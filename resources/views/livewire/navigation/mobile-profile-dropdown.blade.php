@@ -1,0 +1,56 @@
+<flux:header class="lg:hidden">
+    <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+
+    <flux:spacer />
+
+    <flux:dropdown position="top" align="end">
+
+        @if (auth()->user()->profile_photo_path)
+            <flux:profile avatar="{{ auth()->user()->profile_photo_url }}" icon-trailing="chevron-down" />
+        @else
+            <flux:profile initials="{{ $userInitials }}" icon-trailing="chevron-down" />
+        @endif
+
+        <flux:menu>
+            <flux:menu.radio.group>
+                <div class="p-0 text-sm font-normal">
+                    <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                        <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                            @if (auth()->user()->profile_photo_path)
+                                <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}"
+                                    class="h-full w-full object-cover">
+                            @else
+                                <span
+                                    class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                    {{ $userInitials }}
+                                </span>
+                            @endif
+                        </span>
+
+                        <div class="grid flex-1 text-start text-sm leading-tight">
+                            <span class="truncate font-semibold">{{ $userName }}</span>
+                            <span class="truncate text-xs">{{ $userEmail }}</span>
+                        </div>
+                    </div>
+                </div>
+            </flux:menu.radio.group>
+
+            <flux:menu.separator />
+
+            <flux:menu.radio.group>
+                <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
+                </flux:menu.item>
+            </flux:menu.radio.group>
+
+            <flux:menu.separator />
+
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"
+                    data-test="logout-button">
+                    {{ __('Log Out') }}
+                </flux:menu.item>
+            </form>
+        </flux:menu>
+    </flux:dropdown>
+</flux:header>
