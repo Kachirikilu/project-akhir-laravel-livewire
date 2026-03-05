@@ -8,7 +8,7 @@ use Livewire\WithPagination;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\Admin\UserManagement\WithProdiFilters;
+use App\Livewire\Admin\UserManagement\WithProdiSearchFilters;
 use App\Livewire\Admin\UserManagement\WithUserExcel;
 
 class UserManagement extends Component
@@ -18,7 +18,7 @@ class UserManagement extends Component
     use WithUserModal;
     use WithUserDelete;
     use WithUserFilters;
-    use WithProdiFilters;
+    use WithProdiSearchFilters;
 
     use WithUserExcel;
 

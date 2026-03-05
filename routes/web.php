@@ -16,7 +16,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Route::middleware('is_admin')->group(function () {
     Route::view('user-management', 'user-management')->name('user-management');
-    // });
+    Route::view('prodi-management', 'prodi-management')->name('prodi-management');
+        // });
 
     Route::redirect('settings', 'settings/profile');
 

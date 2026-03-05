@@ -34,6 +34,6 @@ class Prodi extends Model {
     }
 
     protected function fakultas(): Attribute {
-        return Attribute::get(fn() => $this->jurusan_rel?->fakultas?->nama_fakultas);
+        return Attribute::get(fn() => $this->jurusan_rel?->fakultas_rel?->nama_fakultas);
     }
 }

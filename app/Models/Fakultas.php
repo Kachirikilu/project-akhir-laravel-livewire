@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Fakultas extends Model
 {
@@ -18,5 +19,9 @@ class Fakultas extends Model
     public function prodis(): HasManyThrough
     {
         return $this->hasManyThrough(Prodi::class, Jurusan::class);
+    }
+
+    protected function fakultas(): Attribute {
+        return Attribute::get(fn() => $this->nama_fakultas);
     }
 }
