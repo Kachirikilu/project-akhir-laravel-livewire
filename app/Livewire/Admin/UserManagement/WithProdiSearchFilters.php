@@ -34,8 +34,10 @@ trait WithProdiSearchFilters
                 ->orWhere('id', $this->prodiSearchQuery)
                 ->orWhereHas('jurusan_rel', function ($q) use ($searchTerm) {
                     $q->where('nama_jurusan', 'like', $searchTerm)
+                    ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
                         ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
-                            $sq->where('nama_fakultas', 'like', $searchTerm);
+                            $sq->where('nama_fakultas', 'like', $searchTerm)
+                                ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
                         });
                 })
                 ->limit(12)

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\UserManagement;use App\Models\Prodi;
+namespace App\Livewire\Admin\UserManagement;
+
+use App\Models\Prodi;
 use App\Models\User;
 use Livewire\WithPagination;
 
@@ -10,13 +12,13 @@ trait WithUserFilters
 
     public $search = '';
 
-   public $filter = '';
+    public $filter = '';
 
-   public $sortField = 'name';
+    public $sortField = 'name';
 
-   public $sortDirection = 'asc';
+    public $sortDirection = 'asc';
 
-   public $searchAngkatan = '';
+    public $searchAngkatan = '';
 
     public function updatingSearch()
     {
@@ -34,32 +36,63 @@ trait WithUserFilters
         $searchTerm = '%'.$this->search.'%';
 
         if (! empty($this->search)) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('email', 'like', $searchTerm)
-                    ->orWhereHas('admin', fn ($q) => $q->where('name', 'like', $searchTerm))
-                    ->orWhereHas('dosen', fn ($q) => $q->where('name', 'like', $searchTerm))
-                    ->orWhereHas('dosen', fn ($q) => $q->where('nip', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('name', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('nim', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('tahun_angkatan', 'like', $searchTerm))
-                    ->orWhereHas('admin.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
-                    ->orWhereHas('dosen.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
 
-                    // 2. Pencarian Nama Fakultas (Masuk ke prodi -> jurusan_rel -> fakultas)
-                    ->orWhereHas('admin.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
-                    ->orWhereHas('dosen.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
+            $roles = ['admin', 'dosen', 'mahasiswa'];
 
-                    // 3. Pencarian Nama Jurusan (Masuk ke prodi -> jurusan_rel)
-                    ->orWhereHas('admin.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
-                    ->orWhereHas('dosen.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
-                    ->orWhereHas('mahasiswa.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
+            // field khusus tiap role
+            $roleFields = [
+                'admin' => ['name', 'nip', 'nitk', 'status'],
+                'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
+                'mahasiswa' => ['name', 'nim', 'tahun_angkatan', 'status'],
+            ];
 
-                    ->orWhere('users.id', $this->search);
+            $query->where(function ($q) use ($searchTerm, $roles, $roleFields) {
+                // email user
+                $q->where('users.email', 'like', $searchTerm);
+
+                foreach ($roles as $role) {
+                    // field utama role
+                    $q->orWhereHas($role, function ($r) use ($searchTerm, $roleFields, $role) {
+                        $r->where(function ($sub) use ($searchTerm, $roleFields, $role) {
+                            foreach ($roleFields[$role] as $field) {
+                                $sub->orWhere($field, 'like', $searchTerm);
+                            }
+
+                        });
+
+                    });
+
+                    // prodi
+                    $q->orWhereHas("$role.prodi", fn ($r) => $r->where('nama_prodi', 'like', $searchTerm)
+                    );
+                    // jurusan
+                    $q->orWhereHas("$role.prodi.jurusan_rel", fn ($r) => $r->where('nama_jurusan', 'like', $searchTerm)
+                        ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
+                    );
+                    // fakultas
+                    $q->orWhereHas("$role.prodi.jurusan_rel.fakultas_rel", fn ($r) => $r->where('nama_fakultas', 'like', $searchTerm)
+                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm])
+                    );
+                }
+
+                // 🔹 pencarian role langsung
+                $searchLower = strtolower($this->search);
+                if (str_contains($searchLower, 'admin')) {
+                    $q->orWhereHas('admin');
+                }
+                if (str_contains($searchLower, 'dosen')) {
+                    $q->orWhereHas('dosen');
+                }
+                if (str_contains($searchLower, 'mahasiswa')) {
+                    $q->orWhereHas('mahasiswa');
+                }
+                // search ID user
+                if (is_numeric($this->search)) {
+                    $q->orWhere('users.id', $this->search);
+                }
+
             });
         }
-
         $this->sortFieldOrder($query);
 
         return $query;

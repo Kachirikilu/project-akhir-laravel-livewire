@@ -155,8 +155,8 @@ trait WithProdiFilters
     public function resetInputFilter()
     {
         $this->reset(['search', 'filter']);
-        $this->resetFakultasFilter();
-        $this->resetJurusanFilter();
+        // $this->resetFakultasFilter();
+        // $this->resetJurusanFilter();
         $this->resetPage();
     }
 

@@ -46,7 +46,7 @@
                     @include('livewire.admin.global.table.head-table', [
                         'sortFieldString' => 'tahun_angkatan',
                         'headString' => 'Angkatan',
-                        'withTh' => 0
+                        'withTh' => 0,
                     ])
 
                     <div class="sm:col-span-4 relative w-fit">
@@ -153,7 +153,13 @@
 
         @empty
             <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                <td colspan="{{ match ($filter) {
+                    'admin' => 9,
+                    'dosen' => 10,
+                    'mahasiswa' => 9,
+                    default => 10,
+                } }}"
+                    class="px-6 py-4 text-center text-gray-500">
                     Tidak ada pengguna ditemukan!
                 </td>
             </tr>
