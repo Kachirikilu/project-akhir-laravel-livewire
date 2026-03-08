@@ -15,17 +15,6 @@
                         </button>
                     </th>
 
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                        @if ($filter == '')
-                            <button wire:click="sortBy('role')"
-                                class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
-                                Role {!! $sortField === 'role' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                            </button>
-                        @else
-                            Role
-                        @endif
-                    </th>
-
                     {{-- Nama - Sorting A-Z --}}
                     <th class="px-6 py-3 text-left">
                         <button wire:click="sortBy('name')"
@@ -36,10 +25,10 @@
 
                     {{-- NIP/NIM Dinamis --}}
                     <th class="px-6 py-3 text-left">
-                        <button wire:click="sortBy('identity')"
+                        <button wire:click="sortBy('identity1')"
                             class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
                             {{ $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP') }}
-                            {!! $sortField === 'identity' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            {!! $sortField === 'identity1' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
                         </button>
                     </th>
 
@@ -126,6 +115,7 @@
                             Prodi {!! $sortField === 'prodi' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
                         </button>
                     </th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Role</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
                 </tr>
@@ -142,68 +132,10 @@
 
                     <tr wire:key="user-{{ $user->id }}" class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $user->id }}</td>
-                        {{-- Role --}}
-                        <td class="px-6 py-4 text-center text-sm">
-                            <flux:dropdown>
-
-                                <button>
-                                    @switch($user->role)
-                                        @case('Admin')
-                                            <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
-                                        @break
-
-                                        @case('Dosen')
-                                            <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
-                                        @break
-
-                                        @case('Mahasiswa')
-                                            <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
-                                        @break
-
-                                        @default
-                                            <flux:badge icon="user-circle" size="sm">{{ $user->role }}</flux:badge>
-                                    @endswitch
-                                </button>
-
-                                <flux:menu>
-                                    @if (Auth::user()?->admin)
-                                        <flux:menu.item wire:click="editUser({{ $user->id }})"
-                                            class="!text-yellow-600 hover:!bg-yellow-100">
-                                            <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
-
-                                            <div class="flex justify-between items-center w-full">
-                                                <span>Edit Data</span>
-                                                <flux:icon wire:loading wire:target="editUser({{ $user->id }})"
-                                                    name="arrow-path" class="animate-spin h-4 w-4" />
-                                            </div>
-                                        </flux:menu.item>
-
-
-                                        @if (Auth::id() != $user->id)
-                                            <flux:menu.separator />
-                                            <flux:menu.item wire:click="confirmDelete({{ $user->id }})"
-                                                class="!text-red-800 hover:!bg-red-50">
-                                                <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
-
-                                                <div class="flex justify-between items-center w-full">
-                                                    <span>Hapus Pengguna</span>
-                                                    <flux:icon wire:loading
-                                                        wire:target="confirmDelete({{ $user->id }})"
-                                                        name="arrow-path" class="animate-spin h-4 w-4" />
-                                                </div>
-                                            </flux:menu.item>
-                                        @endif
-                                    @endif
-                                    {{-- <flux:menu.item icon="eye">Lihat Detail</flux:menu.item>
-                                            @endif --}}
-                                </flux:menu>
-                            </flux:dropdown>
-                            {{-- </div> --}}
-                        </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
                         {{-- @if ($filter == 'dosen' || $filter == 'mahasiswa') --}}
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ $user->identity ?? '-' }}
+                            {{ $user->identity1 ?? '-' }}
                         </td>
                         {{-- @endif --}}
                         @if ($filter != 'mahasiswa')
@@ -223,53 +155,74 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $detail->prodi->prodi ?? '-' }}
                         </td>
 
+                        {{-- Role --}}
+                        <td class="px-6 py-4 text-center text-sm">
+                            @switch($user->role)
+                                @case('Admin')
+                                    <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
+                                @break
+
+                                @case('Dosen')
+                                    <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
+                                @break
+
+                                @case('Mahasiswa')
+                                    <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
+                                @break
+
+                                @default
+                                    <flux:badge icon="user-circle" size="sm">{{ $user->role }}</flux:badge>
+                            @endswitch
+                        </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $user->status ?? '-' }}
 
                         <td class="px-6 py-4 text-center text-sm space-x-2 gap-2">
-                            <flux:dropdown>
-                                <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
-                                    inset="top bottom"></flux:button>
+                            <div class="flex justify-center">
+                                <flux:dropdown>
+                                    <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
+                                        inset="top bottom"></flux:button>
 
-                                <flux:menu>
-                                    @if (Auth::user()?->admin)
-                                        <flux:menu.item wire:click="editUser({{ $user->id }})"
-                                            class="!text-yellow-600 hover:!bg-yellow-100">
-                                            <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
-
-                                            <div class="flex justify-between items-center w-full">
-                                                <span>Edit Data</span>
-                                                <flux:icon wire:loading wire:target="editUser({{ $user->id }})"
-                                                    name="arrow-path" class="animate-spin h-4 w-4" />
-                                            </div>
-                                        </flux:menu.item>
-
-
-                                        @if (Auth::id() != $user->id)
-                                            <flux:menu.separator />
-                                            <flux:menu.item wire:click="confirmDelete({{ $user->id }})"
-                                                class="!text-red-800 hover:!bg-red-50">
-                                                <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
+                                    <flux:menu>
+                                        @if (Auth::user()?->admin)
+                                            <flux:menu.item wire:click="editUser({{ $user->id }})"
+                                                class="!text-yellow-600 hover:!bg-yellow-100">
+                                                <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
 
                                                 <div class="flex justify-between items-center w-full">
-                                                    <span>Hapus Pengguna</span>
-                                                    <flux:icon wire:loading
-                                                        wire:target="confirmDelete({{ $user->id }})"
+                                                    <span>Edit Data</span>
+                                                    <flux:icon wire:loading wire:target="editUser({{ $user->id }})"
                                                         name="arrow-path" class="animate-spin h-4 w-4" />
                                                 </div>
                                             </flux:menu.item>
+
+
+                                            @if (Auth::id() != $user->id)
+                                                <flux:menu.separator />
+                                                <flux:menu.item wire:click="confirmDelete({{ $user->id }})"
+                                                    class="!text-red-800 hover:!bg-red-50">
+                                                    <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
+
+                                                    <div class="flex justify-between items-center w-full">
+                                                        <span>Hapus Pengguna</span>
+                                                        <flux:icon wire:loading
+                                                            wire:target="confirmDelete({{ $user->id }})"
+                                                            name="arrow-path" class="animate-spin h-4 w-4" />
+                                                    </div>
+                                                </flux:menu.item>
+                                            @endif
                                         @endif
-                                    @endif
-                                    {{-- <flux:menu.item icon="eye">Lihat Detail</flux:menu.item>
+                                        {{-- <flux:menu.item icon="eye">Lihat Detail</flux:menu.item>
                                             @endif --}}
-                                </flux:menu>
-                            </flux:dropdown>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </div>
                         </td>
                     </tr>
 
                     @empty
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                Tidak ada pengguna ditemukan!
+                                Tidak ada pengguna ditemukan.
                             </td>
                         </tr>
                     @endforelse

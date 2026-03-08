@@ -3,51 +3,37 @@
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
-        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-            @if ($filter == '')
-                <button wire:click="sortBy('role')"
-                    class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
-                    Role {!! $sortField === 'role' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                </button>
-            @else
-                Role
-            @endif
-        </th>
+
+        {{-- Role - Sorting A-Z --}}
+        @if ($filter == '')
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role'])
+        @else
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Role</th>
+        @endif
 
         {{-- Name - Sorting A-Z --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name'])
 
         {{-- NIP/NIM Dinamis --}}
-        <th class="px-6 py-3 text-left">
-            <button wire:click="sortBy('identity')"
-                class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
-                {{ $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP') }}
-                {!! $sortField === 'identity' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-            </button>
-        </th>
+        @include('livewire.admin.global.table.head-table', [
+            'sortFieldString' => 'identity1',
+            'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
+        ])
 
         {{-- NITK/NIDN Dinamis --}}
         @if ($filter != 'mahasiswa')
-            <th class="px-6 py-3 text-left">
-                <button wire:click="sortBy('identity2')"
-                    class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
-                    {{ $filter == '' ? 'NITK/NIDN' : ($filter == 'admin' ? 'NITK' : 'NIDN') }}
-                    {!! $sortField === 'identity2' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                </button>
-            </th>
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'identity2',
+                'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'admin' ? 'NITK' : 'NIDN'),
+            ])
         @endif
 
         @if ($filter == 'dosen' || $filter == '')
-            <th class="px-6 py-3 text-left">
-                <button wire:click="sortBy('identity3')"
-                    class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
-                    NIDK
-                    {!! $sortField === 'identity3' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
-                </button>
-            </th>
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'identity3',
+                'headString' => 'NIDK',
+            ])
         @endif
-
-
 
         {{-- Email - Sorting A-Z --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email'])
@@ -57,14 +43,11 @@
         @if ($filter == 'mahasiswa')
             <th class="px-6 py-3 text-left">
                 <div class="flex flex-col gap-1 items-center">
-                    <button wire:click="sortBy('tahun_angkatan')"
-                        class="flex items-center text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 focus:outline-none">
-                        Angkatan
-                        @if ($sortField === 'tahun_angkatan')
-                            <span class="ml-1">{{ $sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                        @endif
-                    </button>
-
+                    @include('livewire.admin.global.table.head-table', [
+                        'sortFieldString' => 'tahun_angkatan',
+                        'headString' => 'Angkatan',
+                        'withTh' => 0
+                    ])
 
                     <div class="sm:col-span-4 relative w-fit">
                         <div class="relative">
@@ -83,17 +66,15 @@
                                     </svg>
                                 </button>
                             @endif
-
                         </div>
                     </div>
+
                 </div>
             </th>
         @endif
 
         {{-- Prodi - Sorting A-Z --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
-
-
 
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
@@ -111,7 +92,7 @@
             <td class="px-6 py-4 text-center text-sm">
                 <flux:dropdown>
 
-                    <button>
+                    <button class="cursor-pointer">
                         @switch($user->role)
                             @case('Admin')
                                 <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
@@ -130,41 +111,18 @@
                         @endswitch
                     </button>
 
-                    <flux:menu>
-                        @if (Auth::user()?->admin)
-                            <flux:menu.item wire:click="editUser({{ $user->id }})"
-                                class="!text-yellow-600 hover:!bg-yellow-100">
-                                <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
+                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                        'x' => $user,
+                        'nameXString' => 'Pengguna',
+                        'editString' => 'editUser',
+                        'confirmDeleteString' => 'confirmDelete',
+                    ])
 
-                                <div class="flex justify-between items-center w-full">
-                                    <span>Edit Data</span>
-                                    <flux:icon wire:loading wire:target="editUser({{ $user->id }})"
-                                        name="arrow-path" class="animate-spin h-4 w-4" />
-                                </div>
-                            </flux:menu.item>
-
-
-                            @if (Auth::id() != $user->id)
-                                <flux:menu.separator />
-                                <flux:menu.item wire:click="confirmDelete({{ $user->id }})"
-                                    class="!text-red-800 hover:!bg-red-50">
-                                    <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
-
-                                    <div class="flex justify-between items-center w-full">
-                                        <span>Hapus Pengguna</span>
-                                        <flux:icon wire:loading wire:target="confirmDelete({{ $user->id }})"
-                                            name="arrow-path" class="animate-spin h-4 w-4" />
-                                    </div>
-                                </flux:menu.item>
-                            @endif
-                        @endif
-
-                    </flux:menu>
                 </flux:dropdown>
             </td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">
-                {{ $user->identity ?? '-' }}
+                {{ $user->identity1 ?? '-' }}
             </td>
             @if ($filter != 'mahasiswa')
                 <td class="px-6 py-4 text-sm text-gray-700">
@@ -186,8 +144,10 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $user->status ?? '-' }}
 
                 @include('livewire.admin.global.table.menu-aksi', [
-                    'typeOfXString' => $user,
+                    'x' => $user,
                     'nameXString' => 'Pengguna',
+                    'editString' => 'editUser',
+                    'confirmDeleteString' => 'confirmDelete',
                 ])
         </tr>
 

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsDosen;
+use App\Http\Middleware\IsMahasiswa;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,10 +17,10 @@ Route::view('dashboard', 'dashboard')
 
 Route::middleware(['auth'])->group(function () {
 
-    // Route::middleware('is_admin')->group(function () {
-    Route::view('user-management', 'user-management')->name('user-management');
-    Route::view('prodi-management', 'prodi-management')->name('prodi-management');
-        // });
+    Route::middleware(['is_admin'])->group(function () {
+        Route::view('user-management', 'user-management')->name('user-management');
+        Route::view('prodi-management', 'prodi-management')->name('prodi-management');
+    });
 
     Route::redirect('settings', 'settings/profile');
 

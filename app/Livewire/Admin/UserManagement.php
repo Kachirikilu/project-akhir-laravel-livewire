@@ -22,6 +22,8 @@ class UserManagement extends Component
 
     use WithUserExcel;
 
+    public $showModal = false;
+
     public $perPage = 8;
     // public $showPerPage = false;
 

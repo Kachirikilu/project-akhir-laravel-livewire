@@ -8,36 +8,16 @@
                 @php
                     $textShow = $isEditing ? 'Edit ' : 'Tambah ';
 
-                    $colorRole = 'gray';
-                    if ($roleType == 'admin') {
-                        $colorRole = 'red';
-                    } elseif ($roleType == 'dosen') {
-                        $colorRole = 'lime';
-                    } elseif ($roleType == 'mahasiswa') {
-                        $colorRole = 'cyan';
-                    } elseif ($roleType == 'file') {
-                        $colorRole = 'green';
+                    match($roleType) {
+                        'admin' => [$colorIcon = 'text-red-700', $colorBadge = 'red', $textShow .= 'Admin'],
+                        'dosen' => [$colorIcon = 'text-lime-700', $colorBadge = 'lime', $textShow .= 'Dosen'],
+                        'mahasiswa' => [$colorIcon = 'text-cyan-700', $colorBadge = 'cyan', $textShow .= 'Mahasiswa'],
+                        'file' => [$colorIcon = 'text-green-700', $colorBadge = 'green', $textShow = 'Input Data Pengguna dengan File Excel'],
+                        default => [$colorIcon = 'text-gray-700', $colorBadge = 'gray', $textShow .= 'Pengguna'],
                     }
                 @endphp
 
-                @if ($roleType == 'admin')
-                    <flux:badge icon="cog-6-tooth" color="red" size="lg">
-                        {{ $textShow }}
-                        Admin</flux:badge>
-                @elseif ($roleType == 'dosen')
-                    <flux:badge icon="briefcase" color="lime" size="lg">
-                        {{ $textShow }}
-                        Dosen</flux:badge>
-                @elseif ($roleType == 'mahasiswa')
-                    <flux:badge icon="book-open" color="cyan" size="lg">
-                        {{ $textShow }}
-                        Mahasiswa</flux:badge>
-                @elseif ($roleType == 'file')
-                    <flux:badge icon="table-cells" color="green" size="lg">
-                        Input Data Pengguna dengan File Excel</flux:badge>
-                @else
-                    {{ $textShow }}Pengguna
-                @endif
+                <flux:badge icon="cog-6-tooth" color="{{ $colorBadge }}" size="lg">{{ $textShow }}</flux:badge>
 
             </h3>
         </div>

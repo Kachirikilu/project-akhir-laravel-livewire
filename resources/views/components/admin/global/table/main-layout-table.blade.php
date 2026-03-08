@@ -11,7 +11,7 @@
 
             {{-- Body Table --}}
             <tbody wire:loading.class="opacity-50"
-                wire:target="search, filterBy, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
+                wire:target="search, filterBy, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
                 class="bg-white divide-y divide-gray-200">
                 {{ $slot }}
             </tbody>

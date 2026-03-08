@@ -18,55 +18,62 @@
         @include('livewire.admin.user-management.modal-form.partial.input', [
             'colorIcon' => $colorIcon,
             'labelString' => match ($roleType) {
+                'admin', 'dosen' => 'Nomor Induk Pegawai (NIP)',
                 'mahasiswa' => 'Nomor Induk Mahasiswa (NIM)',
-                default => 'Nomor Induk Pegawai (NIP)',
+                default => 'Nomor Induk',
             },
             'modelString' => match ($roleType) {
+                'admin', 'dosen' => 'nip',
                 'mahasiswa' => 'nim',
-                default => 'nip',
+                default => 'nomor_induk',
             },
             'numberOnly' => 1,
             'maxlength' => 20,
             'placeholder' =>
                 'Masukkan ' .
                 match ($roleType) {
+                    'admin', 'dosen' => 'Masukkan NIP',
                     'mahasiswa' => 'Masukkan NIM',
-                    default => 'Masukkan NIP',
+                    default => 'Masukkan Nomor Induk',
                 },
             'message' => $errors->first(
                 match ($roleType) {
+                    'admin', 'dosen' => 'nip',
                     'mahasiswa' => 'nim',
-                    default => 'nip',
+                    default => 'nomor_induk',
                 }),
             'isRequired' => 1,
         ])
 
-        @if ($roleType !== 'mahasiswa')
-            @include('livewire.admin.user-management.modal-form.partial.input', [
-                'colorIcon' => $colorIcon,
-                'labelString' => match ($roleType) {
-                    'dosen' => 'Nomor Induk Dosen Nasional (NIDN)',
-                    default => 'Nomor Induk Tenaga Kerja (NITK)',
+        @include('livewire.admin.user-management.modal-form.partial.input', [
+            'colorIcon' => $colorIcon,
+            'labelString' => match ($roleType) {
+                'admin' => 'Nomor Induk Tenaga Kerja (NITK)',
+                'dosen' => 'Nomor Induk Dosen Nasional (NIDN)',
+                default => 'Nomor Induk Kedua',
+            },
+            'modelString' => match ($roleType) {
+                'admin', 'dosen' => 'nitk',
+                'mahasiswa' => 'nidn',
+                default => 'nomor_induk_kedua',
+            },
+            'numberOnly' => 1,
+            'maxlength' => 20,
+            'placeholder' =>
+                'Masukkan ' .
+                match ($roleType) {
+                    'admin', 'dosen' => 'Masukkan NITK',
+                    'mahasiswa' => 'Masukkan NIDN',
+                    default => 'Masukkan Nomor Induk Kedua',
                 },
-                'modelString' => match ($roleType) {
-                    'dosen' => 'nidn',
-                    default => 'nitk',
-                },
-                'numberOnly' => 1,
-                'maxlength' => 20,
-                'placeholder' =>
-                    'Masukkan ' .
-                    match ($roleType) {
-                        'dosen' => 'Masukkan NIDN',
-                        default => 'Masukkan NITK',
-                    },
-                'message' => $errors->first(
-                    match ($roleType) {
-                        'dosen' => 'nidn',
-                        default => 'nitk',
-                    }),
-            ])
-        @endif
+            'message' => $errors->first(
+                match ($roleType) {
+                    'admin', 'dosen' => 'nitk',
+                    'mahasiswa' => 'nidn',
+                    default => 'nomor_induk_kedua',
+                }),
+            'isRequired' => 0,
+        ])
 
         @if ($roleType === 'dosen')
             @include('livewire.admin.user-management.modal-form.partial.input', [

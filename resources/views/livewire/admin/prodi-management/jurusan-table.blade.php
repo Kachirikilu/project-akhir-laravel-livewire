@@ -18,10 +18,11 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $jurusan->fakultas ?? '-' }}</td>
 
             @include('livewire.admin.global.table.menu-aksi', [
-                'typeOfXString' => $jurusan,
-                'nameXString' => 'Jurusan'
-                ]
-            )
+                'x' => $jurusan,
+                'nameXString' => 'Jurusan',
+                'editString' => 'editJurusan',
+                'confirmDeleteString' => 'confirmDelete',
+            ])
         </tr>
     @empty
         <tr>
@@ -34,9 +35,8 @@
 
     <x-slot:footer>
         @include('livewire.admin.global.table.footer-table', [
-            'typeOfXString' => $jurusans,
-            ]
-        )
+            'typeOfXString' => $jurusans
+        ])
     </x-slot:footer>
 
 </x-admin.global.table.main-layout-table>

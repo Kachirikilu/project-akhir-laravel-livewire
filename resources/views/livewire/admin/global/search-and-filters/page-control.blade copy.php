@@ -1,4 +1,4 @@
-<div class="flex items-center justify-end {{ ($withFull ?? true) ? 'pb-4 ml-4' : '' }}">
+<div class="flex items-center justify-end pb-4 ml-4">
 
     {{-- <label class="text-sm font-medium text-gray-500 mr-2 whitespace-nowrap">Tampilkan:</label> --}}
     <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15 **z-20**" @click.away="open = false">
@@ -23,7 +23,7 @@
             role="menu" aria-orientation="vertical" tabindex="-1">
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"
-                    class="text-gray-700 block px-3 py-1 text-sm cursor-pointer hover:bg-indigo-500 hover:text-white"
+                    class="cursor-pointer text-gray-700 block px-3 py-1 text-sm cursor-pointer hover:bg-indigo-500 hover:text-white"
                     :class="{ 'bg-indigo-100 font-semibold text-indigo-700': selected == {{ $option }} }">
                     {{ $option }}
                 </li>
@@ -31,8 +31,5 @@
         </ul>
     </div>
 
-    @if ($withFull ?? true)
-        <span class="text-sm font-medium text-gray-500 ml-2">Baris</span>
-    @endif
-
+    <span class="text-sm font-medium text-gray-500 ml-2">baris</span>
 </div>

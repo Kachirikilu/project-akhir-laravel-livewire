@@ -5,7 +5,7 @@
 
     <div class="relative mt-2">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon.academic-cap variant="mini" class="text-{{ $colorRole }}-700" />
+            <flux:icon.academic-cap variant="mini" class="{{ $colorIcon }}" />
         </div>
 
         <input autocomplete="off" wire:model.live.debounce.300ms="prodi_name_search" type="text"
@@ -17,7 +17,7 @@
         {{-- Tombol Reset --}}
         @if ($prodi_id || strlen($prodi_name_search) > 0)
             <button wire:click.prevent="resetProdiInput" type="button"
-                class="absolute inset-y-0 right-0 flex items-center pr-3 text-{{ $colorRole }}-700 hover:text-red-500 transition duration-150"
+                class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3 {{ $colorIcon }} hover:text-red-500 transition duration-150"
                 title="Bersihkan Pilihan">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -43,19 +43,19 @@
         @forelse ($prodi_results as $prodi)
             <div wire:key="prodi-{{ $prodi['id'] }}"
                 wire:click="selectProdi({{ $prodi['id'] }}, '{{ $prodi['prodi'] }}')" @click="open = false"
-                class="px-4 py-3 cursor-pointer hover:bg-indigo-600 group transition duration-150 border-b border-gray-50 last:border-none">
+                class="px-4 py-3 cursor-pointer hover:bg-indigo-50 transition duration-150 border-b border-gray-50 last:border-none">
 
                 <div class="flex justify-between items-center">
                     <div class="flex flex-col">
-                        <span class="font-semibold text-gray-800 group-hover:text-white leading-tight">
+                        <span class="font-semibold text-gray-800 leading-tight">
                             {{ $prodi['prodi'] }}
                         </span>
-                        <span class="text-xs text-gray-500 group-hover:text-indigo-100 mt-0.5">
-                            {{ $prodi['fakultas'] }}
+                        <span class="text-xs text-gray-500 mt-0.5">
+                            Fakultas {{ $prodi['fakultas'] }}
                         </span>
                     </div>
                     <span
-                        class="text-[10px] bg-indigo-500 text-white px-2 py-1 rounded-md text-{{ $colorRole }}-700 ml-2">
+                        class="text-[10px] bg-indigo-500 text-white px-2 py-1 rounded-md {{ $colorIcon }} ml-2">
                         ID: {{ $prodi['id'] }}
                     </span>
                 </div>

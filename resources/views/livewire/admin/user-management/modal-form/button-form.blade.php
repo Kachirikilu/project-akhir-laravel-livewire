@@ -4,8 +4,8 @@
 
         @if ($roleType === 'file')
             {{-- @if (!empty($parsedRows)) --}}
-                <flux:button  type="submit" variant="primary" wire:loading.attr="disabled"
-                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 border-none">
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled"
+                    class="cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 border-none">
                     <span wire:loading.remove wire:target="saveAllRows">
                         Simpan Semua Data {{ count($parsedRows) > 0 ? '(' . count($parsedRows) . ' Baris)' : null }}
                     </span>
@@ -16,7 +16,7 @@
             {{-- @endif --}}
         @else
             <flux:button type="submit" variant="primary"
-                wire:loading.attr="disabled" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 border-none">
+                wire:loading.attr="disabled" class="cursor-pointer w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 border-none">
                 <span wire:loading.remove wire:target="{{ $isEditing ? 'updateUser' : 'saveUser' }}">
                     {{ $isEditing ? 'Perbarui' : 'Simpan' }}
                 </span>
@@ -28,7 +28,7 @@
 
         <flux:modal.close>
             <flux:button variant="primary"
-                class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 border-none">
+                class="cursor-pointer w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 border-none">
                 Batal
             </flux:button>
         </flux:modal.close>

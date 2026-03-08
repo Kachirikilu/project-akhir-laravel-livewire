@@ -28,7 +28,7 @@ trait WithProdiSearchFilters
     {
         $searchTerm = '%'.$this->prodiSearchQuery.'%';
 
-        if (strlen($this->prodiSearchQuery) > 1) {
+        if (strlen($this->prodiSearchQuery) > 1 || is_numeric($this->prodiSearchQuery)) {
             $this->prodiSearchResults = Prodi::with(['jurusan_rel.fakultas_rel'])
                 ->where('nama_prodi', 'like', $searchTerm)
                 ->orWhere('id', $this->prodiSearchQuery)
@@ -132,7 +132,7 @@ trait WithProdiSearchFilters
 
     public function getProdibyUser()
     {
-        $userProdi = Auth::user()?->admin?->prodi()->with('jurusan_rel.fakultas_rel')->first();
+        $userProdi = Auth::user()?->admin?->prodi()->first();
 
         if (! $userProdi) {
             return [];

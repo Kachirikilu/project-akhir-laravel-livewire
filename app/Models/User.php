@@ -35,7 +35,7 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url', 
         'name',
-        'identity',
+        'identity1',
         'identity2',
         'identity3',
         'role',
@@ -87,7 +87,7 @@ class User extends Authenticatable
         });
     }
 
-    // protected function identity(): Attribute
+    // protected function identity1(): Attribute
     // {
     //     return Attribute::get(function () {
     //         if ($this->admin) return $this->admin->nip;
@@ -96,7 +96,7 @@ class User extends Authenticatable
     //         return null;
     //     });
     // }
-    protected function identity(): Attribute
+    protected function identity1(): Attribute
     {
         return Attribute::get(function () {
             $value = null;

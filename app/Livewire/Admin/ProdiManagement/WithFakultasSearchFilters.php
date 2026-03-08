@@ -46,9 +46,7 @@ trait WithFakultasSearchFilters
     // }
     public function inputFakultasFilter()
     {
-        $searchTerm = '%'.$this->fakultasSearchQuery.'%';
-
-        if (strlen($this->fakultasSearchQuery) > 1) {
+        if (strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) {
             $this->fakultasSearchResults = Fakultas::query()
                 ->where(function ($q) use ($searchTerm) {
                     $q->where('nama_fakultas', 'like', $searchTerm)
@@ -136,7 +134,7 @@ trait WithFakultasSearchFilters
 
     public function getFakultasbyUser()
     {
-        $userProdi = Auth::user()?->admin?->prodi()->with('jurusan_rel.fakultas_rel')->first();
+        $userProdi = Auth::user()?->admin?->prodi()->first();
 
         $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_rel?->id ?? null;
 

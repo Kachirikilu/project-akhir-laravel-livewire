@@ -1,4 +1,4 @@
-<div x-data="{ open: false, selectedName: @entangle($selectedXNameString).live }" class="sm:col-span-3 relative">
+<div x-data="{ open: false, selectedName: @entangle($selectedXNameString).live }">
 
     <div class="relative w-full sm:flex-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -17,7 +17,7 @@
 
         @if ($selectedXId || $selectedXName)
             <button type="button" wire:click="{{ $resetXFilterString }}" $wire.xSearchQueryString = ''; open=false"
-                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition duration-150"
+                class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition duration-150"
                 title="Bersihkan Filter">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -39,13 +39,15 @@
                     <div class="font-medium">
                         @if ($typeOfXString == 'prodi')
                             {{ $x['prodi'] }}
+                        @elseif ($typeOfXString == 'jurusan')
+                            {{ $x['jurusan'] }}
                         @elseif ($typeOfXString == 'fakultas')
                             Fakultas {{ $x['fakultas'] }}
                         @endif
                     </div>
                     <div class="text-xs text-gray-500">
                         - ID: {{ $x['id'] }}
-                        @if ($typeOfXString == 'prodi')
+                        @if ($typeOfXString == 'prodi' || $typeOfXString == 'jurusan')
                             <span class="mx-1 text-gray-300">|</span> Fakultas {{ $x['fakultas'] }}
                         @endif
                     </div>

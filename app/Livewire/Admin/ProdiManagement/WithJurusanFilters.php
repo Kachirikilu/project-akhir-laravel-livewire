@@ -27,24 +27,70 @@ trait WithJurusanFilters
     //     $this->resetPage();
     // }
 
+    // public function inputJurusanSearch()
+    // {
+    //     $query = Jurusan::query()->with(['fakultas_rel']);
+    //     $searchTerm = '%'.$this->search.'%';
+
+    //     if (! empty($this->search)) {
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             $q->where('jurusans.nama_jurusan', 'like', $searchTerm)
+    //                 ->orWhere('jurusans.id', $this->search)
+    //                 ->orWhereRaw("CONCAT('Jurusan ', jurusans.nama_jurusan) LIKE ?", [$searchTerm])
+    //                 ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
+    //                     $sq->where('nama_fakultas', 'like', $searchTerm)
+    //                         ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+    //                 });
+    //         });
+    //     }
+
+    //     if (! empty($this->selectedFakultasId)) {
+    //         $query->where('jurusans.fakultas_id', $this->selectedFakultasId);
+    //     }
+
+    //     if (! empty($this->selectedJurusanId)) {
+    //         $query->where('jurusans.id', $this->selectedJurusanId);
+    //     }
+
+    //     $this->sortFieldOrderJurusan($query);
+
+    //     return $query;
+    // }
+
     public function inputJurusanSearch()
     {
-        $query = Jurusan::query()->with(['fakultas_rel']);
+        $query = Jurusan::query()->with(['fakultas_rel', 'prodis']);
+        $searchTerm = '%'.$this->search.'%';
 
         if (! empty($this->search)) {
-            $query->where(function ($q) {
-                $q->where('nama_jurusan', 'like', "%{$this->search}%")
-                    ->orWhere('id', $this->search)
-                    ->orWhereHas('fakultas_rel', function ($sq) {
-                        $sq->where('nama_fakultas', 'like', "%{$this->search}%")
-                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$this->search]);
-                    });
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('jurusans.nama_jurusan', 'like', $searchTerm)
+                    ->orWhereRaw("CONCAT('Jurusan ', jurusans.nama_jurusan) LIKE ?", [$searchTerm]);
+                if (is_numeric($this->search)) {
+                    $q->orWhere('jurusans.id', $this->search);
+                }
+                $q->orWhereHas('fakultas_rel', function ($fq) use ($searchTerm) {
+                    $fq->where('nama_fakultas', 'like', $searchTerm);
+                    // if (is_numeric($this->search)) {
+                    //     $fq->orWhere('id', $this->search);
+                    // }
+                });
+                $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
+                    $pq->where('nama_prodi', 'like', $searchTerm);
+                    // if (is_numeric($this->search)) {
+                    //     $pq->orWhere('id', $this->search);
+                    // }
+                });
+
             });
         }
 
-        // Filter berdasarkan fakultas yang dipilih
         if (! empty($this->selectedFakultasId)) {
-            $query->where('fakultas_id', $this->selectedFakultasId);
+            $query->where('jurusans.fakultas_id', $this->selectedFakultasId);
+        }
+
+        if (! empty($this->selectedJurusanId)) {
+            $query->where('jurusans.id', $this->selectedJurusanId);
         }
 
         $this->sortFieldOrderJurusan($query);

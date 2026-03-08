@@ -25,14 +25,14 @@
 
                     {{-- NIP/NIM Dinamis --}}
                     <th class="px-6 py-3 text-left">
-                        <button wire:click="sortBy('identity')"
+                        <button wire:click="sortBy('identity1')"
                             class="flex items-center gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap">
                             {{ $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP') }}
-                            {!! $sortField === 'identity' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
+                            {!! $sortField === 'identity1' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' !!}
                         </button>
                     </th>
 
-                    {{-- NITK/NIDN Dinamis --}}
+                     {{-- NITK/NIDN Dinamis --}}
                     @if ($filter != 'mahasiswa')
                         <th class="px-6 py-3 text-left">
                             <button wire:click="sortBy('identity2')"
@@ -93,15 +93,6 @@
                                                 </svg>
                                             </button>
                                         @endif
-
-                                        {{-- <input wire:model.live.debounce.300ms="searchAngkatan" list="list-angkatan"
-                                            type="text" placeholder="Filter..."
-                                            class="mt-1 text-[10px] w-24 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm">
-                                        <datalist id="list-angkatan">
-                                            @foreach ($angkatanList as $tahun)
-                                                <option value="{{ $tahun }}">
-                                            @endforeach
-                                        </datalist> --}}
                                     </div>
                                 </div>
                             </div>
@@ -135,7 +126,7 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
                         {{-- @if ($filter == 'dosen' || $filter == 'mahasiswa') --}}
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ $user->identity ?? '-' }}
+                            {{ $user->identity1 ?? '-' }}
                         </td>
                         {{-- @endif --}}
                         @if ($filter != 'mahasiswa')

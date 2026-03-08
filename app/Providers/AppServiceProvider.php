@@ -19,7 +19,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // register custom route middleware aliases since kernel file isn't
+        // used in this project structure. this mirrors the existing
+        // "is_admin" alias that appears in routes/web.php.
+        $router = $this->app->make(\Illuminate\Routing\Router::class);
+        $router->aliasMiddleware('is_admin', \App\Http\Middleware\IsAdmin::class);
+        $router->aliasMiddleware('is_dosen', \App\Http\Middleware\IsDosen::class);
+        $router->aliasMiddleware('is_mahasiswa', \App\Http\Middleware\IsMahasiswa::class);
     }
 }
 

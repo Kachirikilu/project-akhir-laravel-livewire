@@ -15,10 +15,11 @@
             <td class="px-6 py-4 text-sm text-gray-700">Fakultas {{ $fakultas->fakultas ?? '-' }}</td>
 
             @include('livewire.admin.global.table.menu-aksi', [
-                'typeOfXString' => $fakultas,
-                'nameXString' => 'Fakultas'
-                ]
-            )
+                'x' => $fakultas,
+                'nameXString' => 'Fakultas',
+                'editString' => 'editFakultas',
+                'confirmDeleteString' => 'confirmDelete',
+            ])
         </tr>
 
     @empty
@@ -32,9 +33,8 @@
 
     <x-slot:footer>
         @include('livewire.admin.global.table.footer-table', [
-            'typeOfXString' => $fakultass,
-            ]
-        )
+            'typeOfXString' => $fakultass
+        ])
     </x-slot:footer>
 
 </x-admin.global.table.main-layout-table>

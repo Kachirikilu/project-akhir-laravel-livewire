@@ -1,4 +1,4 @@
-<div class="p-6 mb-6 bg-gray-50" x-data="{ show: @entangle('showModal') }">
+<div class="p-6 bg-gray-50" x-data="{ show: @entangle('showModal') }">
     <h2 class="text-2xl font-bold mb-4 text-gray-700">Manajemen Program Studi</h2>
     {{-- @include('livewire.admin.prodi-management.toolbar') --}}
     @include('livewire.admin.prodi-management.switch-table')

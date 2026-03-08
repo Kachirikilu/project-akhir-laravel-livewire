@@ -27,19 +27,94 @@ trait WithFakultasFilters
     //     $this->resetPage();
     // }
 
+    // public function inputFakultasSearch()
+    // {
+    //     $query = Fakultas::query();
+    //     $searchTerm = '%'.$this->search.'%';
+
+    //     // if ($this->switchTable === 'fakultas' && ! empty($this->search)) {
+    //     if (! empty($this->search)) {
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             $q->where('nama_fakultas', 'like', $searchTerm)
+    //                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+    //         });
+    //     }
+
+    //     if (! empty($this->selectedFakultasId)) {
+    //         $query->where('id', $this->selectedFakultasId);
+    //     }
+
+    //     if (! empty($this->selectedJurusanId)) {
+    //         $query->where('jurusan_rel.id', $this->selectedJurusanId);
+    //     }
+
+    //     $this->sortFieldOrderFakultas($query);
+
+    //     return $query;
+    // }
+
+    // public function inputFakultasSearch()
+    // {
+    //     $query = Fakultas::query();
+    //     $searchTerm = '%'.$this->search.'%';
+
+    //     if (! empty($this->search)) {
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             $q->where('nama_fakultas', 'like', $searchTerm)
+    //                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+    //         });
+    //     }
+
+    //     if (! empty($this->selectedFakultasId)) {
+    //         $query->where('id', $this->selectedFakultasId);
+    //     }
+
+    //     if (! empty($this->selectedJurusanId)) {
+    //         $query->whereHas('jurusans', function ($q) {
+    //             $q->where('id', $this->selectedJurusanId);
+    //         });
+    //     }
+
+    //     $this->sortFieldOrderFakultas($query);
+
+    //     return $query;
+    // }
+
     public function inputFakultasSearch()
     {
-        $query = Fakultas::query();
+        $query = Fakultas::query()->with(['jurusans.prodis']);
+        $searchTerm = '%'.$this->search.'%';
 
         if (! empty($this->search)) {
-            $query->where(function ($q) {
-                $q->where('nama_fakultas', 'like', "%{$this->search}%")
-                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", ["%{$this->search}%"]);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_fakultas', 'like', $searchTerm);
+                if (is_numeric($this->search)) {
+                    $q->orWhere('id', $this->search);
+                }
+                $q->orWhereHas('jurusans', function ($jq) use ($searchTerm) {
+                    $jq->where('nama_jurusan', 'like', $searchTerm);
+                    // if (is_numeric($this->search)) {
+                    //     $jq->orWhere('id', $this->search);
+                    // }
+                });
+                $q->orWhereHas('jurusans.prodis', function ($pq) use ($searchTerm) {
+                    $pq->where('nama_prodi', 'like', $searchTerm);
+                    // if (is_numeric($this->search)) {
+                    //     $pq->orWhere('id', $this->search);
+                    // }
+                });
+
             });
         }
 
         if (! empty($this->selectedFakultasId)) {
-            $query->where('fakultas_id', $this->selectedFakultasId);
+            $query->where('id', $this->selectedFakultasId);
+        }
+
+        if (! empty($this->selectedJurusanId)) {
+            $query->whereHas('jurusans', function ($q) {
+                $q->where('id', $this->selectedJurusanId);
+            });
         }
 
         $this->sortFieldOrderFakultas($query);
@@ -80,6 +155,7 @@ trait WithFakultasFilters
         } else {
             $query->orderBy('id', $this->sortDirection);
         }
+
         return $query;
     }
 }

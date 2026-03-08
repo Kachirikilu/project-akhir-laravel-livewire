@@ -31,29 +31,30 @@ trait WithUserFilters
     public function inputMainSearch()
     {
         $query = User::query()->with(['admin', 'dosen', 'mahasiswa']);
+        $searchTerm = '%'.$this->search.'%';
 
         if (! empty($this->search)) {
-            $query->where(function ($q) {
-                $q->where('email', 'like', "%{$this->search}%")
-                    ->orWhereHas('admin', fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-                    ->orWhereHas('dosen', fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-                    ->orWhereHas('dosen', fn ($q) => $q->where('nip', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('nim', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('tahun_angkatan', 'like', "%{$this->search}%"))
-                    ->orWhereHas('admin.prodi', fn ($q) => $q->where('nama_prodi', 'like', "%{$this->search}%"))
-                    ->orWhereHas('dosen.prodi', fn ($q) => $q->where('nama_prodi', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa.prodi', fn ($q) => $q->where('nama_prodi', 'like', "%{$this->search}%"))
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('email', 'like', $searchTerm)
+                    ->orWhereHas('admin', fn ($q) => $q->where('name', 'like', $searchTerm))
+                    ->orWhereHas('dosen', fn ($q) => $q->where('name', 'like', $searchTerm))
+                    ->orWhereHas('dosen', fn ($q) => $q->where('nip', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('name', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('nim', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa', fn ($q) => $q->where('tahun_angkatan', 'like', $searchTerm))
+                    ->orWhereHas('admin.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
+                    ->orWhereHas('dosen.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa.prodi', fn ($q) => $q->where('nama_prodi', 'like', $searchTerm))
 
                     // 2. Pencarian Nama Fakultas (Masuk ke prodi -> jurusan_rel -> fakultas)
-                    ->orWhereHas('admin.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', "%{$this->search}%"))
-                    ->orWhereHas('dosen.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', "%{$this->search}%"))
+                    ->orWhereHas('admin.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
+                    ->orWhereHas('dosen.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa.prodi.jurusan_rel.fakultas_rel', fn ($q) => $q->where('nama_fakultas', 'like', $searchTerm))
 
                     // 3. Pencarian Nama Jurusan (Masuk ke prodi -> jurusan_rel)
-                    ->orWhereHas('admin.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', "%{$this->search}%"))
-                    ->orWhereHas('dosen.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', "%{$this->search}%"))
-                    ->orWhereHas('mahasiswa.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', "%{$this->search}%"))
+                    ->orWhereHas('admin.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
+                    ->orWhereHas('dosen.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
+                    ->orWhereHas('mahasiswa.prodi.jurusan_rel', fn ($q) => $q->where('nama_jurusan', 'like', $searchTerm))
 
                     ->orWhere('users.id', $this->search);
             });
@@ -149,7 +150,7 @@ trait WithUserFilters
                 ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
                 ->select('users.*')
                 ->orderByRaw("COALESCE(admins.name, dosens.name, mahasiswas.name) {$this->sortDirection}");
-        } elseif ($this->sortField === 'identity') {
+        } elseif ($this->sortField === 'identity1') {
             $query->leftjoin('admins', 'users.id', '=', 'admins.user_id')
                 ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
                 ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
@@ -189,10 +190,10 @@ trait WithUserFilters
         } elseif ($this->filter != 'mahasiswa' && $this->sortField == 'tahun_angkatan') {
             $this->sortField = 'name';
         } elseif ($this->filter == 'mahasiswa' && $this->sortField == 'identity2') {
-            $this->sortField = 'identity';
+            $this->sortField = 'identity1';
         } elseif ($this->filter != 'dosen' && $this->sortField == 'identity3') {
             if ($this->filter == 'mahasiswa') {
-                $this->sortField = 'identity';
+                $this->sortField = 'identity1';
             } elseif ($this->filter == 'dosen') {
                 $this->sortField = 'identity2';
             }

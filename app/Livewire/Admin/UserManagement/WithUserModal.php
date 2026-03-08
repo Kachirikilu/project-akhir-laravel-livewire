@@ -108,7 +108,7 @@ trait WithUserModal
         $this->roleType = strtolower($user->role);
 
         if (!$user->mahasiswa) {
-            $this->nip = $user->identity;
+            $this->nip = $user->identity1;
             if ($user->admin) {
                 $this->nitk = $user->identity2;
             } else {
@@ -116,7 +116,7 @@ trait WithUserModal
                 $this->nidk = $user->identity3;
             }
         } else {
-            $this->nim = $user->identity;
+            $this->nim = $user->identity1;
             $this->tahun_angkatan = $user->mahasiswa->tahun_angkatan;
         }
     }

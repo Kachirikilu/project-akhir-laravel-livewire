@@ -23,7 +23,7 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $prodi->fakultas ?? '-' }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">
                 <flux:dropdown>
-                    <button>
+                    <button class="cursor-pointer">
                         @switch($prodi->strata)
                             @case('Sarjana')
                                 <flux:badge icon="academic-cap" color="sky" size="sm">Sarjana</flux:badge>
@@ -43,38 +43,20 @@
                         @endswitch
                     </button>
 
-                    <flux:menu>
-                        @if (Auth::user()?->admin)
-                            <flux:menu.item wire:click="editUser({{ $prodi->id }})"
-                                class="!text-yellow-600 hover:!bg-yellow-100">
-                                <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
-
-                                <div class="flex justify-between items-center w-full">
-                                    <span>Edit Data</span>
-                                    <flux:icon wire:loading wire:target="editUser({{ $prodi->id }})"
-                                        name="arrow-path" class="animate-spin h-4 w-4" />
-                                </div>
-                            </flux:menu.item>
-
-                            <flux:menu.separator />
-                            <flux:menu.item wire:click="confirmDelete({{ $prodi->id }})"
-                                class="!text-red-800 hover:!bg-red-50">
-                                <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
-
-                                <div class="flex justify-between items-center w-full">
-                                    <span>Hapus Program Studi</span>
-                                    <flux:icon wire:loading wire:target="confirmDelete({{ $prodi->id }})"
-                                        name="arrow-path" class="animate-spin h-4 w-4" />
-                                </div>
-                            </flux:menu.item>
-                        @endif
-                    </flux:menu>
+                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                        'x' => $prodi,
+                        'nameXString' => 'Program Studi',
+                        'editString' => 'editProdi',
+                        'confirmDeleteString' => 'confirmDelete',
+                    ])
                 </flux:dropdown>
             </td>
 
             @include('livewire.admin.global.table.menu-aksi', [
-                'typeOfXString' => $prodi,
+                'x' => $prodi,
                 'nameXString' => 'Program Studi',
+                'editString' => 'editProdi',
+                'confirmDeleteString' => 'confirmDelete',
             ])
         </tr>
         @empty
