@@ -53,7 +53,7 @@ trait WithUserModal
     //     $this->resetValidation();
     // }
 
-    public function showAddModal($role)
+    public function addUser($role)
     {
         // $this->resetInput();
         $this->roleType = $role;

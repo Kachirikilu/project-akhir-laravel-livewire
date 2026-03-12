@@ -60,7 +60,7 @@ trait WithUserModal
     //     $this->resetValidation();
     // }
 
-    public function showAddModal($role)
+    public function addUser($role)
     {
         if ($this->isEditing) {
             $this->resetInput();

@@ -8,11 +8,12 @@ use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
 use App\Livewire\Admin\ProdiManagement\WithJurusanSearchFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
+use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 // use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 
-use App\Models\Jurusan;
-use App\Models\Prodi;
-use App\Models\Fakultas;
+// use App\Models\Jurusan;
+// use App\Models\Prodi;
+// use App\Models\Fakultas;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -26,7 +27,7 @@ class ProdiManagement extends Component
     use WithPagination;
     use WithProdiFilters;
 
-    // use WithProdiModal;
+    use WithProdiModal;
     // use WithProdiDelete;
     // use WithProdiExcel;
 

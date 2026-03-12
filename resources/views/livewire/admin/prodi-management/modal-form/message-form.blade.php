@@ -30,7 +30,7 @@
         </div>
 
         <div class="space-y-3">
-            @if ($roleType === 'file')
+            @if ($prodiType === 'file')
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">
@@ -53,11 +53,11 @@
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
                 <p class="text-sm text-slate-600 leading-relaxed">
                     Pastikan
-                    {{ $roleType == 'admin'
+                    {{ $prodiType == 'admin'
                         ? 'NIP, NITK'
-                        : ($roleType == 'dosen'
+                        : ($prodiType == 'dosen'
                             ? 'NIP, NIDN, dan NIDK'
-                            : ($roleType == 'mahasiswa'
+                            : ($prodiType == 'mahasiswa'
                                 ? 'NIM'
                                 : 'NIP, NITK, NIDN, NIDK, dan NIM')) }}
                     yang dimasukkan adalah

@@ -132,7 +132,7 @@
                                 {{ $prodi['id'] }}</span>
                         </div>
                     @empty
-                        <div class="px-4 py-2 text-gray-500 italic">Tidak ada prodi ditemukan.</div>
+                        <div class="px-4 py-2 text-gray-500 italic">Tidak ada Program Studi ditemukan!</div>
                     @endforelse
 
                 </div>

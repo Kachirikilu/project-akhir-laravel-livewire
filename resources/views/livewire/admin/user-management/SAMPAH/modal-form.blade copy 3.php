@@ -294,7 +294,7 @@
                             @empty
                                 @if (strlen($prodi_name_search) > 0 && !$prodi_id)
                                     <div class="p-4 text-center">
-                                        <p class="text-sm text-gray-500 italic">Data tidak ditemukan</p>
+                                        <p class="text-sm text-gray-500 italic">Data tidak ditemukan!</p>
                                     </div>
                                 @endif
                             @endforelse

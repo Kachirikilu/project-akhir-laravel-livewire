@@ -115,7 +115,7 @@
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
-                        'confirmDeleteString' => 'confirmDelete',
+                        'confirmDeleteString' => 'deleteUser'
                     ])
 
                 </flux:dropdown>
@@ -147,7 +147,7 @@
                     'x' => $user,
                     'nameXString' => 'Pengguna',
                     'editString' => 'editUser',
-                    'confirmDeleteString' => 'confirmDelete',
+                    'confirmDeleteString' => 'deleteUser'
                 ])
         </tr>
 
@@ -160,7 +160,7 @@
                     default => 10,
                 } }}"
                     class="px-6 py-4 text-center text-gray-500">
-                    Tidak ada pengguna ditemukan!
+                    Tidak ada data Pengguna ditemukan!
                 </td>
             </tr>
         @endforelse

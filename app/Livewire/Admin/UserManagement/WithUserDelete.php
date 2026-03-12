@@ -11,10 +11,10 @@ trait WithUserDelete
     public $userIdToDelete;
     public $userEmailToDelete;
 
-    public function confirmDelete($userId)
+    public function deleteUser($id)
     {
-        $user = User::find($userId);
-        
+        $user = User::find($id);
+
         if (!$user) {
             session()->flash('error', 'Pengguna tidak ditemukan.');
             return;
@@ -24,14 +24,14 @@ trait WithUserDelete
             return;
         }
 
-        $this->userIdToDelete = $userId;
+        $this->userIdToDelete = $id;
         $this->userEmailToDelete = $user->email;
 
         $this->showDeleteConfirmation = true;
         $this->js("Flux.modal('delete-confirmation').show()");
     }
 
-    public function deleteUser()
+    public function destroyUser()
     {
         if (!$this->userIdToDelete) return;
 

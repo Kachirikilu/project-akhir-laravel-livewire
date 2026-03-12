@@ -122,7 +122,7 @@ class UserManagement extends Component
 
 
         // 6. LOGIKA AUTOCOMPLETE PRODI UNTUK MODAL (Telah disederhanakan)
-        // Logika pengisian awal prodi_results dipindahkan ke updatedProdiNameSearch dan showAddModal/editUser
+        // Logika pengisian awal prodi_results dipindahkan ke updatedProdiNameSearch dan addUser/editUser
         if ($this->perPage == 0) {
             $this->showPerPage = true;
         }
@@ -239,7 +239,7 @@ class UserManagement extends Component
         $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
     }
 
-    public function showAddModal($role)
+    public function addUser($role)
     {
         $this->resetInput();
         $this->roleType = $role;

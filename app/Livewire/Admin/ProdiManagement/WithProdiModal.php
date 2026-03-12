@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
+// use App\Models\User;
+// use App\Models\Admin;
+// use App\Models\Dosen;
+// use App\Models\Mahasiswa;
+use App\Models\Fakultas;
+use App\Models\Jurusan;
 use App\Models\Prodi;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 
 // use Livewire\WithFileUploads;
 // use Livewire\Attributes\Validate;
@@ -20,47 +20,68 @@ use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Validator;
 
-
 trait WithProdiModal
 {
-
     // use WithFileUploads;
-    
-    public $showUserModal = false;
-    public $isEditing = false;
-    public $roleType;
 
-    public $userId, $email, $password, $name, $nip, $nitk, $nidn, $nidk, $nim, $tahun_angkatan;
+    public $selected_id;
+
+    public $showProdiModal = false;
+
+    public $isEditing = false;
+
+    public $prodiType;
+
+    public $prodi_id;
+
+    public $jurusan_id;
+
+    public $fakultas_id;
+
+    public $nama_prodi;
+
+    public $nama_strata;
+
+    public $nama_jurusan;
+
+    public $nama_fakultas;
+
+    public $prodi_name_search;
+
+    public $prodi_results;
+
+    public $selectedProdiId;
+
+    public $selectedJurusanId;
+
+    public $selectedFakultasId;
 
     // public $excelFile;
     // public array $parsedRows = [];
     // public array $rowErrors  = [];
 
-    protected $rules = [
-        'email' => 'required|email',
-        'password' => 'nullable|min:8',
-        'name' => 'required|string|max:255',
-        'nip' => 'nullable|string|max:20',
-        'nitk' => 'nullable|string|max:20',
-        'nidn' => 'nullable|string|max:20',
-        'nidk' => 'nullable|string|max:20',
-        'nim' => 'required|string|max:20',
-        'tahun_angkatan' => 'required|integer',
+    protected $prodis = [
         'prodi_id' => 'required|exists:prodis,id',
+        'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi',
+        'nama_fakultas' => 'required|string|max:255|unique:fakultas,nama_fakultas',
+        'jurusan_id' => 'required|exists:jurusans,id',
+        'nama_jurusan' => 'required|string|max:255|unique:jurusans,nama_jurusan',
+        'fakultas_id' => 'required|exists:fakultas,id',
+        'nama_strata' => 'required|string|max:255',
     ];
 
     // public function resetModalFields()
     // {
     //     $this->reset([
-    //         'userId', 'email', 'password', 'name', 'nip', 'nim', 
-    //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing', 
-    //         'prodi_name_search', 'showUserModal'
+    //         'userId', 'email', 'password', 'name', 'nip', 'nim',
+    //         'tahun_angkatan', 'prodi_id', 'prodiType', 'isEditing',
+    //         'prodi_name_search', 'showProdiModal'
     //     ]);
-        
+
     //     $this->resetValidation();
     // }
 
-    public function showAddModal($role)
+    public function addProdi($prodi)
     {
         if ($this->isEditing) {
             $this->resetInput();
@@ -69,283 +90,226 @@ trait WithProdiModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
-        $this->roleType = $role;
-        $this->showUserModal = true;
-        $this->js("Flux.modal('user-modal').show()");
-        $this->updatedProdiNameSearch($this->prodi_name_search); 
-        
+        $this->prodiType = $prodi;
+        $this->showProdiModal = true;
+        // $this->js("Flux.modal('user-modal').show()");
+        if ($prodi === 'prodi') {
+            // $this->inputProdiFilter();
+            $this->updatedJurusanNameSearch($this->jurusan_name_search);
+        } elseif ($prodi === 'jurusan') {
+            // $this->inputJurusanFilter();
+            $this->updatedFakultasNameSearch($this->fakultas_name_search);
+        }
+        // $this->updatedProdiNameSearch($this->prodi_name_search);
     }
 
-    public function editUser($id)
+    public function editProdi($id, $type)
     {
-        if (!Auth::user()->admin) {
-            $this->dispatch('toast', message: '❌ Hanya admin yang dapat mengedit pengguna.');
-            return;
-        }
-
-        $this->resetInput();
-        $this->resetValidation();
-
-        $this->resetErrorBag();
-        $this->showUserModal = true;
-        $this->js("Flux.modal('user-modal').show()");
+        $this->selected_id = $id;
+        $this->prodiType = $type;
         $this->isEditing = true;
 
-        $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
-        $this->userId = $user->id;
-        $this->email = $user->email;
-        $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null; 
+        $this->resetValidation();
+        $this->resetErrorBag();
 
-        if ($this->prodi_id) {
-            $prodi = Prodi::find($this->prodi_id);
-            $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
-        } else {
-            $this->prodi_name_search = '';
-        }
-        $this->getProdibyUser();
+        $this->nama_prodi = $this->nama_jurusan = $this->nama_fakultas = $this->nama_strata = null;
+        $this->jurusan_id = $this->fakultas_id = $this->selected_id = null;
 
-        $this->name = $user->name;
-        $this->roleType = strtolower($user->role);
+        try {
+            if ($type === 'prodi') {
+                $prodi = Prodi::with('jurusan_rel')->findOrFail($id);
+                $this->selected_id = $prodi->id;
+                $this->nama_prodi = $prodi->nama_prodi;
+                $this->nama_strata = $prodi->nama_strata;
+                $this->jurusan_id = $prodi->jurusan_id;
+                $this->jurusan_name_search = $prodi->jurusan_rel->nama_jurusan ?? '';
 
-        if (!$user->mahasiswa) {
-            $this->nip = $user->identity1;
-            if ($user->admin) {
-                $this->nitk = $user->identity2;
-            } else {
-                $this->nidn = $user->identity2;
-                $this->nidk = $user->identity3;
+                if ($this->jurusan_id) {
+                    $jurusan = Jurusan::find($this->jurusan_id);
+                    $this->jurusan_name_search = $jurusan ? 'Jurusan ' . $jurusan->nama_jurusan : '';
+                } else {
+                    $this->jurusan_name_search = '';
+                }
+                $this->getJurusanbyUser();
+                $this->fetchJurusan($this->jurusan_name_search);
+
+            } elseif ($type === 'jurusan') {
+                $jurusan = Jurusan::with('fakultas_rel')->findOrFail($id);
+                $this->selected_id = $jurusan->id;
+                $this->nama_jurusan = $jurusan->nama_jurusan;
+                $this->fakultas_id = $jurusan->fakultas_id;
+                $this->fakultas_name_search = $jurusan->fakultas_rel->nama_fakultas ?? '';
+
+                if ($this->fakultas_id) {
+                    $fakultas = Fakultas::find($this->fakultas_id);
+                    $this->fakultas_name_search = $fakultas ? 'Fakultas ' .  $fakultas->nama_fakultas : '';
+                } else {
+                    $this->fakultas_name_search = '';
+                }
+                $this->getFakultasbyUser();
+                $this->fetchFakultas($this->fakultas_name_search);
+
+            } elseif ($type === 'fakultas') {
+                $fakultas = Fakultas::findOrFail($id);
+                $this->selected_id = $fakultas->id;
+                $this->nama_fakultas = $fakultas->nama_fakultas;
             }
-        } else {
-            $this->nim = $user->identity1;
-            $this->tahun_angkatan = $user->mahasiswa->tahun_angkatan;
+
+            $this->showProdiModal = true;
+            // $this->js("Flux.modal('prodi-modal').show()");
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
         }
     }
 
-    public function inputModalUser($isEditing)
+    public function inputModalProdi($isEditing)
     {
-        $rules = [
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($this->userId),
-            ],
-            'name'     => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id',
-            'password' => $isEditing ? 'nullable|min:8' : 'required|min:8',
-        ];
+        $prodis = [];
 
-        /* ===================== ADMIN ===================== */
-        if ($this->roleType === 'admin') {
-
-            $rules['nip'] = [
-                'required',
-                $this->uniqueRule('admins', 'nip'),
-                Rule::unique('admins', 'nitk'),
-                Rule::unique('dosens', 'nip'),
-                Rule::unique('dosens', 'nidn'),
-                Rule::unique('dosens', 'nidk'),
-                Rule::unique('mahasiswas', 'nim'),
-            ];
-
-            $rules['nitk'] = [
-                'nullable',
-                $this->uniqueRule('admins', 'nitk'),
-                Rule::unique('admins', 'nip'),
-                Rule::unique('dosens', 'nip'),
-                Rule::unique('dosens', 'nidn'),
-                Rule::unique('dosens', 'nidk'),
-                Rule::unique('mahasiswas', 'nim'),
+        /* ===================== PROGRAM STUDI ===================== */
+        if ($this->prodiType === 'prodi') {
+            $prodis = [
+                'nama_prodi' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    // Menggunakan uniqueRule dengan ID saat editing agar tidak error jika nama tetap sama
+                    $this->uniqueRule('prodis', 'nama_prodi', $isEditing ? $this->selected_id : null),
+                ],
+                'nama_strata' => ['required', 'string', 'max:255'],
+                'jurusan_id' => ['required', 'exists:jurusans,id'],
             ];
         }
 
-        /* ===================== DOSEN ===================== */
-        elseif ($this->roleType === 'dosen') {
-
-            $rules['nip'] = [
-                'required',
-                $this->uniqueRule('dosens', 'nip'),
-                Rule::unique('dosens', 'nidn'),
-                Rule::unique('dosens', 'nidk'),
-                Rule::unique('admins', 'nip'),
-                Rule::unique('admins', 'nitk'),
-                Rule::unique('mahasiswas', 'nim'),
-            ];
-
-            $rules['nidn'] = [
-                'nullable',
-                $this->uniqueRule('dosens', 'nidn'),
-                Rule::unique('dosens', 'nip'),
-                Rule::unique('dosens', 'nidk'),
-                Rule::unique('admins', 'nip'),
-                Rule::unique('admins', 'nitk'),
-                Rule::unique('mahasiswas', 'nim'),
-            ];
-
-            $rules['nidk'] = [
-                'nullable',
-                $this->uniqueRule('dosens', 'nidk'),
-                Rule::unique('dosens', 'nip'),
-                Rule::unique('dosens', 'nidn'),
-                Rule::unique('admins', 'nip'),
-                Rule::unique('admins', 'nitk'),
-                Rule::unique('mahasiswas', 'nim'),
+        /* ===================== JURUSAN ===================== */
+        elseif ($this->prodiType === 'jurusan') {
+            $prodis = [
+                'nama_jurusan' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    $this->uniqueRule('jurusans', 'nama_jurusan', $isEditing ? $this->selected_id : null),
+                ],
+                'fakultas_id' => ['required', 'exists:fakultas,id'],
             ];
         }
 
-        /* ===================== MAHASISWA ===================== */
-        elseif ($this->roleType === 'mahasiswa') {
-
-            $rules['nim'] = [
-                'required',
-                $this->uniqueRule('mahasiswas', 'nim'),
-                Rule::unique('admins', 'nip'),
-                Rule::unique('admins', 'nitk'),
-                Rule::unique('dosens', 'nip'),
-                Rule::unique('dosens', 'nidn'),
-                Rule::unique('dosens', 'nidk'),
+        /* ===================== FAKULTAS ===================== */
+        elseif ($this->prodiType === 'fakultas') {
+            $prodis = [
+                'nama_fakultas' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    $this->uniqueRule('fakultas', 'nama_fakultas', $isEditing ? $this->selected_id : null),
+                ],
             ];
-
-            $rules['tahun_angkatan'] =
-                'required|integer|min:1900|max:' . date('Y');
         }
 
-        $this->validate($rules, $this->validationMessages());
-    }
-    private function uniqueRule(string $table, string $column)
-    {
-        return $this->userId
-            ? Rule::unique($table, $column)->ignore($this->userId, 'user_id')
-            : Rule::unique($table, $column);
+        $this->validate($prodis, $this->validationMessages());
     }
 
-    public function saveUser()
+    private function uniqueRule(string $table, string $column, $id = null)
     {
-        $this->inputModalUser(false);
-        
-        $user = User::create([
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-        ]);
+        return $id ? Rule::unique($table, $column)->ignore($id) : Rule::unique($table, $column);
+    }
 
-        if ($this->roleType === 'admin') {
-            Admin::create([
-                'user_id' => $user->id,
-                'name' => $this->name,
-                'nip' => $this->nip,
-                'nitk' => $this->nitk,
-                'prodi_id' => $this->prodi_id
+    public function saveProdi()
+    {
+        $this->inputModalProdi(false);
+
+        if ($this->prodiType === 'prodi') {
+            Prodi::create([
+                'nama_prodi' => $this->nama_prodi,
+                'jurusan_id' => $this->jurusan_id,
+                'fakultas_id' => $this->fakultas_id,
+                'nama_strata' => $this->nama_strata,
             ]);
-        } elseif ($this->roleType === 'dosen') {
-            Dosen::create([
-                'user_id' => $user->id,
-                'nip' => $this->nip,
-                'nidn' => $this->nidn,
-                'nidk' => $this->nidk,
-                'name' => $this->name,
-                'prodi_id' => $this->prodi_id
+        } elseif ($this->prodiType === 'jurusan') {
+            Jurusan::create([
+                'nama_jurusan' => $this->nama_jurusan,
+                'fakultas_id' => $this->fakultas_id,
             ]);
-        } elseif ($this->roleType === 'mahasiswa') {
-            Mahasiswa::create([
-                'user_id' => $user->id,
-                'nim' => $this->nim,
-                'tahun_angkatan' => $this->tahun_angkatan,
-                'name' => $this->name,
-                'prodi_id' => $this->prodi_id,
+        } elseif ($this->prodiType === 'fakultas') {
+            Fakultas::create([
+                'nama_fakultas' => $this->nama_fakultas,
             ]);
         }
 
         $this->resetInput();
-        $this->showUserModal = false;
+        $this->showProdiModal = false;
         $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan.');
     }
 
-    public function updateUser()
+    public function updateProdi()
     {
-        $this->inputModalUser(true);
+        $this->inputModalProdi(true);
 
-        $user = User::findOrFail($this->userId);
-        $user->update(['email' => $this->email]);
+        try {
+            if ($this->prodiType === 'prodi') {
+                Prodi::findOrFail($this->selected_id)->update([
+                    'nama_prodi' => $this->nama_prodi,
+                    'nama_strata' => $this->nama_strata,
+                    'jurusan_id' => $this->jurusan_id,
+                ]);
+                $message = 'Program Studi';
+            } elseif ($this->prodiType === 'jurusan') {
+                Jurusan::findOrFail($this->selected_id)->update([
+                    'nama_jurusan' => $this->nama_jurusan,
+                    'fakultas_id' => $this->fakultas_id,
+                ]);
+                $message = 'Jurusan';
+            } elseif ($this->prodiType === 'fakultas') {
+                Fakultas::findOrFail($this->selected_id)->update([
+                    'nama_fakultas' => $this->nama_fakultas,
+                ]);
+                $message = 'Fakultas';
+            }
 
-        if ($this->password) {
-            $user->update(['password' => Hash::make($this->password)]);
-        }
+            $this->showProdiModal = false;
+            $this->dispatch('toast', message: "✅ Data $message berhasil diperbarui.");
 
-        if ($this->roleType === 'admin') {
-            $user->admin->update(
-                [
-                    'name' => $this->name,
-                    'nip' => $this->nip,
-                    'nitk' => $this->nitk,
-                    'prodi_id' => $this->prodi_id
-                ]
-            );
-        } elseif ($this->roleType === 'dosen') {
-            $user->dosen->update(
-                [
-                    'name' => $this->name,
-                    'nip' => $this->nip,
-                    'nidn' => $this->nidn,
-                    'nidk' => $this->nidk,
-                    'prodi_id' => $this->prodi_id
-                ]
-            );
-        } elseif ($this->roleType === 'mahasiswa') {
-            $user->mahasiswa->update([
-                'name' => $this->name,
-                'nim' => $this->nim,
-                'tahun_angkatan' => $this->tahun_angkatan,
-                'prodi_id' => $this->prodi_id,
-            ]);
-        }
+            $this->dispatch('refresh-data');
 
-        $this->showUserModal = false;
-        $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui.');
-        
-        if (Auth::id() === $user->id) {
-            $this->dispatch('profile-updated');
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data.');
         }
     }
 
     public function validationMessages()
     {
         return [
-            'email.required' => 'Alamat email wajib diisi!',
-            'email.email' => 'Format email tidak valid!',
-            'email.unique' => 'Email ini sudah terdaftar di sistem!',
-            'name.required' => 'Nama lengkap wajib diisi!',
-            'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
-            'password.required' => 'Password wajib diisi!',
-            'password.min' => 'Password minimal harus 8 karakter!',
-            'prodi_id.required' => 'Program studi wajib dipilih!',
-            'prodi_id.exists' => 'Program studi yang dipilih tidak valid!',
-            'nip.required' => 'NIP wajib diisi untuk Admin dan Dosen!',
-            'nip.unique' => 'NIP ini sudah terdaftar!',
-            'nitk.unique' => 'NITK ini sudah terdaftar!',
-            'nidn.unique' => 'NIDN ini sudah terdaftar!',
-            'nidk.unique' => 'NIDK ini sudah terdaftar!',
-            'nim.required' => 'NIM wajib diisi untuk Mahasiswa!',
-            'nim.unique' => 'NIM ini sudah terdaftar!',
-            'tahun_angkatan.required' => 'Tahun masuk wajib diisi!',
-            'tahun_angkatan.integer' => 'Tahun masuk harus berupa angka!',
-            'tahun_angkatan.min' => 'Tahun masuk tidak valid!',
-            'tahun_angkatan.max' => 'Tahun masuk tidak boleh melebihi tahun sekarang!',
-            'excel_file.required' => 'File Excel wajib diunggah!',
-            'excel_file.file' => 'File Excel harus berupa file yang valid!',
+            'nama_prodi.required' => 'Nama program studi wajib diisi!',
+            'nama_prodi.max' => 'Nama program studi tidak boleh lebih dari 255 karakter!',
+            'nama_prodi.unique' => 'Nama program studi sudah ada di database!',
+            'nama_jurusan.required' => 'Nama jurusan wajib diisi!',
+            'nama_jurusan.max' => 'Nama jurusan tidak boleh lebih dari 255 karakter!',
+            'nama_jurusan.unique' => 'Nama jurusan sudah ada di database!',
+            'nama_fakultas.required' => 'Nama fakultas wajib diisi!',
+            'nama_fakultas.max' => 'Nama fakultas tidak boleh lebih dari 255 karakter!',
+            'nama_fakultas.unique' => 'Nama fakultas sudah ada di database!',
+            'nama_strata.required' => 'Nama strata wajib diisi!',
+            'jurusan_id.required' => 'Jurusan wajib diisi!',
+            'jurusan_id.exists' => 'Jurusan yang dipilih tidak valid!',
+            'fakultas_id.required' => 'Fakultas wajib diisi!',
+            'fakultas_id.exists' => 'Fakultas yang dipilih tidak valid!'
         ];
     }
 
     public function resetInput($keepProdi = false)
     {
         $fields = [
-            'userId', 'email', 'password', 'name', 'nip', 'nitk', 
-            'nidn', 'nidk', 'nim', 'tahun_angkatan', 'roleType'
+            'nama_prodi', 'nama_strata', 'nama_jurusan', 'nama_fakultas',
+            'jurusan_id', 'fakultas_id', 'jurusan_name_search', 'fakultas_name_search',
         ];
 
-        if (!$keepProdi) {
+        if (! $keepProdi) {
             $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
         }
 
+        $this->selected_id = null;
         $this->reset($fields);
-        $this->resetErrorBag(); 
+        $this->resetErrorBag();
     }
 }

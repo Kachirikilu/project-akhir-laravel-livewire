@@ -166,16 +166,16 @@
                                 </div>
                             @empty
                                 @if (strlen($prodi_name_search) > 0 && !$prodi_id)
-                                    <p class="p-2 text-sm text-gray-500">Tidak ada Prodi yang
-                                        ditemukan.
+                                    <p class="p-2 text-sm text-gray-500">Tidak ada Program Studi yang
+                                        ditemukan!
                                     </p>
                                 @endif
                             @endforelse
                         </div>
 
                         @if (strlen($prodi_name_search) >= 2 && empty($prodi_results) && !$prodi_id)
-                            <p x-show="!open" class="text-sm text-gray-500 mt-1">Tidak ada Prodi yang
-                                cocok.
+                            <p x-show="!open" class="text-sm text-gray-500 mt-1">Tidak ada Program Studi yang
+                                cocok!
                             </p>
                         @endif
                     </div>

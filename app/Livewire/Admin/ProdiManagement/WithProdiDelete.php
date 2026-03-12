@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\User;
+use App\Models\Prodi;
+use App\Models\Jurusan;
+use App\Models\Fakultas;
+
 use Illuminate\Support\Facades\Auth;
 
 trait WithProdiDelete
@@ -11,7 +14,7 @@ trait WithProdiDelete
     public $userIdToDelete;
     public $userEmailToDelete;
 
-    public function confirmDelete($userId)
+    public function deleteProdi($userId)
     {
         $user = User::find($userId);
         
@@ -31,7 +34,7 @@ trait WithProdiDelete
         $this->js("Flux.modal('delete-confirmation').show()");
     }
 
-    public function deleteUser()
+    public function destroyProdi()
     {
         if (!$this->userIdToDelete) return;
 

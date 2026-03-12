@@ -16,7 +16,7 @@ trait WithUserCrud
 
     public $userId, $email, $password, $name, $nip, $nim, $tahun_angkatan;
 
-    public function showAddModal($role)
+    public function addUser($role)
     {
         $this->resetInput();
         $this->roleType = $role;

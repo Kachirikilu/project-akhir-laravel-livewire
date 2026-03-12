@@ -9,7 +9,9 @@
 
     {{-- Loading indicator --}}
     <div wire:loading.flex
-        wire:target="search, filterBy, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
+        wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery, switchingTable,
+        saveUser, updateUser, destroyUser, saveProdi, updateProdi, destroyProdi,
+        search, filterBy, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
         class="justify-center items-center py-4">
         <div class="flex items-center space-x-2 text-gray-500">
             <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"

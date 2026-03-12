@@ -8,10 +8,14 @@
                     {{ $header }}
                 </tr>
             </thead>
-
             {{-- Body Table --}}
-            <tbody wire:loading.class="opacity-50"
-                wire:target="search, filterBy, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
+            <tbody 
+            {{-- wire:loading.class="opacity-50"  --}}
+                wire:loading.class="opacity-50 pointer-events-none transition-opacity duration-200"
+                wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
+                filterBy,
+                saveUser, updateUser, destroyUser, saveProdi, updateProdi, destroyProdi,
+                search, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
                 class="bg-white divide-y divide-gray-200">
                 {{ $slot }}
             </tbody>

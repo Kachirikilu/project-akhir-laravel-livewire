@@ -73,7 +73,7 @@ trait WithJurusanSearchFilters
     {
         $searchTerm = '%'.$this->jurusanSearchQuery.'%';
 
-        if (strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) {
+        if ((strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) && !$this->selectedJurusanName) {
 
             $this->jurusanSearchResults = Jurusan::query()
                 ->with('fakultas_rel')
@@ -97,7 +97,7 @@ trait WithJurusanSearchFilters
                 ])
                 ->toArray();
 
-        } elseif (empty($this->jurusanSearchQuery)) {
+        } elseif (empty($this->jurusanSearchQuery) || $this->selectedJurusanName) {
             $this->jurusanSearchResults = $this->getJurusanbyUser();
         } else {
             $this->jurusanSearchResults = [];
@@ -110,13 +110,25 @@ trait WithJurusanSearchFilters
         $this->resetPage();
     }
 
-    public function selectJurusanForFilter($jurusanId)
+    // public function selectJurusanForFilter($jurusanId)
+    // {
+    //     $jurusan = Jurusan::find($jurusanId);
+    //     if ($jurusan) {
+    //         $this->selectedJurusanId = $jurusanId;
+    //         $this->selectedJurusanName = 'Jurusan '.$jurusan->nama_jurusan;
+    //         $this->jurusanSearchQuery = '';
+    //         $this->resetPage();
+    //     }
+    // }
+
+    public function selectJurusanForFilter($id)
     {
-        $jurusan = Jurusan::find($jurusanId);
-        if ($jurusan) {
-            $this->selectedJurusanId = $jurusanId;
-            $this->selectedJurusanName = $jurusan->nama_jurusan;
-            $this->jurusanSearchQuery = '';
+        $data = Jurusan::find($id);
+        if ($data) {
+            $this->selectedJurusanId = $id;
+            $this->selectedJurusanName = 'Jurusan '.$data->nama_jurusan;
+            $this->jurusanSearchQuery = 'Jurusan '.$data->nama_jurusan;
+            $this->jurusanSearchResults = [];
             $this->resetPage();
         }
     }
@@ -132,6 +144,7 @@ trait WithJurusanSearchFilters
             $results = Jurusan::query()
                 ->where(function ($q) use ($searchTerm) {
                     $q->where('nama_jurusan', 'like', $searchTerm)
+                        ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
                         ->orWhere('id', 'like', $searchTerm);
                 })
                 ->limit(12)
@@ -151,7 +164,7 @@ trait WithJurusanSearchFilters
 
             if ($exactMatch) {
                 $this->jurusan_id = $exactMatch->id;
-                $this->jurusan_name_search = $exactMatch->nama_jurusan;
+                $this->jurusan_name_search = 'Jurusan '.$exactMatch->nama_jurusan;
                 $this->jurusan_results = [];
             }
 
@@ -171,6 +184,33 @@ trait WithJurusanSearchFilters
             }
         }
     }
+
+    // public function loadDefaultJurusan($value)
+    // {
+    //     if (empty($value) || $this->jurusan_id) {
+    //         $this->jurusan_results = $this->getJurusanbyUser();
+    //         // return;
+    //     }
+    //     // $searchTerm = '%'.$value.'%';
+    //     // $this->jurusan_results = Jurusan::query()
+    //     //     ->where(function ($q) use ($searchTerm) {
+    //     //         $q->where('nama_jurusan', 'like', $searchTerm)
+    //     //             ->orWhere('id', 'like', $searchTerm);
+    //     //     })
+    //     //     ->limit(12)
+    //     //     ->get()
+    //     //     ->map(fn ($j) => [
+    //     //         'id' => $j->id,
+    //     //         'jurusan' => $j->nama_jurusan,
+    //     //         'fakultas' => $j->fakultas_rel?->nama_fakultas,
+    //     //     ])->toArray();
+    // }
+
+    // public function loadDefaultJurusan2()
+    // {
+    //     // $this->updatedJurusanNameSearch('');
+    //     $this->jurusan_results = $this->getJurusanbyUser();
+    // }
 
     public function getJurusanbyUser()
     {
@@ -218,13 +258,38 @@ trait WithJurusanSearchFilters
         })->toArray();
     }
 
-    public function selectJurusan($jurusanId, $jurusanName)
+    public function fetchJurusan($query = '')
     {
-        $this->jurusan_id = $jurusanId;
-        $this->jurusan_name_search = $jurusanName;
-        $this->getJurusanbyUser();
+        if (empty($query) || $this->jurusan_id) {
+            $this->jurusan_results = $this->getJurusanbyUser();
+
+            return;
+        }
+    }
+
+    public function selectJurusan($id, $jurusanName)
+    {
+        $this->jurusan_id = $id;
+        $this->jurusan_name_search = 'Jurusan '.$jurusanName;
+        $this->jurusan_results = $this->getJurusanbyUser();
         $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
     }
+
+    // public function selectJurusan($jurusanId, $jurusanName)
+    // {
+    //     $this->jurusan_id = $jurusanId;
+    //     $this->jurusan_name_search = 'Jurusan '.$jurusanName;
+    //     $this->getJurusanbyUser();
+    //     $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+    // }
+    // public function selectJurusan($jurusanId, $jurusanName)
+    // {
+    //     $this->jurusan_id = $jurusanId;
+    //     $this->jurusan_name_search = 'Jurusan ' . $jurusanName;
+
+    //     $this->jurusan_results = [];
+    //     $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+    // }
 
     public function resetJurusanInput()
     {

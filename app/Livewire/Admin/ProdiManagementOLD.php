@@ -47,7 +47,7 @@ class ProdiManagement extends Component
     }
 
     // ========== Tambah / Edit ==========
-    public function showAddModal()
+    public function addUser()
     {
         $this->resetForm();
         $this->showModal = true;

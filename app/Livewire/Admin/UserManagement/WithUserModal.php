@@ -30,7 +30,7 @@ trait WithUserModal
     public $isEditing = false;
     public $roleType;
 
-    public $userId, $email, $password, $name, $nip, $nitk, $nidn, $nidk, $nim, $tahun_angkatan;
+    public $user_id, $email, $password, $name, $nip, $nitk, $nidn, $nidk, $nim, $tahun_angkatan;
 
     // public $excelFile;
     // public array $parsedRows = [];
@@ -52,7 +52,7 @@ trait WithUserModal
     // public function resetModalFields()
     // {
     //     $this->reset([
-    //         'userId', 'email', 'password', 'name', 'nip', 'nim', 
+    //         'user_id', 'email', 'password', 'name', 'nip', 'nim', 
     //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing', 
     //         'prodi_name_search', 'showUserModal'
     //     ]);
@@ -60,7 +60,7 @@ trait WithUserModal
     //     $this->resetValidation();
     // }
 
-    public function showAddModal($role)
+    public function addUser($role)
     {
         if ($this->isEditing) {
             $this->resetInput();
@@ -71,9 +71,8 @@ trait WithUserModal
         $this->isEditing = false;
         $this->roleType = $role;
         $this->showUserModal = true;
-        $this->js("Flux.modal('user-modal').show()");
+        // $this->js("Flux.modal('user-modal').show()");
         $this->updatedProdiNameSearch($this->prodi_name_search); 
-        
     }
 
     public function editUser($id)
@@ -88,11 +87,11 @@ trait WithUserModal
 
         $this->resetErrorBag();
         $this->showUserModal = true;
-        $this->js("Flux.modal('user-modal').show()");
+        // $this->js("Flux.modal('user-modal').show()");
         $this->isEditing = true;
 
         $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
-        $this->userId = $user->id;
+        $this->user_id = $user->id;
         $this->email = $user->email;
         $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null; 
 
@@ -103,6 +102,7 @@ trait WithUserModal
             $this->prodi_name_search = '';
         }
         $this->getProdibyUser();
+        $this->fetchProdi($this->prodi_name_search);
 
         $this->name = $user->name;
         $this->roleType = strtolower($user->role);
@@ -127,11 +127,10 @@ trait WithUserModal
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users', 'email')->ignore($this->userId),
+                Rule::unique('users', 'email')->ignore($this->user_id),
             ],
-            'name'     => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id',
             'password' => $isEditing ? 'nullable|min:8' : 'required|min:8',
+            'name'     => 'required|string|max:255',
         ];
 
         /* ===================== ADMIN ===================== */
@@ -209,12 +208,14 @@ trait WithUserModal
                 'required|integer|min:1900|max:' . date('Y');
         }
 
+        $rules['prodi_id'] = 'required|exists:prodis,id';
+
         $this->validate($rules, $this->validationMessages());
     }
     private function uniqueRule(string $table, string $column)
     {
-        return $this->userId
-            ? Rule::unique($table, $column)->ignore($this->userId, 'user_id')
+        return $this->user_id
+            ? Rule::unique($table, $column)->ignore($this->user_id, 'user_id')
             : Rule::unique($table, $column);
     }
 
@@ -263,7 +264,7 @@ trait WithUserModal
     {
         $this->inputModalUser(true);
 
-        $user = User::findOrFail($this->userId);
+        $user = User::findOrFail($this->user_id);
         $user->update(['email' => $this->email]);
 
         if ($this->password) {
@@ -312,12 +313,10 @@ trait WithUserModal
             'email.required' => 'Alamat email wajib diisi!',
             'email.email' => 'Format email tidak valid!',
             'email.unique' => 'Email ini sudah terdaftar di sistem!',
-            'name.required' => 'Nama lengkap wajib diisi!',
-            'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
             'password.required' => 'Password wajib diisi!',
             'password.min' => 'Password minimal harus 8 karakter!',
-            'prodi_id.required' => 'Program studi wajib dipilih!',
-            'prodi_id.exists' => 'Program studi yang dipilih tidak valid!',
+            'name.required' => 'Nama lengkap wajib diisi!',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
             'nip.required' => 'NIP wajib diisi untuk Admin dan Dosen!',
             'nip.unique' => 'NIP ini sudah terdaftar!',
             'nitk.unique' => 'NITK ini sudah terdaftar!',
@@ -329,15 +328,18 @@ trait WithUserModal
             'tahun_angkatan.integer' => 'Tahun masuk harus berupa angka!',
             'tahun_angkatan.min' => 'Tahun masuk tidak valid!',
             'tahun_angkatan.max' => 'Tahun masuk tidak boleh melebihi tahun sekarang!',
+            'prodi_id.required' => 'Program studi wajib dipilih!',
+            'prodi_id.exists' => 'Program studi yang dipilih tidak valid!',
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
+            'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!'
         ];
     }
 
     public function resetInput($keepProdi = false)
     {
         $fields = [
-            'userId', 'email', 'password', 'name', 'nip', 'nitk', 
+            'user_id', 'email', 'password', 'name', 'nip', 'nitk', 
             'nidn', 'nidk', 'nim', 'tahun_angkatan', 'roleType'
         ];
 

@@ -1,4 +1,4 @@
-<div class="flex space-x-4 overflow-x-auto pb-2 md:pb-0">
+<div x-data="{ activeTab: @entangle('filter') }" class="flex space-x-4 overflow-x-auto pb-2 md:pb-0">
 
     {{-- Tab Semua --}}
     @include('livewire.admin.global.search-and-filters.partial.tab-filter', [

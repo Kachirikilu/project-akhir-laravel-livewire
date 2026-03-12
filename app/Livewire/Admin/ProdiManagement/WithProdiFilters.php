@@ -160,6 +160,16 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
+    // public function sortBy($field)
+    // {
+    //     if ($this->sortField === $field) {
+    //         $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+    //     } else if ($this->sortField !== $field) {
+    //         $this->sortField = $field;
+    //         $this->sortDirection = 'asc';
+    //     }
+    //     $this->resetPage();
+    // }
     public function sortBy($field)
     {
         if ($this->sortField === $field) {

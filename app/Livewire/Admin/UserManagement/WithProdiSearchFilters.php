@@ -28,7 +28,7 @@ trait WithProdiSearchFilters
     {
         $searchTerm = '%'.$this->prodiSearchQuery.'%';
 
-        if (strlen($this->prodiSearchQuery) > 1 || is_numeric($this->prodiSearchQuery)) {
+        if ((strlen($this->prodiSearchQuery) > 1 || is_numeric($this->prodiSearchQuery)) && !$this->selectedProdiName) {
             $this->prodiSearchResults = Prodi::with(['jurusan_rel.fakultas_rel'])
                 ->where('nama_prodi', 'like', $searchTerm)
                 ->orWhere('id', $this->prodiSearchQuery)
@@ -48,7 +48,7 @@ trait WithProdiSearchFilters
                     'jurusan' => $p->jurusan,
                     'fakultas' => $p->fakultas,
                 ])->toArray();
-        } elseif (empty($this->prodiSearchQuery)) {
+        } elseif (empty($this->prodiSearchQuery) || $this->selectedProdiName) {
             $this->prodiSearchResults = $this->getProdibyUser();
         } else {
             $this->prodiSearchResults = [];
@@ -61,13 +61,25 @@ trait WithProdiSearchFilters
         $this->resetPage();
     }
 
-    public function selectProdiForFilter($prodiId)
+    // public function selectProdiForFilter($prodiId)
+    // {
+    //     $prodi = Prodi::find($prodiId);
+    //     if ($prodi) {
+    //         $this->selectedProdiId = $prodiId;
+    //         $this->selectedProdiName = $prodi->nama_prodi;
+    //         $this->prodiSearchQuery = '';
+    //         $this->resetPage();
+    //     }
+    // }
+
+    public function selectProdiForFilter($id)
     {
-        $prodi = Prodi::find($prodiId);
-        if ($prodi) {
-            $this->selectedProdiId = $prodiId;
-            $this->selectedProdiName = $prodi->nama_prodi;
-            $this->prodiSearchQuery = '';
+        $data = Prodi::find($id);
+        if ($data) {
+            $this->selectedProdiId = $id;
+            $this->selectedProdiName = $data->nama_prodi;
+            $this->prodiSearchQuery = $data->nama_prodi;
+            $this->prodiSearchResults = [];
             $this->resetPage();
         }
     }
@@ -198,13 +210,30 @@ trait WithProdiSearchFilters
         })->toArray();
     }
 
-    public function selectProdi($prodiId, $prodiName)
+    public function fetchProdi($query = '')
     {
-        $this->prodi_id = $prodiId;
+        if (empty($query) || $this->prodi_id) {
+            $this->prodi_results = $this->getProdibyUser();
+
+            return;
+        }
+    }
+
+    public function selectProdi($id, $prodiName)
+    {
+        $this->prodi_id = $id;
         $this->prodi_name_search = $prodiName;
-        $this->getProdibyUser();
+        $this->prodi_results = $this->getProdibyUser();
         $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
     }
+
+    // public function selectProdi($prodiId, $prodiName)
+    // {
+    //     $this->prodi_id = $prodiId;
+    //     $this->prodi_name_search = $prodiName;
+    //     $this->getProdibyUser();
+    //     $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+    // }
 
     public function resetProdiInput()
     {
