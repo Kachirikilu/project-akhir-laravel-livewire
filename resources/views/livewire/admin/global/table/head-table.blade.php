@@ -38,7 +38,6 @@ async doSort() {
         <span class="w-4 text-center">
 
      <span
-    x-text="'↑'"
     :class="[
         (sortField === '{{ $sortFieldString }}' || clicked)
             ? 'opacity-100 text-indigo-600 font-bold'
@@ -49,7 +48,7 @@ async doSort() {
             : 'rotate-0'
     ]"
     class="inline-block transition-all transition-transform duration-300 ease-in-out"
-></span>
+>↑</span>
 
     </button>
 

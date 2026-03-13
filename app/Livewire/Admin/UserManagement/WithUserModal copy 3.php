@@ -2,15 +2,14 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
+use App\Models\User;
 use App\Models\Admin;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 // use Livewire\WithFileUploads;
 // use Livewire\Attributes\Validate;
@@ -21,35 +20,17 @@ use Illuminate\Validation\Rule;
 // use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Validator;
 
+
 trait WithUserModal
 {
+
     // use WithFileUploads;
-
+    
     public $showUserModal = false;
-
     public $isEditing = false;
-
     public $roleType;
 
-    public $user_id;
-
-    public $email;
-
-    public $password;
-
-    public $name;
-
-    public $nip;
-
-    public $nitk;
-
-    public $nidn;
-
-    public $nidk;
-
-    public $nim;
-
-    public $tahun_angkatan;
+    public $user_id, $email, $password, $name, $nip, $nitk, $nidn, $nidk, $nim, $tahun_angkatan;
 
     // public $excelFile;
     // public array $parsedRows = [];
@@ -71,11 +52,11 @@ trait WithUserModal
     // public function resetModalFields()
     // {
     //     $this->reset([
-    //         'user_id', 'email', 'password', 'name', 'nip', 'nim',
-    //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing',
+    //         'user_id', 'email', 'password', 'name', 'nip', 'nim', 
+    //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing', 
     //         'prodi_name_search', 'showUserModal'
     //     ]);
-
+        
     //     $this->resetValidation();
     // }
 
@@ -91,14 +72,13 @@ trait WithUserModal
         $this->roleType = $role;
         $this->showUserModal = true;
         // $this->js("Flux.modal('user-modal').show()");
-        $this->updatedProdiNameSearch($this->prodi_name_search);
+        $this->updatedProdiNameSearch($this->prodi_name_search); 
     }
 
     public function editUser($id)
     {
-        if (! Auth::user()->admin) {
+        if (!Auth::user()->admin) {
             $this->dispatch('toast', message: '❌ Hanya admin yang dapat mengedit pengguna.');
-
             return;
         }
 
@@ -113,7 +93,7 @@ trait WithUserModal
         $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
         $this->user_id = $user->id;
         $this->email = $user->email;
-        $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
+        $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null; 
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
@@ -127,7 +107,7 @@ trait WithUserModal
         $this->name = $user->name;
         $this->roleType = strtolower($user->role);
 
-        if (! $user->mahasiswa) {
+        if (!$user->mahasiswa) {
             $this->nip = $user->identity1;
             if ($user->admin) {
                 $this->nitk = $user->identity2;
@@ -141,7 +121,7 @@ trait WithUserModal
         }
     }
 
-    public function inputModalUser($isEditing, $data)
+    public function inputModalUser($isEditing)
     {
         $rules = [
             'email' => [
@@ -150,7 +130,7 @@ trait WithUserModal
                 Rule::unique('users', 'email')->ignore($this->user_id),
             ],
             'password' => $isEditing ? 'nullable|min:8' : 'required|min:8',
-            'name' => 'required|string|max:255',
+            'name'     => 'required|string|max:255',
         ];
 
         /* ===================== ADMIN ===================== */
@@ -225,63 +205,13 @@ trait WithUserModal
             ];
 
             $rules['tahun_angkatan'] =
-                'required|integer|min:1900|max:'.date('Y');
+                'required|integer|min:1900|max:' . date('Y');
         }
 
         $rules['prodi_id'] = 'required|exists:prodis,id';
 
-        // $this->validate($rules, $this->validationMessages());
-        $validator = Validator::make($data, $rules, $this->validationMessages());
-
-        $validator->after(function ($validator) use ($data) {
-
-            if ($this->roleType === 'admin') {
-
-                if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk']) {
-
-                    $validator->errors()->add(
-                        'nitk',
-                        'NITK tidak boleh memiliki nilai yang sama dengan NIP!'
-                    );
-
-                }
-
-            } elseif ($this->roleType === 'dosen') {
-
-                if (! empty($data['nip']) && ! empty($data['nidn']) && $data['nip'] === $data['nidn']) {
-
-                    $validator->errors()->add(
-                        'nidn',
-                        'NIDN tidak boleh memiliki nilai yang sama dengan NIP dan NIDK!'
-                    );
-
-                }
-
-                if (! empty($data['nip']) && ! empty($data['nidk']) && $data['nip'] === $data['nidk']) {
-
-                    $validator->errors()->add(
-                        'nidk',
-                        'NIDK tidak boleh memiliki nilai yang sama dengan NIP dan NIDN!'
-                    );
-
-                }
-
-                if (! empty($data['nidn']) && ! empty($data['nidk']) && $data['nidn'] === $data['nidk']) {
-
-                    $validator->errors()->add(
-                        'nidk',
-                        'NIDK tidak boleh memiliki nilai yang sama dengan NIP dan NIDN!'
-                    );
-
-                }
-
-            }
-
-        });
-
-        return $validator->validate();
+        $this->validate($rules, $this->validationMessages());
     }
-
     private function uniqueRule(string $table, string $column)
     {
         return $this->user_id
@@ -291,37 +221,38 @@ trait WithUserModal
 
     public function saveUser($data)
     {
-        $validated = $this->inputModalUser(false, $data);
-
+        // dd($data);
+        $this->inputModalUser(false);
+        
         $user = User::create([
-            'email' => $validated['email'] ?? $this->email,
-            'password' => Hash::make($validated['password'] ?? $this->password),
+            'email' => $data['email'] ?? $this->email,
+            'password' => Hash::make($data['password'] ?? $this->password),
         ]);
 
         if ($this->roleType === 'admin') {
             Admin::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nip' => $validated['nip'] ?? $this->nip,
-                'nitk' => $validated['nitk'] ?? $this->nitk,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $data['name'] ?? $this->name,
+                'nip' => $data['nip'] ?? $this->nip,
+                'nitk' => $data['nitk'] ?? $this->nitk,
+                'prodi_id' => $this->prodi_id
             ]);
         } elseif ($this->roleType === 'dosen') {
             Dosen::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nip' => $validated['nip'] ?? $this->nip,
-                'nidn' => $validated['nidn'] ?? $this->nidn,
-                'nidk' => $validated['nidk'] ?? $this->nidk,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $data['name'] ?? $this->name,
+                'nip' => $data['nip'] ?? $this->nip,
+                'nidn' => $data['nidn'] ?? $this->nidn,
+                'nidk' => $data['nidk'] ?? $this->nidk,
+                'prodi_id' => $this->prodi_id
             ]);
         } elseif ($this->roleType === 'mahasiswa') {
             Mahasiswa::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nim' => $validated['nim'] ?? $this->nim,
-                'tahun_angkatan' => $validated['tahun_masuk'] ?? $this->tahun_angkatan,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $data['name'] ?? $this->name,
+                'nim' => $data['nim'] ?? $this->nim,
+                'tahun_angkatan' => $data['tahun_masuk'] ?? $this->tahun_angkatan,
+                'prodi_id' => $this->prodi_id,
             ]);
         }
 
@@ -332,46 +263,46 @@ trait WithUserModal
 
     public function updateUser($data)
     {
-        $validated = $this->inputModalUser(true, $data);
+        $this->inputModalUser(true);
 
         $user = User::findOrFail($this->user_id);
-        $user->update(['email' => $validated['email'] ?? $this->email]);
+        $user->update(['email' => $data['email'] ?? $this->email]);
 
-        if ($validated['password'] || $this->password) {
-            $user->update(['password' => Hash::make($validated['password'] ?? $this->password)]);
+        if ($this->password) {
+            $user->update(['password' => Hash::make($data['password'] ?? $this->password)]);
         }
 
         if ($this->roleType === 'admin') {
             $user->admin->update(
                 [
-                    'name' => $validated['name'] ?? $this->name,
-                    'nip' => $validated['nip'] ?? $this->nip,
-                    'nitk' => $validated['nitk'] ?? $this->nitk,
-                    'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                    'name' => $data['name'] ?? $this->name,
+                    'nip' => $data['nip'] ?? $this->nip,
+                    'nitk' => $data['nitk'] ?? $this->nitk,
+                    'prodi_id' => $this->prodi_id
                 ]
             );
         } elseif ($this->roleType === 'dosen') {
             $user->dosen->update(
                 [
-                    'name' => $validated['name'] ?? $this->name,
-                    'nip' => $validated['nip'] ?? $this->nip,
-                    'nidn' => $validated['nidn'] ?? $this->nidn,
-                    'nidk' => $validated['nidk'] ?? $this->nidk,
-                    'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                    'name' => $data['name'] ?? $this->name,
+                    'nip' => $data['nip'] ?? $this->nip,
+                    'nidn' => $data['nidn'] ?? $this->nidn,
+                    'nidk' => $data['nidk'] ?? $this->nidk,
+                    'prodi_id' => $this->prodi_id
                 ]
             );
         } elseif ($this->roleType === 'mahasiswa') {
             $user->mahasiswa->update([
-                'name' => $validated['name'] ?? $this->name,
-                'nim' => $validated['nim'] ?? $this->nim,
-                'tahun_angkatan' => $validated['tahun_angkatan'] ?? $this->tahun_angkatan,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $data['name'] ?? $this->name,
+                'nim' => $data['nim'] ?? $this->nim,
+                'tahun_angkatan' => $data['tahun_angkatan'] ?? $this->tahun_angkatan,
+                'prodi_id' => $this->prodi_id,
             ]);
         }
 
         $this->showUserModal = false;
         $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui.');
-
+        
         if (Auth::id() === $user->id) {
             $this->dispatch('profile-updated');
         }
@@ -402,22 +333,22 @@ trait WithUserModal
             'prodi_id.exists' => 'Program studi yang dipilih tidak valid!',
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
-            'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
+            'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!'
         ];
     }
 
     public function resetInput($keepProdi = false)
     {
         $fields = [
-            'user_id', 'email', 'password', 'name', 'nip', 'nitk',
-            'nidn', 'nidk', 'nim', 'tahun_angkatan', 'roleType',
+            'user_id', 'email', 'password', 'name', 'nip', 'nitk', 
+            'nidn', 'nidk', 'nim', 'tahun_angkatan', 'roleType'
         ];
 
-        if (! $keepProdi) {
+        if (!$keepProdi) {
             $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
         }
 
         $this->reset($fields);
-        $this->resetErrorBag();
+        $this->resetErrorBag(); 
     }
 }

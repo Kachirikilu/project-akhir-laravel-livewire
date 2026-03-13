@@ -19,7 +19,7 @@
                         {{-- pType = 'prodi'; --}}
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
-                        $store.config.setType('prodi')
+                        $store.config?.setType('prodi')
                     "
                     class="cursor-pointer !text-red-600 hover:!bg-red-50">
                     <flux:icon name="cog-6-tooth" class="!text-red-600 mr-2 h-4 w-4" />
@@ -37,7 +37,7 @@
                         {{-- pType = 'jurusan'; --}}
                         $flux.modal('jurusan-modal').show();
                         $wire.addProdi('jurusan');
-                        $store.config.setType('jurusan')
+                        $store.config?.setType('jurusan')
                     "
                     class="cursor-pointer !text-lime-600 hover:!bg-lime-100">
                     <flux:icon name="briefcase" class="!text-lime-600 mr-2 h-4 w-4" />
@@ -57,7 +57,7 @@
                         {{-- pType = 'fakultas'; --}}
                         $flux.modal('fakultas-modal').show();
                         $wire.addProdi('fakultas');
-                        $store.config.setType('fakultas')
+                        $store.config?.setType('fakultas')
                     "
                     class="cursor-pointer !text-cyan-600 hover:!bg-cyan-50">
                     <flux:icon name="book-open" class="!text-cyan-600 mr-2 h-4 w-4" />

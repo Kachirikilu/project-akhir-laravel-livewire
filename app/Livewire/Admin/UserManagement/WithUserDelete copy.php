@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait WithUserDelete
 {    
-    public $showDeleteConfirmation = false;
+    public $showUserDelete = false;
     public $userIdToDelete;
     public $userEmailToDelete;
 
@@ -27,7 +27,7 @@ trait WithUserDelete
 
         $this->userIdToDelete = $userId;
         $this->userEmailToDelete = $user->email;
-        $this->showDeleteConfirmation = true;
+        $this->showUserDelete = true;
     }
 
     public function deleteUser()
@@ -46,7 +46,7 @@ trait WithUserDelete
 
             session()->flash('success', 'Pengguna dan data terkait berhasil dihapus.');
             
-            $this->reset(['showDeleteConfirmation', 'userIdToDelete', 'userEmailToDelete']);
+            $this->reset(['showUserDelete', 'userIdToDelete', 'userEmailToDelete']);
             $this->resetPage(); 
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal menghapus pengguna. ' . $e->getMessage());
@@ -55,6 +55,6 @@ trait WithUserDelete
 
     public function cancelDelete()
     {
-        $this->reset(['showDeleteConfirmation', 'userIdToDelete', 'userEmailToDelete']);
+        $this->reset(['showUserDelete', 'userIdToDelete', 'userEmailToDelete']);
     }
 }

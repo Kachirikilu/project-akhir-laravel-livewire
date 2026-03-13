@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait WithUserDelete
 {
-    public $showDeleteConfirmation = false;
+    public $showUserDelete = false;
     public $userIdToDelete;
     public $userEmailToDelete;
 
@@ -20,13 +20,13 @@ trait WithUserDelete
 
         $this->userIdToDelete = $id;
         $this->userEmailToDelete = $user->email;
-        $this->showDeleteConfirmation = true;
+        $this->showUserDelete = true;
     }
 
     public function deleteUser()
     {
         User::findOrFail($this->userIdToDelete)->delete();
-        $this->reset(['showDeleteConfirmation', 'userIdToDelete']);
+        $this->reset(['showUserDelete', 'userIdToDelete']);
         $this->resetPage();
     }
 }

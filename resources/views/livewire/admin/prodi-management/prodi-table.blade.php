@@ -68,7 +68,7 @@
                             'typeXString' => $switchTable,
                             'editString' => 'editProdi',
                             'nameXString' => $xNameString,
-                            'confirmDeleteString' => 'confirmDelete',
+                            'confirmDeleteString' => 'deleteProdi',
                         ])
                     </flux:dropdown>
                 </td>
@@ -79,7 +79,7 @@
                 'typeXString' => $switchTable,
                 'editString' => 'editProdi',
                 'nameXString' => $xNameString,
-                'confirmDeleteString' => 'confirmDelete',
+                'confirmDeleteString' => 'deleteProdi',
             ])
         </tr>
         @empty
@@ -93,7 +93,7 @@
 
         <x-slot:footer>
             @include('livewire.admin.global.table.footer-table', [
-                'typeOfXString' => $prodis,
+                'typeOfXString' => $xResults,
             ])
         </x-slot:footer>
 

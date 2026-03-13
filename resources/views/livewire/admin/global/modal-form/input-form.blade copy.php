@@ -17,19 +17,18 @@
             <flux:icon.envelope variant="mini" x-bind:class="$store.config?.colorIcon" />
             {{-- $store.config?.setEdit(0) --}}
         </div>
-        <input x-model="$store.config.{{ $modelString }}"
-            {{-- wire:model.lazy="{{ $modelString }}" --}}
-            name="{{ $modelString }}" x-bind:value="$store.config?.isEdit ? $el.value : ''"
+        <input wire:loading.attr="disabled" wire:target="{{ $targetLoading }}" x-model="$store.config.{{ $modelString }}"
+            wire:model.lazy="{{ $modelString }}" x-bind:value="$store.config?.isEdit ? $el.value : ''"
             type="{{ $typeString ?? 'text' }}" id="{{ $modelString }}" placeholder="{{ $placeholder }}"
             class="w-full border rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500"
             @if (isset($numberOnly) && $numberOnly) inputmode="numeric" pattern="[0-9]*" maxlength="{{ $maxlength ?? 255 }}"
         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, {{ $maxlength ?? 255 }})"
     @else
         maxlength="{{ $maxlength ?? 255 }}" @endif>
-        {{-- <div wire:loading wire:target="{{ $targetLoading }}"
+        <div wire:loading wire:target="{{ $targetLoading }}"
             class="absolute inset-y-0 right-0 flex items-center pt-4 pr-3">
         <flux:icon name="arrow-path" class="animate-spin h-4 w-4 text-gray-400"/>
-    </div> --}}
+    </div>
     </div>
     @error($modelString)
         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>

@@ -10,7 +10,7 @@
         <flux:menu.item
             @click="
                 const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}';
-                const editMode = '{{ $editString }}'
+                const editMode = '{{ $confirmDeleteString }}'
 
                 $store.config?.setType(type);
                 $store.config?.setEdit(1);
@@ -52,7 +52,7 @@
                     );
                     $flux.modal('prodi-modal').show();
                 }
-            " 
+            "
             wire:click="{{ $editCall }}" class="!text-yellow-600 hover:!bg-yellow-100">
             <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
 
@@ -69,23 +69,21 @@
 
             <flux:menu.item
                 @click="
-                    {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
+                    const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}';
                     const deleteMode = '{{ $confirmDeleteString }}'
 
-                    if (deleteMode == 'deleteUser') {
+                    {{-- if (deleteMode == 'deleteUser') {
                         $store.config?.setDeleteUser(
                             '{{ $x->email ?? '' }}'
                         );
-                        $flux.modal('user-delete').show();
                     } else if (deleteMode == 'deleteProdi') { 
                         $store.config?.setDeleteProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->jurusan ?? '' }}',
-                            '{{ $x->fakultas ?? '' }}',
-                            '{{ $typeXString ?? '' }}'
+                            '{{ $x->fakultas ?? '' }}'
                         );
-                        $flux.modal('prodi-delete').show();
-                    }
+                    } --}}
+                    $flux.modal('user-delete').show();
                 "
                 wire:click="{{ $deleteCall }}" class="!text-red-800 hover:!bg-red-50">
                 <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />

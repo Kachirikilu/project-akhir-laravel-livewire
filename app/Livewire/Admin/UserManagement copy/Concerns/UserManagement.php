@@ -29,7 +29,7 @@ class UserManagement extends Component
     public $roleType;
 
     // Properti Konfirmasi Hapus
-    public $showDeleteConfirmation = false;
+    public $showUserDelete = false;
     public $userIdToDelete = null;
     public $userEmailToDelete = '';
 
@@ -413,7 +413,7 @@ class UserManagement extends Component
 
         $this->userIdToDelete = $userId;
         $this->userEmailToDelete = $user->email;
-        $this->showDeleteConfirmation = true;
+        $this->showUserDelete = true;
     }
 
     /**
@@ -435,7 +435,7 @@ class UserManagement extends Component
 
             session()->flash('success', 'Pengguna dan data terkait berhasil dihapus.');
             
-            $this->reset(['showDeleteConfirmation', 'userIdToDelete', 'userEmailToDelete']);
+            $this->reset(['showUserDelete', 'userIdToDelete', 'userEmailToDelete']);
             $this->resetPage(); 
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal menghapus pengguna. ' . $e->getMessage());
@@ -444,6 +444,6 @@ class UserManagement extends Component
 
     public function cancelDelete()
     {
-        $this->reset(['showDeleteConfirmation', 'userIdToDelete', 'userEmailToDelete']);
+        $this->reset(['showUserDelete', 'userIdToDelete', 'userEmailToDelete']);
     }
 }

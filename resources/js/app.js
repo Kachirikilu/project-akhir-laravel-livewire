@@ -1,0 +1,223 @@
+// import Alpine from "alpinejs";
+
+// window.Alpine = Alpine;
+
+// Alpine.store("config", {
+//     typeModal: "admin",
+//     isEdit: 0,
+//     colorIcon: "text-gray-700",
+
+//     email: "",
+//     password: "",
+//     name: "",
+//     nip: "",
+//     nitk: "",
+//     nidn: "",
+//     nidk: "",
+//     nim: "",
+//     tahun_angkatan: "",
+//     status: "",
+//     prodi_id: "",
+//     nama_prodi: "",
+
+//     setType(val) {
+//         this.typeModal = val;
+//     },
+
+//     setEdit(val) {
+//         this.isEdit = val;
+//     },
+
+//     setColor(val) {
+//         this.colorIcon = val;
+//     },
+
+//     setValueUser(
+//         email,
+//         password,
+//         name,
+//         nip,
+//         nitk,
+//         nidn,
+//         nidk,
+//         nim,
+//         tahunAngkatan,
+//         status,
+//         idProdi,
+//         namaProdi,
+//     ) {
+//         this.email = email;
+//         this.password = password;
+//         this.name = name;
+//         this.nip = nip;
+//         this.nitk = nitk;
+//         this.nidn = nidn;
+//         this.nidk = nidk;
+//         this.nim = nim;
+//         this.tahun_angkatan = tahunAngkatan;
+//         this.status = status;
+//         this.prodi_id = idProdi;
+//         this.nama_prodi = namaProdi;
+//     },
+
+//     setDeleteUser(val) {
+//         this.email = val;
+//     },
+
+//     reset() {
+//         this.typeModal = "admin";
+//         this.isEdit = 0;
+//         this.colorIcon = "text-gray-700";
+
+//         this.email = "";
+//         this.password = "";
+//         this.name = "";
+//         this.nip = "";
+//         this.nitk = "";
+//         this.nidn = "";
+//         this.nidk = "";
+//         this.nim = "";
+//         this.tahun_angkatan = "";
+//         this.status = "";
+//         this.prodi_id = "";
+//         this.nama_prodi = "";
+//     },
+// });
+
+// Alpine.start();
+document.addEventListener("alpine:init", () => {
+    Alpine.store("config", {
+        typeModal: "",
+        typeModal_2: "",
+        isEdit: 0,
+        colorIcon: "",
+
+        email: "",
+        email_2: "",
+        password: "",
+        name: "",
+        nip: "",
+        nitk: "",
+        nidn: "",
+        nidk: "",
+        nim: "",
+        tahun_angkatan: "",
+        status: "",
+        prodi_id: "",
+
+        nama_prodi: "",
+        nama_prodi_2: "",
+
+        nama_strata: "",
+        jurusan_id: "",
+        nama_jurusan: "",
+        nama_jurusan_2: "",
+        fakultas_id: "",
+        nama_fakultas: "",
+        nama_fakultas_2: "",
+
+
+        setType(val) {
+            this.typeModal = val;
+        },
+
+        setEdit(val) {
+            this.isEdit = val;
+        },
+
+        setColor(val) {
+            this.colorIcon = val;
+        },
+
+        setValueUser(
+            email,
+            password,
+            name,
+            nip,
+            nitk,
+            nidn,
+            nidk,
+            nim,
+            tahunAngkatan,
+            status,
+            idProdi,
+            namaProdi
+        ) {
+            this.email = email;
+            this.password = password;
+            this.name = name;
+            this.nip = nip;
+            this.nitk = nitk;
+            this.nidn = nidn;
+            this.nidk = nidk;
+            this.nim = nim;
+            this.tahun_angkatan = tahunAngkatan;
+            this.status = status;
+            this.prodi_id = idProdi;
+            this.nama_prodi = namaProdi;
+        },
+
+        setValueProdi(
+            namaProdi,
+            strata,
+            idJurusan,
+            namaJurusan,
+            idFakultas,
+            namaFakultas
+        ) {
+            this.nama_prodi = namaProdi;
+            this.nama_strata = strata;
+            this.jurusan_id = idJurusan;
+            this.nama_jurusan = namaJurusan;
+            this.fakultas_id = idFakultas;
+            this.nama_fakultas = namaFakultas;
+        },
+
+        setDeleteUser(val) {
+            this.email_2 = val;
+        },
+        setDeleteProdi(
+            namaProdi,
+            namaJurusan,
+            namaFakultas,
+            type
+        ) {
+            this.nama_prodi_2 = namaProdi;
+            this.nama_jurusan_2 = namaJurusan;
+            this.nama_fakultas_2 = namaFakultas;
+            this.typeModal_2 = type;
+        },
+
+
+        reset() {
+            this.typeModal = "";
+            this.typeModal_2 = "";
+            this.isEdit = 0;
+            this.colorIcon = "";
+
+            this.email = "";
+            this.email_2 = "";
+            this.password = "";
+            this.name = "";
+            this.nip = "";
+            this.nitk = "";
+            this.nidn = "";
+            this.nidk = "";
+            this.nim = "";
+            this.tahun_angkatan = "";
+            this.status = "";
+            this.prodi_id = "";
+
+            this.nama_prodi = "";
+            this.nama_prodi_2 = "";
+
+            this.nama_strata = "";
+            this.jurusan_id = "";
+            this.nama_jurusan = "";
+            this.nama_jurusan_2 = "";
+            this.fakultas_id = "";
+            this.nama_fakultas = "";
+            this.nama_fakultas_2 = "";
+        },
+    });
+});

@@ -7,10 +7,10 @@
 
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon.envelope variant="mini" x-bind:class="$store.config.colorIcon" />
-            {{-- $store.config.setEdit(0) --}}
+            <flux:icon.envelope variant="mini" x-bind:class="$store.config?.colorIcon" />
+            {{-- $store.config?.setEdit(0) --}}
         </div>
-        <input wire:model.lazy="{{ $modelString }}" x-bind:value="$store.config.isEdit ? $el.value : ''"
+        <input wire:model.lazy="{{ $modelString }}" x-bind:value="$store.config?.isEdit ? $el.value : ''"
             type="{{ $typeString ?? 'text' }}" id="{{ $modelString }}" placeholder="{{ $placeholder }}"
             class="w-full border rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500"
             @if (isset($numberOnly) && $numberOnly) inputmode="numeric" pattern="[0-9]*" maxlength="{{ $maxlength ?? 255 }}"

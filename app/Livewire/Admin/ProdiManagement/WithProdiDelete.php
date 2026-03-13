@@ -2,57 +2,80 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Prodi;
-use App\Models\Jurusan;
 use App\Models\Fakultas;
-
-use Illuminate\Support\Facades\Auth;
+use App\Models\Jurusan;
+use App\Models\Prodi;
 
 trait WithProdiDelete
-{    
-    public $showDeleteConfirmation = false;
-    public $userIdToDelete;
-    public $userEmailToDelete;
+{
+    public $showProdiDelete = false;
 
-    public function deleteProdi($userId)
+    public $prodiIdToDelete;
+
+    public $typeNamaToDelete;
+
+    public $typeForDelete;
+
+    public $notFoundText;
+
+    public function deleteProdi($id, $type)
     {
-        $user = User::find($userId);
-        
-        if (!$user) {
-            session()->flash('error', 'Pengguna tidak ditemukan.');
-            return;
+        if ($type == 'prodi') {
+            $prodiType = Prodi::find($id);
+        } elseif ($type == 'jurusan') {
+            $prodiType = Jurusan::find($id);
+        } elseif ($type == 'fakultas') {
+            $prodiType = Fakultas::find($id);
         }
-        if (Auth::id() === $user->id) {
-            session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+
+        if ($type == 'prodi') {
+            $this->notFoundText = 'Program Studi';
+        } else {
+            $this->notFoundText = ucfirst($type);
+        }
+
+        if (! $prodiType) {
+            session()->flash('error', $this->notFoundText .' tidak ditemukan!');
+
             return;
         }
 
-        $this->userIdToDelete = $userId;
-        $this->userEmailToDelete = $user->email;
+        $this->prodiIdToDelete = $id;
+        $this->typeNamaToDelete = $prodiType->nama_prodi ?? $prodiType->nama_jurusan ?? $prodiType->nama_fakultas;
+        $this->typeForDelete = $type;
 
-        $this->showDeleteConfirmation = true;
-        $this->js("Flux.modal('delete-confirmation').show()");
+        $this->showProdiDelete = true;
+        // $this->js("Flux.modal('prodi-delete').show()");
     }
 
     public function destroyProdi()
     {
-        if (!$this->userIdToDelete) return;
+        if (!$this->prodiIdToDelete) {
+            return;
+        }
 
         try {
-            $user = User::findOrFail($this->userIdToDelete);
-            $user->delete();
+            if ($this->typeForDelete == 'prodi') {
+                $prodiType = Prodi::findOrFail($this->prodiIdToDelete);
+            } elseif ($this->typeForDelete == 'jurusan') {
+                $prodiType = Jurusan::findOrFail($this->prodiIdToDelete);
+            } elseif ($this->typeForDelete == 'fakultas') {
+                $prodiType = Fakultas::findOrFail($this->prodiIdToDelete);
+            }
 
-            $this->js("Flux.toast('Pengguna berhasil dihapus')");
-            
-            $this->userIdToDelete = null;
-            $this->userEmailToDelete = null;
+            $prodiType->delete();
+
+            $this->js("Flux.toast('{$this->notFoundText} berhasil dihapus!')");
+
+            $this->prodiIdToDelete = null;
+            $this->typeNamaToDelete = null;
 
             $this->resetPage();
-            $this->showDeleteConfirmation = false;
+            $this->showProdiDelete = false;
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus' })");
-            $this->showDeleteConfirmation = false;
+            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus!' })");
+            $this->showProdiDelete = false;
         }
     }
 }

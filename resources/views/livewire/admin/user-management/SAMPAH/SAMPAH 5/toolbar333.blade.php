@@ -14,9 +14,9 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('prodi');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-red-700');
+                        $store.config?.setType('prodi');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-red-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
@@ -32,9 +32,9 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('jurusan');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-lime-700');
+                        $store.config?.setType('jurusan');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-lime-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('jurusan');
                     "
@@ -50,9 +50,9 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('fakultas');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-cyan-700');
+                        $store.config?.setType('fakultas');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-cyan-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "

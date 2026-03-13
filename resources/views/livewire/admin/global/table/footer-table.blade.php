@@ -11,6 +11,7 @@
     <div wire:loading.flex
         wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery, switchingTable,
         saveUser, updateUser, destroyUser, saveProdi, updateProdi, destroyProdi,
+        saveAllRows, processImport, saveUserInternal,
         search, filterBy, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
         class="justify-center items-center py-4">
         <div class="flex items-center space-x-2 text-gray-500">

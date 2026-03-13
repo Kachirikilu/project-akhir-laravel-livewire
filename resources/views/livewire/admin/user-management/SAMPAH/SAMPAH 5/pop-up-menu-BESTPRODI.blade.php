@@ -12,17 +12,17 @@
             @click="
                 const type = '{{ $typeXString }}';
 
-                $store.config.setType(type);
-                $store.config.setEdit(1);
+                $store.config?.setType(type);
+                $store.config?.setEdit(1);
 
-                $store.config.setColor(
+                $store.config?.setColor(
                     type === 'prodi' ? 'text-red-700'
                     : type === 'jurusan' ? 'text-lime-700'
                     : type === 'fakultas' ? 'text-cyan-700'
                     : 'text-gray-700'
                 );
 
-                $store.config.setValueProdi(
+                $store.config?.setValueProdi(
                     '{{ $x->prodi }}',
                     '{{ $x->strata }}',
                     '{{ $x->jurusan_id }}',

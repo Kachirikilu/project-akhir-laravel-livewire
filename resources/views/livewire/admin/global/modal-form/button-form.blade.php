@@ -3,8 +3,9 @@
     <div class="flex flex-col sm:flex-row gap-2 mt-2">
 
         {{-- @if ($xType === 'file') --}}
-        <template x-if="$store.config.typeModal == 'file'" x-cloak>
+        <template x-if="$store.config?.typeModal == 'file'" x-cloak>
             <flux:button type="submit" variant="primary"
+                wire:loading.attr="disabled" wire:target="excel_file, parseExcelFile, processImport, saveAllRows, saveUserInternal"
                 class="cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 border-none">
                 <span wire:loading.remove wire:target="saveAllRows">
                     Simpan Semua Data {{ (isset($parsedRows) && count($parsedRows) > 0) ? '(' . count($parsedRows) . ' Baris)' : null }}
@@ -15,12 +16,13 @@
             </flux:button>
         {{-- @else --}}
         </template>
-        <template x-if="$store.config.typeModal !== 'file'" x-cloak>
+        <template x-if="$store.config?.typeModal !== 'file'" x-cloak>
             <flux:button type="submit" variant="primary"
+                wire:loading.attr="disabled" wire:target="{{ $targetX }}"
                 class="cursor-pointer w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 border-none">
-                <span x-text="$store.config.isEdit ? 'Perbarui Data' : 'Simpan Data'" wire:loading.remove wire:target="{{ $isEditing ? $updateX : $saveX }}">
+                <span x-text="$store.config?.isEdit ? 'Perbarui Data' : 'Simpan Data'" wire:loading.remove wire:target="{{ $targetX }}">
                 </span>
-                <span wire:loading wire:target="{{ $isEditing ? $updateX : $saveX }}">
+                <span wire:loading wire:target="{{ $targetX }}">
                     Memproses...
                 </span>
             </flux:button>

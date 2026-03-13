@@ -1,9 +1,10 @@
 <flux:menu>
     @if (Auth::user()?->admin)
         @php
-            $typeParam = isset($typeXString) ? ", '$typeXString'" : '';
+            $typeParam = isset($typeXString) ? ", '$typeXString'" : "";
             $editCall = "{$editString}({$x->id}{$typeParam})";
             $deleteCall = "{$confirmDeleteString}({$x->id}{$typeParam})";
+            // dd($typeParam);
         @endphp
 
         {{-- Tombol Edit --}}
@@ -67,27 +68,7 @@
         @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
             <flux:menu.separator />
 
-            <flux:menu.item
-                @click="
-                    {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
-                    const deleteMode = '{{ $confirmDeleteString }}'
-
-                    if (deleteMode == 'deleteUser') {
-                        $store.config?.setDeleteUser(
-                            '{{ $x->email ?? '' }}'
-                        );
-                        $flux.modal('user-delete').show();
-                    } else if (deleteMode == 'deleteProdi') { 
-                        $store.config?.setDeleteProdi(
-                            '{{ $x->prodi ?? '' }}',
-                            '{{ $x->jurusan ?? '' }}',
-                            '{{ $x->fakultas ?? '' }}',
-                            '{{ $typeXString ?? '' }}'
-                        );
-                        $flux.modal('prodi-delete').show();
-                    }
-                "
-                wire:click="{{ $deleteCall }}" class="!text-red-800 hover:!bg-red-50">
+            <flux:menu.item wire:click="{{ $deleteCall }}" class="!text-red-800 hover:!bg-red-50">
                 <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">

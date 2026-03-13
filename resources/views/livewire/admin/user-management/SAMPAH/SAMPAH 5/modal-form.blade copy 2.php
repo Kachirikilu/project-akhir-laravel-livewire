@@ -13,13 +13,13 @@
         {{-- 1. Header Modal (Tetap di Atas) --}}
         <div class="p-6 pb-4 border-b">
             <h3 class="text-xl font-semibold text-gray-800">
-                <template x-if="$store.config.typeModal == 'admin'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna Admin</flux:badge>
                 </template>
-                <template x-if="$store.config.typeModal == 'dosen'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="lime" size="lg">Tambah Pengguna Dosen</flux:badge>
                 </template>
-                <template x-if="$store.config.typeModal == 'mahasiswa'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="cyan" size="lg">Tambah Pengguna Mahasiswa</flux:badge>
                 </template>
             </h3>
@@ -36,35 +36,35 @@
                 @endif
                 enctype="multipart/form-data" id="userForm">
 
-                <template x-if="$store.config.typeModal == 'file'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'file'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.excel-form')
                 </template>
 
-                <template x-if="$store.config.typeModal !== 'file'" x-cloak>
+                <template x-if="$store.config?.typeModal !== 'file'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.account-form')
                 </template>
 
-                <template x-if="$store.config.typeModal == 'admin'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.admin-form')
                 </template>
-                <template x-if="$store.config.typeModal == 'dosen'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.dosen-form')
                 </template>
-                <template x-if="$store.config.typeModal == 'mahasiswa'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.mahasiswa-form')
                 </template>
 
 
 
-                {{-- <template x-if="$store.config.typeModal == 'admin'" x-cloak>
+                {{-- <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.account-form')
                     @include('livewire.admin.user-management.modal-form.personal-form')
                 </template>
-                <template x-if="$store.config.typeModal == 'dosen'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.account-form')
                     @include('livewire.admin.user-management.modal-form.personal-form')
                 </template>
-                <template x-if="$store.config.typeModal == 'mahasiswa'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.account-form')
                     @include('livewire.admin.user-management.modal-form.personal-form')
                 </template> --}}

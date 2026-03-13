@@ -43,29 +43,30 @@
         @if ($filter == 'mahasiswa')
             <th class="px-6 py-3 text-left">
                 <div class="flex flex-col gap-1 items-center">
+
                     @include('livewire.admin.global.table.head-table', [
                         'sortFieldString' => 'tahun_angkatan',
                         'headString' => 'Angkatan',
                         'withTh' => 0,
                     ])
 
-                    <div class="sm:col-span-4 relative w-fit">
+                    <div x-data="{ value: @entangle('searchAngkatan') }" class="sm:col-span-4 relative w-fit">
                         <div class="relative">
-                            <input wire:model.live.debounce.300ms="searchAngkatan" list="list-angkatan" type="text"
-                                inputmode="numeric" pattern="[0-9]*" maxlength="4"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)" placeholder="Tahun"
+
+                            <input x-model="value" wire:model.live.debounce.300ms="searchAngkatan" list="list-angkatan"
+                                type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)" placeholder="Tahun"
                                 class="mt-1 text-[10px] w-13 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
-                            @if ($searchAngkatan)
-                                <button type="button" wire:click="resetInputAngkatan"
-                                    class="absolute inset-y-0 right-0 flex items-center pr-1 text-gray-400 hover:text-red-500 transition duration-150"
-                                    title="Bersihkan Filter">
-                                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            @endif
+                            {{-- Tombol Reset --}}
+                            @include('livewire.admin.global.search-and-filters.partial.reset-button', [
+                                'xShow' => 'value',
+                                'xClick' => "value = ''",
+                                'xWire' => 'resetInputAngkatan()',
+                                'xSize' => 3,
+                                'xPr' => 1
+                            ])
+
                         </div>
                     </div>
 
@@ -115,7 +116,7 @@
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
-                        'confirmDeleteString' => 'deleteUser'
+                        'confirmDeleteString' => 'deleteUser',
                     ])
 
                 </flux:dropdown>
@@ -147,7 +148,7 @@
                     'x' => $user,
                     'nameXString' => 'Pengguna',
                     'editString' => 'editUser',
-                    'confirmDeleteString' => 'deleteUser'
+                    'confirmDeleteString' => 'deleteUser',
                 ])
         </tr>
 

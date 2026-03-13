@@ -22,7 +22,7 @@
             <form wire:submit.prevent="{{ $isEditing ? 'updateProdi' : 'saveProdi' }}" enctype="multipart/form-data" id="prodiForm">
 
                 <div class="text-red-500 bg-yellow-100 p-2 text-xs">
-                    Debug: <span x-text="$store.config.type"></span>
+                    Debug: <span x-text="$store.config?.type"></span>
                 </div>
 
                 @include('livewire.admin.prodi-management.modal-form.jurusan-form')

@@ -1,37 +1,40 @@
 <?php
 
-namespace App\Livewire\Admin\UserManagement;
+namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\User;
+use App\Models\Prodi;
+use App\Models\Jurusan;
+use App\Models\Fakultas;
+
 use Illuminate\Support\Facades\Auth;
 
-trait WithUserDelete
+trait WithProdiDelete
 {    
     public $showUserDelete = false;
     public $userIdToDelete;
     public $userEmailToDelete;
 
-    public function deleteUser($id)
+    public function deleteProdi($userId)
     {
-        $user = User::find($id);
-
+        $user = User::find($userId);
+        
         if (!$user) {
-            session()->flash('error', 'Pengguna tidak ditemukan!');
+            session()->flash('error', 'Pengguna tidak ditemukan.');
             return;
         }
         if (Auth::id() === $user->id) {
-            session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
+            session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
             return;
         }
 
-        $this->userIdToDelete = $id;
+        $this->userIdToDelete = $userId;
         $this->userEmailToDelete = $user->email;
 
         $this->showUserDelete = true;
-        // $this->js("Flux.modal('user-delete').show()");
+        $this->js("Flux.modal('user-delete').show()");
     }
 
-    public function destroyUser()
+    public function destroyProdi()
     {
         if (!$this->userIdToDelete) return;
 
@@ -39,7 +42,7 @@ trait WithUserDelete
             $user = User::findOrFail($this->userIdToDelete);
             $user->delete();
 
-            $this->js("Flux.toast('Pengguna berhasil dihapus!')");
+            $this->js("Flux.toast('Pengguna berhasil dihapus')");
             
             $this->userIdToDelete = null;
             $this->userEmailToDelete = null;
@@ -48,7 +51,7 @@ trait WithUserDelete
             $this->showUserDelete = false;
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus!' })");
+            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus' })");
             $this->showUserDelete = false;
         }
     }

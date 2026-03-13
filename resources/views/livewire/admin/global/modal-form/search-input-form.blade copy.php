@@ -14,7 +14,7 @@
             } else {
                 search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
             }
-            selectedId = $store.config?.['{{ $idString }}'];
+            selectedId = $store.config?.{{ $idString }};
         }
     "
     wire:key="search-input-form-{{ $typeXString }}"
@@ -69,7 +69,6 @@
                 @click="
                     search = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}'; 
                     selectedId = {{ $x['id'] }}; 
-                    $store.config['{{ $idString }}'] = selectedId;
                     open = false; 
                     $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
                 "

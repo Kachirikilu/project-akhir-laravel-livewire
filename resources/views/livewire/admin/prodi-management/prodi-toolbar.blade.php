@@ -14,9 +14,9 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('prodi');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-red-700');
+                        $store.config?.setType('prodi');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-red-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
@@ -32,9 +32,9 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('jurusan');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-lime-700');
+                        $store.config?.setType('jurusan');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-lime-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('jurusan');
                     "
@@ -50,9 +50,9 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('fakultas');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-cyan-700');
+                        $store.config?.setType('fakultas');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-cyan-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "
@@ -68,54 +68,4 @@
         </flux:dropdown>
     </div>
 
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('config', {
-                typeModal: 'prodi',
-                isEdit: 0,
-                colorIcon: 'text-red-700',
-
-                nama_prodi: '',
-                nama_strata: '',
-                jurusan_id: '',
-                nama_jurusan: '',
-                fakultas_id: '',
-                nama_fakultas: '',
-
-                setType(val) {
-                    this.typeModal = val
-                },
-
-                setEdit(val) {
-                    this.isEdit = val
-                },
-
-                setColor(val) {
-                    this.colorIcon = val
-                },
-
-                setValueProdi(namaProdi, strata, idJurusan, namaJurusan, idFakultas, namaFakultas) {
-                    this.nama_prodi = namaProdi
-                    this.nama_strata = strata
-                    this.jurusan_id = idJurusan
-                    this.nama_jurusan = namaJurusan
-                    this.fakultas_id = idFakultas
-                    this.nama_fakultas = namaFakultas
-                },
-
-                reset() {
-                    this.typeModal = ''
-                    this.isEdit = 0
-                    this.colorIcon = 'text-gray-700'
-
-                    this.nama_prodi = ''
-                    this.nama_strata = ''
-                    this.jurusan_id = ''
-                    this.nama_jurusan = ''
-                    this.fakultas_id = ''
-                    this.nama_fakultas = ''
-                }
-            })
-        })
-    </script>
 </div>

@@ -13,10 +13,10 @@
                 const type = '{{ strtolower($x->role) ?? $typeXString }}';
                 const editMode = '{{ $editString }}'
 
-                $store.config.setType(type);
-                $store.config.setEdit(1);
+                $store.config?.setType(type);
+                $store.config?.setEdit(1);
 
-                $store.config.setColor(
+                $store.config?.setColor(
                     type === 'admin' ? 'text-red-700'
                     : type === 'dosen' ? 'text-lime-700'
                     : type === 'mahasiswa' ? 'text-cyan-700'
@@ -27,7 +27,7 @@
                 );
 
                 if (editMode == 'editUser') {
-                    $store.config.setValueUser(
+                    $store.config?.setValueUser(
                         '{{ $x->email ?? '' }}',
                         '',
                         '{{ $x->name ?? '' }}',
@@ -43,7 +43,7 @@
                     );
                     $flux.modal('user-modal').show();
                 } else if (editMode == 'editProdi') { 
-                    $store.config.setValueProdi(
+                    $store.config?.setValueProdi(
                         '{{ $x->prodi ?? '' }}',
                         '{{ $x->strata ?? '' }}',
                         '{{ $x->jurusan_id ?? '' }}',

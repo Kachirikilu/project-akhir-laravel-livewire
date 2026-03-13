@@ -14,9 +14,9 @@
                 {{-- Admin --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('admin');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-red-700');
+                        $store.config?.setType('admin');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-red-700');
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
                     "
@@ -33,9 +33,9 @@
                 {{-- Dosen --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('dosen');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-lime-700');
+                        $store.config?.setType('dosen');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-lime-700');
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
                     "
@@ -51,9 +51,9 @@
                 {{-- Mahasiswa --}}
                 <flux:menu.item
                     @click="
-                        $store.config.setType('mahasiswa');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-cyan-700');
+                        $store.config?.setType('mahasiswa');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-cyan-700');
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');
                     "
@@ -70,9 +70,9 @@
 
                 <flux:menu.item
                     @click="
-                        $store.config.setType('file');
-                        $store.config.setEdit(0);
-                        $store.config.setColor('text-green-700');
+                        $store.config?.setType('file');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-green-700');
                         $flux.modal('user-modal').show();
                         $wire.addUser('file');
                     "
@@ -87,73 +87,4 @@
             </flux:menu>
         </flux:dropdown>
     </div>
-
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('config', {
-                typeModal: 'admin',
-                isEdit: 0,
-                colorIcon: 'text-gray-700',
-
-                email: '',
-                password: '',
-                name: '',
-                nip: '',
-                nitk: '',
-                nidn: '',
-                nidk: '',
-                nim: '',
-                tahun_angkatan: '',
-                status: '',
-                prodi_id: '',
-                nama_prodi: '',
-
-                setType(val) {
-                    this.typeModal = val
-                },
-
-                setEdit(val) {
-                    this.isEdit = val
-                },
-
-                setColor(val) {
-                    this.colorIcon = val
-                },
-
-                setValueUser(email, password, name, nip, nitk, nidn, nidk, nim, tahunAngkatan, status, idProdi, namaProdi) {
-                    this.email = email
-                    this.password = password
-                    this.name = name
-                    this.nip = nip
-                    this.nitk = nitk
-                    this.nidn = nidn
-                    this.nidk = nidk
-                    this.nim = nim
-                    this.tahun_angkatan = tahunAngkatan
-                    this.status = status,
-                    this.prodi_id = idProdi
-                    this.nama_prodi = namaProdi
-                },
-
-                reset() {
-                    this.typeModal = ''
-                    this.isEdit = 0
-                    this.colorIcon = 'text-gray-700'
-
-                    this.email = ''
-                    this.password = ''
-                    this.name = ''
-                    this.nip = ''
-                    this.nitk = ''
-                    this.nidn = ''
-                    this.nidk = ''
-                    this.nim = ''
-                    this.tahun_angkatan = ''
-                    this.status = ''
-                    this.prodi_id = ''
-                    this.nama_prodi = ''
-                }
-            })
-        })
-    </script>
 </div>

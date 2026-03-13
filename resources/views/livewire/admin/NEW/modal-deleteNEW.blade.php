@@ -1,4 +1,4 @@
-<flux:modal wire:model="showDeleteConfirmation" class="max-w-sm">
+<flux:modal wire:model="showUserDelete" class="max-w-sm">
     <flux:heading class="text-red-600">
         Konfirmasi Hapus
     </flux:heading>

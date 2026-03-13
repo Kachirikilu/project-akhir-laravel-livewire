@@ -8,12 +8,12 @@
         {{ isset($xWire) ? '$wire.' . $xWire . ';' : '' }} 
         {{ isset($xWire2) ? '$wire.' . $xWire2 . ';' : '' }}
     "
-    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3 {{ $xColor ?? 'text-gray-700' }} hover:text-red-500 transition duration-150"
+    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-gray-700' }} hover:text-red-500 transition duration-150"
     @empty($xColor)
-        x-bind:class="$store.config.colorIcon || 'text-gray-700'"
+        x-bind:class="$store.config?.colorIcon || 'text-gray-700'"
     @endempty
-    title="Bersihkan">
-    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    title="Reset">
+    <svg class="h-{{ $xSize ?? 5 }} w-{{ $xSize ?? 5 }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
 </button>

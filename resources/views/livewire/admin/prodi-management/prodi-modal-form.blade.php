@@ -2,9 +2,9 @@
 
     <div class="flex flex-col h-full relative">
 
-        @php
+        {{-- @php
             $targetLoading = 'editProdi'
-        @endphp
+        @endphp --}}
 
         {{-- Loading Overlay --}}
         <div wire:loading wire:target="saveProdi, updateProdi">
@@ -18,21 +18,21 @@
         <div class="p-6 pb-4 border-b">
             <h3 class="text-xl font-semibold text-gray-800">
 
-                <template x-if="$store.config.typeModal == 'prodi'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
                     <flux:badge icon="academic-cap" color="red" size="lg">
-                        <span x-text="$store.config.isEdit ? 'Edit Program Studi' : 'Tambah Program Studi'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Program Studi' : 'Tambah Program Studi'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
                     <flux:badge icon="book-open" color="lime" size="lg">
-                        <span x-text="$store.config.isEdit ? 'Edit Jurusan' : 'Tambah Jurusan'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Jurusan' : 'Tambah Jurusan'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config.typeModal == 'fakultas'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
                     <flux:badge icon="building-library" color="cyan" size="lg">
-                        <span x-text="$store.config.isEdit ? 'Edit Fakultas' : 'Tambah Fakultas'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Fakultas' : 'Tambah Fakultas'"></span>
                     </flux:badge>
                 </template>
 
@@ -42,18 +42,19 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
-            <form wire:submit.prevent="{{ $isEditing ? 'updateProdi' : 'saveProdi' }}" enctype="multipart/form-data"
-                id="prodiForm">
+            <form
+                x-on:submit.prevent="$wire.{{ $isEditing ? 'updateProdi' : 'saveProdi' }}($store.config)"
+                enctype="multipart/form-data" id="prodiForm">
 
-                <template x-if="$store.config.typeModal == 'prodi'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.prodi-input')
                 </template>
 
-                <template x-if="$store.config.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.jurusan-input')
                 </template>
 
-                <template x-if="$store.config.typeModal == 'fakultas'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.fakultas-input')
                 </template>
 
@@ -62,8 +63,7 @@
                     @include('livewire.admin.prodi-management.modal-form.message-form')
                     @include('livewire.admin.global.modal-form.button-form', [
                         'xType' => $prodiType,
-                        'updateX' => 'updateProdi',
-                        'saveX' => 'saveProdi',
+                        'targetX' => 'addProdi, saveProdi, editProdi, updateProdi'
                     ])
                 </div>
             </form>

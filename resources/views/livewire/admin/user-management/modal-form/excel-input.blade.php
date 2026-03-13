@@ -20,8 +20,8 @@
                         file:mr-4 file:py-1 file:px-4
                         file:rounded-full file:border-0
                         file:text-sm file:font-semibold
-                        file:bg-gray-50 file:text-gray-600
-                        hover:file:bg-gray-100 transition-all cursor-pointer">
+                        file:bg-green-600 file:text-white
+                        hover:file:bg-green-700 transition-all cursor-pointer">
 
                     <div wire:loading.flex wire:target="excel_file, parseExcelFile"
                         class="absolute inset-y-0 right-3 items-center">

@@ -1,5 +1,5 @@
-@if ($showDeleteConfirmation)
-    <div x-show="$wire.showDeleteConfirmation" x-transition.opacity.duration.200ms x-cloak
+@if ($showUserDelete)
+    <div x-show="$wire.showUserDelete" x-transition.opacity.duration.200ms x-cloak
         class="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center z-50">
         <div @click.outside="$wire.cancelDelete()"
             class="bg-white rounded-lg p-6 w-full max-w-sm transform transition-all duration-200 ease-out scale-100">

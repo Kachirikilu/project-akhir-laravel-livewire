@@ -13,13 +13,13 @@
         {{-- 1. Header Modal --}}
         <div class="p-6 pb-4 border-b">
             <h3 class="text-xl font-semibold text-gray-800">
-                <template x-if="$store.config.typeModal == 'prodi'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
                     <flux:badge icon="academic-cap" color="red" size="lg">Tambah Program Studi</flux:badge>
                 </template>
-                <template x-if="$store.config.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
                     <flux:badge icon="book-open" color="lime" size="lg">Tambah Jurusan</flux:badge>
                 </template>
-                <template x-if="$store.config.typeModal == 'fakultas'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
                     <flux:badge icon="building-library" color="cyan" size="lg">Tambah Fakultas</flux:badge>
                 </template>
             </h3>
@@ -30,15 +30,15 @@
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
             <form wire:submit.prevent="{{ $isEditing ? 'updateProdi' : 'saveProdi' }}" enctype="multipart/form-data" id="prodiForm">
 
-                <template x-if="$store.config.typeModal == 'prodi'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.prodi-form')
                 </template>
 
-                <template x-if="$store.config.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.jurusan-form')
                 </template>
 
-                <template x-if="$store.config.typeModal == 'fakultas'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
                     @include('livewire.admin.prodi-management.modal-form.fakultas-form')
                 </template>
 

@@ -12,7 +12,15 @@
                 <flux:menu.separator />
 
                 {{-- Admin --}}
-                <flux:menu.item wire:click="addUser('admin')" class="cursor-pointer !text-red-600 hover:!bg-red-50">
+                <flux:menu.item
+                    @click="
+                        $store.config?.setType('admin');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-red-700');
+                        $flux.modal('user-modal').show();
+                        $wire.addUser('admin');
+                    "
+                    class="cursor-pointer !text-red-600 hover:!bg-red-50">
                     <flux:icon name="cog-6-tooth" class="!text-red-600 mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -22,25 +30,16 @@
                     </div>
                 </flux:menu.item>
 
+                {{-- Dosen --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('prodi');
+                        $store.config?.setType('dosen');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-red-700');
-                        $flux.modal('prodi-modal').show();
-                        $wire.addProdi('prodi');
+                        $store.config?.setColor('text-lime-700');
+                        $flux.modal('user-modal').show();
+                        $wire.addUser('dosen');
                     "
-                    class="cursor-pointer !text-red-600 hover:!bg-red-50">
-                    <flux:icon name="academic-cap" class="!text-red-600 mr-2 h-4 w-4" />
-                    <div class="flex justify-between items-center w-full">
-                        <span>Program Studi</span>
-                        <flux:icon wire:loading wire:target="addProdi('prodi')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
-                    </div>
-                </flux:menu.item>
-
-                {{-- Dosen --}}
-                <flux:menu.item wire:click="addUser('dosen')" class="cursor-pointer !text-lime-600 hover:!bg-lime-100">
+                    class="cursor-pointer !text-lime-600 hover:!bg-lime-100">
                     <flux:icon name="briefcase" class="!text-lime-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Dosen</span>
@@ -50,7 +49,14 @@
                 </flux:menu.item>
 
                 {{-- Mahasiswa --}}
-                <flux:menu.item wire:click="addUser('mahasiswa')"
+                <flux:menu.item
+                    @click="
+                        $store.config?.setType('mahasiswa');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-cyan-700');
+                        $flux.modal('user-modal').show();
+                        $wire.addUser('mahasiswa');
+                    "
                     class="cursor-pointer !text-cyan-600 hover:!bg-cyan-50">
                     <flux:icon name="book-open" class="!text-cyan-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
@@ -62,7 +68,15 @@
 
                 <flux:menu.separator />
 
-                <flux:menu.item wire:click="addUser('file')" class="cursor-pointer !text-green-600 hover:!bg-green-50">
+                <flux:menu.item
+                    @click="
+                        $store.config?.setType('file');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-green-700');
+                        $flux.modal('user-modal').show();
+                        $wire.addUser('file');
+                    "
+                    class="cursor-pointer !text-green-600 hover:!bg-green-50">
                     <flux:icon name="table-cells" class="!text-green-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Input File Excel</span>
@@ -79,18 +93,20 @@
             Alpine.store('config', {
                 typeModal: 'admin',
                 isEdit: 0,
-                colorIcon: 'text-red-700',
+                colorIcon: 'text-gray-700',
 
-                email = ''
-                password = ''
-                name = ''
-                nip = ''
-                nitk = ''
-                nidn = ''
-                nidk = ''
-                nim = ''
-                tahun_angkatan = ''
-                status = ''
+                email: '',
+                password: '',
+                name: '',
+                nip: '',
+                nitk: '',
+                nidn: '',
+                nidk: '',
+                nim: '',
+                tahun_angkatan: '',
+                status: '',
+                prodi_id: '',
+                nama_prodi: '',
 
                 setType(val) {
                     this.typeModal = val
@@ -104,7 +120,7 @@
                     this.colorIcon = val
                 },
 
-                setValueUser(email, password, name, nip, nitk, nidn, nidk, nim, tahunAngkatan, status) {
+                setValueUser(email, password, name, nip, nitk, nidn, nidk, nim, tahunAngkatan, status, idProdi, namaProdi) {
                     this.email = email
                     this.password = password
                     this.name = name
@@ -115,12 +131,18 @@
                     this.nim = nim
                     this.tahun_angkatan = tahunAngkatan
                     this.status = status
+                    this.prodi_id = idProdi
+                    this.nama_prodi = namaProdi
+                },
+
+                setDeleteUser(val) {
+                    this.email = val
                 },
 
                 reset() {
                     this.typeModal = ''
                     this.isEdit = 0
-                    this.colorIcon = ''
+                    this.colorIcon = 'text-gray-700'
 
                     this.email = ''
                     this.password = ''
@@ -132,6 +154,8 @@
                     this.nim = ''
                     this.tahun_angkatan = ''
                     this.status = ''
+                    this.prodi_id = ''
+                    this.nama_prodi = ''
                 }
             })
         })

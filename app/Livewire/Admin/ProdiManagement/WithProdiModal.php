@@ -9,6 +9,7 @@ namespace App\Livewire\Admin\ProdiManagement;
 use App\Models\Fakultas;
 use App\Models\Jurusan;
 use App\Models\Prodi;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 // use Livewire\WithFileUploads;
@@ -163,7 +164,7 @@ trait WithProdiModal
         }
     }
 
-    public function inputModalProdi($isEditing)
+    public function inputModalProdi($isEditing, $data)
     {
         $prodis = [];
 
@@ -207,7 +208,7 @@ trait WithProdiModal
             ];
         }
 
-        $this->validate($prodis, $this->validationMessages());
+        return Validator::make($data, $prodis, $this->validationMessages())->validate();
     }
 
     private function uniqueRule(string $table, string $column, $id = null)
@@ -215,54 +216,53 @@ trait WithProdiModal
         return $id ? Rule::unique($table, $column)->ignore($id) : Rule::unique($table, $column);
     }
 
-    public function saveProdi()
+    public function saveProdi($data)
     {
-        $this->inputModalProdi(false);
+        $validated = $this->inputModalProdi(false, $data);
 
         if ($this->prodiType === 'prodi') {
             Prodi::create([
-                'nama_prodi' => $this->nama_prodi,
-                'jurusan_id' => $this->jurusan_id,
-                'fakultas_id' => $this->fakultas_id,
-                'nama_strata' => $this->nama_strata,
+                'nama_prodi' => $validated['nama_prodi'] ?? $this->nama_prodi,
+                'nama_strata' => $validated['nama_strata'] ?? $this->nama_strata,
+                'jurusan_id' => $validated['jurusan_id'] ?? $this->jurusan_id,
             ]);
         } elseif ($this->prodiType === 'jurusan') {
             Jurusan::create([
-                'nama_jurusan' => $this->nama_jurusan,
-                'fakultas_id' => $this->fakultas_id,
+                'nama_jurusan' => $validated['nama_jurusan'] ?? $this->nama_jurusan,
+                'fakultas_id' => $validated['fakultas_id'] ?? $this->fakultas_id,
             ]);
         } elseif ($this->prodiType === 'fakultas') {
             Fakultas::create([
-                'nama_fakultas' => $this->nama_fakultas,
+                'nama_fakultas' => $validated['nama_fakultas'] ?? $this->nama_fakultas,
             ]);
         }
 
         $this->resetInput();
         $this->showProdiModal = false;
-        $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan.');
+        $this->dispatch('toast', message: '✅ Data berhasil ditambahkan.');
     }
 
-    public function updateProdi()
+    public function updateProdi($data)
     {
-        $this->inputModalProdi(true);
+        $validated = $this->inputModalProdi(true, $data);
 
         try {
             if ($this->prodiType === 'prodi') {
                 Prodi::findOrFail($this->selected_id)->update([
-                    'nama_prodi' => $this->nama_prodi,
-                    'nama_strata' => $this->nama_strata,
-                    'jurusan_id' => $this->jurusan_id,
+                    'nama_prodi' => $validated['nama_prodi'] ??  $this->nama_prodi,
+                    'nama_strata' => $validated['nama_strata'] ?? $this->nama_strata,
+                    'jurusan_id' => $validated['jurusan_id'] ?? $this->jurusan_id,
                 ]);
                 $message = 'Program Studi';
             } elseif ($this->prodiType === 'jurusan') {
                 Jurusan::findOrFail($this->selected_id)->update([
-                    'nama_jurusan' => $this->nama_jurusan,
-                    'fakultas_id' => $this->fakultas_id,
+                    'nama_jurusan' => $validated['nama_jurusan'] ?? $this->nama_jurusan,
+                    'fakultas_id' => $validated['fakultas_id'] ?? $this->fakultas_id,
                 ]);
                 $message = 'Jurusan';
             } elseif ($this->prodiType === 'fakultas') {
                 Fakultas::findOrFail($this->selected_id)->update([
-                    'nama_fakultas' => $this->nama_fakultas,
+                    'nama_fakultas' => $validated['nama_fakultas'] ?? $this->nama_fakultas,
                 ]);
                 $message = 'Fakultas';
             }

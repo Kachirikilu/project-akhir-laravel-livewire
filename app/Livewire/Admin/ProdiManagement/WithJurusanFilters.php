@@ -132,7 +132,6 @@ trait WithJurusanFilters
         } elseif ($this->sortField === 'fakultas') {
             $query->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
                 ->orderBy('fakultas.nama_fakultas', $this->sortDirection);
-
         } else {
             $query->orderBy('jurusans.id', $this->sortDirection);
         }

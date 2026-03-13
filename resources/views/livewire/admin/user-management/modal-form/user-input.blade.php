@@ -17,7 +17,7 @@
         ])
 
         {{-- 🔒 Password Input --}}
-        <template x-if="$store.config.isEdit == 0" x-cloak>
+        <template x-if="$store.config?.isEdit == 0" x-cloak>
             @include('livewire.admin.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'labelString' => 'Password',
@@ -28,7 +28,7 @@
                 'isRequired' => 1
             ])
         </template>
-        <template x-if="$store.config.isEdit == 1" x-cloak>
+        <template x-if="$store.config?.isEdit == 1" x-cloak>
             @include('livewire.admin.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'labelString' => 'Password',

@@ -18,7 +18,6 @@
             {{-- $store.config?.setEdit(0) --}}
         </div>
         <input x-model="$store.config.{{ $modelString }}"
-            {{-- wire:model.lazy="{{ $modelString }}" --}}
             name="{{ $modelString }}" x-bind:value="$store.config?.isEdit ? $el.value : ''"
             type="{{ $typeString ?? 'text' }}" id="{{ $modelString }}" placeholder="{{ $placeholder }}"
             class="w-full border rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500"

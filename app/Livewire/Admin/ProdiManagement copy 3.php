@@ -50,22 +50,6 @@ class ProdiManagement extends Component
         'switchTable' => ['except' => 'prodi'],
     ];
 
-    public function mount()
-    {
-        $this->syncSortField($this->switchTable);
-    }
-
-    public function syncSortField($table)
-    {
-        if ($table === 'prodi') {
-            $this->sortField = 'prodi';
-        } elseif ($table === 'jurusan') {
-            $this->sortField = 'jurusan';
-        } elseif ($table === 'fakultas') {
-            $this->sortField = 'fakultas';
-        }
-    }
-
     public function updatedPerPage()
     {
         $this->resetPage();
@@ -76,37 +60,43 @@ class ProdiManagement extends Component
         $this->resetPage();
     }
 
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-
-    //     if ($table === 'prodi') {
-    //         $this->sortField = 'prodi';
-    //     } elseif ($table == 'jurusan') {
-    //         $this->sortField = 'jurusan';
-    //         if ($this->perPage > 50) {
-    //             $this->perPage = 50;
-    //         }
-    //     } elseif ($table == 'fakultas') {
-    //         $this->sortField = 'fakultas';
-    //         if ($this->perPage > 10) {
-    //             $this->perPage = 10;
-    //         }
-    //     }
-
-    //     $this->resetPage();
-    // }
     public function switchingTable($table)
     {
         $this->switchTable = $table;
-        $this->syncSortField($table);
 
-        // Logika limit perPage tetap dipertahankan
-        if ($table == 'jurusan' && $this->perPage > 50) $this->perPage = 50;
-        if ($table == 'fakultas' && $this->perPage > 10) $this->perPage = 10;
+        if ($table === 'prodi') {
+            $this->sortField = 'prodi';
+        } elseif ($table == 'jurusan') {
+            $this->sortField = 'jurusan';
+            // $this->resetInputFilter();
+            if ($this->perPage > 50) {
+                $this->perPage = 50;
+            }
+        } elseif ($table == 'fakultas') {
+            $this->sortField = 'fakultas';
+            // $this->resetInputFilter();
+            // $this->resetJurusanFilter();
+            if ($this->perPage > 10) {
+                $this->perPage = 10;
+            }
+        }
+
+        // if ($table == 'jurusan' && $this->sortField === 'prodi') {
+        //     $this->sortField = 'jurusan';
+        // } elseif ($table == 'fakultas' && ($this->sortField === 'prodi' || $this->sortField === 'jurusan')) {
+        //     $this->sortField = 'fakultas';
+        // }
 
         $this->resetPage();
     }
+
+    // public function resetAllFilters()
+    // {
+    //     $this->resetInputFilter();
+    //     $this->resetFakultasFilter();
+    //     $this->resetJurusanFilter();
+    //     $this->resetPage();
+    // }
 
     public function render()
     {
@@ -128,6 +118,50 @@ class ProdiManagement extends Component
             }
         }
 
+        // $totalProdiQuery = Prodi::query();
+        // if (! empty($this->search)) {
+        //     $totalProdiQuery->where(function ($q) {
+        //         $q->where('nama_prodi', 'like', "%{$this->search}%")
+        //             ->orWhere('id', $this->search);
+        //     });
+        // }
+
+        // $totalJurusanQuery = Jurusan::query();
+        // if (! empty($this->search)) {
+        //     $totalJurusanQuery->where(function ($q) {
+        //         $q->where('nama_jurusan', 'like', "%{$this->search}%")
+        //             ->orWhere('id', $this->search)
+        //             ->orWhereHas('fakultas_rel', function ($sq) {
+        //                 $sq->where('nama_fakultas', 'like', "%{$this->search}%")
+        //                     ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$this->search]);
+        //             });
+        //     });
+        // }
+
+        // $totalFakultasQuery = Fakultas::query();
+        // if (! empty($this->search)) {
+        //   $totalFakultasQuery->where(function ($q) {
+        //       $q->where('nama_fakultas', 'like', "%{$this->search}%")
+        //           ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", ["%{$this->search}%"]);
+        //   });
+        // }
+
+        // $totalProdi = $totalProdiQuery->count();
+        // $totalJurusan = $totalJurusanQuery->count();
+        // $totalFakultas = $totalFakultasQuery->count();
+
+        // if ($this->switchTable === 'prodi') {
+        //     $totalProdi = $countTotal[0];
+        // } elseif ($this->switchTable === 'jurusan') {
+        //     $totalJurusan = $queryJurusan->count();
+        // } elseif ($this->switchTable === 'fakultas') {
+        //     $totalFakultas = $queryFakultas->count();
+        // }
+
+        // $totalProdi = $countTotal[0];
+        // $totalJurusan = $queryJurusan->count();
+        // $totalFakultas = $queryFakultas->count();
+    
         $this->inputFakultasFilter();
         $this->inputJurusanFilter();
 
