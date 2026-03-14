@@ -11,6 +11,7 @@
             'labelString' => 'Nama Jurusan',
             'modelString' => 'nama_jurusan',
             // 'typeString' => 'text',
+            'iconString' => 'book-open',
             'placeholder' => 'Masukkan nama Jurusan',
             'message' => $errors->first('nama_jurusan'),
             'isRequired' => 1

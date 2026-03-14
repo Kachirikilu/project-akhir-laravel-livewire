@@ -25,11 +25,16 @@ return new class extends Migration
             $table->foreignId('prodi_id')->nullable();
             $table->string('name');
 
-            $table->enum('status',
-                ['Aktif', 'Tugas Belajar', 'Mutasi', 'Cuti Luar Tanggungan',
-                'Resign', 'Pensiun', 'Diberhentikan',
-                'Meninggal Dunia'
-                ])->default('Aktif');
+            $table->enum('status', [
+                'Aktif',                  // Hijau (Produktif)
+                'Tugas Belajar',          // Kuning (Transisi/Sementara)
+                'Mutasi',                 // Kuning (Transisi/Sementara)
+                'Cuti Luar Tanggungan',   // Kuning (Transisi/Sementara)
+                'Resign',                 // Orange (Keluar Prosedural)
+                'Pensiun',                // Orange (Keluar Prosedural)
+                'Diberhentikan',          // Merah (Masalah/Sanksi)
+                'Meninggal Dunia'         // Merah (Permanen)
+            ])->default('Aktif');
 
             $table->timestamps();
         });

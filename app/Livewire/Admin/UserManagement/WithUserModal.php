@@ -50,6 +50,8 @@ trait WithUserModal
     public $nim;
 
     public $tahun_angkatan;
+    
+    public $status;
 
     // public $excelFile;
     // public array $parsedRows = [];
@@ -114,7 +116,8 @@ trait WithUserModal
         $this->user_id = $user->id;
         $this->email = $user->email;
         $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
-
+        $this->status = $user->admin->status ?? $user->dosen->status ?? $user->mahasiswa->status ?? null;
+        
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
             $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
@@ -225,7 +228,7 @@ trait WithUserModal
             ];
 
             $rules['tahun_angkatan'] =
-                'required|integer|min:1900|max:'.date('Y');
+                'required|integer|min:1960|max:'.date('Y');
         }
 
         $rules['prodi_id'] = 'required|exists:prodis,id';
@@ -298,30 +301,47 @@ trait WithUserModal
             'password' => Hash::make($validated['password'] ?? $this->password),
         ]);
 
+        $nameInput = $validated['name'] ?? $this->name;
+        if ($this->roleType !== 'mahasiswa') {
+            $identity1Input = $validated['nip'] ?? $this->nip;
+            if ($this->roleType == 'admin') {
+                $identity2Input = $validated['nitk'] ?? $this->nitk;
+            } else {
+                $identity2Input = $validated['nidn'] ?? $this->nidn;
+            }
+        } else {
+            $identity1Input = $validated['nim'] ?? $this->nim;
+        }
+        $prodiInput = $validated['prodi_id'] ?? $this->prodi_id;
+        $statusInput = ($validated['status'] ?? $this->status) ?: 'Aktif';
+
         if ($this->roleType === 'admin') {
             Admin::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nip' => $validated['nip'] ?? $this->nip,
-                'nitk' => $validated['nitk'] ?? $this->nitk,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $nameInput,
+                'nip' => $identity1Input,
+                'nitk' => $identity2Input,
+                'prodi_id' => $prodiInput,
+                'status' => $statusInput
             ]);
         } elseif ($this->roleType === 'dosen') {
             Dosen::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nip' => $validated['nip'] ?? $this->nip,
-                'nidn' => $validated['nidn'] ?? $this->nidn,
+                'name' => $nameInput,
+                'nip' => $identity1Input,
+                'nidn' => $identity2Input,
                 'nidk' => $validated['nidk'] ?? $this->nidk,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'prodi_id' => $prodiInput,
+                'status' => $statusInput
             ]);
         } elseif ($this->roleType === 'mahasiswa') {
             Mahasiswa::create([
                 'user_id' => $user->id,
-                'name' => $validated['name'] ?? $this->name,
-                'nim' => $validated['nim'] ?? $this->nim,
-                'tahun_angkatan' => $validated['tahun_masuk'] ?? $this->tahun_angkatan,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'name' => $nameInput,
+                'nim' => $identity1Input,
+                'tahun_angkatan' => $validated['tahun_angkatan'] ?? $this->tahun_angkatan,
+                'prodi_id' => $prodiInput,
+                'status' => $statusInput
             ]);
         }
 
@@ -341,31 +361,48 @@ trait WithUserModal
             $user->update(['password' => Hash::make($validated['password'] ?? $this->password)]);
         }
 
+        $nameInput = $validated['name'] ?? $this->name;
+        if ($this->roleType !== 'mahasiswa') {
+            $identity1Input = $validated['nip'] ?? $this->nip;
+            if ($this->roleType == 'admin') {
+                $identity2Input = $validated['nitk'] ?? $this->nitk;
+            } else {
+                $identity2Input = $validated['nidn'] ?? $this->nidn;
+            }
+        } else {
+            $identity1Input = $validated['nim'] ?? $this->nim;
+        }
+        $prodiInput = $validated['prodi_id'] ?? $this->prodi_id;
+        $statusInput = ($validated['status'] ?? $this->status) ?: 'Aktif';
+
         if ($this->roleType === 'admin') {
             $user->admin->update(
                 [
-                    'name' => $validated['name'] ?? $this->name,
-                    'nip' => $validated['nip'] ?? $this->nip,
-                    'nitk' => $validated['nitk'] ?? $this->nitk,
-                    'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                    'name' => $nameInput,
+                    'nip' => $identity1Input,
+                    'nitk' => $identity2Input,
+                    'prodi_id' => $prodiInput,
+                    'status' => $statusInput
                 ]
             );
         } elseif ($this->roleType === 'dosen') {
             $user->dosen->update(
                 [
-                    'name' => $validated['name'] ?? $this->name,
-                    'nip' => $validated['nip'] ?? $this->nip,
-                    'nidn' => $validated['nidn'] ?? $this->nidn,
+                    'name' => $nameInput,
+                    'nip' => $identity1Input,
+                    'nidn' => $identity2Input,
                     'nidk' => $validated['nidk'] ?? $this->nidk,
-                    'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                    'prodi_id' => $prodiInput,
+                    'status' => $statusInput
                 ]
             );
         } elseif ($this->roleType === 'mahasiswa') {
             $user->mahasiswa->update([
-                'name' => $validated['name'] ?? $this->name,
-                'nim' => $validated['nim'] ?? $this->nim,
+                'name' => $nameInput,
+                'nim' => $identity1Input,
                 'tahun_angkatan' => $validated['tahun_angkatan'] ?? $this->tahun_angkatan,
-                'prodi_id' => $validated['prodi_id'] ?? $this->prodi_id,
+                'prodi_id' => $prodiInput,
+                'status' => $statusInput
             ]);
         }
 
@@ -394,10 +431,10 @@ trait WithUserModal
             'nidk.unique' => 'NIDK ini sudah terdaftar!',
             'nim.required' => 'NIM wajib diisi untuk Mahasiswa!',
             'nim.unique' => 'NIM ini sudah terdaftar!',
-            'tahun_angkatan.required' => 'Tahun masuk wajib diisi!',
-            'tahun_angkatan.integer' => 'Tahun masuk harus berupa angka!',
-            'tahun_angkatan.min' => 'Tahun masuk tidak valid!',
-            'tahun_angkatan.max' => 'Tahun masuk tidak boleh melebihi tahun sekarang!',
+            'tahun_angkatan.required' => 'Tahun angkatan wajib diisi!',
+            'tahun_angkatan.integer' => 'Tahun angkatan harus berupa angka!',
+            'tahun_angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
+            'tahun_angkatan.max' => 'Tahun angkatan tidak boleh melebihi tahun sekarang!',
             'prodi_id.required' => 'Program studi wajib dipilih!',
             'prodi_id.exists' => 'Program studi yang dipilih tidak valid!',
             'excel_file.required' => 'File Excel wajib diunggah!',

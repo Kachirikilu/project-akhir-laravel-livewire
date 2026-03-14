@@ -11,6 +11,7 @@
             'labelString' => 'Email',
             'modelString' => 'email',
             'typeString' => 'email',
+            'iconString' => 'envelope',
             'placeholder' => 'contoh@domain.com',
             'message' => $errors->first('email'),
             'isRequired' => 1
@@ -23,6 +24,7 @@
                 'labelString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',
+                'iconString' => 'lock-closed',
                 'placeholder' => 'Masukkan Password',
                 'message' => $errors->first('password'),
                 'isRequired' => 1
@@ -34,6 +36,7 @@
                 'labelString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',
+                'iconString' => 'lock-closed',
                 'placeholder' => 'Kosongkan jika tidak ingin diubah',
                 'message' => $errors->first('password'),
                 'isRequired' => 0

@@ -19,19 +19,19 @@
             <h3 class="text-xl font-semibold text-gray-800">
 
                 <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
-                    <flux:badge icon="academic-cap" color="red" size="lg">
+                    <flux:badge icon="academic-cap" color="emerald" size="lg">
                         <span x-text="$store.config?.isEdit ? 'Edit Program Studi' : 'Tambah Program Studi'"></span>
                     </flux:badge>
                 </template>
 
                 <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
-                    <flux:badge icon="book-open" color="lime" size="lg">
+                    <flux:badge icon="book-open" color="amber" size="lg">
                         <span x-text="$store.config?.isEdit ? 'Edit Jurusan' : 'Tambah Jurusan'"></span>
                     </flux:badge>
                 </template>
 
                 <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
-                    <flux:badge icon="building-library" color="cyan" size="lg">
+                    <flux:badge icon="building-library" color="indigo" size="lg">
                         <span x-text="$store.config?.isEdit ? 'Edit Fakultas' : 'Tambah Fakultas'"></span>
                     </flux:badge>
                 </template>

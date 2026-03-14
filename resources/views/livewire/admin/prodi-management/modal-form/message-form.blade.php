@@ -30,41 +30,42 @@
         </div>
 
         <div class="space-y-3">
-            @if ($prodiType === 'file')
-                <div class="flex items-start gap-3">
-                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                    <p class="text-sm text-slate-600 leading-relaxed">
-                        Unggah file <strong class="text-slate-900 font-semibold">Excel</strong> dengan format yang
-                        sesuai untuk menambahkan
-                        banyak pengguna sekaligus.
-                    </p>
-                </div>
-            @elseif ($isEditing)
-                <div class="flex items-start gap-3">
-                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                    <p class="text-sm text-slate-600 leading-relaxed">
-                        Kosongkan kolom <strong class="text-slate-900 font-semibold">password</strong>
-                        untuk mempertahankan password lama.
-                    </p>
-                </div>
-            @endif
-
             <div class="flex items-start gap-3">
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                <p class="text-sm text-slate-600 leading-relaxed">
-                    Pastikan
-                    {{ $prodiType == 'admin'
-                        ? 'NIP, NITK'
-                        : ($prodiType == 'dosen'
-                            ? 'NIP, NIDN, dan NIDK'
-                            : ($prodiType == 'mahasiswa'
-                                ? 'NIM'
-                                : 'NIP, NITK, NIDN, NIDK, dan NIM')) }}
-                    yang dimasukkan adalah
+                <p class="text-sm text-slate-600 leading-relaxed" x-data="{
+                    wrap: (txt) => `<strong class='text-blue-900 font-semibold'>${txt}</strong>`,
+                
+                    get labels() {
+                        const mapping = {
+                            'prodi': ['Program Studi', 'ID Jurusan'],
+                            'jurusan': ['Jurusan', 'ID Fakultas'],
+                            'fakultas': ['Fakultas']
+                        };
+                        return mapping[$store.config?.typeModal] || [];
+                    },
+                
+                    formatList(arr) {
+                        if (arr.length === 0) return '';
+                        if (arr.length === 1) return this.wrap(arr[0]);
+                        const last = arr.pop();
+                        return arr.map(i => this.wrap(i)).join(', ') + ' dan ' + this.wrap(last);
+                    }
+                }">
+
+                    Pastikan <span x-html="formatList(labels)"></span> yang dimasukkan adalah
                     <strong class="text-slate-900 font-semibold">unik</strong> dan
                     <strong class="text-slate-900 font-semibold">valid</strong>.
                 </p>
             </div>
+
+            <template x-if="$store.config?.typeModal == 'mahasiswa' || $store.config?.typeModal == 'file'" x-cloak>
+                <div class="flex items-start gap-3">
+                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Pastikan <strong class="text-blue-900 font-semibold">Tahun Angkatan</strong> minimal <strong class="text-slate-900 font-semibold">tahun 1960</strong>.
+                    </p>
+                </div>
+            </template>
 
             <div class="flex items-start gap-3">
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>

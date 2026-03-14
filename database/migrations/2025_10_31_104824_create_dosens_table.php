@@ -23,11 +23,17 @@ return new class extends Migration
             
             $table->string('name');
 
-            $table->enum('status',
-                ['Aktif', 'Tugas Belajar', 'Izin Belajar', 'Cuti Sabatika',
-                'Resign', 'Pensiun', 'Diberhentikan', 'Alih Tugas',
-                'Meninggal Dunia'
-                ])->default('Aktif');
+            $table->enum('status', [
+                'Aktif',                  // Hijau (Produktif)
+                'Tugas Belajar',          // Kuning (Transisi/Studi)
+                'Izin Belajar',           // Kuning (Transisi/Studi)
+                'Cuti Sabatika',          // Kuning (Transisi/Riset)
+                'Alih Tugas',             // Orange (Perubahan Jabatan)
+                'Resign',                 // Orange (Keluar Prosedural)
+                'Pensiun',                // Orange (Keluar Prosedural)
+                'Diberhentikan',          // Merah (Masalah/Sanksi)
+                'Meninggal Dunia'         // Merah (Permanen)
+            ])->default('Aktif');
             $table->timestamps();
         });
     }

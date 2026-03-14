@@ -25,11 +25,17 @@ return new class extends Migration
             $table->year('tahun_angkatan');
             $table->date('tanggal_yudisium')->nullable(); 
             $table->date('tanggal_wisuda')->nullable();
-            $table->enum('status',
-                ['Aktif', 'Lulus', 'Mengundurkan Diri', 'Cuti',
-                'Drop Out', 'Non-Aktif', 'Pindah', 'Hilang',
-                'Meninggal Dunia'
-                ])->default('Aktif');
+            $table->enum('status', [
+                'Aktif',                  // Hijau (Aktif Kuliah)
+                'Lulus',                  // Biru (Output Positif)
+                'Cuti',                   // Kuning (Jeda Resmi)
+                'Pindah',                 // Kuning (Transisi Keluar)
+                'Non-Aktif',              // Orange (Masalah Administrasi)
+                'Mengundurkan Diri',      // Orange (Keluar Prosedural)
+                'Drop Out',               // Merah (Masalah Akademik/Sanksi)
+                'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
+                'Meninggal Dunia'         // Merah (Permanen)
+            ])->default('Aktif');
             $table->timestamps();
         });
     }

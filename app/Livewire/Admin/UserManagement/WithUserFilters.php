@@ -213,6 +213,12 @@ trait WithUserFilters
             $query->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
                 ->select('users.*')
                 ->orderBy('mahasiswas.tahun_angkatan', $this->sortDirection);
+        } elseif ($this->sortField === 'status') {
+            $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
+                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
+                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
+                ->select('users.*')
+                ->orderByRaw("COALESCE(admins.status, dosens.status, mahasiswas.status) {$this->sortDirection}");
         } else {
             $field = $this->sortField === 'id' ? 'users.id' : $this->sortField;
             $query->orderBy($field, $this->sortDirection);

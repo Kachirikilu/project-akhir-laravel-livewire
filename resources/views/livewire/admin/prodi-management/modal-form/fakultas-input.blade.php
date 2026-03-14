@@ -11,6 +11,7 @@
             'labelString' => 'Nama Fakultas',
             'modelString' => 'nama_fakultas',
             // 'typeString' => 'text',
+            'iconString' => 'building-library',
             'placeholder' => 'Masukkan nama Fakultas',
             'message' => $errors->first('nama_fakultas'),
             'isRequired' => 1

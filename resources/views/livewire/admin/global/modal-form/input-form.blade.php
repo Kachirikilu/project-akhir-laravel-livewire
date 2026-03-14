@@ -14,7 +14,7 @@
 
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon.envelope variant="mini" x-bind:class="$store.config?.colorIcon" />
+            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon" />
             {{-- $store.config?.setEdit(0) --}}
         </div>
         <input x-model="$store.config.{{ $modelString }}"

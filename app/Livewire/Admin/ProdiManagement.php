@@ -39,6 +39,8 @@ class ProdiManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public $selectedProdiName = '';
+
     protected $listeners = ['refresh-table' => 'refreshProdisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 

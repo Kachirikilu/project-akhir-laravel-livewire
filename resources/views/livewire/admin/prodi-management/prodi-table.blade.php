@@ -2,7 +2,7 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'isCenter' => 1])
 
         @if ($switchTable === 'prodi')
             {{-- Prodi - Sorting A-Z --}}
@@ -19,7 +19,7 @@
 
         @if ($switchTable === 'prodi')
             {{-- Strata - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'strata'])
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'strata', 'isCenter' => 1])
         @endif
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
@@ -28,7 +28,7 @@
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" class="hover:bg-gray-50"
             data-{{ $switchTable }}-id="{{ $x->id }}">
-            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $x->id }}</td>
+            <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">{{ $x->id }}</td>
 
             @if ($switchTable === 'prodi')
                 <td class="px-6 py-4 text-sm text-gray-700">{{ $x->prodi ?? '-' }}</td>
@@ -41,7 +41,7 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
-                <td class="px-6 py-4 text-sm text-gray-700">
+                <td class="px-6 py-4 text-center text-sm text-gray-700">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)

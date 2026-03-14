@@ -3,7 +3,7 @@
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
-                wire:target="addProdi" wire:loading.attr="disabled">
+                wire:target="addProdi">
                 Tambah Program Studi
             </flux:button>
 
@@ -16,12 +16,12 @@
                     @click="
                         $store.config?.setType('prodi');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-red-700');
+                        $store.config?.setColor('text-emerald-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
-                    class="cursor-pointer !text-red-600 hover:!bg-red-50">
-                    <flux:icon name="academic-cap" class="!text-red-600 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-emerald-600 hover:!bg-emerald-50">
+                    <flux:icon name="academic-cap" class="!text-emerald-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Program Studi</span>
                         <flux:icon wire:loading wire:target="addProdi('prodi')" name="arrow-path"
@@ -34,12 +34,12 @@
                     @click="
                         $store.config?.setType('jurusan');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-lime-700');
+                        $store.config?.setColor('text-amber-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('jurusan');
                     "
-                    class="cursor-pointer !text-lime-600 hover:!bg-lime-100">
-                    <flux:icon name="book-open" class="!text-lime-600 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-amber-600 hover:!bg-amber-100">
+                    <flux:icon name="book-open" class="!text-amber-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Jurusan</span>
                         <flux:icon wire:loading wire:target="addProdi('jurusan')" name="arrow-path"
@@ -52,12 +52,12 @@
                     @click="
                         $store.config?.setType('fakultas');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-cyan-700');
+                        $store.config?.setColor('text-indigo-700');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "
-                    class="cursor-pointer !text-cyan-600 hover:!bg-cyan-50">
-                    <flux:icon name="building-library" class="!text-cyan-600 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-indigo-600 hover:!bg-indigo-50">
+                    <flux:icon name="building-library" class="!text-indigo-600 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Fakultas</span>
                         <flux:icon wire:loading wire:target="addProdi('fakultas')" name="arrow-path"

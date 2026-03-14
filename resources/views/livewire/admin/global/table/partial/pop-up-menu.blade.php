@@ -19,9 +19,9 @@
                     admin: 'text-red-700',
                     dosen: 'text-lime-700',
                     mahasiswa: 'text-cyan-700',
-                    prodi: 'text-red-700',
-                    jurusan: 'text-lime-700',
-                    fakultas: 'text-cyan-700'
+                    prodi: 'text-emerald-700',
+                    jurusan: 'text-amber-700',
+                    fakultas: 'text-indigo-700'
                 }
                 $store.config?.setColor(colors[type] ?? 'text-gray-700')
 

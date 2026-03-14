@@ -3,7 +3,7 @@
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
-                wire:target="addUser" wire:loading.attr="disabled">
+                wire:target="addUser">
                 Tambah Pengguna
             </flux:button>
 
