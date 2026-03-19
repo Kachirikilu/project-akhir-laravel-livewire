@@ -17,55 +17,10 @@ trait WithProdiFilters
 
     public $sortDirection = 'asc';
 
-    // public $searchAngkatan = '';
-
     public function updatingSearch()
     {
         $this->resetPage();
     }
-
-    // public function updatingSearchAngkatan()
-    // {
-    //     $this->resetPage();
-    // }
-
-    // public function inputMainSearch()
-    // {
-    //     $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
-    //     $searchTerm = '%'.$this->search.'%';
-
-    //     // if ($this->switchTable === 'prodi' && ! empty($this->search)) {
-    //         if (! empty($this->search)) {
-    //         $query->where(function ($q) use ($searchTerm) {
-    //             $q->where('nama_prodi', 'like', $searchTerm)
-    //                 ->orWhere('nama_strata', 'like', $searchTerm)
-    //                 ->orWhereHas('jurusan_rel', function ($q) use ($searchTerm) {
-    //                     $q->where('nama_jurusan', 'like', $searchTerm)
-    //                         ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-    //                         ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
-    //                             $sq->where('nama_fakultas', 'like', $searchTerm)
-    //                                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-    //                         });
-    //                 });
-    //         });
-    //     }
-
-    //     // Filter berdasarkan fakultas yang dipilih
-    //     if (! empty($this->selectedFakultasId)) {
-    //         $query->whereHas('jurusan_rel', function ($q) {
-    //             $q->where('fakultas_id', $this->selectedFakultasId);
-    //         });
-    //     }
-
-    //     // Filter berdasarkan jurusan yang dipilih
-    //     if (! empty($this->selectedJurusanId)) {
-    //         $query->where('jurusan_id', $this->selectedJurusanId);
-    //     }
-
-    //     $this->sortFieldOrder($query);
-
-    //     return $query;
-    // }
 
     public function inputMainSearch()
     {
@@ -101,14 +56,13 @@ trait WithProdiFilters
             });
         }
 
+        if (! empty($this->selectedJurusanId)) {
+            $query->where('jurusan_id', $this->selectedJurusanId);
+        }
         if (! empty($this->selectedFakultasId)) {
             $query->whereHas('jurusan_rel', function ($q) {
                 $q->where('fakultas_id', $this->selectedFakultasId);
             });
-        }
-
-        if (! empty($this->selectedJurusanId)) {
-            $query->where('jurusan_id', $this->selectedJurusanId);
         }
 
         $this->sortFieldOrder($query);
@@ -122,54 +76,58 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
-    public function buttonStrataFilter($query)
-    {
-        $query->when($this->selectedFakultasId, function ($q) {
-            $q->whereHas('jurusan_rel', function ($rel) {
-                $rel->where('fakultas_id', $this->selectedFakultasId);
-            });
-        });
+    // public function buttonStrataFilter($query)
+    // {
+    //     // 1. Terapkan filter relasi Fakultas/Jurusan pada query utama
+    //     $query->when($this->selectedFakultasId, function ($q) {
+    //         $q->whereHas('jurusan_rel', function ($rel) {
+    //             $rel->where('fakultas_id', $this->selectedFakultasId);
+    //         });
+    //     });
 
-        $query->when($this->selectedJurusanId, function ($q) {
-            $q->where('jurusan_id', $this->selectedJurusanId);
-        });
+    //     $query->when($this->selectedJurusanId, function ($q) {
+    //         $q->where('jurusan_id', $this->selectedJurusanId);
+    //     });
 
-        $countQueryBase = clone $query;
+    //     // 2. Hitung semua statistik (Total, Sarjana, Magister, Doktor) dalam SATU query
+    //     $stats = Prodi::query()
+    //         ->when($this->selectedFakultasId, function ($q) {
+    //             $q->whereExists(function ($sub) {
+    //                 $sub->select(\DB::raw(1))
+    //                     ->from('jurusans')
+    //                     ->whereColumn('jurusans.id', 'prodis.jurusan_id')
+    //                     ->where('fakultas_id', $this->selectedFakultasId);
+    //             });
+    //         })
+    //         ->when($this->selectedJurusanId, function ($q) {
+    //             $q->where('jurusan_id', $this->selectedJurusanId);
+    //         })
+    //         ->selectRaw("
+    //             COUNT(*) as total,
+    //             SUM(CASE WHEN nama_strata = 'Sarjana' THEN 1 ELSE 0 END) as sarjana,
+    //             SUM(CASE WHEN nama_strata = 'Magister' THEN 1 ELSE 0 END) as magister,
+    //             SUM(CASE WHEN nama_strata = 'Doktor' THEN 1 ELSE 0 END) as doktor
+    //         ")->first();
 
-        $totalProdis = (clone $countQueryBase)->count();
-        $totalSarjana = (clone $countQueryBase)->where('nama_strata', 'Sarjana')->count();
-        $totalMagister = (clone $countQueryBase)->where('nama_strata', 'Magister')->count();
-        $totalDoktor = (clone $countQueryBase)->where('nama_strata', 'Doktor')->count();
+    //     // 3. Terapkan filter strata untuk tampilan tabel utama
+    //     if (in_array($this->filter, ['sarjana', 'magister', 'doktor'])) {
+    //         $query->where('nama_strata', ucfirst($this->filter));
+    //     }
 
-        if ($this->filter === 'sarjana') {
-            $query->where('nama_strata', 'Sarjana');
-        } elseif ($this->filter === 'magister') {
-            $query->where('nama_strata', 'Magister');
-        } elseif ($this->filter === 'doktor') {
-            $query->where('nama_strata', 'Doktor');
-        }
-
-        return [$totalProdis, $totalSarjana, $totalMagister, $totalDoktor];
-    }
+    //     return [
+    //         $stats->total ?? 0,
+    //         $stats->sarjana ?? 0,
+    //         $stats->magister ?? 0,
+    //         $stats->doktor ?? 0
+    //     ];
+    // }
 
     public function resetInputFilter()
     {
         $this->reset(['search', 'filter']);
-        // $this->resetFakultasFilter();
-        // $this->resetJurusanFilter();
         $this->resetPage();
     }
 
-    // public function sortBy($field)
-    // {
-    //     if ($this->sortField === $field) {
-    //         $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-    //     } else if ($this->sortField !== $field) {
-    //         $this->sortField = $field;
-    //         $this->sortDirection = 'asc';
-    //     }
-    //     $this->resetPage();
-    // }
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -180,12 +138,6 @@ trait WithProdiFilters
         }
         $this->resetPage();
     }
-
-    // public function resetInputAngkatan()
-    // {
-    //     $this->reset('searchAngkatan');
-    //     $this->resetPage();
-    // }
 
     public function sortFieldOrder($query)
     {
@@ -202,6 +154,20 @@ trait WithProdiFilters
                 ->orderBy('fakultas.nama_fakultas', $this->sortDirection);
         } elseif ($this->sortField === 'strata') {
             $query->orderBy('prodis.nama_strata', $this->sortDirection);
+        } elseif ($this->sortField === 'kode') {
+            if ($this->switchTable === 'prodi') {
+                $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                    ->select('prodis.*')
+                    ->orderByRaw('COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk) '.$this->sortDirection);
+            } elseif ($this->switchTable === 'jurusan') {
+                $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                    ->select('jurusans.*')
+                    ->orderByRaw('COALESCE(jurusans.kode_jr, fakultas.kode_fk) '.$this->sortDirection);
+            } elseif ($this->switchTable === 'fakultas') {
+                $query->orderBy('kode_fk', $this->sortDirection);
+            }
         } else {
             $query->orderBy('prodis.id', $this->sortDirection);
         }

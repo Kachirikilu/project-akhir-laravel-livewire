@@ -8,23 +8,13 @@ use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-// use Livewire\WithFileUploads;
-// use Livewire\Attributes\Validate;
-
-// use Illuminate\Support\LazyCollection;
-// use PhpOffice\PhpSpreadsheet\IOFactory;
-// use Illuminate\Support\Str;
-// use Illuminate\Support\Facades\DB;
-// use Illuminate\Support\Facades\Validator;
-
 trait WithUserModal
 {
-    // use WithFileUploads;
-
     public $showUserModal = false;
 
     public $isEditing = false;
@@ -33,29 +23,27 @@ trait WithUserModal
 
     public $user_id;
 
-    public $email;
+    // public $email;
 
-    public $password;
+    // public $password;
 
-    public $name;
+    // public $name;
 
-    public $nip;
+    // public $nip;
 
-    public $nitk;
+    // public $nitk;
 
-    public $nidn;
+    // public $nidn;
 
-    public $nidk;
+    // public $nidk;
 
-    public $nim;
+    // public $nim;
 
-    public $tahun_angkatan;
-    
-    public $status;
+    // public $tahun_angkatan;
 
-    // public $excelFile;
-    // public array $parsedRows = [];
-    // public array $rowErrors  = [];
+    // public $status;
+
+    public $prodi_id_2;
 
     protected $rules = [
         'email' => 'required|email',
@@ -70,17 +58,6 @@ trait WithUserModal
         'prodi_id' => 'required|exists:prodis,id',
     ];
 
-    // public function resetModalFields()
-    // {
-    //     $this->reset([
-    //         'user_id', 'email', 'password', 'name', 'nip', 'nim',
-    //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing',
-    //         'prodi_name_search', 'showUserModal'
-    //     ]);
-
-    //     $this->resetValidation();
-    // }
-
     public function addUser($role)
     {
         if ($this->isEditing) {
@@ -92,14 +69,13 @@ trait WithUserModal
         $this->isEditing = false;
         $this->roleType = $role;
         $this->showUserModal = true;
-        // $this->js("Flux.modal('user-modal').show()");
         $this->updatedProdiNameSearch($this->prodi_name_search);
     }
 
     public function editUser($id)
     {
         if (! Auth::user()->admin) {
-            $this->dispatch('toast', message: '❌ Hanya admin yang dapat mengedit pengguna.');
+            $this->dispatch('toast', message: '❌ Hanya admin yang dapat mengedit pengguna!');
 
             return;
         }
@@ -109,15 +85,15 @@ trait WithUserModal
 
         $this->resetErrorBag();
         $this->showUserModal = true;
-        // $this->js("Flux.modal('user-modal').show()");
         $this->isEditing = true;
 
         $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
         $this->user_id = $user->id;
-        $this->email = $user->email;
+        // $this->email = $user->email;
         $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
-        $this->status = $user->admin->status ?? $user->dosen->status ?? $user->mahasiswa->status ?? null;
-        
+        $this->prodi_id_2 = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
+        // $this->status = $user->admin->status ?? $user->dosen->status ?? $user->mahasiswa->status ?? null;
+
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
             $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
@@ -127,21 +103,21 @@ trait WithUserModal
         $this->getProdibyUser();
         $this->fetchProdi($this->prodi_name_search);
 
-        $this->name = $user->name;
+        // $this->name = $user->name;
         $this->roleType = strtolower($user->role);
 
-        if (! $user->mahasiswa) {
-            $this->nip = $user->identity1;
-            if ($user->admin) {
-                $this->nitk = $user->identity2;
-            } else {
-                $this->nidn = $user->identity2;
-                $this->nidk = $user->identity3;
-            }
-        } else {
-            $this->nim = $user->identity1;
-            $this->tahun_angkatan = $user->mahasiswa->tahun_angkatan;
-        }
+        // if (! $user->mahasiswa) {
+        //     $this->nip = $user->identity1;
+        //     if ($user->admin) {
+        //         $this->nitk = $user->identity2;
+        //     } else {
+        //         $this->nidn = $user->identity2;
+        //         $this->nidk = $user->identity3;
+        //     }
+        // } else {
+        //     $this->nim = $user->identity1;
+        //     $this->tahun_angkatan = $user->mahasiswa->tahun_angkatan;
+        // }
     }
 
     public function inputModalUser($isEditing, $data)
@@ -178,6 +154,20 @@ trait WithUserModal
                 Rule::unique('dosens', 'nidk'),
                 Rule::unique('mahasiswas', 'nim'),
             ];
+
+            $rules['status'] = [
+                'required',
+                Rule::in([
+                    'Aktif',                  // Hijau (Produktif)
+                    'Tugas Belajar',          // Kuning (Transisi/Sementara)
+                    'Mutasi',                 // Kuning (Transisi/Sementara)
+                    'Cuti Luar Tanggungan',   // Kuning (Transisi/Sementara)
+                    'Resign',                 // Orange (Keluar Prosedural)
+                    'Pensiun',                // Orange (Keluar Prosedural)
+                    'Diberhentikan',          // Merah (Masalah/Sanksi)
+                    'Meninggal Dunia',         // Merah (Permanen)
+                ]),
+            ];
         }
 
         /* ===================== DOSEN ===================== */
@@ -212,6 +202,21 @@ trait WithUserModal
                 Rule::unique('admins', 'nitk'),
                 Rule::unique('mahasiswas', 'nim'),
             ];
+
+            $rules['status'] = [
+                'required',
+                Rule::in([
+                    'Aktif',                  // Hijau (Produktif)
+                    'Tugas Belajar',          // Kuning (Transisi/Studi)
+                    'Izin Belajar',           // Kuning (Transisi/Studi)
+                    'Cuti Sabatika',          // Kuning (Transisi/Riset)
+                    'Alih Tugas',             // Orange (Perubahan Jabatan)
+                    'Resign',                 // Orange (Keluar Prosedural)
+                    'Pensiun',                // Orange (Keluar Prosedural)
+                    'Diberhentikan',          // Merah (Masalah/Sanksi)
+                    'Meninggal Dunia',         // Merah (Permanen)
+                ]),
+            ];
         }
 
         /* ===================== MAHASISWA ===================== */
@@ -229,11 +234,25 @@ trait WithUserModal
 
             $rules['tahun_angkatan'] =
                 'required|integer|min:1960|max:'.date('Y');
+
+            $rules['status'] = [
+                'required',
+                Rule::in([
+                    'Aktif',                  // Hijau (Aktif Kuliah)
+                    'Lulus',                  // Biru (Output Positif)
+                    'Cuti',                   // Kuning (Jeda Resmi)
+                    'Pindah',                 // Kuning (Transisi Keluar)
+                    'Non-Aktif',              // Orange (Masalah Administrasi)
+                    'Mengundurkan Diri',      // Orange (Keluar Prosedural)
+                    'Drop Out',               // Merah (Masalah Akademik/Sanksi)
+                    'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
+                    'Meninggal Dunia',         // Merah (Permanen)
+                ]),
+            ];
         }
 
         $rules['prodi_id'] = 'required|exists:prodis,id';
 
-        // $this->validate($rules, $this->validationMessages());
         $validator = Validator::make($data, $rules, $this->validationMessages());
 
         $validator->after(function ($validator) use ($data) {
@@ -294,123 +313,148 @@ trait WithUserModal
 
     public function saveUser($data)
     {
+        if (empty($data['prodi_id']) == '') {
+            $data['prodi_id'] = $this->prodi_id;
+        }
         $validated = $this->inputModalUser(false, $data);
 
-        $user = User::create([
-            'email' => $validated['email'] ?? $this->email,
-            'password' => Hash::make($validated['password'] ?? $this->password),
-        ]);
+        try {
+            DB::transaction(function () use ($validated) {
 
-        $nameInput = $validated['name'] ?? $this->name;
-        if ($this->roleType !== 'mahasiswa') {
-            $identity1Input = $validated['nip'] ?? $this->nip;
-            if ($this->roleType == 'admin') {
-                $identity2Input = $validated['nitk'] ?? $this->nitk;
-            } else {
-                $identity2Input = $validated['nidn'] ?? $this->nidn;
-            }
-        } else {
-            $identity1Input = $validated['nim'] ?? $this->nim;
+                $user = User::create([
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                ]);
+
+                $nameInput = $validated['name'];
+                if ($this->roleType !== 'mahasiswa') {
+                    $identity1Input = $validated['nip'];
+                    if ($this->roleType == 'admin') {
+                        $identity2Input = ($validated['nitk'] ?? null) ?: null;
+                    } else {
+                        $identity2Input = ($validated['nidn'] ?? null) ?: null;
+                    }
+                } else {
+                    $identity1Input = $validated['nim'];
+                }
+                $prodiInput = $validated['prodi_id'];
+                $statusInput = ($validated['status'] ?? '') ?: 'Aktif';
+
+                if ($this->roleType === 'admin') {
+                    Admin::create([
+                        'user_id' => $user->id,
+                        'name' => $nameInput,
+                        'nip' => $identity1Input,
+                        'nitk' => $identity2Input,
+                        'prodi_id' => $prodiInput,
+                        'status' => $statusInput,
+                    ]);
+                } elseif ($this->roleType === 'dosen') {
+                    Dosen::create([
+                        'user_id' => $user->id,
+                        'name' => $nameInput,
+                        'nip' => $identity1Input,
+                        'nidn' => $identity2Input,
+                        'nidk' => ($validated['nidk'] ?? null) ?: null,
+                        'prodi_id' => $prodiInput,
+                        'status' => $statusInput,
+                    ]);
+                } elseif ($this->roleType === 'mahasiswa') {
+                    Mahasiswa::create([
+                        'user_id' => $user->id,
+                        'name' => $nameInput,
+                        'nim' => $identity1Input,
+                        'tahun_angkatan' => $validated['tahun_angkatan'],
+                        'prodi_id' => $prodiInput,
+                        'status' => $statusInput,
+                    ]);
+                }
+
+            });
+
+            $this->resetInput();
+            $this->showUserModal = false;
+            $this->dispatch('user-saved');
+            $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat menambahkan data!');
         }
-        $prodiInput = $validated['prodi_id'] ?? $this->prodi_id;
-        $statusInput = ($validated['status'] ?? $this->status) ?: 'Aktif';
-
-        if ($this->roleType === 'admin') {
-            Admin::create([
-                'user_id' => $user->id,
-                'name' => $nameInput,
-                'nip' => $identity1Input,
-                'nitk' => $identity2Input,
-                'prodi_id' => $prodiInput,
-                'status' => $statusInput
-            ]);
-        } elseif ($this->roleType === 'dosen') {
-            Dosen::create([
-                'user_id' => $user->id,
-                'name' => $nameInput,
-                'nip' => $identity1Input,
-                'nidn' => $identity2Input,
-                'nidk' => $validated['nidk'] ?? $this->nidk,
-                'prodi_id' => $prodiInput,
-                'status' => $statusInput
-            ]);
-        } elseif ($this->roleType === 'mahasiswa') {
-            Mahasiswa::create([
-                'user_id' => $user->id,
-                'name' => $nameInput,
-                'nim' => $identity1Input,
-                'tahun_angkatan' => $validated['tahun_angkatan'] ?? $this->tahun_angkatan,
-                'prodi_id' => $prodiInput,
-                'status' => $statusInput
-            ]);
-        }
-
-        $this->resetInput();
-        $this->showUserModal = false;
-        $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan.');
     }
 
     public function updateUser($data)
     {
+        if ((empty($data['prodi_id']) && $this->prodi_id !== $this->prodi_id_2) ||
+            ($this->prodi_id == $this->prodi_id_2) || ($this->prodi_id !== $this->prodi_id_2)) {
+            $data['prodi_id'] = $this->prodi_id;
+        } 
         $validated = $this->inputModalUser(true, $data);
 
-        $user = User::findOrFail($this->user_id);
-        $user->update(['email' => $validated['email'] ?? $this->email]);
+        try {
+            DB::transaction(function () use ($validated) {
 
-        if ($validated['password'] || $this->password) {
-            $user->update(['password' => Hash::make($validated['password'] ?? $this->password)]);
-        }
+                $user = User::findOrFail($this->user_id);
+                $user->update(['email' => $validated['email']]);
 
-        $nameInput = $validated['name'] ?? $this->name;
-        if ($this->roleType !== 'mahasiswa') {
-            $identity1Input = $validated['nip'] ?? $this->nip;
-            if ($this->roleType == 'admin') {
-                $identity2Input = $validated['nitk'] ?? $this->nitk;
-            } else {
-                $identity2Input = $validated['nidn'] ?? $this->nidn;
+                if ($validated['password']) {
+                    $user->update(['password' => Hash::make($validated['password'])]);
+                }
+
+                $nameInput = $validated['name'];
+                if ($this->roleType !== 'mahasiswa') {
+                    $identity1Input = $validated['nip'];
+                    if ($this->roleType == 'admin') {
+                        $identity2Input = ($validated['nitk'] ?? null) ?: null;
+                    } else {
+                        $identity2Input = ($validated['nidn'] ?? null) ?: null;
+                    }
+                } else {
+                    $identity1Input = $validated['nim'];
+                }
+                $prodiInput = $validated['prodi_id'];
+                $statusInput = ($validated['status'] ?? '') ?: 'Aktif';
+
+                if ($this->roleType === 'admin') {
+                    $user->admin->update(
+                        [
+                            'name' => $nameInput,
+                            'nip' => $identity1Input,
+                            'nitk' => $identity2Input,
+                            'prodi_id' => $prodiInput,
+                            'status' => $statusInput,
+                        ]
+                    );
+                } elseif ($this->roleType === 'dosen') {
+                    $user->dosen->update(
+                        [
+                            'name' => $nameInput,
+                            'nip' => $identity1Input,
+                            'nidn' => $identity2Input,
+                            'nidk' => ($validated['nidk'] ?? null) ?: null,
+                            'prodi_id' => $prodiInput,
+                            'status' => $statusInput,
+                        ]
+                    );
+                } elseif ($this->roleType === 'mahasiswa') {
+                    $user->mahasiswa->update([
+                        'name' => $nameInput,
+                        'nim' => $identity1Input,
+                        'tahun_angkatan' => $validated['tahun_angkatan'],
+                        'prodi_id' => $prodiInput,
+                        'status' => $statusInput,
+                    ]);
+                }
+            });
+
+            $this->showUserModal = false;
+            $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui!');
+
+            if (Auth::id() === $user->id) {
+                $this->dispatch('profile-updated');
             }
-        } else {
-            $identity1Input = $validated['nim'] ?? $this->nim;
-        }
-        $prodiInput = $validated['prodi_id'] ?? $this->prodi_id;
-        $statusInput = ($validated['status'] ?? $this->status) ?: 'Aktif';
-
-        if ($this->roleType === 'admin') {
-            $user->admin->update(
-                [
-                    'name' => $nameInput,
-                    'nip' => $identity1Input,
-                    'nitk' => $identity2Input,
-                    'prodi_id' => $prodiInput,
-                    'status' => $statusInput
-                ]
-            );
-        } elseif ($this->roleType === 'dosen') {
-            $user->dosen->update(
-                [
-                    'name' => $nameInput,
-                    'nip' => $identity1Input,
-                    'nidn' => $identity2Input,
-                    'nidk' => $validated['nidk'] ?? $this->nidk,
-                    'prodi_id' => $prodiInput,
-                    'status' => $statusInput
-                ]
-            );
-        } elseif ($this->roleType === 'mahasiswa') {
-            $user->mahasiswa->update([
-                'name' => $nameInput,
-                'nim' => $identity1Input,
-                'tahun_angkatan' => $validated['tahun_angkatan'] ?? $this->tahun_angkatan,
-                'prodi_id' => $prodiInput,
-                'status' => $statusInput
-            ]);
-        }
-
-        $this->showUserModal = false;
-        $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui.');
-
-        if (Auth::id() === $user->id) {
-            $this->dispatch('profile-updated');
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
+            $this->showUserDelete = false;
         }
     }
 
@@ -440,19 +484,25 @@ trait WithUserModal
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
             'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
+            'status.required' => 'Status user wajib dipilih!',
+            'status.in' => 'Status yang dipilih tidak sesuai dengan kategori yang diizinkan!',
         ];
     }
 
-    public function resetInput($keepProdi = false)
+    public function resetInput(
+        // $keepProdi = false
+        )
     {
         $fields = [
-            'user_id', 'email', 'password', 'name', 'nip', 'nitk',
-            'nidn', 'nidk', 'nim', 'tahun_angkatan', 'roleType',
+            'user_id',
+            // 'email', 'password', 'name', 'nip', 'nitk',
+            // 'nidn', 'nidk', 'nim', 'tahun_angkatan',
+            'roleType',
         ];
 
-        if (! $keepProdi) {
-            $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
-        }
+        // if (! $keepProdi) {
+        //     $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
+        // }
 
         $this->reset($fields);
         $this->resetErrorBag();

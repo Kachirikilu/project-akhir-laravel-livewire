@@ -116,6 +116,10 @@ document.addEventListener("alpine:init", () => {
         nama_fakultas: "",
         nama_fakultas_2: "",
 
+        kode_pr: "",
+        kode_jr: "",
+        kode_fk: "",
+
 
         setType(val) {
             this.typeModal = val;
@@ -163,7 +167,10 @@ document.addEventListener("alpine:init", () => {
             idJurusan,
             namaJurusan,
             idFakultas,
-            namaFakultas
+            namaFakultas,
+            kodePr,
+            kodeJr,
+            kodeFk
         ) {
             this.nama_prodi = namaProdi;
             this.nama_strata = strata;
@@ -171,6 +178,10 @@ document.addEventListener("alpine:init", () => {
             this.nama_jurusan = namaJurusan;
             this.fakultas_id = idFakultas;
             this.nama_fakultas = namaFakultas;
+
+            this.kode_pr = kodePr,
+            this.kode_jr = kodeJr,
+            this.kode_fk = kodeFk
         },
 
         setDeleteUser(val) {
@@ -188,6 +199,16 @@ document.addEventListener("alpine:init", () => {
             this.typeModal_2 = type;
         },
 
+        resetSelect() {
+            this.status = "";
+            this.nama_strata = "";
+            this.prodi_id = "";
+            this.nama_prodi = "";
+            this.jurusan_id = "";
+            this.nama_jurusan = "";
+            this.fakultas_id = "";
+            this.nama_fakultas = "";
+        },
 
         reset() {
             this.typeModal = "";
@@ -218,6 +239,10 @@ document.addEventListener("alpine:init", () => {
             this.fakultas_id = "";
             this.nama_fakultas = "";
             this.nama_fakultas_2 = "";
+
+            this.kode_pr = "",
+            this.kode_jr = "",
+            this.kode_fk = ""
         },
     });
 });

@@ -77,7 +77,6 @@
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
-            'isRequired' => 0,
         ])
 
     </div>

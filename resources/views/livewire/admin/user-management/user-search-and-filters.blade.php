@@ -3,7 +3,7 @@
 
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.admin.global.search-and-filters.filter-mode', [
-            'typeOfXString' => 'pengguna',
+            'typeOfXString' => 'Pengguna',
             'totalTab' => $totalUsers,
             'totalTab1' => $totalAdmins,
             'totalTab2' => $totalDosens,
@@ -56,5 +56,48 @@
                 <i class="fas fa-sync-alt mr-1"></i> Reset
             </button>
         </div> --}}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.admin.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputJurusanFilter',
+                'xSearchResultsString' => 'jurusanSearchResults',
+                'selectedXNameString' => 'selectedJurusanName',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan Jurusan...',
+                'xSearchQueryString' => 'jurusanSearchQuery',
+                'selectedXId' => $selectedJurusanId,
+                'selectedXName' => $selectedJurusanName,
+                'resetXFilter' => 'resetJurusanFilter()',
+                'xSearchQuery' => $jurusanSearchQuery,
+                'xSearchResults' => $jurusanSearchResults,
+                'selectXForFilterString' => 'selectJurusanForFilter',
+                'typeOfXString' => 'jurusan',
+                'unfoundString' => 'Tidak ada Jurusan ditemukan!',
+                'xColor' => 'text-gray-700',
+            ])
+        </div>
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.admin.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputFakultasFilter',
+                'xSearchResultsString' => 'fakultasSearchResults',
+                'selectedXNameString' => 'selectedFakultasName',
+                'iconString' => 'building-library',
+                'placeholderString' => 'Filter berdasarkan Fakultas...',
+                'xSearchQueryString' => 'fakultasSearchQuery',
+                'selectedXId' => $selectedFakultasId,
+                'selectedXName' => $selectedFakultasName,
+                'resetXFilter' => 'resetFakultasFilter()',
+                'xSearchQuery' => $fakultasSearchQuery,
+                'xSearchResults' => $fakultasSearchResults,
+                'selectXForFilterString' => 'selectFakultasForFilter',
+                'typeOfXString' => 'fakultas',
+                'unfoundString' => 'Tidak ada Fakultas ditemukan!',
+                'xColor' => 'text-gray-700',
+            ])
+        </div>
     </div>
 </div>

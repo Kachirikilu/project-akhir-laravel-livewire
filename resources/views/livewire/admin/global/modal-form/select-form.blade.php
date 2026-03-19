@@ -1,7 +1,7 @@
 <div class="relative"
     x-data="{
         open: false,
-        value: @entangle($modelString)
+        value: $store.config?.{{ $modelString }}
     }"
     x-effect="
         if ($store.config?.isEdit === 0) {
@@ -34,6 +34,7 @@
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
             'xShow'   => 'value',
             'xClick' => "value = ''",
+            'xAlpine' => $modelString
             // 'xColor' => $colorIcon
         ])
     </div>

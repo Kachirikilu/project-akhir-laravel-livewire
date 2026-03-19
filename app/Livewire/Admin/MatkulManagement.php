@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Livewire\Admin;
+
+use App\Livewire\Admin\GlobalManagement\WithProdiSearchFilters;
+use App\Livewire\Admin\GlobalManagement\WithJurusanSearchFilters;
+use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
+
+// use App\Livewire\Admin\MatkulManagement\WithJurusanSearchFilters;
+// use App\Livewire\Admin\MatkulManagement\WithFakultasSearchFilters;
+// use App\Livewire\Admin\MatkulManagement\WithProdiDelete;
+
+use App\Livewire\Admin\MatkulManagement\WithMataKuliahFilters;
+
+// use App\Livewire\Admin\MatkulManagement\WithProdiModal;
+
+use App\Models\Prodi;
+use App\Models\Jurusan;
+use App\Models\Fakultas;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class MatkulManagement extends Component
+{
+    use WithProdiSearchFilters;
+    use WithJurusanSearchFilters;
+    use WithFakultasSearchFilters;
+
+    use WithMataKuliahFilters;
+
+    // use WithProdiModal;
+    // use WithProdiDelete;
+
+    use WithPagination;
+
+    public $showModal = false;
+
+    public $perPage = 8;
+
+    public $switchTable = 'matkuls';
+
+    protected $paginationTheme = 'tailwind';
+
+    public $selectedMatkulName = '';
+
+    protected $listeners = ['refresh-table' => 'refreshMatkulsList',
+        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'perPage' => ['except' => 8],
+        'filter' => ['except' => ''],
+        'selectedMatkulName' => ['except' => ''],
+        'switchTable' => ['except' => 'matkuls'],
+        'sortField' => ['except' => 'nama_matkul'],
+        'sortDirection' => ['except' => 'asc'],
+
+        'selectedProdiId' => ['except' => null],
+        'selectedJurusanId' => ['except' => null],
+        'selectedFakultasId' => ['except' => null]
+    ];
+
+    private function syncSortField($table)
+    {
+        // if ($this->sortField != 'id' && $this->sortField != 'kode') {
+        //     if ($table === 'prodi') {
+        //         $this->sortField = 'prodi';
+        //     } elseif ($table === 'jurusan') {
+        //         $this->sortField = 'jurusan';
+        //     } elseif ($table === 'fakultas') {
+        //         $this->sortField = 'fakultas';
+        //     }
+        // }
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function refreshMatkulsList()
+    {
+        $this->resetPage();
+    }
+
+    public function switchingTable($table)
+    {
+        $this->switchTable = $table;
+        // $this->syncSortField($table);
+
+        // if ($table == 'jurusan' && $this->perPage > 50) {
+        //     $this->perPage = 50;
+        // }
+        // if ($table == 'fakultas' && $this->perPage > 10) {
+        //     $this->perPage = 10;
+        // }
+
+        $this->resetPage();
+    }
+
+    public function buttonMKFilter($query)
+    {
+        if ($this->filter === 'wajib') {
+            $query->where('is_wajib', true);
+        } elseif ($this->filter === 'pilihan') {
+            $query->where('is_wajib', false);
+        } elseif ($this->filter === 'universal') {
+            $query->where('tingkatan_mk', 5);
+        }
+    }
+
+    // public function render()
+    // {
+    //     $baseQuery = $this->inputMainSearch();
+    //     $query = clone $baseQuery;
+    //     $this->buttonMKFilter($query);
+
+    //     if ($this->switchTable === 'matkuls') {
+    //         $matkuls = $query->paginate($this->perPage);
+    //     } elseif ($this->switchTable === 'tatap_muka') {
+
+    //     } elseif ($this->switchTable === 'praktikum') {
+
+    //     } elseif ($this->switchTable === 'praktek_lapangan') {
+
+    //     } elseif ($this->switchTable === 'simulasi') {
+
+    //     }
+
+    //     return view('livewire.admin.matkul-management', [
+    //         'matkuls' => $matkuls,
+    //         'totalMatkuls' => (clone $baseQuery)->count(),
+    //         'totalWajib' => (clone $baseQuery)->where('is_wajib', true)->count(),
+    //         'totalPilihan' => (clone $baseQuery)->where('is_wajib', false)->count(),
+    //         'totalUni' => (clone $baseQuery)->where('tingkatan_mk', 5)->count(),
+    //     ]);
+    // }
+
+    public function render()
+    {
+        $this->inputProdiFilter();
+        $this->inputJurusanFilter();
+        $this->inputFakultasFilter();
+
+        $query = $this->inputMainSearch();
+
+        if ($this->switchTable === 'tatap_muka') {
+            $query->where('tipe_sks', 1);
+        } elseif ($this->switchTable === 'praktikum') {
+            $query->where('tipe_sks', 2);
+        } elseif ($this->switchTable === 'praktek_lapangan') {
+            $query->where('tipe_sks', 3);
+        } elseif ($this->switchTable === 'simulasi') {
+            $query->where('tipe_sks', 4);
+        }
+
+        $totalMatkuls = (clone $query)->count();
+        $totalWajib = (clone $query)->where('is_wajib', true)->count();
+        $totalPilihan = (clone $query)->where('is_wajib', false)->count();
+        $totalUni = (clone $query)->where('tingkatan_mk', 5)->count();
+
+        $globalQuery = $this->inputMainSearch();
+        $totalTatapMuka = (clone $globalQuery)->where('tipe_sks', 1)->count();
+        $totalPraktikum = (clone $globalQuery)->where('tipe_sks', 2)->count();
+        $totalPraktekLapangan = (clone $globalQuery)->where('tipe_sks', 3)->count();
+        $totalSimulasi = (clone $globalQuery)->where('tipe_sks', 4)->count();
+        $totalSemuaMK = (clone $globalQuery)->count();
+
+        $this->buttonMKFilter($query);
+
+        return view('livewire.admin.matkul-management', [
+            'matkuls' => $query->paginate($this->perPage),
+            'totalMatkuls' => $totalMatkuls,
+            'totalWajib' => $totalWajib,
+            'totalPilihan' => $totalPilihan,
+            'totalUni' => $totalUni,
+
+            'totalSemuaMK' => $totalSemuaMK,
+            'totalTatapMuka' => $totalTatapMuka,
+            'totalPraktikum' => $totalPraktikum,
+            'totalPraktekLapangan' => $totalPraktekLapangan,
+            'totalSimulasi' => $totalSimulasi,
+        ]);
+    }
+}

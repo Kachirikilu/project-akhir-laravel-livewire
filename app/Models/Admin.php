@@ -34,7 +34,7 @@ class Admin extends Model
     {
         static::saving(function ($admin) {
             if ($admin->nip && \DB::table('dosens')->where('nip', $admin->nip)->exists()) {
-                throw new \Exception("NIP ini sudah terdaftar sebagai Dosen.");
+                throw new \Exception("NIP ini sudah terdaftar sebagai Dosen!");
             }
         });
     }

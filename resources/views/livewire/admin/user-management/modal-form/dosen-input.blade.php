@@ -13,7 +13,7 @@
             'iconString' => 'user-circle',
             'placeholder' => 'Masukkan Nama Lengkap',
             'message' => $errors->first('name'),
-            'isRequired' => 1,
+            'isRequired' => 1
         ])
 
         @include('livewire.admin.global.modal-form.input-form', [
@@ -25,7 +25,7 @@
             'iconString' => 'identification',
             'placeholder' => 'Masukkan NIP',
             'message' => $errors->first('nip'),
-            'isRequired' => 1,
+            'isRequired' => 1
         ])
         @include('livewire.admin.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
@@ -36,7 +36,7 @@
             'iconString' => 'identification',
             'placeholder' => 'Masukkan NIDN',
             'message' => $errors->first('nidn'),
-            'isRequired' => 0,
+            'isRequired' => 0
         ])
         @include('livewire.admin.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
@@ -47,7 +47,7 @@
             'iconString' => 'identification',
             'placeholder' => 'Masukkan NIDK',
             'message' => $errors->first('nidk'),
-            'isRequired' => 0,
+            'isRequired' => 0
         ])
 
         {{-- @include('livewire.admin.user-management.modal-form.partial.prodi-input-form') --}}
@@ -86,7 +86,7 @@
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
-            'isRequired' => 0,
+            'isRequired' => 0
         ])
 
     </div>

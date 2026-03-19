@@ -1,22 +1,48 @@
 <div class="relative"
-    x-data="{
-        open: false,
-        search: @entangle($nameSearchString),
-        selectedId: @entangle($idString).live
-    }"
-    x-effect="
+x-data="{
+    open: false,
+    search: @entangle($nameSearchString).live,
+    selectedId: @entangle($idString).live,
+    isManual: false
+}"
+{{-- x-init="
+    $watch('$store.config.{{ $idString }}', value => {
+            if ($store.config?.isEdit === 0) {
+                search = '';
+                selectedId = null;
+            } else if (!isManual) {
+                selectedId = value;
+
+                if('{{ $typeXString }}' == 'prodi') {
+                    search = $store.config?.{{ $modelString }};
+                } else {
+                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                }
+            }
+    })
+" --}}
+x-effect="
         if ($store.config?.isEdit === 0) {
             search = '';
             selectedId = null;
         } else {
-            if('{{$typeXString}}' == 'prodi') {
-                search = $store.config?.{{ $modelString }};
+            selectedId2 = $store.config?.{{ $idString }};
+            {{-- search = $store.config?.{{ $modelString }}; --}}
+            {{-- isManual = true; --}}
+
+            if (selectedId2 == '') {
+                search = '';
+                selectedId = null;
             } else {
-                search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                if('{{$typeXString}}' == 'prodi') {
+                    search = $store.config?.{{ $modelString }};
+                } else {
+                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                }
+                selectedId = $store.config?.['{{ $idString }}'];
             }
-            selectedId = $store.config?.['{{ $idString }}'];
         }
-    "
+"
     wire:key="search-input-form-{{ $typeXString }}"
 >
     <label for="{{ $searchString }}" class="block text-sm font-medium text-gray-700">
@@ -45,10 +71,12 @@
 
         {{-- Tombol Reset --}}
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
-            'xShow'   => 'search || selectedId',
+            'xShow'   => 'search',
             'xClick' => "search = ''; selectedId = null",
             'xWire'   => $resetXInput,
             'xWire2'  => $fetchString . "()",
+            'xAlpine' => $idString,
+            // 'xLivewire' => $resetXInput
             // 'xColor' => $colorIcon
         ])
     </div>
@@ -66,13 +94,20 @@
 
         @forelse ($xResults as $x)
             <div wire:key="{{ $x[$typeXString] }}-{{ $x['id'] }}"
-                @click="
-                    search = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}'; 
-                    selectedId = {{ $x['id'] }}; 
-                    $store.config['{{ $idString }}'] = selectedId;
-                    open = false; 
-                    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
-                "
+@click="
+    let newSearch = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}';
+
+    search = newSearch;
+    selectedId = {{ $x['id'] }};
+    isManual = true;
+
+    $store.config['{{ $idString }}'] = selectedId;
+    $store.config.{{ $modelString }} = '{{ $x[$typeXString] }}';
+
+    open = false;
+
+    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
+"
                 class="px-4 py-3 cursor-pointer hover:bg-indigo-50 transition duration-150 border-b border-gray-50 last:border-none">
 
                 <div class="flex justify-between items-center">

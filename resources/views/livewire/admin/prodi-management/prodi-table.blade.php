@@ -3,10 +3,11 @@
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'isCenter' => 1])
+        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'kode'])
 
         @if ($switchTable === 'prodi')
             {{-- Prodi - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi'])
         @endif
 
         @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
@@ -30,6 +31,8 @@
             data-{{ $switchTable }}-id="{{ $x->id }}">
             <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">{{ $x->id }}</td>
 
+            <td class="px-6 py-4 text-sm text-gray-700">{{ $x->kode_text ?? $x->kode ?? '-' }}</td>
+
             @if ($switchTable === 'prodi')
                 <td class="px-6 py-4 text-sm text-gray-700">{{ $x->prodi ?? '-' }}</td>
             @endif
@@ -38,7 +41,7 @@
                 <td class="px-6 py-4 text-sm text-gray-700">{{ $x->jurusan ?? '-' }}</td>
             @endif
 
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $x->fakultas ?? '-' }}</td>
+            <td class="px-6 py-4 text-sm text-gray-700">{{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
                 <td class="px-6 py-4 text-center text-sm text-gray-700">

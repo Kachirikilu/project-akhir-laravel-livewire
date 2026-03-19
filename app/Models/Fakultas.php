@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Fakultas extends Model
 {
-    protected $fillable = ['nama_fakultas'];
+    protected $fillable = ['nama_fakultas', 'kode_fk'];
+    protected $appends = ['fakultas', 'kode'];
 
     public function jurusans(): HasMany 
     {
@@ -19,6 +20,10 @@ class Fakultas extends Model
     public function prodis(): HasManyThrough
     {
         return $this->hasManyThrough(Prodi::class, Jurusan::class);
+    }
+
+    protected function kode(): Attribute {
+        return Attribute::get(fn() => $this->kode_fk);
     }
 
     protected function fakultas(): Attribute {

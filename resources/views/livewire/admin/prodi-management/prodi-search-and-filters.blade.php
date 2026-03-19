@@ -9,7 +9,7 @@
         class="flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.admin.global.search-and-filters.filter-mode', [
-            'typeOfXString' => 'strata',
+            'typeOfXString' => 'Strata',
             'totalTab' => $totalProdis,
             'totalTab1' => $totalSarjanas,
             'totalTab2' => $totalMagisters,

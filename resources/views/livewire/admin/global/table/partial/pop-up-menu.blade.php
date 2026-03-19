@@ -1,14 +1,15 @@
 <flux:menu>
-    @if (Auth::user()?->admin)
-        @php
-            $typeParam = isset($typeXString) ? ", '$typeXString'" : '';
-            $editCall = "{$editString}({$x->id}{$typeParam})";
-            $deleteCall = "{$confirmDeleteString}({$x->id}{$typeParam})";
-        @endphp
+    @if (Auth::user()?->admin) @php
+        $typeParam = isset($typeXString) ? ", '$typeXString'" : '';
+        $editCall = "{$editString}({$x->id}{$typeParam})";
+        $deleteCall = "{$confirmDeleteString}({$x->id}{$typeParam})";
+    @endphp
 
         {{-- Tombol Edit --}}
         <flux:menu.item
             @click="
+                $store.config?.resetSelect()
+
                 const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}';
                 const editMode = '{{ $editString }}'
 
@@ -48,11 +49,14 @@
                         '{{ $x->jurusan_id ?? '' }}',
                         '{{ $x->jurusan ?? '' }}',
                         '{{ $x->fakultas_id ?? '' }}',
-                        '{{ $x->fakultas ?? '' }}'
+                        '{{ $x->fakultas ?? '' }}',
+                        '{{ $x->kode ?? '' }}',
+                        '{{ $x->kode ?? '' }}',
+                        '{{ $x->kode ?? '' }}'
                     );
                     $flux.modal('prodi-modal').show();
                 }
-            " 
+            "
             wire:click="{{ $editCall }}" class="!text-yellow-600 hover:!bg-yellow-100">
             <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
 
@@ -99,4 +103,5 @@
         @endif {{-- Ini penutup @if logika hapus --}}
 
     @endif {{-- Ini penutup @if Auth admin --}}
+
 </flux:menu>

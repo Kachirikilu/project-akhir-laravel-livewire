@@ -5,12 +5,17 @@
         id="count-all">{{ $tabFilter }}</span>)
 </button> --}}
 <button @click="activeTab = '{{ $tabString }}'; $wire.{{ $xString }}('{{ $tabString }}')"
-    :class="activeTab == '{{ $tabString }}' ?
-        'border-indigo-500 text-indigo-700' :
-        'border-transparent text-gray-500 hover:text-indigo-700'"
-    class="cursor-pointer tab-mode px-2 py-2 text-sm font-medium rounded-t-lg transition duration-150 border-b-2 whitespace-nowrap">
+    class="relative cursor-pointer tab-mode px-2 py-2 text-sm font-medium rounded-t-lg transition duration-300 whitespace-nowrap group"
+    :class="activeTab === '{{ $tabString }}' ? 'text-indigo-700' : 'text-gray-500 hover:text-indigo-700'">
 
-    <i class="fas fa-users mr-2"></i>
-    {{ $tabNameString }}
-    (<span>{{ $tabFilter }}</span>)
+    <div class="flex items-center">
+        <i class="fas fa-users mr-2"></i>
+        {{ $tabNameString }}
+        <span class="ml-1">({{ $tabFilter }})</span>
+    </div>
+
+    <span 
+        class="absolute bottom-0 left-0 h-0.5 bg-indigo-500 transition-all duration-300 ease-in-out transform origin-left"
+        :class="activeTab === '{{ $tabString }}' ? 'w-full scale-x-100' : 'w-full scale-x-0 group-hover:scale-x-100'"
+    ></span>
 </button>

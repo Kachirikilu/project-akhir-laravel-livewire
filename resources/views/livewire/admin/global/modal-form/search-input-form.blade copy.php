@@ -1,32 +1,64 @@
-<div class="relative"
-    x-data="{
-        open: false,
-        search: @entangle($nameSearchString),
-        selectedId: @entangle($idString).live
-    }"
-    x-effect="
-        if ($store.config?.isEdit === 0) {
+<div class="relative" x-data="{
+    open: false,
+    search: @entangle($nameSearchString),
+    selectedId: @entangle($idString).live,
+    isManual: false
+}"
+x-init="
+    $watch('$store.config.{{ $idString }}', value => {
+        if (!isManual) {
+            if (!value) {
+                search = '';
+                selectedId = null;
+            } else {
+                selectedId = value;
+
+                if('{{ $typeXString }}' == 'prodi') {
+                    search = $store.config?.{{ $modelString }};
+                } else {
+                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                }
+            }
+        }
+    })
+"
+{{-- x-effect="
+    if ($store.config?.isEdit === 0) {
+        search = '';
+        selectedId = null;
+        isManual = false;
+    } else if (!isManual) {
+
+        let newId = $store.config?.['{{ $idString }}'];
+
+        if (!newId) {
             search = '';
             selectedId = null;
         } else {
-            if('{{$typeXString}}' == 'prodi') {
-                search = $store.config?.{{ $modelString }};
-            } else {
-                search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
-            }
-            selectedId = $store.config?.{{ $idString }};
+            // paksa re-render walaupun sama
+            search = '';
+            selectedId = null;
+
+            setTimeout(() => {
+                selectedId = newId;
+
+                if('{{ $typeXString }}' == 'prodi') {
+                    search = $store.config?.{{ $modelString }};
+                } else {
+                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                }
+            }, 0);
         }
-    "
-    wire:key="search-input-form-{{ $typeXString }}"
->
+    }
+" --}}
+    wire:key="search-input-form-{{ $typeXString }}-{{ $selected_id ?? 'new' }}">
     <label for="{{ $searchString }}" class="block text-sm font-medium text-gray-700">
         {{ $nameXString }} <span class="text-red-500">*</span>
     </label>
 
     <div class="relative mt-2">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon"
- />
+            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon" />
         </div>
 
         <input x-model="search" autocomplete="off" type="text"
@@ -45,10 +77,10 @@
 
         {{-- Tombol Reset --}}
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
-            'xShow'   => 'search || selectedId',
+            'xShow' => 'search',
             'xClick' => "search = ''; selectedId = null",
-            'xWire'   => $resetXInput,
-            'xWire2'  => $fetchString . "()",
+            'xWire' => $resetXInput,
+            'xWire2' => $fetchString . '()',
             // 'xColor' => $colorIcon
         ])
     </div>
@@ -67,11 +99,18 @@
         @forelse ($xResults as $x)
             <div wire:key="{{ $x[$typeXString] }}-{{ $x['id'] }}"
                 @click="
-                    search = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}'; 
-                    selectedId = {{ $x['id'] }}; 
-                    open = false; 
-                    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
-                "
+    let newSearch = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}';
+
+    search = newSearch;
+    selectedId = {{ $x['id'] }};
+    isManual = true;
+
+    $store.config['{{ $idString }}'] = selectedId;
+
+    open = false;
+
+    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
+"
                 class="px-4 py-3 cursor-pointer hover:bg-indigo-50 transition duration-150 border-b border-gray-50 last:border-none">
 
                 <div class="flex justify-between items-center">

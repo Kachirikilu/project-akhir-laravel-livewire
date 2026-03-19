@@ -4,7 +4,7 @@
 
         {{-- @if ($xType === 'file') --}}
         <template x-if="$store.config?.typeModal == 'file'" x-cloak>
-            <flux:button type="submit" variant="primary"
+            <flux:button @click="$store.config?.reset()" type="submit" variant="primary"
                 wire:loading.attr="disabled" wire:target="excel_file, parseExcelFile, processImport, saveAllRows, saveUserInternal"
                 class="cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 border-none">
                 <span wire:loading.remove wire:target="saveAllRows">

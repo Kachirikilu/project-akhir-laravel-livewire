@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\Prodi;
 use App\Models\User;
+
+// use App\Models\Prodi;
+// use App\Models\Jurusan;
+// use App\Models\Fakultas;
+
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithUserFilters
@@ -86,13 +91,56 @@ trait WithUserFilters
                 if (str_contains($searchLower, 'mahasiswa')) {
                     $q->orWhereHas('mahasiswa');
                 }
+
                 // search ID user
                 if (is_numeric($this->search)) {
                     $q->orWhere('users.id', $this->search);
                 }
-
             });
         }
+
+        if ($this->selectedProdiId) {
+            $query->where(function ($q) {
+                $q->whereHas('admin', function ($r) {
+                    $r->where('prodi_id', $this->selectedProdiId);
+                })
+                    ->orWhereHas('dosen', function ($r) {
+                        $r->where('prodi_id', $this->selectedProdiId);
+                    })
+                    ->orWhereHas('mahasiswa', function ($r) {
+                        $r->where('prodi_id', $this->selectedProdiId);
+                    });
+            });
+        }
+
+        if ($this->selectedJurusanId) {
+            $query->where(function ($q) {
+                $q->whereHas('admin.prodi', function ($r) {
+                    $r->where('jurusan_id', $this->selectedJurusanId);
+                })
+                    ->orWhereHas('dosen.prodi', function ($r) {
+                        $r->where('jurusan_id', $this->selectedJurusanId);
+                    })
+                    ->orWhereHas('mahasiswa.prodi', function ($r) {
+                        $r->where('jurusan_id', $this->selectedJurusanId);
+                    });
+            });
+        }
+
+        if ($this->selectedFakultasId) {
+            $query->where(function ($q) {
+                $q->whereHas('admin.prodi.jurusan_rel', function ($r) {
+                    $r->where('fakultas_id', $this->selectedFakultasId);
+                })
+                    ->orWhereHas('dosen.prodi.jurusan_rel', function ($r) {
+                        $r->where('fakultas_id', $this->selectedFakultasId);
+                    })
+                    ->orWhereHas('mahasiswa.prodi.jurusan_rel', function ($r) {
+                        $r->where('fakultas_id', $this->selectedFakultasId);
+                    });
+            });
+        }
+
         $this->sortFieldOrder($query);
 
         return $query;
@@ -104,33 +152,129 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function buttonRoleFilter($query)
-    {
-        $query->when($this->selectedProdiId, function ($q) {
-            $q->where(function ($subQ) {
-                $subQ->whereHas('admin', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
-                    ->orWhereHas('dosen', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
-                    ->orWhereHas('mahasiswa', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId));
-            });
-        });
+    // public function buttonRoleFilter($query)
+    // {
+    //     $query->when($this->selectedProdiId, function ($q) {
+    //         $q->where(function ($subQ) {
+    //             $subQ->whereHas('admin', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('dosen', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('mahasiswa', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId));
+    //         });
+    //     });
 
-        $countQueryBase = clone $query;
+    //     $countQueryBase = clone $query;
 
-        if ($this->filter === 'admin') {
-            $query->whereHas('admin');
-        } elseif ($this->filter === 'dosen') {
-            $query->whereHas('dosen');
-        } elseif ($this->filter === 'mahasiswa') {
-            $query->whereHas('mahasiswa');
-        }
+    //     if ($this->filter === 'admin') {
+    //         $query->whereHas('admin');
+    //     } elseif ($this->filter === 'dosen') {
+    //         $query->whereHas('dosen');
+    //     } elseif ($this->filter === 'mahasiswa') {
+    //         $query->whereHas('mahasiswa');
+    //     }
 
-        $totalUsers = $countQueryBase->count();
-        $totalAdmins = (clone $countQueryBase)->whereHas('admin')->count();
-        $totalDosens = (clone $countQueryBase)->whereHas('dosen')->count();
-        $totalMahasiswas = (clone $countQueryBase)->whereHas('mahasiswa')->count();
+    //     $totalUsers = $countQueryBase->count();
+    //     $totalAdmins = (clone $countQueryBase)->whereHas('admin')->count();
+    //     $totalDosens = (clone $countQueryBase)->whereHas('dosen')->count();
+    //     $totalMahasiswas = (clone $countQueryBase)->whereHas('mahasiswa')->count();
 
-        return [$totalUsers, $totalAdmins, $totalDosens, $totalMahasiswas];
-    }
+    //     return [$totalUsers, $totalAdmins, $totalDosens, $totalMahasiswas];
+    // }
+
+    // public function buttonRoleFilter($query)
+    // {
+    //     // Filter berdasarkan Prodi jika dipilih (tetap di query utama)
+    //     $query->when($this->selectedProdiId, function ($q) {
+    //         $q->where(function ($subQ) {
+    //             $subQ->whereHas('admin', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('dosen', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('mahasiswa', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId));
+    //         });
+    //     });
+
+    //     // 1. Ambil Statistik secara terpisah agar tidak bentrok dengan users.*
+    //     $stats = User::query()
+    //         ->when($this->selectedProdiId, function ($q) {
+    //             $q->whereExists(function ($sub) {
+    //                 $sub->select(DB::raw(1))
+    //                     ->from('admins')
+    //                     ->whereColumn('admins.user_id', 'users.id')
+    //                     ->where('prodi_id', $this->selectedProdiId);
+    //             })->orWhereExists(function ($sub) {
+    //                 $sub->select(DB::raw(1))
+    //                     ->from('dosens')
+    //                     ->whereColumn('dosens.user_id', 'users.id')
+    //                     ->where('prodi_id', $this->selectedProdiId);
+    //             })->orWhereExists(function ($sub) {
+    //                 $sub->select(DB::raw(1))
+    //                     ->from('mahasiswas')
+    //                     ->whereColumn('mahasiswas.user_id', 'users.id')
+    //                     ->where('prodi_id', $this->selectedProdiId);
+    //             });
+    //         })
+    //         ->selectRaw('
+    //         COUNT(*) as total,
+    //         SUM(EXISTS (SELECT 1 FROM admins WHERE admins.user_id = users.id)) as admins,
+    //         SUM(EXISTS (SELECT 1 FROM dosens WHERE dosens.user_id = users.id)) as dosens,
+    //         SUM(EXISTS (SELECT 1 FROM mahasiswas WHERE mahasiswas.user_id = users.id)) as mahasiswas
+    //     ')->first();
+
+    //     // 2. Terapkan filter role untuk hasil tabel UTAMA
+    //     if ($this->filter === 'admin') {
+    //         $query->whereHas('admin');
+    //     } elseif ($this->filter === 'dosen') {
+    //         $query->whereHas('dosen');
+    //     } elseif ($this->filter === 'mahasiswa') {
+    //         $query->whereHas('mahasiswa');
+    //     }
+
+    //     return [
+    //         $stats->total ?? 0,
+    //         $stats->admins ?? 0,
+    //         $stats->dosens ?? 0,
+    //         $stats->mahasiswas ?? 0,
+    //     ];
+    // }
+
+    // public function buttonRoleFilter($query)
+    // {
+    //     $query->when($this->selectedProdiId, function ($q) {
+    //         $q->where(function ($subQ) {
+    //             $subQ->whereHas('admin', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('dosen', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId))
+    //                 ->orWhereHas('mahasiswa', fn ($rel) => $rel->where('prodi_id', $this->selectedProdiId));
+    //         });
+    //     });
+
+    //     $stats = User::query()
+    //         ->when($this->selectedProdiId, function ($q) {
+    //             $q->where(function ($sub) {
+    //                 $sub->whereHas('admin', fn ($r) => $r->where('prodi_id', $this->selectedProdiId))
+    //                     ->orWhereHas('dosen', fn ($r) => $r->where('prodi_id', $this->selectedProdiId))
+    //                     ->orWhereHas('mahasiswa', fn ($r) => $r->where('prodi_id', $this->selectedProdiId));
+    //             });
+    //         })
+    //         ->selectRaw('
+    //         COUNT(*) as total,
+    //         SUM(CASE WHEN EXISTS (SELECT 1 FROM admins WHERE admins.user_id = users.id) THEN 1 ELSE 0 END) as admins,
+    //         SUM(CASE WHEN EXISTS (SELECT 1 FROM dosens WHERE dosens.user_id = users.id) THEN 1 ELSE 0 END) as dosens,
+    //         SUM(CASE WHEN EXISTS (SELECT 1 FROM mahasiswas WHERE mahasiswas.user_id = users.id) THEN 1 ELSE 0 END) as mahasiswas
+    //     ')->first();
+
+    //     if ($this->filter === 'admin') {
+    //         $query->whereHas('admin');
+    //     } elseif ($this->filter === 'dosen') {
+    //         $query->whereHas('dosen');
+    //     } elseif ($this->filter === 'mahasiswa') {
+    //         $query->whereHas('mahasiswa');
+    //     }
+
+    //     return [
+    //         $stats->total ?? 0,
+    //         $stats->admins ?? 0,
+    //         $stats->dosens ?? 0,
+    //         $stats->mahasiswas ?? 0,
+    //     ];
+    // }
 
     public function resetInputFilter()
     {
@@ -222,20 +366,6 @@ trait WithUserFilters
         } else {
             $field = $this->sortField === 'id' ? 'users.id' : $this->sortField;
             $query->orderBy($field, $this->sortDirection);
-        }
-
-        if ($this->filter != '' && $this->sortField == 'role') {
-            $this->sortField = 'name';
-        } elseif ($this->filter != 'mahasiswa' && $this->sortField == 'tahun_angkatan') {
-            $this->sortField = 'name';
-        } elseif ($this->filter == 'mahasiswa' && $this->sortField == 'identity2') {
-            $this->sortField = 'identity1';
-        } elseif ($this->filter != 'dosen' && $this->sortField == 'identity3') {
-            if ($this->filter == 'mahasiswa') {
-                $this->sortField = 'identity1';
-            } elseif ($this->filter == 'dosen') {
-                $this->sortField = 'identity2';
-            }
         }
 
         return $query;

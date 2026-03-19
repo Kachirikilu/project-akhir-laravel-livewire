@@ -24,6 +24,6 @@ class IsDosen
             }
         }
 
-        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Dosen.');
+        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Dosen!');
     }
 }

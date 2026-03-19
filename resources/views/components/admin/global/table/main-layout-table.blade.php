@@ -7,11 +7,11 @@
                 <tr class="bg-gray-50">
                     {{ $header }}
                 </tr>
-            </thead>
-            {{-- Body Table --}}
+            
+                    {{-- Body Table --}}
             <tbody 
             {{-- wire:loading.class="opacity-50"  --}}
-                wire:loading.class="opacity-50 pointer-events-none transition-opacity duration-200"
+                wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
                 filterBy,
                 saveAllRows, processImport, saveUserInternal,
@@ -22,8 +22,8 @@
             </tbody>
         </table>
 
-        {{-- FOOTER --}}
-        {{ $footer }}
 
     </div>
+    {{-- FOOTER --}}
+    {{ $footer }}
 </div>

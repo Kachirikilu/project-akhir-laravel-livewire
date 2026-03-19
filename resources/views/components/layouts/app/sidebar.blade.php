@@ -16,19 +16,20 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                     <flux:navlist.item icon="user" :href="route('user-management')" :current="request()->routeIs('user-management')" wire:navigate>{{ __('User Management') }}</flux:navlist.item>
                     <flux:navlist.item icon="academic-cap" :href="route('prodi-management')" :current="request()->routeIs('prodi-management')" wire:navigate>{{ __('Study Program') }}</flux:navlist.item>
+                    <flux:navlist.item icon="rectangle-stack" :href="route('matkul-management')" :current="request()->routeIs('matkul-management')" wire:navigate>{{ __('Mata Kuliah') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
+                {{-- <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
                 {{ __('Documentation') }}
-                </flux:navlist.item>
+                </flux:navlist.item> --}}
             </flux:navlist>
 
             <!-- Desktop User Menu -->

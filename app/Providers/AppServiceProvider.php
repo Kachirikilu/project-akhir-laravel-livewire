@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $router = $this->app->make(\Illuminate\Routing\Router::class);
         $router->aliasMiddleware('is_admin', \App\Http\Middleware\IsAdmin::class);
         $router->aliasMiddleware('is_dosen', \App\Http\Middleware\IsDosen::class);
+        $router->aliasMiddleware('is_staff', \App\Http\Middleware\IsStaff::class);
         $router->aliasMiddleware('is_mahasiswa', \App\Http\Middleware\IsMahasiswa::class);
     }
 }

@@ -24,6 +24,6 @@ class IsMahasiswa
             }
         }
 
-        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Mahasiswa.');
+        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Mahasiswa!');
     }
 }

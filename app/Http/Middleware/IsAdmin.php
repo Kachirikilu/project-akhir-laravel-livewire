@@ -24,6 +24,6 @@ class IsAdmin
             }
         }
         
-        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Admin.');
+        return redirect('/')->with('error', 'Anda tidak memiliki akses sebagai Admin!');
     }
 }

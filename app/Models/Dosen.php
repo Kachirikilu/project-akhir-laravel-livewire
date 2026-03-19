@@ -40,7 +40,7 @@ class Dosen extends Model
                     ->exists();
 
                 if ($exists) {
-                    throw new \Exception("NIP {$dosen->nip} sudah digunakan oleh Admin.");
+                    throw new \Exception("NIP {$dosen->nip} sudah digunakan oleh Admin!");
                 }
             }
         });

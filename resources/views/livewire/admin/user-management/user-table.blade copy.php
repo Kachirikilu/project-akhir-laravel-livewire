@@ -2,17 +2,17 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'isCenter' => 1, 'isBorderX' => 1])
 
         {{-- Role - Sorting A-Z --}}
         @if ($filter == '')
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role'])
         @else
-            <th class="px-6 py-3  text-sm text-xs font-medium text-gray-500 uppercase">Role</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
         @endif
 
         {{-- Name - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name'])
+        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name', 'isBorderX' => 1])
 
         {{-- NIP/NIM Dinamis --}}
         @include('livewire.admin.global.table.head-table', [
@@ -41,7 +41,7 @@
 
         {{-- Angkatan - Autocomplete Input --}}
         @if ($filter == 'mahasiswa')
-            <th class="px-6 py-3 text-sm">
+            <th class="px-6 py-3 text-left">
                 <div class="flex flex-col gap-1 items-center">
 
                     @include('livewire.admin.global.table.head-table', [
@@ -76,9 +76,8 @@
 
         {{-- Prodi - Sorting A-Z --}}
         @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
-
-        <th class="px-6 py-3  text-sm text-xs font-medium text-gray-500 uppercase">Status</th>
-        <th class="px-6 py-3  text-sm text-xs font-medium text-gray-500 uppercase">Aksi</th>
+        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'isCenter' => 1])
+        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
 
 
@@ -88,23 +87,23 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
-            <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">{{ $user->id }}</td>
+            <td class="px-6 py-4 border-l border-r border-gray-300 bg-gray-100/30 text-center text-sm font-medium text-gray-900">{{ $user->id }}</td>
             {{-- Role --}}
-            <td class="px-6 py-4 text-sm">
+            <td class="px-6 py-4 text-sm text-gray-700">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
                         @switch($user->role)
                             @case('Admin')
-                                <flux:badge icon="cog-6-tooth" color="red" size="sm">{{ $user->role }}</flux:badge>
+                                <flux:badge icon="cog-6-tooth" color="red" size="sm">Admin</flux:badge>
                             @break
 
                             @case('Dosen')
-                                <flux:badge icon="briefcase" color="lime" size="sm">{{ $user->role }}</flux:badge>
+                                <flux:badge icon="briefcase" color="lime" size="sm">Dosen</flux:badge>
                             @break
 
                             @case('Mahasiswa')
-                                <flux:badge icon="book-open" color="cyan" size="sm">{{ $user->role }}</flux:badge>
+                                <flux:badge icon="book-open" color="cyan" size="sm">Mahasiswa</flux:badge>
                             @break
 
                             @default
@@ -121,7 +120,7 @@
 
                 </flux:dropdown>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
+            <td class="px-6 py-4 border-l border-r border-gray-300 bg-gray-50/30 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">
                 {{ $user->identity1 ?? '-' }}
             </td>
@@ -142,25 +141,52 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $detail->prodi->prodi ?? '-' }}
             </td>
 
-            <td class="px-6 py-4 text-right text-sm">
+            <td class="px-6 py-4 text-center text-sm text-gray-700">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
-
                         @switch($user->status)
-                            @case('Akitf')
+
+                            {{-- HIJAU: Status Lulus --}}
+                            @case('Lulus')
+                                <flux:badge color="blue" size="sm">{{ $user->status }}</flux:badge>
+                            @break
+                            {{-- HIJAU: Status Aktif --}}
+                            @case('Aktif')
                                 <flux:badge color="green" size="sm">{{ $user->status }}</flux:badge>
                             @break
 
-                            @case('A')
+                            {{-- KUNING: Status Transisi/Sementara --}}
+                            @case('Tugas Belajar')
+                            @case('Izin Belajar')
+
+                            @case('Mutasi')
+                            @case('Cuti')
+
+                            @case('Cuti Sabatika')
+                            @case('Cuti Luar Tanggungan')
+
+                            @case('Pindah')
                                 <flux:badge color="yellow" size="sm">{{ $user->status }}</flux:badge>
                             @break
 
-                            @case('B')
+                            {{-- ORANGE: Keluar Prosedural / Masalah Administrasi --}}
+                            @case('Resign')
+                            @case('Pensiun')
+
+                            @case('Alih Tugas')
+                            @case('Mengundurkan Diri')
+
+                            @case('Non-Aktif')
                                 <flux:badge color="orange" size="sm">{{ $user->status }}</flux:badge>
                             @break
 
-                            @case('C')
+                            {{-- MERAH: Berhenti Permanen / Sanksi / Masalah Berat --}}
+                            @case('Diberhentikan')
+                            @case('Drop Out')
+
+                            @case('Meninggal Dunia')
+                            @case('Hilang')
                                 <flux:badge color="red" size="sm">{{ $user->status }}</flux:badge>
                             @break
 
@@ -168,15 +194,16 @@
                                 <flux:badge size="sm">{{ $user->status }}</flux:badge>
                         @endswitch
                     </button>
+                    
                     @include('livewire.admin.global.table.partial.pop-up-menu', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
                         'confirmDeleteString' => 'deleteUser',
                     ])
+
                 </flux:dropdown>
             </td>
-
 
             @include('livewire.admin.global.table.menu-aksi', [
                 'x' => $user,
@@ -194,7 +221,7 @@
                     'mahasiswa' => 9,
                     default => 10,
                 } }}"
-                    class="px-6 py-4  text-sm text-gray-500">
+                    class="px-6 py-4 text-center text-gray-500">
                     Tidak ada data Pengguna ditemukan!
                 </td>
             </tr>

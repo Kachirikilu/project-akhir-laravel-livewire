@@ -1,9 +1,9 @@
 <flux:dropdown class="hidden lg:block" position="bottom" align="start">
 
     @if (auth()->user()->profile_photo_path)
-        <flux:profile name="{{ auth()->user()->name }}" avatar="{{ auth()->user()->profile_photo_url }}" icon:trailing="chevrons-up-down" />
+        <flux:profile name="{{ auth()->user()->name }}" avatar="{{ auth()->user()->profile_photo_url }}" icon:trailing="chevron-up" />
     @else
-        <flux:profile name="{{ auth()->user()->name }}" initials="{{ $userInitials }}" icon:trailing="chevrons-up-down" />
+        <flux:profile name="{{ auth()->user()->name }}" initials="{{ $userInitials }}" icon:trailing="chevron-up" />
     @endif
 
     <flux:menu class="w-[220px]">

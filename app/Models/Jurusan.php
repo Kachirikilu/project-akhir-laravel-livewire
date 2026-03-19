@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Jurusan extends Model
 {
-    protected $fillable = ['fakultas_id', 'nama_jurusan'];
+    protected $fillable = ['fakultas_id', 'nama_jurusan', 'kode_jr'];
+    protected $appends = ['jurusan', 'kode', 'fakultas'];
 
     public function fakultas_rel()
     {
@@ -23,6 +24,34 @@ class Jurusan extends Model
 
     protected function jurusan(): Attribute {
         return Attribute::get(fn() => $this->nama_jurusan);
+    }
+
+    protected function kode(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!empty($this->attributes['kode_jr'])) {
+                return $this->attributes['kode_jr'];
+            }
+            // $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            // if (!empty($kodeFakultas)) {
+            //     return $kodeFakultas;
+            // }
+            return null;
+        });
+    }
+
+    protected function kodeText(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!empty($this->attributes['kode_jr'])) {
+                return $this->attributes['kode_jr'];
+            }
+            $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            if (!empty($kodeFakultas)) {
+                return $kodeFakultas . ' (Fakultas)';
+            }
+            return null;
+        });
     }
 
     protected function fakultas(): Attribute {

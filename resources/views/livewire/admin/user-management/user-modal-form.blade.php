@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal" class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
+<flux:modal name="user-modal" wire:model="showUserModal"  class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
 
     <div class="flex flex-col h-full">
 

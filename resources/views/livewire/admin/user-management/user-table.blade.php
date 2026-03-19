@@ -1,83 +1,93 @@
 <x-admin.global.table.main-layout-table>
 
     <x-slot:header>
-        {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'isCenter' => 1])
+        <tr class="bg-gray-50">
 
-        {{-- Role - Sorting A-Z --}}
-        @if ($filter == '')
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role'])
-        @else
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Role</th>
-        @endif
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'rowSpan' => 2, 'isMain' => 1, 'isCenter' => 1])
 
-        {{-- Name - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name'])
+            @if ($filter == '')
+                @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role', 'rowSpan' => 2])
+            @else
+                <th rowspan="2" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
+            @endif
 
-        {{-- NIP/NIM Dinamis --}}
-        @include('livewire.admin.global.table.head-table', [
-            'sortFieldString' => 'identity1',
-            'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
-        ])
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name', 'headString' => 'Nama', 'rowSpan' => 2, 'isMain' => 1])
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email', 'rowSpan' => 2])
 
-        {{-- NITK/NIDN Dinamis --}}
-        @if ($filter != 'mahasiswa')
-            @include('livewire.admin.global.table.head-table', [
-                'sortFieldString' => 'identity2',
-                'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'admin' ? 'NITK' : 'NIDN'),
-            ])
-        @endif
+            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" class="border-x border-b border-gray-300 bg-gray-50/30 px-6 py-2 text-center text-xs font-bold text-indigo-600 uppercase">
+                Identitas (ID)
+            </th>
 
-        @if ($filter == 'dosen' || $filter == '')
-            @include('livewire.admin.global.table.head-table', [
-                'sortFieldString' => 'identity3',
-                'headString' => 'NIDK',
-            ])
-        @endif
+            {{-- Angkatan - Autocomplete Input --}}
+            @if ($filter == 'mahasiswa')
+                <th rowspan="2" class="px-6 py-3 text-left relative">
+                    <div class="flex flex-col gap-1 items-center">
 
-        {{-- Email - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email'])
+                        @include('livewire.admin.global.table.head-table', [
+                            'sortFieldString' => 'tahun_angkatan',
+                            'headString' => 'Angkatan',
+                            'withTh' => 0,
+                        ])
 
+                        <div x-data="{ value: @entangle('searchAngkatan') }" class="sm:col-span-4 relative w-fit">
+                            <div class="relative">
 
-        {{-- Angkatan - Autocomplete Input --}}
-        @if ($filter == 'mahasiswa')
-            <th class="px-6 py-3 text-left">
-                <div class="flex flex-col gap-1 items-center">
+                                <input x-model="value" wire:model.live.debounce.300ms="searchAngkatan"
+                                    list="list-angkatan" type="text" inputmode="numeric" pattern="[0-9]*"
+                                    maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)"
+                                    placeholder="Tahun"
+                                    class="mt-1 text-[10px] w-13 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
-                    @include('livewire.admin.global.table.head-table', [
-                        'sortFieldString' => 'tahun_angkatan',
-                        'headString' => 'Angkatan',
-                        'withTh' => 0,
-                    ])
+                                {{-- Tombol Reset --}}
+                                @include('livewire.admin.global.search-and-filters.partial.reset-button', [
+                                    'xShow' => 'value',
+                                    'xClick' => "value = ''",
+                                    'xWire' => 'resetInputAngkatan()',
+                                    'xSize' => 3,
+                                    'xPr' => 1,
+                                ])
 
-                    <div x-data="{ value: @entangle('searchAngkatan') }" class="sm:col-span-4 relative w-fit">
-                        <div class="relative">
-
-                            <input x-model="value" wire:model.live.debounce.300ms="searchAngkatan" list="list-angkatan"
-                                type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)" placeholder="Tahun"
-                                class="mt-1 text-[10px] w-13 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
-
-                            {{-- Tombol Reset --}}
-                            @include('livewire.admin.global.search-and-filters.partial.reset-button', [
-                                'xShow' => 'value',
-                                'xClick' => "value = ''",
-                                'xWire' => 'resetInputAngkatan()',
-                                'xSize' => 3,
-                                'xPr' => 1,
-                            ])
-
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
-            </th>
-        @endif
+                </th>
+            @endif
 
-        {{-- Prodi - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'isCenter' => 1])
-        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'rowSpan' => 2, 'isCenter' => 1])
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi', 'rowSpan' => 2, 'isMain' => 1])
+            <th rowspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+
+        </tr>
+
+        {{-- NIP/NIM
+        NITK/NIDN
+        NIDK --}}
+
+        {{-- $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'), --}}
+
+        <tr class="bg-gray-50">
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'identity1',
+                'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
+                'isSubHeader' => 1, 'isCenter' => 1, 'isMain' => 1
+            ])
+            @if ($filter !== 'mahasiswa')
+                @include('livewire.admin.global.table.head-table', [
+                    'sortFieldString' => 'identity2',
+                    'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'dosen' ? 'NIDN' : 'NIDK'),
+                    'isSubHeader' => 1, 'isCenter' => 1, 'isBorderR' => $filter == 'admin' ? 1 : 0
+                ])
+                @if ($filter !== 'admin')
+                    @include('livewire.admin.global.table.head-table', [
+                        'sortFieldString' => 'identity3',
+                        'headString' => 'NIDK',
+                        'isSubHeader' => 1, 'isCenter' => 1,'isBorderR' => 1
+                    ])
+                @endif
+            @endif
+        </tr>
     </x-slot:header>
 
 
@@ -87,7 +97,8 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
-            <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">{{ $user->id }}</td>
+            <td class="px-6 py-4 border-x border-gray-300 bg-gray-100/30 text-center text-sm font-medium text-gray-900">
+                {{ $user->id }}</td>
             {{-- Role --}}
             <td class="px-6 py-4 text-sm text-gray-700">
                 <flux:dropdown>
@@ -120,37 +131,35 @@
 
                 </flux:dropdown>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">
+            <td class="px-6 py-4 border-x border-gray-300 bg-gray-50/30 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
+            <td class="px-6 py-4 text-sm text-gray-700">{{ $user->email }}</td>
+            <td class="px-6 py-4 border-x border-gray-300 bg-gray-100/30 text-center text-sm text-gray-700">
                 {{ $user->identity1 ?? '-' }}
             </td>
             @if ($filter != 'mahasiswa')
-                <td class="px-6 py-4 text-sm text-gray-700">
+                <td class="px-6 py-4 {{ $filter == 'admin' ? 'border-r' : '' }} text-center text-sm text-gray-700">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
             @if ($filter == 'dosen' || $filter == '')
-                <td class="px-6 py-4 text-sm text-gray-700">
+                <td class="px-6 py-4 {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} text-center text-sm text-gray-700">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $user->email }}</td>
             @if ($filter == 'mahasiswa')
-                <td class="px-6 py-4 text-sm text-gray-700">{{ $detail->tahun_angkatan ?? '-' }}</td>
+                <td class="px-6 py-4 text-center text-sm text-gray-700">{{ $detail->tahun_angkatan ?? '-' }}</td>
             @endif
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $detail->prodi->prodi ?? '-' }}
-            </td>
 
             <td class="px-6 py-4 text-center text-sm text-gray-700">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
                         @switch($user->status)
-
                             {{-- HIJAU: Status Lulus --}}
                             @case('Lulus')
                                 <flux:badge color="blue" size="sm">{{ $user->status }}</flux:badge>
                             @break
+
                             {{-- HIJAU: Status Aktif --}}
                             @case('Aktif')
                                 <flux:badge color="green" size="sm">{{ $user->status }}</flux:badge>
@@ -194,7 +203,7 @@
                                 <flux:badge size="sm">{{ $user->status }}</flux:badge>
                         @endswitch
                     </button>
-                    
+
                     @include('livewire.admin.global.table.partial.pop-up-menu', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
@@ -204,6 +213,9 @@
 
                 </flux:dropdown>
             </td>
+
+            <td class="px-6 py-4 border-x border-gray-300 bg-gray-50/30 text-sm text-gray-700">
+                {{ $detail->prodi->prodi ?? '-' }}</td>
 
             @include('livewire.admin.global.table.menu-aksi', [
                 'x' => $user,
