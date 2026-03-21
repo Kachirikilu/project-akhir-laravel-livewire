@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire\Admin\ProdiManagement;
+namespace App\Livewire\Admin\MatkulManagement;
 
 use App\Models\Prodi;
 use App\Models\Jurusan;
 use App\Models\Fakultas;
 
-trait WithProdiDelete
+trait WithMatkulDelete
 {
     public $showProdiDelete = false;
 

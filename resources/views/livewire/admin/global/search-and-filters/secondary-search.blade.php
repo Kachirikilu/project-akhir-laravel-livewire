@@ -22,7 +22,7 @@
                 $wire.{{ $inputXFilterString }}(); 
             "
             @click.outside="open = false" @keydown.escape.window="open = false"
-            class="w-full h-10 pl-10 px-4 rounded-lg shadow-sm border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400"
+            class="w-full h-10 pl-10 px-4 transition-all duration-200 rounded-lg shadow-sm border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400"
             autocomplete="off" />
 
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [

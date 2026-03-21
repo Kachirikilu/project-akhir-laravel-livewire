@@ -55,9 +55,9 @@ class UserManagement extends Component
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc'],
 
-        'selectedProdiId' => ['except' => null],
-        'selectedJurusanId' => ['except' => null],
-        'selectedFakultasId' => ['except' => null]
+        // 'selectedProdiName' => ['except' => null],
+        // 'selectedJurusanName' => ['except' => null],
+        // 'selectedFakultasName' => ['except' => null]
 
         // 'selectedProdiName' => ['except' => ''],
         // 'roleType' => ['except' => ''],

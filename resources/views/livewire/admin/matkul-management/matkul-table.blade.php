@@ -39,7 +39,7 @@
 
             {{-- Group SKS (Lebar 5 kolom: Total SKS + 4 Tipe SKS) --}}
             <th colspan="{{ $switchTable == '' ? 5 : 2 }}"
-                class="border-x border-b border-gray-300 dark:border-neutral-700 dark:border-neutral-600 bg-gray-50/50 dark:bg-neutral-700/50 px-6 py-2 text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider transition-colors">
+                class="border-x border-b border-gray-300 dark:border-neutral-700 dark:border-neutral-600 bg-gray-50/50 dark:bg-neutral-700/50 px-6 py-2 text-center text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider transition-colors">
                 Bobot Mata Kuliah (SKS)
             </th>
 
@@ -48,7 +48,8 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
-            <th rowspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            <th rowspan="2"
+                class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
         </tr>
 
         {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
@@ -142,11 +143,26 @@
             @endif
 
             <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-200">
-                @if ($matkul->is_wajib)
-                    <flux:badge icon="check" color="green" size="sm" inset="top bottom">Wajib</flux:badge>
-                @else
-                    <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">Pilihan</flux:badge>
-                @endif
+                <flux:dropdown>
+                    <button class="cursor-pointer">
+                        @if ($matkul->wajib)
+                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">Wajib
+                            </flux:badge>
+                        @else
+                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">Pilihan
+                            </flux:badge>
+                        @endif
+                    </button>
+
+                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                        'x' => $matkul,
+                        'typeXString' => $switchTable,
+                        'editString' => 'editMK',
+                        'nameXString' => 'Mata Kuliah',
+                        'confirmDeleteString' => 'deleteMK',
+                    ])
+
+                </flux:dropdown>
             </td>
 
 
@@ -160,7 +176,8 @@
         </tr>
     @empty
         <tr>
-            <td colspan="{{ $switchTable == '' ? 11 : 8 }}" class="px-6 py-4 text-center text-gray-500">
+            <td colspan="{{ $switchTable == '' ? 11 : 8 }}"
+                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                 Tidak ada Mata Kuliah ditemukan!
             </td>
         </tr>

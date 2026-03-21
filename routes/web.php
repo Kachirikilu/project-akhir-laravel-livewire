@@ -21,11 +21,11 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['is_admin'])->group(function () {
         Route::view('user-management', 'user-management')->name('user-management');
         Route::view('user-lite', 'user-lite')->name('user-lite');
-        Route::view('prodi-management', 'prodi-management')->name('prodi-management');
+        Route::view('program-studi-management', 'program-studi-management')->name('program-studi-management');
     });
 
     Route::middleware(['is_staff'])->group(function () {
-        Route::view('matkul-management', 'matkul-management')->name('matkul-management');
+        Route::view('mata-kuliah-management', 'mata-kuliah-management')->name('mata-kuliah-management');
     });
 
     Route::redirect('settings', 'settings/profile');

@@ -6,13 +6,11 @@ use App\Livewire\Admin\GlobalManagement\WithProdiSearchFilters;
 use App\Livewire\Admin\GlobalManagement\WithJurusanSearchFilters;
 use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
 
-// use App\Livewire\Admin\MatkulManagement\WithJurusanSearchFilters;
-// use App\Livewire\Admin\MatkulManagement\WithFakultasSearchFilters;
-// use App\Livewire\Admin\MatkulManagement\WithProdiDelete;
 
-use App\Livewire\Admin\MatkulManagement\WithMataKuliahFilters;
+use App\Livewire\Admin\MatkulManagement\WithMatkulFilters;
+// use App\Livewire\Admin\MatkulManagement\WithMatkulModal;
+// use App\Livewire\Admin\MatkulManagement\WithMatkulDelete;
 
-// use App\Livewire\Admin\MatkulManagement\WithProdiModal;
 
 use App\Models\Prodi;
 use App\Models\Jurusan;
@@ -21,16 +19,15 @@ use App\Models\Fakultas;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class MatkulManagement extends Component
+class MataKuliahManagement extends Component
 {
     use WithProdiSearchFilters;
     use WithJurusanSearchFilters;
     use WithFakultasSearchFilters;
 
-    use WithMataKuliahFilters;
-
-    // use WithProdiModal;
-    // use WithProdiDelete;
+    use WithMatkulFilters;
+    // use WithMatkulModal;
+    // use WithMatkulDelete;
 
     use WithPagination;
 
@@ -42,7 +39,7 @@ class MatkulManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    public $selectedMatkulName = '';
+    // public $selectedMatkulName = '';
 
     protected $listeners = ['refresh-table' => 'refreshMatkulsList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
@@ -51,14 +48,14 @@ class MatkulManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
-        'selectedMatkulName' => ['except' => ''],
+        // 'selectedMatkulName' => ['except' => ''],
         'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'nama_matkul'],
         'sortDirection' => ['except' => 'asc'],
 
-        'selectedProdiId' => ['except' => null],
-        'selectedJurusanId' => ['except' => null],
-        'selectedFakultasId' => ['except' => null]
+        // 'selectedProdiName' => ['except' => null],
+        // 'selectedJurusanName' => ['except' => null],
+        // 'selectedFakultasName' => ['except' => null]
     ];
 
     public function updatedPerPage()

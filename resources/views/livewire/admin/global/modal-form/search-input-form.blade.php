@@ -83,7 +83,7 @@ x-effect="
 
     {{-- Info Terpilih --}}
     <div x-show="selectedId && search" x-cloak>
-        <p class="text-xs text-indigo-600 dark:text-indigo-500 mt-1 font-medium italic">
+        <p class="text-xs text-indigo-700 dark:text-indigo-400 mt-1 font-medium italic">
             Terpilih: <span x-text="search"></span> (ID: <span x-text="selectedId"></span>)
         </p>
     </div>

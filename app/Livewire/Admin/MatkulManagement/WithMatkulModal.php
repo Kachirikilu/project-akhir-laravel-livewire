@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\ProdiManagement;
+namespace App\Livewire\Admin\MatkulManagement;
+
+use App\Models\MataKuliah;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-trait WithProdiModal
+trait WithMatkulModal
 {
     public $selected_id;
 

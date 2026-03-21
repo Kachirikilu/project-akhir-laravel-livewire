@@ -1,6 +1,6 @@
 <div class="flex items-center justify-end {{ ($withFull ?? true) ? 'pb-4 ml-4' : '' }}">
 
-    <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15 z-20" @click.away="open = false">
+    <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15" @click.away="open = false">
         {{-- Tombol Utama --}}
         <button type="button" @click="open = !open"
             class="cursor-pointer flex items-center justify-between border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm 

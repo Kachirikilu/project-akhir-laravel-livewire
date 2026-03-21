@@ -3,7 +3,7 @@
 
     <flux:spacer />
 
-    <flux:dropdown position="top" align="end">
+    <flux:dropdown align="end">
 
         @if (auth()->user()->profile_photo_path)
             <flux:profile avatar="{{ auth()->user()->profile_photo_url }}" icon-trailing="chevron-down" />

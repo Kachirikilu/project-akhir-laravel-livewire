@@ -8,14 +8,14 @@
             @if ($filter == '')
                 @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role', 'rowSpan' => 2])
             @else
-                <th rowspan="2" class="px-6 py-3 text-xs text-gray-500 uppercase">Role</th>
+                <th rowspan="2" class="px-6 py-3 text-xs text-gray-500 dark:text-gray-400 uppercase">Role</th>
             @endif
 
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name', 'headString' => 'Nama', 'rowSpan' => 2, 'isMain' => 1])
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email', 'rowSpan' => 2])
 
             <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" 
-                class="border-x border-b border-gray-300 dark:border-neutral-700 dark:border-neutral-600 bg-gray-50/50 dark:bg-neutral-700/50 px-6 py-2 text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider transition-colors">
+                class="border-x border-b border-gray-300 dark:border-neutral-700 dark:border-neutral-600 bg-gray-50/50 dark:bg-neutral-700/50 px-6 py-2 text-center text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider transition-colors">
                 Identitas (ID)
             </th>
 
@@ -58,7 +58,7 @@
 
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'rowSpan' => 2, 'isCenter' => 1])
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi', 'rowSpan' => 2, 'isMain' => 1])
-            <th rowspan="2" class="px-6 py-3 text-center text-xs text-gray-500 uppercase">Aksi</th>
+            <th rowspan="2" class="px-6 py-3 text-center text-xs text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
 
         </tr>
 
@@ -138,12 +138,12 @@
                 {{ $user->identity1 ?? '-' }}
             </td>
             @if ($filter != 'mahasiswa')
-                <td class="px-6 py-4 {{ $filter == 'admin' ? 'border-r' : '' }} border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
+                <td class="px-6 py-4 {{ $filter == 'admin' ? 'border-r' : '' }} bg-gray-50/30 dark:bg-neutral-600/30 border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
             @if ($filter == 'dosen' || $filter == '')
-                <td class="px-6 py-4 {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
+                <td class="px-6 py-4 {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} bg-gray-50/30 dark:bg-neutral-600/30 border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
@@ -234,7 +234,7 @@
                     'mahasiswa' => 9,
                     default => 10,
                 } }}"
-                    class="px-6 py-4 text-center text-gray-500">
+                    class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     Tidak ada data Pengguna ditemukan!
                 </td>
             </tr>

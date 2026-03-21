@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Admin\MatkulManagement;
 
+
 use App\Models\MataKuliah;
 use Livewire\WithPagination;
 
-trait WithMataKuliahFilters
+trait WithMatkulFilters
 {
     use WithPagination;
 

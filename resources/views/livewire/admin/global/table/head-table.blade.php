@@ -33,7 +33,7 @@
 
         <span
             :class="{
-                'text-indigo-600 dark:text-indigo-400 {{ $isMain ?? false ? 'font-bold' : '' }}': (
+                'text-indigo-700 dark:text-indigo-400 {{ $isMain ?? false ? 'font-bold' : '' }}': (
                     sortField === '{{ $sortFieldString }}' || clicked),
                 '{{ $isMain ?? false ? 'font-bold text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400' }}':
                     !(
@@ -46,7 +46,7 @@
         <span
             :class="[
                 (sortField === '{{ $sortFieldString }}' || clicked) ?
-                'opacity-100 text-indigo-600 dark:text-indigo-400 font-bold' :
+                'opacity-100 text-indigo-700 dark:text-indigo-400 font-bold' :
                 'opacity-0 group-hover:opacity-80 text-gray-400 dark:text-gray-500',
             
                 sortField === '{{ $sortFieldString }}' && localDir === 'desc' ?

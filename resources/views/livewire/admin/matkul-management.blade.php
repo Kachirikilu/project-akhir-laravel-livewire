@@ -8,6 +8,6 @@
         @include('livewire.admin.matkul-management.matkul-table')
     </div>
 
-    {{-- @include('livewire.admin.user-management.user-modal-form')
-    @include('livewire.admin.user-management.user-modal-delete') --}}
+    {{-- @include('livewire.admin.matkul-management.matkul-modal-form') --}}
+    {{-- @include('livewire.admin.matkul-management.matkul-modal-delete') --}}
 </div>

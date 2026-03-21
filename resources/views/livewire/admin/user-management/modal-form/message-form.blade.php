@@ -25,7 +25,7 @@
     {{-- 💡 2. Tips (Di bawah Error) --}}
     <div class="rounded-xl border border-slate-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
         <div class="flex items-center gap-2 mb-3">
-            <flux:icon name="calendar" variant="mini" class="text-indigo-600 dark:text-indigo-400" />
+            <flux:icon name="calendar" variant="mini" class="text-indigo-700 dark:text-indigo-400" />
             <span class="font-bold text-slate-900 dark:text-gray-200 text-xs uppercase tracking-wider">Tips</span>
         </div>
 

@@ -19,7 +19,7 @@ use App\Models\Fakultas;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ProdiManagement extends Component
+class ProgramStudiManagement extends Component
 {
     use WithJurusanSearchFilters;
     use WithFakultasSearchFilters;
@@ -41,7 +41,7 @@ class ProdiManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    public $selectedProdiName = '';
+    // public $selectedProdiName = '';
 
     protected $listeners = ['refresh-table' => 'refreshProdisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
@@ -50,14 +50,12 @@ class ProdiManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
-        'selectedProdiName' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
         'sortField' => ['except' => 'prodi'],
         'sortDirection' => ['except' => 'asc'],
 
-        'selectedProdiId' => ['except' => null],
-        'selectedJurusanId' => ['except' => null],
-        'selectedFakultasId' => ['except' => null]
+        // 'selectedJurusanName' => ['except' => null],
+        // 'selectedFakultasName' => ['except' => null]
     ];
 
     public function updatedPerPage()

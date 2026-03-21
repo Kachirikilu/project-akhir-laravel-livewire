@@ -65,6 +65,24 @@
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
+
+                {{-- Universitas --}}
+                <flux:menu.item
+                    @click="
+                        $store.config?.setType('universal');
+                        $store.config?.setEdit(0);
+                        $store.config?.setColor('text-indigo-700 dark:text-indigo-400');
+                        $flux.modal('prodi-modal').show();
+                        $wire.addProdi('universal');
+                    "
+                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                    <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
+                    <div class="flex justify-between items-center w-full">
+                        <span>Universitas</span>
+                        <flux:icon wire:loading wire:target="addProdi('universal')" name="arrow-path"
+                            class="animate-spin h-4 w-4" />
+                    </div>
+                </flux:menu.item>
             </flux:menu>
         </flux:dropdown>
     </div>

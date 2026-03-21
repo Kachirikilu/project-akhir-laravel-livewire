@@ -34,7 +34,7 @@
                     'isMain' => 1,
                 ])
             @endif
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
 
         </tr>
     </x-slot:header>
@@ -107,7 +107,7 @@
         </tr>
         @empty
             <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                     Tidak ada {{ $xNameString }} ditemukan!
                 </td>
             </tr>
