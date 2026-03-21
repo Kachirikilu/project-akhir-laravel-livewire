@@ -1,20 +1,21 @@
 <x-admin.global.table.main-layout-table>
 
     <x-slot:header>
-        <tr class="bg-gray-50">
+        <tr class="bg-gray-50 dark:bg-neutral-800/50">
 
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'rowSpan' => 2, 'isMain' => 1, 'isCenter' => 1])
 
             @if ($filter == '')
                 @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role', 'rowSpan' => 2])
             @else
-                <th rowspan="2" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
+                <th rowspan="2" class="px-6 py-3 text-xs text-gray-500 uppercase">Role</th>
             @endif
 
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name', 'headString' => 'Nama', 'rowSpan' => 2, 'isMain' => 1])
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email', 'rowSpan' => 2])
 
-            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" class="border-x border-b border-gray-300 bg-gray-50/30 px-6 py-2 text-center text-xs font-bold text-indigo-600 uppercase">
+            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" 
+                class="border-x border-b border-gray-300 dark:border-neutral-700 dark:border-neutral-600 bg-gray-50/50 dark:bg-neutral-700/50 px-6 py-2 text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider transition-colors">
                 Identitas (ID)
             </th>
 
@@ -36,7 +37,7 @@
                                     list="list-angkatan" type="text" inputmode="numeric" pattern="[0-9]*"
                                     maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)"
                                     placeholder="Tahun"
-                                    class="mt-1 text-[10px] w-13 border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
+                                    class="mt-1 text-[10px] w-13 border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
                                 {{-- Tombol Reset --}}
                                 @include('livewire.admin.global.search-and-filters.partial.reset-button', [
@@ -57,7 +58,7 @@
 
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'rowSpan' => 2, 'isCenter' => 1])
             @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi', 'rowSpan' => 2, 'isMain' => 1])
-            <th rowspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            <th rowspan="2" class="px-6 py-3 text-center text-xs text-gray-500 uppercase">Aksi</th>
 
         </tr>
 
@@ -96,11 +97,11 @@
             $detail = $user->admin ?? ($user->dosen ?? $user->mahasiswa);
         @endphp
 
-        <tr wire:key="user-{{ $user->id }}" class="hover:bg-gray-50" data-user-id="{{ $user->id }}">
-            <td class="px-6 py-4 border-x border-gray-300 bg-gray-100/30 text-center text-sm font-medium text-gray-900">
+        <tr wire:key="user-{{ $user->id }}" class="hover:bg-gray-50 dark:hover:bg-gray-700/40 border-gray-300 dark:border-neutral-700 transition-colors duration-200" data-user-id="{{ $user->id }}">
+            <td class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-center text-sm">
                 {{ $user->id }}</td>
             {{-- Role --}}
-            <td class="px-6 py-4 text-sm text-gray-700">
+            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
@@ -131,26 +132,26 @@
 
                 </flux:dropdown>
             </td>
-            <td class="px-6 py-4 border-x border-gray-300 bg-gray-50/30 text-sm text-gray-700">{{ $user->name ?? '-' }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $user->email }}</td>
-            <td class="px-6 py-4 border-x border-gray-300 bg-gray-100/30 text-center text-sm text-gray-700">
+            <td class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-sm text-gray-700 dark:text-gray-200">{{ $user->name ?? '-' }}</td>
+            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">{{ $user->email }}</td>
+            <td class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-center text-sm text-gray-700 dark:text-gray-200">
                 {{ $user->identity1 ?? '-' }}
             </td>
             @if ($filter != 'mahasiswa')
-                <td class="px-6 py-4 {{ $filter == 'admin' ? 'border-r' : '' }} text-center text-sm text-gray-700">
+                <td class="px-6 py-4 {{ $filter == 'admin' ? 'border-r' : '' }} border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
             @if ($filter == 'dosen' || $filter == '')
-                <td class="px-6 py-4 {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} text-center text-sm text-gray-700">
+                <td class="px-6 py-4 {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} border-gray-300 dark:border-neutral-700 text-center text-sm text-gray-700 dark:text-gray-200">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
             @if ($filter == 'mahasiswa')
-                <td class="px-6 py-4 text-center text-sm text-gray-700">{{ $detail->tahun_angkatan ?? '-' }}</td>
+                <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-200">{{ $detail->tahun_angkatan ?? '-' }}</td>
             @endif
 
-            <td class="px-6 py-4 text-center text-sm text-gray-700">
+            <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-200">
                 <flux:dropdown>
 
                     <button class="cursor-pointer">
@@ -214,7 +215,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="px-6 py-4 border-x border-gray-300 bg-gray-50/30 text-sm text-gray-700">
+            <td class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-sm text-gray-700 dark:text-gray-200">
                 {{ $detail->prodi->prodi ?? '-' }}</td>
 
             @include('livewire.admin.global.table.menu-aksi', [

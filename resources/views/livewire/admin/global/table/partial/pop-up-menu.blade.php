@@ -8,10 +8,10 @@
         {{-- Tombol Edit --}}
         <flux:menu.item
             @click="
-                $store.config?.resetSelect()
+                $store.config?.resetSelect();
 
                 const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}';
-                const editMode = '{{ $editString }}'
+                const editMode = '{{ $editString }}';
 
                 $store.config?.setType(type);
                 $store.config?.setEdit(1);
@@ -23,8 +23,8 @@
                     prodi: 'text-emerald-700',
                     jurusan: 'text-amber-700',
                     fakultas: 'text-indigo-700'
-                }
-                $store.config?.setColor(colors[type] ?? 'text-gray-700')
+                };
+                $store.config?.setColor(colors[type] ?? 'text-gray-700');
 
                 if (editMode == 'editUser') {
                     $store.config?.setValueUser(
@@ -57,8 +57,8 @@
                     $flux.modal('prodi-modal').show();
                 }
             "
-            wire:click="{{ $editCall }}" class="!text-yellow-600 hover:!bg-yellow-100">
-            <flux:icon name="pencil-square" class="!text-yellow-600 mr-2 h-4 w-4" />
+            wire:click="{{ $editCall }}" class="!text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
+            <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
                 <span class="cursor-pointer">Edit Data</span>
@@ -74,7 +74,7 @@
             <flux:menu.item
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
-                    const deleteMode = '{{ $confirmDeleteString }}'
+                    const deleteMode = '{{ $confirmDeleteString }}';
 
                     if (deleteMode == 'deleteUser') {
                         $store.config?.setDeleteUser(
@@ -91,8 +91,8 @@
                         $flux.modal('prodi-delete').show();
                     }
                 "
-                wire:click="{{ $deleteCall }}" class="!text-red-800 hover:!bg-red-50">
-                <flux:icon name="trash" class="!text-red-800 mr-2 h-4 w-4" />
+                wire:click="{{ $deleteCall }}" class="!text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
+                <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
                     <span class="cursor-pointer">Hapus {{ $nameXString ?? 'Data' }}</span>

@@ -38,7 +38,7 @@ class MatkulManagement extends Component
 
     public $perPage = 8;
 
-    public $switchTable = 'matkuls';
+    public $switchTable = '';
 
     protected $paginationTheme = 'tailwind';
 
@@ -52,7 +52,7 @@ class MatkulManagement extends Component
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'selectedMatkulName' => ['except' => ''],
-        'switchTable' => ['except' => 'matkuls'],
+        'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'nama_matkul'],
         'sortDirection' => ['except' => 'asc'],
 
@@ -60,19 +60,6 @@ class MatkulManagement extends Component
         'selectedJurusanId' => ['except' => null],
         'selectedFakultasId' => ['except' => null]
     ];
-
-    private function syncSortField($table)
-    {
-        // if ($this->sortField != 'id' && $this->sortField != 'kode') {
-        //     if ($table === 'prodi') {
-        //         $this->sortField = 'prodi';
-        //     } elseif ($table === 'jurusan') {
-        //         $this->sortField = 'jurusan';
-        //     } elseif ($table === 'fakultas') {
-        //         $this->sortField = 'fakultas';
-        //     }
-        // }
-    }
 
     public function updatedPerPage()
     {
@@ -84,20 +71,20 @@ class MatkulManagement extends Component
         $this->resetPage();
     }
 
-    public function switchingTable($table)
-    {
-        $this->switchTable = $table;
-        // $this->syncSortField($table);
+    // public function switchingTable($table)
+    // {
+    //     $this->switchTable = $table;
+    //     // $this->syncSortField($table);
 
-        // if ($table == 'jurusan' && $this->perPage > 50) {
-        //     $this->perPage = 50;
-        // }
-        // if ($table == 'fakultas' && $this->perPage > 10) {
-        //     $this->perPage = 10;
-        // }
+    //     // if ($table == 'jurusan' && $this->perPage > 50) {
+    //     //     $this->perPage = 50;
+    //     // }
+    //     // if ($table == 'fakultas' && $this->perPage > 10) {
+    //     //     $this->perPage = 10;
+    //     // }
 
-        $this->resetPage();
-    }
+    //     $this->resetPage();
+    // }
 
     public function buttonMKFilter($query)
     {
@@ -136,6 +123,27 @@ class MatkulManagement extends Component
     //         'totalUni' => (clone $baseQuery)->where('tingkatan_mk', 5)->count(),
     //     ]);
     // }
+
+    private function syncSortField($table, $sortField)
+    {
+        if ($table == 'tatap_muka' && ($sortField == 'sks_pr' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_tm';
+        } elseif ($table == 'praktikum' && ($sortField == 'sks_tm' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_pr';
+        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_pl';
+        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_pl')) {
+            $this->sortField = 'sks_sm';
+        }
+    }
+
+    public function switchingTable($table)
+    {
+        $this->switchTable = $table;
+        $this->syncSortField($table, $this->sortField);
+
+        $this->resetPage();
+    }
 
     public function render()
     {

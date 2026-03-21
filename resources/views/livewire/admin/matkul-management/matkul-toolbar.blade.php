@@ -1,86 +1,67 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    <h2 class="text-2xl font-bold mb-4 text-gray-700">Manajemen Mata Kuliah</h2>
+    <h2 class="text-2xl font-bold mb-4 text-gray-700 dark:text-gray-200">Manajemen Program Studi</h2>
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" class="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
-                wire:target="addUser">
+            <flux:button variant="primary" icon="plus" 
+                class="cursor-pointer text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                wire:target="addProdi">
                 Tambah Mata Kuliah
             </flux:button>
 
-            <flux:menu class="min-w-48">
-                <flux:menu.heading>Pilih Tingkatan Mata Kuliah</flux:menu.heading>
-                <flux:menu.separator />
+            <flux:menu class="min-w-48 dark:bg-neutral-800 dark:border-neutral-700">
+                <flux:menu.heading class="dark:text-gray-400">Pilih Tingkatan</flux:menu.heading>
+                <flux:menu.separator class="dark:border-neutral-700" />
 
-                {{-- Admin --}}
+                {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('admin');
+                        $store.config?.setType('prodi');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-red-700');
-                        $flux.modal('user-modal').show();
-                        $wire.addUser('admin');
+                        $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $flux.modal('prodi-modal').show();
+                        $wire.addProdi('prodi');
                     "
-                    class="cursor-pointer !text-red-600 hover:!bg-red-50">
-                    <flux:icon name="cog-6-tooth" class="!text-red-600 mr-2 h-4 w-4" />
-
+                    class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
+                    <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
-                        <span>Admin</span>
-                        <flux:icon wire:loading wire:target="addUser('admin')" name="arrow-path"
+                        <span>Program Studi</span>
+                        <flux:icon wire:loading wire:target="addProdi('prodi')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
 
-                {{-- Dosen --}}
+                {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('dosen');
+                        $store.config?.setType('jurusan');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-lime-700');
-                        $flux.modal('user-modal').show();
-                        $wire.addUser('dosen');
+                        $store.config?.setColor('text-amber-700 dark:text-amber-400');
+                        $flux.modal('prodi-modal').show();
+                        $wire.addProdi('jurusan');
                     "
-                    class="cursor-pointer !text-lime-600 hover:!bg-lime-100">
-                    <flux:icon name="briefcase" class="!text-lime-600 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
+                    <flux:icon name="book-open" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
-                        <span>Dosen</span>
-                        <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
+                        <span>Jurusan</span>
+                        <flux:icon wire:loading wire:target="addProdi('jurusan')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
 
-                {{-- Mahasiswa --}}
+                {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mahasiswa');
+                        $store.config?.setType('fakultas');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-cyan-700');
-                        $flux.modal('user-modal').show();
-                        $wire.addUser('mahasiswa');
+                        $store.config?.setColor('text-indigo-700 dark:text-indigo-400');
+                        $flux.modal('prodi-modal').show();
+                        $wire.addProdi('fakultas');
                     "
-                    class="cursor-pointer !text-cyan-600 hover:!bg-cyan-50">
-                    <flux:icon name="book-open" class="!text-cyan-600 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                    <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
-                        <span>Mahasiswa</span>
-                        <flux:icon wire:loading wire:target="addUser('mahasiswa')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
-                    </div>
-                </flux:menu.item>
-
-                <flux:menu.separator />
-
-                <flux:menu.item
-                    @click="
-                        $store.config?.setType('file');
-                        $store.config?.setEdit(0);
-                        $store.config?.setColor('text-green-700');
-                        $flux.modal('user-modal').show();
-                        $wire.addUser('file');
-                    "
-                    class="cursor-pointer !text-green-600 hover:!bg-green-50">
-                    <flux:icon name="table-cells" class="!text-green-600 mr-2 h-4 w-4" />
-                    <div class="flex justify-between items-center w-full">
-                        <span>Input File Excel</span>
-                        <flux:icon wire:loading wire:target="addUser('file')" name="arrow-path"
+                        <span>Fakultas</span>
+                        <flux:icon wire:loading wire:target="addProdi('fakultas')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>

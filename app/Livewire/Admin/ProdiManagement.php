@@ -60,20 +60,6 @@ class ProdiManagement extends Component
         'selectedFakultasId' => ['except' => null]
     ];
 
-
-    private function syncSortField($table)
-    {
-        if ($this->sortField != 'id' && $this->sortField != 'kode') {
-            if ($table === 'prodi') {
-                $this->sortField = 'prodi';
-            } elseif ($table === 'jurusan') {
-                $this->sortField = 'jurusan';
-            } elseif ($table === 'fakultas') {
-                $this->sortField = 'fakultas';
-            }
-        }
-    }
-
     public function updatedPerPage()
     {
         $this->resetPage();
@@ -84,10 +70,25 @@ class ProdiManagement extends Component
         $this->resetPage();
     }
 
+    private function syncSortField($table, $sortField)
+    {
+        if ($sortField != 'id' && $sortField != 'kode') {
+            if ($table === 'prodi') {
+                $this->sortField = 'prodi';
+            } elseif ($table === 'jurusan') {
+                $this->sortField = 'jurusan';
+                $this->filter = '';
+            } elseif ($table === 'fakultas') {
+                $this->sortField = 'fakultas';
+                $this->filter = '';
+            }
+        }
+    }
+
     public function switchingTable($table)
     {
         $this->switchTable = $table;
-        $this->syncSortField($table);
+        $this->syncSortField($table, $this->sortField);
 
         if ($table == 'jurusan' && $this->perPage > 50) {
             $this->perPage = 50;

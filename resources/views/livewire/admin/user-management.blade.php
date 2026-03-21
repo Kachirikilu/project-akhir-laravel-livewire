@@ -1,4 +1,4 @@
-<div class="p-6 bg-gray-50">
+<div class="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl shadow-sm transition-colors duration-300">
     @include('livewire.admin.user-management.user-toolbar')
     @include('livewire.admin.user-management.user-search-and-filters')
 

@@ -1,5 +1,5 @@
-<div class="mb-6 p-4 bg-white rounded-lg shadow-md border border-gray-100">
-    <div class="flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
+<div class="mb-6 p-4 bg-white dark:bg-neutral-800 rounded-lg shadow-md border border-gray-100 dark:border-neutral-700 transition-colors duration-300">
+    <div class="flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b dark:border-neutral-700 mb-4 gap-4">
 
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.admin.global.search-and-filters.filter-mode', [
@@ -25,7 +25,6 @@
         <div class="sm:col-span-4 relative">
             @include('livewire.admin.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
-                'xColor' => 'text-gray-700'
             ])
         </div>
 
@@ -45,7 +44,6 @@
                 'selectXForFilterString' => 'selectProdiForFilter',
                 'typeOfXString' => 'prodi',
                 'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-                'xColor' => 'text-gray-700'
             ])
         </div>
 
@@ -76,7 +74,6 @@
                 'selectXForFilterString' => 'selectJurusanForFilter',
                 'typeOfXString' => 'jurusan',
                 'unfoundString' => 'Tidak ada Jurusan ditemukan!',
-                'xColor' => 'text-gray-700',
             ])
         </div>
 
@@ -96,7 +93,6 @@
                 'selectXForFilterString' => 'selectFakultasForFilter',
                 'typeOfXString' => 'fakultas',
                 'unfoundString' => 'Tidak ada Fakultas ditemukan!',
-                'xColor' => 'text-gray-700',
             ])
         </div>
     </div>

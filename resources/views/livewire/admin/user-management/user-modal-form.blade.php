@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal"  class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
+<flux:modal name="user-modal" wire:model="showUserModal" class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
 
     <div class="flex flex-col h-full">
 
@@ -16,7 +16,7 @@
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
         <div class="p-6 pb-4 border-b">
-            <h3 class="text-xl font-semibold text-gray-800">
+            <h3 class="text-xl font-semibold">
                 <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna Admin</flux:badge>
                 </template>
@@ -32,12 +32,10 @@
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
         <div class="p-6 pb-flex-1 overflow-y-auto space-y-6">
 
-                <form
-                @if ($roleType == 'file')
-                    wire:submit.prevent="saveAllRows"
+            <form
+                @if ($roleType == 'file') wire:submit.prevent="saveAllRows"
                 @else
-                    x-on:submit.prevent="$wire.{{ $isEditing ? 'updateUser' : 'saveUser' }}($store.config)"
-                @endif
+                    x-on:submit.prevent="$wire.{{ $isEditing ? 'updateUser' : 'saveUser' }}($store.config)" @endif
                 enctype="multipart/form-data" id="userForm">
 
                 <template x-if="$store.config?.typeModal == 'file'" x-cloak>
@@ -59,13 +57,15 @@
                 </template>
 
                 {{-- 3. Footer/Tombol --}}
-                <div class="p-4 mt-4 bg-gray-50 rounded-b-lg rounded-t-sm gap-4 shadow-sm">
+                <div
+                    class="p-4 mt-4 bg-gray-50 dark:bg-neutral-900/50 rounded-b-lg rounded-t-sm gap-4 shadow-sm border-t dark:border-neutral-700/50 transition-colors duration-300">
 
-                    <div class="flex-1 text-xs text-gray-600 space-y-3">
+                    <div class="flex-1 text-xs text-gray-600 dark:text-gray-400 space-y-3">
                         @include('livewire.admin.user-management.modal-form.message-form')
+
                         @include('livewire.admin.global.modal-form.button-form', [
                             'xType' => $roleType,
-                            'targetX' => 'addUser, saveUser, editUser, updateUser'
+                            'targetX' => 'addUser, saveUser, editUser, updateUser',
                         ])
                     </div>
 

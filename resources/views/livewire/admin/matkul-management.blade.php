@@ -1,4 +1,4 @@
-<div class="p-6 bg-gray-50">
+<div class="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl shadow-sm transition-colors duration-300">
     @include('livewire.admin.matkul-management.matkul-toolbar')
     @include('livewire.admin.matkul-management.matkul-switch-table')
 

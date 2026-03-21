@@ -4,7 +4,7 @@
             $store.config.{{ $modelString }} = '';
         }
     ">
-    <label for="{{ $modelString }}" class="block text-sm font-medium text-gray-700">{{ $labelString }}
+    <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
         @if ($isRequired ?? false)
             <span class="text-red-500">*</span>
         @endif
@@ -18,7 +18,7 @@
         <input x-model="$store.config.{{ $modelString }}" {{-- wire:model.lazy="{{ $modelString }}" --}} name="{{ $modelString }}"
             x-bind:value="$store.config?.isEdit ? $el.value : ''" type="{{ $typeString ?? 'text' }}"
             id="{{ $modelString }}" placeholder="{{ $placeholder }}"
-            class="w-full border rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500"
+            class="w-full border dark:border-neutral-700 rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500"
             @if (!empty($isKode) && $isKode > 0) maxlength="{{ $isKode }}"
                 inputmode="text"
                 oninput="

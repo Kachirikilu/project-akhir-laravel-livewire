@@ -1,4 +1,5 @@
-<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @prodi-saved.window="$store.config.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
+<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @prodi-saved.window="$store.config.reset()"
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
 
     <div class="flex flex-col h-full relative">
 
@@ -16,7 +17,7 @@
 
         {{-- 1. Header Modal --}}
         <div class="p-6 pb-4 border-b">
-            <h3 class="text-xl font-semibold text-gray-800">
+            <h3 class="text-xl font-semibold">
 
                 <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
                     <flux:badge icon="academic-cap" color="emerald" size="lg">
@@ -42,8 +43,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
-            <form
-                x-on:submit.prevent="$wire.{{ $isEditing ? 'updateProdi' : 'saveProdi' }}($store.config)"
+            <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateProdi' : 'saveProdi' }}($store.config)"
                 enctype="multipart/form-data" id="prodiForm">
 
                 <template x-if="$store.config?.typeModal == 'prodi'" x-cloak>
@@ -59,12 +59,16 @@
                 </template>
 
                 {{-- 3. Footer / Button Action --}}
-                <div class="p-4 mt-8 bg-gray-50 rounded-lg border border-gray-100">
-                    @include('livewire.admin.prodi-management.modal-form.message-form')
-                    @include('livewire.admin.global.modal-form.button-form', [
-                        'xType' => $prodiType,
-                        'targetX' => 'addProdi, saveProdi, editProdi, updateProdi'
-                    ])
+                <div
+                    class="p-4 mt-4 bg-gray-50 dark:bg-neutral-900/50 rounded-b-lg rounded-t-sm gap-4 shadow-sm border-t dark:border-neutral-700/50 transition-colors duration-300">
+
+                    <div class="flex-1 text-xs text-gray-600 dark:text-gray-400 space-y-3">
+                        @include('livewire.admin.prodi-management.modal-form.message-form')
+                        @include('livewire.admin.global.modal-form.button-form', [
+                            'xType' => $prodiType,
+                            'targetX' => 'addProdi, saveProdi, editProdi, updateProdi',
+                        ])
+                    </div>
                 </div>
             </form>
         </div>

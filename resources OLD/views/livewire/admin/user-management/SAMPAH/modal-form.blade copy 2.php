@@ -6,7 +6,7 @@
     <div class="flex flex-col h-full">
         {{-- 1. Header Modal (Tetap di Atas) --}}
         <div class="p-6 pb-4 border-b">
-            <h3 class="text-xl font-semibold text-gray-800">
+            <h3 class="text-xl font-semibold">
                 {{ $isEditing ? 'Edit ' . ucfirst($roleType) : 'Tambah ' . ucfirst($roleType) }}
             </h3>
         </div>

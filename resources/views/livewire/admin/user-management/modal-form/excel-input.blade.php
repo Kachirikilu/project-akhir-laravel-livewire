@@ -2,32 +2,39 @@
     {{-- ****************************************************** --}}
     {{-- 1. UPLOAD EXCEL FILE --}}
     {{-- ***********************F******************************* --}}
-    <div class="p-4 bg-white shadow-sm rounded-lg border border-gray-100 space-y-4">
-        <h4 class="text-lg font-medium text-gray-700 border-b pb-2">Upload File Excel</h4>
+    <div
+        class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors duration-300">
+        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-200 border-b dark:border-neutral-700 pb-2">Upload
+            File Excel</h4>
 
         {{-- 📁 File Input --}}
         <div>
-            <label for="excel_file" class="block text-sm font-medium text-gray-700">Pilih File
-                Excel
-                <span class="text-red-500">*</span></label>
+            <label for="excel_file" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Pilih File Excel <span class="text-red-500">*</span>
+            </label>
 
             <div class="mt-1" wire:key="upload-container">
-                <div class="relative w-full mt-1" wire:key="upload-container">
+                <div class="relative w-full mt-1">
                     <input wire:model="excel_file" type="file" id="excel_file" accept=".xlsx, .xls"
                         wire:key="excel-input-field"
                         class="
-                        w-full border rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-800 font-medium
-                        file:mr-4 file:py-1 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-green-600 file:text-white
-                        hover:file:bg-green-700 transition-all cursor-pointer">
+                w-full border dark:border-neutral-700 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium
+                bg-white dark:bg-neutral-800
+                focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-indigo-400
+                file:mr-4 file:py-1 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-green-600 file:text-white
+                hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600
+                transition-all cursor-pointer">
 
+                    {{-- Status Loading --}}
                     <div wire:loading.flex wire:target="excel_file, parseExcelFile"
                         class="absolute inset-y-0 right-3 items-center">
-                        <div class="flex items-center space-x-2 text-xs text-gray-500 bg-white pl-2">
-                            <svg class="animate-spin h-4 w-4 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 24 24">
+                        <div
+                            class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-neutral-700 pl-2 rounded-r-lg">
+                            <svg class="animate-spin h-4 w-4 text-indigo-500 dark:text-indigo-400"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -37,8 +44,9 @@
                     </div>
                 </div>
             </div>
+
             @error('excel_file')
-                <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                <span class="text-red-500 dark:text-red-400 text-sm mt-1 block">{{ $message }}</span>
             @enderror
         </div>
     </div>
@@ -47,7 +55,8 @@
     {{-- 2. TABEL INPUT HASIL PARSING --}}
     {{-- ****************************************************** --}}
 
-    <div class="p-4 mt-4 bg-white shadow-sm rounded-lg border border-gray-100 space-y-4">
+    <div
+        class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors">
 
         @include('livewire.admin.global.modal-form.search-input-form', [
             'xResults' => $prodi_results,
@@ -61,10 +70,10 @@
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodi_name_search',
             'fetchString' => 'fetchProdi',
-            'iconString' => 'academic-cap'
+            'iconString' => 'academic-cap',
         ])
 
-        <h4 class="text-lg font-medium text-gray-700 border-b pb-2">
+        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-200 border-b dark:border-neutral-700 pb-2">
             Preview & Edit Data Pengguna
         </h4>
 
@@ -77,8 +86,8 @@
 
                 <table wire:loading.class="opacity-50" wire:target="excel_file, parseExcelFile, removeParsedRow"
                     class="min-w-full border-collapse text-sm">
-                    <thead class="sticky top-0 bg-gray-100 z-10">
-                        <tr class="text-left text-gray-700">
+                    <thead class="sticky top-0 bg-gray-100 dark:bg-neutral-800 z-10">
+                        <tr class="text-left">
                             <th class="px-3 py-2 border whitespace-nowrap text-center">#</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Email</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Password</th>
@@ -95,62 +104,63 @@
                         </tr>
                     </thead>
 
-                    <tbody class="bg-white">
+                    <tbody class="bg-white dark:bg-neutral-800">
                         @foreach ($parsedRows as $i => $row)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-2 py-1 border text-center font-semibold text-gray-600">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700/50 transition-colors">
+                                <td
+                                    class="px-2 py-1 border dark:border-neutral-700 text-center font-semibold text-gray-600 dark:text-gray-400">
                                     {{ $i + 1 }}
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="email" wire:model.lazy="parsedRows.{{ $i }}.email"
-                                        class="w-48 border rounded px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                                        class="w-48 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.password"
-                                        class="w-48 border rounded px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 outline-none"
+                                        class="w-48 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none"
                                         placeholder="Default / custom">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.name"
-                                        class="w-56 border rounded px-2 py-1 text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+                                        class="w-56 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nip"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nitk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidn"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td>
 
                                 <td class="px-2 py-1 border">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nim"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td>
 
                                 {{-- Tahun Masuk: Input dikecilkan --}}
@@ -166,20 +176,24 @@
                                 {{-- <td class="px-2 py-1 border">
                                     <input type="text"
                                         wire:model.lazy="parsedRows.{{ $i }}.program_studi"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
                                 </td> --}}
 
                                 {{-- Role: Diberi styling Select yang lebih jelas --}}
-                                <td class="px-2 py-1 border">
+                                <td class="px-2 py-1 border dark:border-neutral-700">
                                     <div class="relative">
                                         <select wire:model.lazy="parsedRows.{{ $i }}.role"
-                                            class="w-24 border rounded pl-2 pr-4 py-1 text-xs bg-gray-50 cursor-pointer focus:bg-white appearance-none">
-                                            <option value="admin">Admin</option>
-                                            <option value="dosen">Dosen</option>
-                                            <option value="mahasiswa">Mahasiswa</option>
+                                            class="w-24 border rounded pl-2 pr-4 py-1 text-xs cursor-pointer appearance-none transition-colors
+                   bg-gray-50 text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
+                   dark:bg-neutral-700 dark:text-gray-200 dark:border-neutral-600 dark:focus:bg-gray-600 dark:focus:ring-blue-400">
+                                            <option value="admin" class="dark:bg-neutral-800">Admin</option>
+                                            <option value="dosen" class="dark:bg-neutral-800">Dosen</option>
+                                            <option value="mahasiswa" class="dark:bg-neutral-800">Mahasiswa</option>
                                         </select>
+
+                                        {{-- Ikon Panah Dropdown --}}
                                         <div
-                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-400">
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-400 dark:text-gray-500">
                                             <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path
                                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
@@ -215,7 +229,8 @@
             </div>
         @endif
 
-        <div wire:loading.flex wire:target="excel_file, parseExcelFile, removeParsedRow" class="justify-center items-center py-4">
+        <div wire:loading.flex wire:target="excel_file, parseExcelFile, removeParsedRow"
+            class="justify-center items-center py-4">
             <div class="flex items-center space-x-2 text-gray-500">
                 <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24">

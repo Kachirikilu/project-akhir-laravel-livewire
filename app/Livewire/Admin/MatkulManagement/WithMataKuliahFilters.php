@@ -13,7 +13,7 @@ trait WithMataKuliahFilters
 
     public $filter = '';
 
-    public $sortField = 'nama_matkul';
+    public $sortField = 'matkul';
 
     public $sortDirection = 'asc';
 
@@ -34,10 +34,17 @@ trait WithMataKuliahFilters
                 $q->where('nama_matkul', 'like', $searchTerm)
                     ->orWhere('kode_mk', 'like', $searchTerm);
 
-                // 2. Cari berdasarkan ID atau Semester jika numerik
-                if (is_numeric($search)) {
-                    $q->orWhere('mata_kuliahs.id', $search)
-                        ->orWhere('semester', $search);
+                // 1. Cari Semester
+                $cleanSearch = $search;
+                if (preg_match('/(?:s|sem|semester)\s*(\d+)/i', $search, $matches)) {
+                    $cleanSearch = $matches[1];
+                }
+
+                if (is_numeric($cleanSearch)) {
+                    $q->orWhere(function($sub) use ($cleanSearch, $search) {
+                        $sub->where('mata_kuliahs.id', $search) 
+                            ->orWhere('semester', $cleanSearch);
+                    });
                 }
 
                 // 3. Cari berdasarkan "Wajib" atau "Pilihan"
@@ -58,11 +65,9 @@ trait WithMataKuliahFilters
 
                 if (array_key_exists($searchLower, $tipeMap)) {
                     $q->orWhere('tipe_sks', $tipeMap[$searchLower]);
-                } 
-                // dd($searchLower, $tipeMap[$searchLower]);
-     
+                }
+
                 // 5. Cari berdasarkan Kode Lengkap atau Terpenggal (Partial Code Search)
-                // Contoh: 'UNI10', 'TKE', '1102', 'EK11'
                 $cleanSearch = strtoupper($search);
 
                 // Kita cek apakah input mengandung unsur huruf (prefix) atau angka (digit)
@@ -86,7 +91,11 @@ trait WithMataKuliahFilters
                                                         });
                                                 });
                                         })
-                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '4'));
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '4'))
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '3'))
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '2'))
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '1'))
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '0'));
                                 });
                             }
 
@@ -134,7 +143,7 @@ trait WithMataKuliahFilters
         if (! empty($this->selectedFakultasId)) {
             $query->whereHas('prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
-        
+
         // Filter Tab/Pills
         // if (! empty($this->filter)) {
         //     if (is_numeric($this->filter)) {
@@ -161,7 +170,7 @@ trait WithMataKuliahFilters
 
     public function sortBy($field)
     {
-    if ($this->sortField === $field) {
+        if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
             $this->sortField = $field;
@@ -172,14 +181,45 @@ trait WithMataKuliahFilters
 
     public function sortFieldOrder($query)
     {
-        if ($this->sortField === 'nama_matkul') {
+        $query->select('mata_kuliahs.*');
+
+        if ($this->sortField === 'matkul') {
             $query->orderBy('nama_matkul', $this->sortDirection);
         } elseif ($this->sortField === 'semester') {
             $query->orderBy('semester', $this->sortDirection);
         } elseif ($this->sortField === 'sks') {
             $query->orderBy('sks_kuliah', $this->sortDirection);
+        } elseif ($this->sortField === 'wajib') {
+            $query->orderBy('is_wajib', $this->sortDirection);
+        } elseif (in_array($this->sortField, ['sks_tm', 'sks_pr', 'sks_pl', 'sks_sm'])) {
+            $typeMap = ['sks_tm' => 1, 'sks_pr' => 2, 'sks_pl' => 3, 'sks_sm' => 4];
+            $targetType = $typeMap[$this->sortField];
+
+            $query->orderByRaw("CASE WHEN tipe_sks = $targetType THEN sks_kuliah ELSE 0 END $this->sortDirection");
+        } elseif ($this->sortField === 'kode') {
+            $query->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
+                ->leftJoin('prodis', 'prodi_pivot_mk.prodi_id', '=', 'prodis.id')
+                ->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id');
+            $prefixSql = "MAX(CASE 
+        WHEN mata_kuliahs.tingkatan_mk = 0 THEN UPPER(mata_kuliahs.kode_mk)
+        WHEN mata_kuliahs.tingkatan_mk = 1 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+        WHEN mata_kuliahs.tingkatan_mk = 2 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+        WHEN mata_kuliahs.tingkatan_mk = 3 THEN COALESCE(fakultas.kode_fk, 'UNI')
+        ELSE 'UNI'
+    END)";
+            $query->groupBy('mata_kuliahs.id');
+            $query->orderByRaw("
+        CONCAT(
+            $prefixSql, 
+            MAX(mata_kuliahs.digit_semester), 
+            MAX(mata_kuliahs.digit_mk)
+        ) $this->sortDirection
+    ");
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('mata_kuliahs.id', 'desc');
         }
+
+        return $query;
     }
 }

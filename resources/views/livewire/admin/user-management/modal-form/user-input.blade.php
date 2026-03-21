@@ -2,8 +2,8 @@
     {{-- ****************************************************** --}}
     {{-- 1. ACCOUNT INFORMATION (EMAIL & PASSWORD) --}}
     {{-- ****************************************************** --}}
-    <div class="p-4 bg-white shadow-sm rounded-lg border border-gray-100 space-y-4">
-        <h4 class="text-lg font-medium text-gray-700 border-b pb-2">Account Information</h4>
+    <div class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-gray-100 dark:border-neutral-700 space-y-4 transition-colors duration-300">
+        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-200 border-b dark:border-neutral-700 pb-2">Account Information</h4>
 
         {{-- 📧 Email Input --}}
         @include('livewire.admin.global.modal-form.input-form', [

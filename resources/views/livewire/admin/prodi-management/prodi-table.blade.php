@@ -1,50 +1,70 @@
 <x-admin.global.table.main-layout-table>
 
     <x-slot:header>
-        {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'isCenter' => 1])
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'kode'])
 
-        @if ($switchTable === 'prodi')
-            {{-- Prodi - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi'])
-        @endif
+        <tr class="bg-gray-50 dark:bg-neutral-800/50">
 
-        @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-            {{-- Jurusan - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
-        @endif
 
-        {{-- Fakultas - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'id',
+                'isCenter' => 1,
+            ])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'kode',
+                'isMain' => 1,
+            ])
 
-        @if ($switchTable === 'prodi')
-            {{-- Strata - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'strata', 'isCenter' => 1])
-        @endif
-        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+            @if ($switchTable === 'prodi')
+                @include('livewire.admin.global.table.head-table', [
+                    'sortFieldString' => 'prodi',
+                    'headString' => 'Program Studi',
+                ])
+            @endif
+
+            @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
+                @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
+            @endif
+
+            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+
+            @if ($switchTable === 'prodi')
+                @include('livewire.admin.global.table.head-table', [
+                    'sortFieldString' => 'strata',
+                    'isCenter' => 1,
+                    'isMain' => 1,
+                ])
+            @endif
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+
+        </tr>
     </x-slot:header>
 
 
     @forelse($xResults as $x)
-        <tr wire:key="{{ $switchTable }}-{{ $x->id }}" class="hover:bg-gray-50"
+        <tr wire:key="{{ $switchTable }}-{{ $x->id }}"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200"
             data-{{ $switchTable }}-id="{{ $x->id }}">
-            <td class="px-6 py-4 text-center text-sm font-medium text-gray-900">{{ $x->id }}</td>
+            <td class="px-6 py-4 text-center text-sm font-medium">{{ $x->id }}</td>
 
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $x->kode_text ?? $x->kode ?? '-' }}</td>
+            <td
+                class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-sm text-gray-700 dark:text-gray-200">
+                {{ $x->kode_text ?? ($x->kode ?? '-') }}</td>
 
             @if ($switchTable === 'prodi')
-                <td class="px-6 py-4 text-sm text-gray-700">{{ $x->prodi ?? '-' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">{{ $x->prodi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-                <td class="px-6 py-4 text-sm text-gray-700">{{ $x->jurusan ?? '-' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+                    {{ $switchTable === 'jurusan' ? 'Jurusan ' : '' }}{{ $x->jurusan ?? '-' }}</td>
             @endif
 
-            <td class="px-6 py-4 text-sm text-gray-700">{{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
+            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+                {{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
-                <td class="px-6 py-4 text-center text-sm text-gray-700">
+                <td
+                    class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-center text-sm text-gray-700 dark:text-gray-200">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)

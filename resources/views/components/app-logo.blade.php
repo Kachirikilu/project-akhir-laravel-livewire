@@ -11,8 +11,12 @@
         <x-app-logo-icon class="h-8 w-auto" />
     </div>
 
-    <div class="grid flex-1 text-start text-sm">
-        <span class="truncate leading-tight font-bold text-base">Universitas Sriwijaya</span>
-        <span class="truncate text-xs text-gray-500">Sistem Informasi RPS</span>
+    <div class="grid flex-1 text-start text-sm transition-colors duration-200">
+        <span class="truncate leading-tight font-bold text-base text-gray-900 dark:text-gray-100">
+            Universitas Sriwijaya
+        </span>
+        <span class="truncate text-xs text-gray-500 dark:text-gray-400 font-medium">
+            Sistem Informasi RPS
+        </span>
     </div>
 </div>

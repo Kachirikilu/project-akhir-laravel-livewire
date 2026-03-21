@@ -93,16 +93,16 @@ class UserManagement extends Component
     private function syncSortField($filter, $sortField)
     {
         if ($filter != '' && $sortField == 'role') {
-            $sortField = 'name';
+            $this->sortField = 'name';
         } elseif ($filter != 'mahasiswa' && $sortField == 'tahun_angkatan') {
-            $sortField = 'name';
+            $this->sortField = 'name';
         } elseif ($filter == 'mahasiswa' && $sortField == 'identity2') {
-            $sortField = 'identity1';
+            $this->sortField = 'identity1';
         } elseif ($filter != 'dosen' && $sortField == 'identity3') {
             if ($filter == 'mahasiswa') {
-                $sortField = 'identity1';
+                $this->sortField = 'identity1';
             } elseif ($filter == 'dosen') {
-                $sortField = 'identity2';
+                $this->sortField = 'identity2';
             }
         }
     }
