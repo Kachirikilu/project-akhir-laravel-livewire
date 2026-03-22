@@ -1,7 +1,7 @@
 <div x-data="{ activeTab: @entangle('switchTable') }" 
-     class="mb-2 p-4 bg-white dark:bg-neutral-800 rounded-lg shadow-md border border-gray-100 dark:border-neutral-700 transition-colors duration-300">
+    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-2 p-4 rounded-lg shadow-md border">
 
-    <div class="flex flex-col-reverse border-b dark:border-neutral-700 gap-4">
+    <div class="border-[var(--border-table-color)] flex flex-col-reverse border-b">
 
         {{-- Bagian Tab / Link (Kiri) --}}
         <div class="flex space-x-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
