@@ -3,9 +3,9 @@
     <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15" @click.away="open = false">
         {{-- Tombol Utama --}}
         <button type="button" @click="open = !open"
-            class="cursor-pointer flex items-center justify-between border border-gray-300 dark:border-neutral-600 rounded-md shadow-sm 
-                   py-1 px-2 text-sm w-full bg-white dark:bg-neutral-700 text-gray-700 dark:text-gray-200 
-                   transition duration-150 hover:border-indigo-500 dark:hover:border-indigo-400">
+            class="cursor-pointer flex items-center justify-between border rounded-md shadow-sm 
+                   bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] py-1 px-2 text-sm w-full
+                   hover:border-[var(--hover-focus-color)] transition-[border-color] duration-200">
             <span x-text="selected">8</span>
             <svg class="h-4 w-4 ml-1 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                 fill="currentColor">
@@ -21,15 +21,16 @@
             x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75"
             x-transition:leave-start="transform opacity-100 scale-100"
             x-transition:leave-end="transform opacity-0 scale-95"
-            class="absolute z-20 mt-1 w-full rounded-md bg-white dark:bg-neutral-700 shadow-lg ring-1 ring-gray-300 dark:ring-gray-600 ring-opacity-5 focus:outline-none overflow-hidden"
+            class="bg-[var(--pop-up-color)] ring-[var(--focus-color)] absolute z-20 mt-1 w-full rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none overflow-hidden"
             role="menu" aria-orientation="vertical" tabindex="-1">
             
             @foreach ($perPageOptions as $option)
                 <li wire:key="perPage-{{ $option }}" @click="selected = {{ $option }}; open = false"
-                    class="block px-3 py-1 text-sm cursor-pointer transition-colors duration-150
-                           text-gray-700 dark:text-gray-200 hover:bg-indigo-500 dark:hover:bg-indigo-600 hover:text-white"
+                    class="block px-3 py-1 text-sm cursor-pointer transition-colors duration-200
+                           hover:bg-[var(--hover-main-color)]
+                           hover:text-[var(--main-text)]"
                     :class="{ 
-                        'bg-indigo-100 dark:bg-indigo-900/50 font-semibold text-indigo-700 dark:text-indigo-300': selected == {{ $option }} 
+                        'bg-[var(--main-color)] text-[var(--main-text)] dark:text-[var(--hover-focus-color)] font-semibold': selected == {{ $option }} 
                     }">
                     {{ $option }}
                 </li>

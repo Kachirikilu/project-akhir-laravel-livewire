@@ -1,10 +1,10 @@
 @if ($withTh ?? true)
     <th rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
-        class="px-6 py-3 relative {{ $isSubHeader ?? false ? 'bg-gray-100/50 dark:bg-neutral-700' : '' }}
+        class="bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 py-3 relative 
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
-        border-gray-300 dark:border-neutral-600">
+    ">
 @endif
 
 <button x-data="{
@@ -33,9 +33,9 @@
 
         <span
             :class="{
-                'text-indigo-700 dark:text-indigo-400 {{ $isMain ?? false ? 'font-bold' : '' }}': (
+                'text-[var(--focus-color)] {{ $isMain ?? false ? 'font-bold' : '' }}': (
                     sortField === '{{ $sortFieldString }}' || clicked),
-                '{{ $isMain ?? false ? 'font-bold text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400' }}':
+                'font-bold text-[var(--contrast-main-text)]':
                     !(
                         sortField === '{{ $sortFieldString }}' || clicked)
             }"
@@ -46,26 +46,24 @@
         <span
             :class="[
                 (sortField === '{{ $sortFieldString }}' || clicked) ?
-                'opacity-100 text-indigo-700 dark:text-indigo-400 font-bold' :
-                'opacity-0 group-hover:opacity-80 text-gray-400 dark:text-gray-500',
+                'opacity-100 text-[var(--focus-color)] font-bold' :
+                'opacity-0 group-hover:opacity-80 {{ $isMain ?? false ? 'text-[var(--contrast-main-text)]' : 'text-[var(--contrast-second-text)]' }}',
             
-                sortField === '{{ $sortFieldString }}' && localDir === 'desc' ?
+                (sortField === '{{ $sortFieldString }}' && localDir === 'desc') ?
                 'rotate-180' :
                 'rotate-0'
             ]"
-            class="inline-block transition-all transition-transform duration-300 ease-in-out">↑
+            class="inline-block transition-all duration-200 ease-in-out">
+            ↑
         </span>
 
         {{-- Garis Biru Absolut di Paling Bawah TH --}}
-        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-indigo-500 dark:bg-indigo-400 origin-left"
-        x-show="sortField === '{{ $sortFieldString }}' || clicked"
-        x-transition:enter="transition transform ease-out duration-300"
-        x-transition:enter-start="scale-x-0"
-        x-transition:enter-end="scale-x-100"
-        x-transition:leave="transition transform ease-in duration-200"
-        x-transition:leave-start="scale-x-100"
-        x-transition:leave-end="scale-x-0">
-    </div>
+        <div class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--focus-color)] origin-left"
+            x-show="sortField === '{{ $sortFieldString }}' || clicked"
+            x-transition:enter="transition transform ease-out duration-200" x-transition:enter-start="scale-x-0"
+            x-transition:enter-end="scale-x-100" x-transition:leave="transition transform ease-in duration-200"
+            x-transition:leave-start="scale-x-100" x-transition:leave-end="scale-x-0">
+        </div>
 
 </button>
 

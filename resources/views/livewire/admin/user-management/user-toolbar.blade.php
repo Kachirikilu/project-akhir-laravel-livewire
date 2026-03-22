@@ -1,15 +1,15 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    <h2 class="text-2xl font-bold mb-4 text-gray-700 dark:text-gray-200">Manajemen Pengguna</h2>
+    <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Pengguna</h2>
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" class="cursor-pointer text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            <flux:button variant="primary" icon="plus" class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
                 wire:target="addUser">
                 Tambah Pengguna
             </flux:button>
 
-            <flux:menu class="min-w-48 dark:bg-neutral-800 dark:border-neutral-700">
-                <flux:menu.heading class="dark:text-gray-400">Pilih Role Pengguna</flux:menu.heading>
-                <flux:menu.separator class="dark:border-neutral-700" />
+            <flux:menu class="min-w-48">
+                <flux:menu.heading>Pilih Role Pengguna</flux:menu.heading>
+                <flux:menu.separator />
 
                 {{-- Admin --}}
                 <flux:menu.item
@@ -20,8 +20,8 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
                     "
-                    class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
-                    <flux:icon name="cog-6-tooth" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                    <flux:icon name="cog-6-tooth" class="!text-red-700 dark:!text-red-400 mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
                         <span>Admin</span>
@@ -66,7 +66,7 @@
                     </div>
                 </flux:menu.item>
 
-                <flux:menu.separator class="dark:border-neutral-700" />
+                <flux:menu.separator />
 
                 {{-- Input File --}}
                 <flux:menu.item

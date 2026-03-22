@@ -59,10 +59,13 @@
                 </template>
 
                 {{-- 3. Footer / Button Action --}}
-                <div
-                    class="p-4 mt-4 bg-gray-50 dark:bg-neutral-900/50 rounded-b-lg rounded-t-sm gap-4 shadow-sm border-t dark:border-neutral-700/50 transition-colors duration-300">
+               <div
+                    class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
+                    p-4 mt-4
+                    {{-- dark:bg-neutral-900/50 dark:border-neutral-700/50  --}}
+                    rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
-                    <div class="flex-1 text-xs text-gray-600 dark:text-gray-400 space-y-3">
+                    <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.mk-management.modal-form.message-form')
                         @include('livewire.admin.global.modal-form.button-form', [
                             'xType' => $mkType,

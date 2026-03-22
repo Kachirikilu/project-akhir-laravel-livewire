@@ -35,7 +35,7 @@
     <div :class="isAuto ? 'opacity-40' : 'opacity-100'" class="transition-opacity duration-300 mr-6">
 
         <button type="button" @click="manualToggle()"
-            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all">
+            class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-[var(--main-text)] transition-all">
 
             <span
                 class="flex items-center justify-center w-4 h-4 transition-transform transform bg-white rounded-full shadow-sm">

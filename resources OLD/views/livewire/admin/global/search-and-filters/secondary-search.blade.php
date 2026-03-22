@@ -37,17 +37,17 @@
                     wire:click="{{ $selectXForFilterString }}({{ $x['id'] }})" @click="open = false"
                     class="px-4 py-2 cursor-pointer hover:bg-indigo-50 text-gray-800 transition duration-150">
                     <div class="font-medium">
-                        @if ($typeOfXString == 'prodi')
+                        @if ($typeXString == 'prodi')
                             {{ $x['prodi'] }}
-                        @elseif ($typeOfXString == 'jurusan')
+                        @elseif ($typeXString == 'jurusan')
                             {{ $x['jurusan'] }}
-                        @elseif ($typeOfXString == 'fakultas')
+                        @elseif ($typeXString == 'fakultas')
                             Fakultas {{ $x['fakultas'] }}
                         @endif
                     </div>
                     <div class="text-xs text-gray-500">
                         - ID: {{ $x['id'] }}
-                        @if ($typeOfXString == 'prodi' || $typeOfXString == 'jurusan')
+                        @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
                             <span class="mx-1 text-gray-300">|</span> Fakultas {{ $x['fakultas'] }}
                         @endif
                     </div>

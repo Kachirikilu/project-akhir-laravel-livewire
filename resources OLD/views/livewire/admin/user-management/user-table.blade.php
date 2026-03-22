@@ -168,7 +168,7 @@
 
         <x-slot:footer>
             @include('livewire.admin.global.table.footer-table', [
-                'typeOfXString' => $users,
+                'typeXString' => $users,
             ])
         </x-slot:footer>
 

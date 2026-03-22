@@ -44,6 +44,7 @@ trait WithProdiSearchFilters
                 ->get()
                 ->map(fn ($p) => [
                     'id' => $p->id,
+                    'kode' => $p->kode_pr ?? $p->jurusan_rel->kode_jr ?? $p->fakultas_rel->kode_fk ?? 'UNI',
                     'prodi' => $p->prodi,
                     'jurusan' => $p->jurusan,
                     'fakultas' => $p->fakultas,
@@ -110,6 +111,7 @@ trait WithProdiSearchFilters
             $this->prodi_results = $results->map(function ($prodi) {
                 return [
                     'id' => $prodi->id,
+                    'kode' => $prodi->kode_pr ?? $prodi->jurusan_rel->kode_jr ?? $prodi->fakultas_rel->kode_fk ?? 'UNI',
                     'prodi' => $prodi->nama_prodi,
                     'jurusan' => $prodi->jurusan,
                     'fakultas' => $prodi->fakultas,
@@ -163,6 +165,7 @@ trait WithProdiSearchFilters
                     ->get()
                     ->map(fn ($p) => [
                         'id' => $p->id,
+                        'kode' => $p->kode_pr ?? $p->jurusan_rel->kode_jr ?? $p->fakultas_rel->kode_fk ?? 'UNI',
                         'prodi' => $p->nama_prodi,
                         'jurusan' => $p->jurusan,
                         'fakultas' => $p->fakultas,
@@ -200,6 +203,7 @@ trait WithProdiSearchFilters
             ->limit(12)
             ->get([
                 'prodis.id',
+                'prodis.kode_pr',
                 'prodis.nama_prodi',
                 'jurusans.nama_jurusan',
                 'fakultas.nama_fakultas',
@@ -220,6 +224,7 @@ trait WithProdiSearchFilters
                 ->limit($remaining)
                 ->get([
                     'prodis.id',
+                    'prodis.kode_pr',
                     'prodis.nama_prodi',
                     'jurusans.nama_jurusan',
                     'fakultas.nama_fakultas',
@@ -231,6 +236,7 @@ trait WithProdiSearchFilters
         return $mainResults->map(function ($item) {
             return [
                 'id' => $item->id,
+                'kode' => $item->kode_pr ?? $item->jurusan_rel->kode_jr ?? $item->fakultas_rel->kode_fk ?? 'UNI',
                 'prodi' => $item->nama_prodi,
                 'jurusan' => $item->nama_jurusan,
                 'fakultas' => $item->nama_fakultas,

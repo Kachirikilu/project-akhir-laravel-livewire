@@ -32,7 +32,7 @@
         <div class="space-y-3">
             @if ($roleType === 'file')
                 <div class="flex items-start gap-3">
-                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">
                         Unggah file <strong class="text-slate-900 font-semibold">Excel</strong> dengan format yang
                         sesuai untuk menambahkan
@@ -41,7 +41,7 @@
                 </div>
             @elseif ($isEditing)
                 <div class="flex items-start gap-3">
-                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">
                         Kosongkan kolom <strong class="text-slate-900 font-semibold">password</strong>
                         untuk mempertahankan password lama.
@@ -50,7 +50,7 @@
             @endif
 
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-slate-600 leading-relaxed">
                     Pastikan
                     {{ $roleType == 'admin'
@@ -67,14 +67,14 @@
             </div>
 
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-slate-600 leading-relaxed">
                     Pastikan semua kolom <strong class="text-slate-900 font-semibold">wajib
                         diisi</strong> dengan benar.
                 </p>
             </div>
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-slate-600 leading-relaxed">
                     Perubahan akan tersimpan segera setelah formulir dikirim.
                 </p>

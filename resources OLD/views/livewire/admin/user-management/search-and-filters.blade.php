@@ -3,7 +3,7 @@
 
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.admin.global.search-and-filters.filter-mode', [
-            'typeOfXString' => 'pengguna',
+            'typeXString' => 'pengguna',
             'totalTab' => $totalUsers,
             'totalTab1' => $totalAdmins,
             'totalTab2' => $totalDosens,
@@ -40,7 +40,7 @@
                 'xSearchQuery' => $prodiSearchQuery,
                 'xSearchResults' => $prodiSearchResults,
                 'selectXForFilterString' => 'selectProdiForFilter',
-                'typeOfXString' => 'prodi',
+                'typeXString' => 'prodi',
                 'unfoundString' => 'Tidak ada program studi ditemukan!',
             ])
         </div>

@@ -5,7 +5,7 @@
 
             {{-- Bagian Tab / Link (Kiri) --}}
             @include('livewire.admin.global.search-and-filters.filter-mode', [
-                'typeOfXString' => 'strata',
+                'typeXString' => 'strata',
                 'totalTab' => $totalProdis,
                 'totalTab1' => $totalSarjanas,
                 'totalTab2' => $totalMagisters,
@@ -50,7 +50,7 @@
                     'xSearchQuery' => $jurusanSearchQuery,
                     'xSearchResults' => $jurusanSearchResults,
                     'selectXForFilterString' => 'selectJurusanForFilter',
-                    'typeOfXString' => 'jurusan',
+                    'typeXString' => 'jurusan',
                     'unfoundString' => 'Tidak ada jurusan ditemukan!',
                 ])
             </div>
@@ -70,7 +70,7 @@
                 'xSearchQuery' => $fakultasSearchQuery,
                 'xSearchResults' => $fakultasSearchResults,
                 'selectXForFilterString' => 'selectFakultasForFilter',
-                'typeOfXString' => 'fakultas',
+                'typeXString' => 'fakultas',
                 'unfoundString' => 'Tidak ada fakultas ditemukan!',
             ])
         </div>

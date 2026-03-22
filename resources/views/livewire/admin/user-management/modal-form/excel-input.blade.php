@@ -4,7 +4,7 @@
     {{-- ***********************F******************************* --}}
     <div
         class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors duration-300">
-        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-200 border-b dark:border-neutral-700 pb-2">Upload
+        <h4 class="text-lg font-medium text-[var(--contrast-second-text)] border-b dark:border-neutral-700 pb-2">Upload
             File Excel</h4>
 
         {{-- 📁 File Input --}}
@@ -18,9 +18,10 @@
                     <input wire:model="excel_file" type="file" id="excel_file" accept=".xlsx, .xls"
                         wire:key="excel-input-field"
                         class="
-                w-full border dark:border-neutral-700 rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium
-                bg-white dark:bg-neutral-800
-                focus:ring-indigo-500 focus:border-indigo-500 dark:focus:ring-indigo-400
+                        bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+                placeholder-[var(--contrast-third-text)]
+                
+                w-full border rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium
                 file:mr-4 file:py-1 file:px-4
                 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
@@ -32,8 +33,8 @@
                     <div wire:loading.flex wire:target="excel_file, parseExcelFile"
                         class="absolute inset-y-0 right-3 items-center">
                         <div
-                            class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-neutral-700 pl-2 rounded-r-lg">
-                            <svg class="animate-spin h-4 w-4 text-indigo-500 dark:text-indigo-400"
+                            class="text-[var(--focus-color)] flex items-center space-x-2 text-xs pl-2 rounded-r-lg">
+                            <svg class="animate-spin h-4 w-4"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>
@@ -73,7 +74,7 @@
             'iconString' => 'academic-cap',
         ])
 
-        <h4 class="text-lg font-medium text-gray-700 dark:text-gray-200 border-b dark:border-neutral-700 pb-2">
+        <h4 class="text-lg font-medium text-[var(--contrast-second-text)] border-b dark:border-neutral-700 pb-2">
             Preview & Edit Data Pengguna
         </h4>
 
@@ -104,67 +105,71 @@
                         </tr>
                     </thead>
 
+                    @php
+                        $kolomExcel = 'border bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] placeholder-[var(--contrast-third-text)] px-2 py-1 border'
+                    @endphp
+
                     <tbody class="bg-white dark:bg-neutral-800">
                         @foreach ($parsedRows as $i => $row)
                             <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700/50 transition-colors">
                                 <td
-                                    class="px-2 py-1 border dark:border-neutral-700 text-center font-semibold text-gray-600 dark:text-gray-400">
+                                    class="{{ $kolomExcel }} text-center font-semibold">
                                     {{ $i + 1 }}
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="email" wire:model.lazy="parsedRows.{{ $i }}.email"
-                                        class="w-48 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none">
+                                        class="w-48 border rounded px-2 py-1 text-xs outline-none">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.password"
-                                        class="w-48 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none"
+                                        class="w-48 border rounded px-2 py-1 text-xs outline-none"
                                         placeholder="Default / custom">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.name"
-                                        class="w-56 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-blue-500 outline-none">
+                                        class="w-56 border rounded px-2 py-1 text-xs outline-none">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nip"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nitk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidn"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td>
 
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nim"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td>
 
                                 {{-- Tahun Masuk: Input dikecilkan --}}
-                                <td class="px-2 py-1 border">
+                                <td class="{{ $kolomExcel }}">
                                     <input type="number"
                                         wire:model.lazy="parsedRows.{{ $i }}.tahun_angkatan"
                                         class="w-full border rounded px-1 py-1 text-xs text-center appearance-none"
@@ -173,14 +178,14 @@
                                         placeholder="YYYY">
                                 </td>
 
-                                {{-- <td class="px-2 py-1 border">
+                                {{-- <td class="{{ $kolomExcel }}">
                                     <input type="text"
                                         wire:model.lazy="parsedRows.{{ $i }}.program_studi"
-                                        class="w-40 border dark:border-neutral-700 rounded px-2 py-1 text-xs bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100">
+                                        class="w-40 border rounded px-2 py-1 text-xs">
                                 </td> --}}
 
                                 {{-- Role: Diberi styling Select yang lebih jelas --}}
-                                <td class="px-2 py-1 border dark:border-neutral-700">
+                                <td class="{{ $kolomExcel }}">
                                     <div class="relative">
                                         <select wire:model.lazy="parsedRows.{{ $i }}.role"
                                             class="w-24 border rounded pl-2 pr-4 py-1 text-xs cursor-pointer appearance-none transition-colors
@@ -231,8 +236,8 @@
 
         <div wire:loading.flex wire:target="excel_file, parseExcelFile, removeParsedRow"
             class="justify-center items-center py-4">
-            <div class="flex items-center space-x-2 text-gray-500">
-                <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+            <div class="text-[var(--focus-color)] flex items-center space-x-2">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                         stroke-width="4">

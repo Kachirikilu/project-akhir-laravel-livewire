@@ -1,9 +1,25 @@
 <x-admin.global.table.main-layout-table>
 
+    @php
+        $padingKolom = 'px-6 py-4 text-sm';
+        $headKolom =
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            $padingKolom;
+
+        $mainKolom = 'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' . ' border-x ' . $padingKolom;
+        $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
+
+        $headSubKolom =
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--focus-color)] border-x border-b text-center font-bold uppercase ' .
+            $padingKolom;
+        $subKolom =
+            'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
+            $padingKolom;
+    @endphp
+
     <x-slot:header>
 
-        <tr class="bg-gray-50 dark:bg-neutral-800/50">
-
+        <tr>
 
             @include('livewire.admin.global.table.head-table', [
                 'sortFieldString' => 'id',
@@ -34,37 +50,37 @@
                     'isMain' => 1,
                 ])
             @endif
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
+            <th class="{{ $headKolom }} . ' uppercase'">Aksi</th>
 
         </tr>
     </x-slot:header>
 
 
     @forelse($xResults as $x)
-        <tr wire:key="{{ $switchTable }}-{{ $x->id }}"
-            class="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-200"
-            data-{{ $switchTable }}-id="{{ $x->id }}">
-            <td class="px-6 py-4 text-center text-sm font-medium">{{ $x->id }}</td>
+        <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
+            class="border-[var(--border-table-color)] hover:bg-blue-200/60 dark:hover:bg-gray-700/60 transition-colors duration-200">
+            
+            <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
             <td
-                class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-sm text-gray-700 dark:text-gray-200">
+                class="{{ $mainKolom }} text-center">
                 {{ $x->kode_text ?? ($x->kode ?? '-') }}</td>
 
             @if ($switchTable === 'prodi')
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">{{ $x->prodi ?? '-' }}</td>
+                <td class="{{ $secondKolom }}">{{ $x->prodi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-                <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+                <td class="{{ $secondKolom }}">
                     {{ $switchTable === 'jurusan' ? 'Jurusan ' : '' }}{{ $x->jurusan ?? '-' }}</td>
             @endif
 
-            <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+            <td class="{{ $secondKolom }}">
                 {{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
                 <td
-                    class="px-6 py-4 border-x border-gray-300 dark:border-neutral-700 bg-gray-100/30 dark:bg-neutral-700/30 text-center text-sm text-gray-700 dark:text-gray-200">
+                    class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)
@@ -107,7 +123,12 @@
         </tr>
         @empty
             <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                <td colspan="{{ match ($filter) {
+                    'prodi' => 7,
+                    'jurusan' => 5,
+                    'fakultas' => 4,
+                    default => 7,
+                } }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada {{ $xNameString }} ditemukan!
                 </td>
             </tr>
@@ -116,7 +137,7 @@
 
         <x-slot:footer>
             @include('livewire.admin.global.table.footer-table', [
-                'typeOfXString' => $xResults,
+                'typeXString' => $xResults,
             ])
         </x-slot:footer>
 

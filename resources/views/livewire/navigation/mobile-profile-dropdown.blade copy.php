@@ -2,20 +2,20 @@
     {{-- <flux:sidebar.toggle class="lg:hidden" icon="bars-3" inset="left" /> --}}
 
     {{-- Tombol Toggle Mobile --}}
-    <button type="button" x-cloak @click.stop="toggleExpanded()"
-        class="bg-[var(--main-color)] border-[var(--border-main-color)] hover:bg-[var(--hover-main-color)] lg:hidden fixed z-[40] top-4 left-4 p-2 text-white rounded-lg shadow-md border active:scale-95 transition-all duration-300 ease-out"
+    <button type="button" x-cloak @click.stop="toggleMobile()"
+        class="lg:hidden fixed z-[40] top-4 left-4 p-2 bg-sky-800 text-white rounded-lg shadow-md border border-white/20 active:scale-95 transition-transform"
         aria-label="Toggle Menu">
         <flux:icon name="bars-3" variant="outline" class="w-6 h-6" />
     </button>
 
     {{-- Overlay Backdrop --}}
-    <div x-show="expanded && !isDesktop" x-cloak @click="toggleExpanded()" x-transition:enter="transition ease-out duration-300"
+    <div x-show="openMobile" x-cloak @click="toggleMobile()" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
         x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] lg:hidden">
     </div>
 
-    {{-- <flux:spacer />
+    <flux:spacer />
 
     <flux:dropdown align="end">
 
@@ -66,5 +66,5 @@
                 </flux:menu.item>
             </form>
         </flux:menu>
-    </flux:dropdown> --}}
+    </flux:dropdown>
 </flux:header>

@@ -1,4 +1,4 @@
-<td class="px-6 py-4 text-center text-sm space-x-2 gap-2">
+<td class="{{ $secondKolom }}">
     <flux:dropdown>
         <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
         </flux:button>

@@ -28,7 +28,9 @@
         <input autocomplete="off" x-model="value" {{-- Gunakan x-model agar Alpine tahu isinya --}} type="text" readonly @click="open = true"
             @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $modelString }}"
             placeholder="{{ $placeholder ?? 'Pilih Opsi' }}"
-            class="w-full border dark:border-neutral-700 rounded-lg pl-10 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10 cursor-pointer">
+            class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
+                placeholder-[var(--contrast-third-text)]
+            w-full border rounded-lg pl-10 px-3 py-2 pr-10 cursor-pointer">
 
         {{-- 2. Tombol Reset --}}
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
@@ -41,7 +43,7 @@
 
     {{-- Dropdown Result --}}
     <div x-show="open" x-transition.opacity x-cloak
-        class="absolute left-0 right-0 z-[100] mt-1 bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
+        class="bg-[var(--pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
 
         @foreach ($xOptions as $option)
             <div wire:key="option-{{ $option }}"
@@ -50,11 +52,14 @@
                     $store.config['{{ $modelString }}'] = value;
                     open = false
                 "
-                {{-- Set nilai via Alpine --}}
-                class="px-4 py-3 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition duration-150 border-b border-gray-50 dark:border-neutral-700 last:border-none">
-                <div class="flex justify-between items-center">
-                    <span class="font-semibold text-gray-800 dark:text-gray-200 leading-tight">{{ $option }}</span>
-                    <span class="text-[10px] bg-indigo-500 text-white px-2 py-1 rounded-md ml-2">Pilih</span>
+                 class="px-4 py-2 cursor-pointer transition-colors duration-200
+                bg-[var(--pop-up-color)] border-[var(--focus-color)]
+                hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
+                {{-- border-b last:border-none  --}}
+                text-sm">
+                <div class="flex justify-between items-center my-1">
+                    <span class="text-[var(--contrast-main-text)] font-semibold leading-tight">{{ $option }}</span>
+                    <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs text-white px-2 py-1 rounded-md ml-2">Pilih</span>
                 </div>
             </div>
         @endforeach

@@ -45,10 +45,11 @@ trait WithJurusanSearchFilters
                 })
                 ->limit(12)
                 ->get()
-                ->map(fn ($p) => [
-                    'id' => $p->id,
-                    'jurusan' => $p->nama_jurusan,
-                    'fakultas' => $p->fakultas_rel?->nama_fakultas,
+                ->map(fn ($j) => [
+                    'id' => $j->id,
+                    'kode' => $j->kode_jr ?? $j->fakultas_rel->kode_fk ?? 'UNI',
+                    'jurusan' => $j->nama_jurusan,
+                    'fakultas' => $j->fakultas_rel?->nama_fakultas,
                 ])
                 ->toArray();
 
@@ -97,6 +98,7 @@ trait WithJurusanSearchFilters
             $this->jurusan_results = $results->map(function ($jurusan) {
                 return [
                     'id' => $jurusan->id,
+                    'kode' => $jurusan->kode_jr ?? $jurusan->fakultas_rel->kode_fk ?? 'UNI',
                     'jurusan' => $jurusan->nama_jurusan,
                     'fakultas' => $jurusan->fakultas_rel?->nama_fakultas,
                 ];
@@ -122,10 +124,11 @@ trait WithJurusanSearchFilters
                     ->orderBy('nama_jurusan')
                     ->limit(12)
                     ->get()
-                    ->map(fn ($f) => [
-                        'id' => $f->id,
-                        'jurusan' => $f->nama_jurusan,
-                        'fakultas' => $f->fakultas_rel?->nama_fakultas,
+                    ->map(fn ($j) => [
+                        'id' => $j->id,
+                        'kode' => $j->kode_jr ?? $j->fakultas_rel->kode_fk ?? 'UNI',
+                        'jurusan' => $j->nama_jurusan,
+                        'fakultas' => $j->fakultas_rel?->nama_fakultas,
                     ])->toArray();
             }
         }
@@ -147,6 +150,7 @@ trait WithJurusanSearchFilters
             ->where('jurusans.id', $jurusanIdUser)
             ->get([
                 'jurusans.id',
+                'jurusans.kode_jr',
                 'jurusans.nama_jurusan',
                 'fakultas.nama_fakultas',
             ]);
@@ -162,6 +166,7 @@ trait WithJurusanSearchFilters
                 ->limit(12 - $count)
                 ->get([
                     'jurusans.id',
+                    'jurusans.kode_jr',
                     'jurusans.nama_jurusan',
                     'fakultas.nama_fakultas',
                 ]);
@@ -172,6 +177,7 @@ trait WithJurusanSearchFilters
         return $results->map(function ($item) {
             return [
                 'id' => $item->id,
+                'kode' => $item->kode_jr ?? $item->fakultas_rel->kode_fk ?? 'UNI',
                 'jurusan' => $item->nama_jurusan,
                 'fakultas' => $item->nama_fakultas,
             ];

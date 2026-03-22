@@ -33,7 +33,7 @@
 
     <x-slot:footer>
         @include('livewire.admin.global.table.footer-table', [
-            'typeOfXString' => $fakultass
+            'typeXString' => $fakultass
         ])
     </x-slot:footer>
 

@@ -91,7 +91,7 @@
                         $flux.modal('prodi-delete').show();
                     }
                 "
-                wire:click="{{ $deleteCall }}" class="!text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
+                wire:click="{{ $deleteCall }}" class="!text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">

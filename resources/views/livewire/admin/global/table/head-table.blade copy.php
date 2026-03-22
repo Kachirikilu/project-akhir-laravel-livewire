@@ -59,16 +59,16 @@
             this.clicked = false
         }
     }" @click="doSort()"
-        class="w-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} gap-1 text-xs font-medium text-gray-500 uppercase hover:text-indigo-600 whitespace-nowrap transition-colors duration-200">
+        class="w-full cursor-pointer group flex {{ $isCenter ?? false ? 'justify-center' : '' }} gap-1 text-xs font-medium text-gray-500 uppercase hover:text-[var(--hover-focus-color)] whitespace-nowrap transition-colors duration-200">
 
-        <span :class="clicked ? 'text-indigo-600 font-bold' : '{{ ($isMain ?? false) ? 'font-bold text-gray-900' : '' }}'">
+        <span :class="clicked ? 'text-[var(--focus-color)] font-bold' : '{{ ($isMain ?? false) ? 'font-bold text-gray-900' : '' }}'">
             {{ $headString ?? $sortFieldString }}
         </span>
 
         <span
             :class="[
                 (sortField === '{{ $sortFieldString }}' || clicked) ?
-                'opacity-100 text-indigo-600 font-bold' :
+                'opacity-100 text-[var(--focus-color)] font-bold' :
                 'opacity-0 group-hover:opacity-80 text-gray-400',
             
                 sortField === '{{ $sortFieldString }}' && localDir === 'desc' ?

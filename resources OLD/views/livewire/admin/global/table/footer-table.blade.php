@@ -1,9 +1,9 @@
 <div>
     {{-- Pagination --}}
-    @if ($typeOfXString->hasPages())
+    @if ($typeXString->hasPages())
         <div class="p-4" id="pagination-links-container" wire:loading.remove
             wire:target="gotoPage, previousPage, nextPage">
-            {{ $typeOfXString->links() }}
+            {{ $typeXString->links() }}
         </div>
     @endif
 

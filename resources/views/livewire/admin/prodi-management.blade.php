@@ -1,4 +1,4 @@
-<div class="p-6 bg-gray-50 dark:bg-neutral-900 rounded-xl shadow-sm transition-colors duration-300">
+<div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
     {{-- <h2 class="text-2xl font-bold mb-4 text-gray-700">Manajemen Program Studi</h2> --}}
     @include('livewire.admin.prodi-management.prodi-toolbar')
     @include('livewire.admin.prodi-management.prodi-switch-table')

@@ -57,9 +57,10 @@ trait WithFakultasSearchFilters
                 })
                 ->limit(12)
                 ->get()
-                ->map(fn ($p) => [
-                    'id' => $p->id,
-                    'fakultas' => $p->nama_fakultas,
+                ->map(fn ($f) => [
+                    'id' => $f->id,
+                    'kode' => $f->kode_fk ?? 'UNI',
+                    'fakultas' => $f->nama_fakultas,
                 ])->toArray();
         } elseif (empty($this->fakultasSearchQuery) || $this->selectedFakultasName) {
             $this->fakultasSearchResults = $this->getFakultasbyUser();
@@ -116,6 +117,7 @@ trait WithFakultasSearchFilters
             $this->fakultas_results = $results->map(function ($fakultas) {
                 return [
                     'id' => $fakultas->id,
+                    'kode' => $fakultas->kode_fk ?? 'UNI',
                     'fakultas' => $fakultas->nama_fakultas,
                 ];
             })->toArray();
@@ -145,6 +147,7 @@ trait WithFakultasSearchFilters
                     ->get()
                     ->map(fn ($f) => [
                         'id' => $f->id,
+                        'kode' => $f->kode_fk ?? 'UNI',
                         'fakultas' => $f->nama_fakultas,
                     ])->toArray();
             }
@@ -183,6 +186,7 @@ trait WithFakultasSearchFilters
         return $results->map(function ($item) {
             return [
                 'id' => $item->id,
+                'kode' => $item->kode_fk ?? 'UNI',
                 'fakultas' => $item->nama_fakultas,
             ];
         })->toArray();

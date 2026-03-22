@@ -1,6 +1,6 @@
 <button type="button" x-show="{{ $xShow }}" x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100"
-    x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-50"
     @click="
         open = false; 
@@ -14,9 +14,9 @@
         wire:loading.attr="disabled"
         wire:target="{{ $jurusan_id }}"
     @endif --}}
-    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-gray-500 dark:text-gray-300' }} hover:text-red-500 dark:hover:text-red-400 transition duration-150"
+    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-[var(--contrast-main-text)]' }} hover:text-red-500 dark:text-red-400 transition duration-200"
     @empty($xColor)
-        x-bind:class="$store.config?.colorIcon || 'text-gray-500 dark:text-gray-300'"
+        x-bind:class="$store.config?.colorIcon || 'text-[var(--contrast-main-text)]'"
     @endempty
     title="Reset">
     <svg class="h-{{ $xSize ?? 5 }} w-{{ $xSize ?? 5 }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 scale-50" 
     x-transition:enter-end="opacity-100 scale-100"
-    x-transition:leave="transition ease-in duration-150" 
+    x-transition:leave="transition ease-in duration-200" 
     x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-50" 
     
@@ -40,7 +40,7 @@
         $wire.{{ $xWire }};
         {{ isset($xWire2) ? '$wire.' . $xWire2 : '' }}
     "
-    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3 {{ $xColor ?? 'text-gray-400' }} hover:text-red-500 transition duration-150"
+    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3 {{ $xColor ?? 'text-gray-400' }} hover:text-red-500 transition duration-200"
     title="Bersihkan">
     
     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

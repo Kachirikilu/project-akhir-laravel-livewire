@@ -1,9 +1,12 @@
-<div class="bg-white dark:bg-neutral-800 shadow-lg rounded-lg overflow-hidden transition-colors duration-300" id="table-results-container">
+<div class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden" id="table-results-container">
 
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y">
             {{-- Head Table --}}
-            <thead class="bg-gray-50 dark:bg-neutral-700/50 border-gray-400 dark:border-neutral-500">
+            <thead
+            class="bg-[var(--main-table-color)] border-[var(--border-table-color)]"
+            {{-- class="bg-gray-50 dark:bg-neutral-700/50 border-gray-400 dark:border-neutral-500" --}}
+            >
                     {{ $header }}
                     {{-- Body Table --}}
             <tbody 
@@ -14,7 +17,7 @@
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, saveProdi, updateProdi, destroyProdi,
                 search, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
-                class="bg-white dark:bg-neutral-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-300">
+                class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">
                 {{ $slot }}
             </tbody>
         </table>

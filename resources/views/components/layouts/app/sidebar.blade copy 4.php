@@ -12,87 +12,29 @@
             --sidebar-width: 72px;
         }
 
-        :root { 
-            --wadah-color: #feffff;       /* sky-950 */
-            --border-wadah-color: #c0ced5;       /* sky-950 */
-
-            --main-color: #075985;       /* sky-800 */
-            --hover-main-color: #066fa7;       /* sky-800 */
-            --border-main-color: #0284c7;     /* sky-600 */
-            --contrast-main-color: #075985;
-            
-            --main-text: #ffffff;        /* white */
-            --second-text: rgb(164, 166, 170);      /* gray-500 */
-            --contrast-main-text: #000000;
-            --contrast-second-text: #52525b;
-            --contrast-third-text: #818187; 
-
-            --focus-color: #4f46e5;       /* bg-indigo-600 */
-            --hover-focus-color: #4338ca; /* hover:bg-indigo-700 */
-
-            --main-table-color: #eff0f1;
-            --second-table-color: #ffffff;
-            --sub-table-color: #f8fafc;
-
-            --main-table-trans: #eff0f1a0;
-            --second-table-trans: #ffffffa0;
-            --sub-table-trans: #f8fafca0;
-
-            --border-table-color: #c4cdd8;
-
-            --pop-up-color: #eaedee;
-            --hover-pop-up-color: #d6dbdc;
-
-        }
-
-        .dark {
-            --wadah-color: #17191a;       /* sky-950 */
-            --border-wadah-color: #1e343f;       /* sky-950 */
-
-            --main-color: #082f49;       /* sky-950 */
-            --hover-main-color: #063e63;       /* sky-950 */
-            --border-main-color: #075985;     /* sky-800 */
-            --contrast-main-color: #ffffff;
-            
-            --main-text: #e0e3e9;        /* gray-400 */
-            --second-text: #9297a1;      /* gray-500 */
-            --contrast-main-text: #ffffff;
-            --contrast-second-text: #b6b6bd; 
-            --contrast-third-text: #9999a0; 
-
-            --focus-color: #6668ec;       /* bg-indigo-500 */
-            --hover-focus-color: #6059e7; /* hover:bg-indigo-600 */
-
-            /* --main-table-color: #1e272e;
-            --second-table-color: #2a333b;
-            --sub-table-color: #232c34;
-            --border-table-color: #0d1922; */
-            --main-table-color: #25292d;
-            --second-table-color: #303031;
-            --sub-table-color: #2f3235a0;
-
-            --main-table-trans: #25292da0;
-            --second-table-trans: #303031a0;
-            --sub-table-trans: #2f3235a0;
-
-            --border-table-color: #141a1f;
-
-            --pop-up-color: #191a1a;
-            --hover-pop-up-color: #252727;
-        }
-
         .sidebar-expanded {
             --sidebar-width: 256px;
         }
 
         .flux-sidebar-custom {
             width: var(--sidebar-width) !important;
-            transition: width 0.3s ease !important;
+            /* transition: all 0.3s ease !important; */
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease !important;
             position: fixed !important;
             left: 0;
             top: 0;
             bottom: 0;
             z-index: 50;
+        }
+
+        /* Kondisi ketika sidebar sembunyi di mobile */
+        .sidebar-hidden {
+            transform: translateX(-100%) !important;
+        }
+
+        /* Kondisi ketika sidebar muncul di mobile */
+        .sidebar-visible {
+            transform: translateX(0) !important;
         }
 
         .main-content {
@@ -103,48 +45,47 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }" x-data="{
-    expanded: $persist(false).as('sidebar_expanded'),
-    expanded2: false,
-    isDesktop: window.matchMedia('(min-width: 1024px)').matches,
+<body class="min-h-screen bg-white dark:bg-zinc-900"
+    :class="{ 'sidebar-expanded': (isDesktop && expanded) || (!isDesktop && openMobile) }" x-data="{
+        expanded: $persist(false).as('sidebar_expanded'),
+        openMobile: false,
+        isDesktop: window.matchMedia('(min-width: 1024px)').matches,
+    
+        toggleMobile() {
+            this.openMobile = !this.openMobile;
+            this.expanded = this.openMobile;
+        },
+        toggleExpanded() {
+            this.expanded = !this.expanded;
+            this.openMobile = this.expanded;
+        },
+    
+        init() {
+            const media = window.matchMedia('(min-width: 1024px)');
+            this.isDesktop = media.matches;
+            media.addEventListener('change', (e) => {
+                this.isDesktop = e.matches;
+                if (e.matches && this.expanded) this.openMobile = true;
+            });
 
-    toggleExpanded() {
-        this.expanded = !this.expanded;
-        if (this.isDesktop) {
-            this.expanded2 = this.expanded;
-        }
-    },
-
-    init() {
-        const media = window.matchMedia('(min-width: 1024px)');
-        this.isDesktop = media.matches;
-
-        this.expanded2 = this.expanded;
-
-        media.addEventListener('change', (e) => {
-            this.isDesktop = e.matches;
-
-            if (!e.matches) {
-                this.expanded = false;
-            } else {
-                this.expanded = this.expanded2;
+            if (this.isDesktop && this.expanded) {
+                this.openMobile = true;
             }
-        });
-    }
-}">
+        }
+        {{-- if (this.isDesktop && this.expanded) this.openMobile = true; --}}
+
+    }">
 
     {{-- Sidebar --}}
-    <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
+    <div x-show="openMobile || isDesktop" x-cloak {{-- @click.outside="if(!isDesktop) { openMobile = false; expanded = false; }" --}}
         x-transition:enter="transition transform duration-300 ease-in-out" x-transition:enter-start="-translate-x-full"
         x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-200 ease-in-out"
-        x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
+        x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" {{-- Gunakan variabel CSS untuk lebar agar sinkron dengan main content --}}
         class="fixed inset-y-0 left-0 z-50 transition-all duration-300"
         :class="isDesktop && !expanded ? 'w-[72px]' : 'w-[256px]'">
 
-        <flux:sidebar x-cloak
-            class="flux-sidebar-custom overflow-hidden border-e
-            bg-[var(--main-color)] border-[var(--border-main-color)]
-            flex flex-col">
+        <flux:sidebar x-cloak {{-- :class="isDesktop ? 'sidebar-visible' : (openMobile ? 'sidebar-visible' : 'sidebar-hidden')" --}}
+            class="flux-sidebar-custom overflow-hidden border-e border-sky-600 bg-sky-800 dark:border-sky-800 dark:bg-sky-950 flex flex-col">
 
             {{-- Header Logo & Toggle --}}
             <div class="flex items-center h-10 mt-2 mx-1">
@@ -167,10 +108,11 @@
 
                 @foreach ($navItems as $item)
                     <a href="{{ route($item['route']) }}" wire:navigate
-                        class="flex items-center text-xs mx-1 p-2 rounded-lg transition-colors {{ request()->routeIs($item['route']) ? 'bg-white/20 text-[var(--main-text)]' : 'text-[var(--main-text)]/80 hover:bg-white/10 hover:text-[var(--main-text)]' }}"
+                        class="flex items-center text-xs mx-1 p-2 rounded-lg transition-colors {{ request()->routeIs($item['route']) ? 'bg-white/20 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white' }}"
                         title="{{ !$item['label'] ? $item['label'] : '' }}">
                         <flux:icon :name="$item['icon']" variant="outline" class="w-4 h-4 shrink-0" />
-                        <span x-show="expanded" x-cloak x-transition:enter="transition-all duration-300 ease-out"
+                        <span x-show="expanded || openMobile" x-cloak
+                            x-transition:enter="transition-all duration-300 ease-out"
                             x-transition:enter-start="opacity-0 translate-x-4"
                             x-transition:enter-end="opacity-100 translate-x-0"
                             x-transition:leave="transition-all duration-200 ease-in"
@@ -188,9 +130,9 @@
                 x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
                 class="mb-4 mx-1 flex justify-end">
                 <button type="button" @click="toggleExpanded()"
-                    class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-[var(--main-text)]">
+                    class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white">
                     <span class="transition-all" :class="expanded ? 'rotate-[-180deg]' : ''">
-                        <flux:icon name="chevron-double-right" variant="mini" class="w-6 h-6 text-[var(--main-text)]" />
+                        <flux:icon name="chevron-double-right" variant="mini" class="w-6 h-6 text-white" />
                     </span>
                 </button>
             </div>

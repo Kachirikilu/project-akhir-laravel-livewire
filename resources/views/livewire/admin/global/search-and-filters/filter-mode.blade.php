@@ -6,7 +6,7 @@
                 'xFilter' => $filter,
                 'tabFilter' => $totalTab,
                 'tabString' => '',
-                'tabNameString' => 'Semua ' . ucfirst($typeOfXString)
+                'tabNameString' => 'Semua ' . ucfirst($typeXString)
             ])
 
     {{-- Tab 1 --}}

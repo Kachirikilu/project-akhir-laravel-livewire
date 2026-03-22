@@ -70,7 +70,7 @@
 
         <x-slot:footer>
             @include('livewire.admin.global.table.footer-table', [
-                'typeOfXString' => $prodis,
+                'typeXString' => $prodis,
             ])
         </x-slot:footer>
 

@@ -5,10 +5,10 @@
         id="count-all">{{ $tabFilter }}</span>)
 </button> --}}
 <button @click="activeTab = '{{ $tabString }}'; $wire.{{ $xString }}('{{ $tabString }}')"
-    class="relative cursor-pointer tab-mode px-2 py-2 text-sm font-medium rounded-t-lg transition duration-300 whitespace-nowrap group focus:outline-none"
+    class="relative cursor-pointer tab-mode px-2 py-2 text-sm font-medium rounded-t-lg transition duration-200 whitespace-nowrap group focus:outline-none"
     :class="activeTab === '{{ $tabString }}' 
-        ? 'text-indigo-700 dark:text-indigo-400' 
-        : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-300'">
+        ? 'text-[var(--focus-color)]' 
+        : 'text-[var(--contrast-second-text)] hover:text-[var(--focus-color)]'">
 
     <div class="flex items-center">
         <i class="fas fa-users mr-2"></i>
@@ -18,7 +18,8 @@
 
     {{-- Garis Indikator Bawah --}}
     <span 
-        class="absolute bottom-0 left-0 h-0.5 bg-indigo-500 dark:bg-indigo-400 transition-all duration-300 ease-in-out transform origin-left"
+        x-cloak
+        class="bg-[var(--focus-color)] absolute bottom-0 left-0 h-0.5 transition-all duration-300 ease-in-out transform origin-left"
         :class="activeTab === '{{ $tabString }}' ? 'w-full scale-x-100' : 'w-full scale-x-0 group-hover:scale-x-100'"
     ></span>
 </button>

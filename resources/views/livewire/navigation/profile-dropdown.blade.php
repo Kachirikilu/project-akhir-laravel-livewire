@@ -1,4 +1,4 @@
-<flux:dropdown class="hidden lg:block" align="start">
+<flux:dropdown class="block" align="start">
 
     {{-- @if (auth()->user()->profile_photo_path)
         <flux:profile 
@@ -59,15 +59,15 @@
                                 class="h-full w-full object-cover">
                         @else
                             <span
-                                class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-sky-700 dark:text-white">
+                                class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 bg-[var(--contrast-main-color)] text-[var(--contrast-main-text)]">
                                 {{ $userInitials }}
                             </span>
                         @endif
                     </span>
 
                     <div class="grid flex-1 text-start text-sm leading-tight">
-                        <span class="truncate font-semibold dark:text-white">{{ $userName }}</span>
-                        <span class="truncate text-xs text-zinc-600 dark:text-zinc-400">{{ $userEmail }}</span>
+                        <span class="truncate font-semibold text-[var(--contrast-main-text)]">{{ $userName }}</span>
+                        <span class="truncate text-xs text-[var(--contrast-second-text)]">{{ $userEmail }}</span>
                     </div>
                 </div>
             </div>

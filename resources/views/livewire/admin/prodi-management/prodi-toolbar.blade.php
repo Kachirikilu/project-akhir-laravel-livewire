@@ -1,16 +1,16 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    <h2 class="text-2xl font-bold mb-4 text-gray-700 dark:text-gray-200">Manajemen Program Studi</h2>
+    <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Program Studi</h2>
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" 
-                class="cursor-pointer text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
                 wire:target="addProdi">
                 Tambah Program Studi
             </flux:button>
 
-            <flux:menu class="min-w-48 dark:bg-neutral-800 dark:border-neutral-700">
-                <flux:menu.heading class="dark:text-gray-400">Pilih Jenis</flux:menu.heading>
-                <flux:menu.separator class="dark:border-neutral-700" />
+            <flux:menu class="min-w-48">
+                <flux:menu.heading>Pilih Jenis</flux:menu.heading>
+                <flux:menu.separator />
 
                 {{-- Program Studi --}}
                 <flux:menu.item
@@ -53,7 +53,7 @@
                     @click="
                         $store.config?.setType('fakultas');
                         $store.config?.setEdit(0);
-                        $store.config?.setColor('text-indigo-700 dark:text-indigo-400');
+                        $store.config?.setColor('text-[var(--focus-color)]');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "

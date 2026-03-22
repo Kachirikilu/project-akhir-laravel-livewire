@@ -3,7 +3,7 @@
     @if ($errors->any())
         <div class="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl shadow-sm transition-colors duration-300">
             <div class="flex items-center gap-2 mb-3">
-                <flux:icon name="exclamation-triangle" variant="mini" class="text-red-600 dark:text-red-400" />
+                <flux:icon name="exclamation-triangle" variant="mini" class="text-red-700 dark:text-red-400" />
                 <h4 class="font-bold text-red-700 dark:text-red-400 text-xs uppercase tracking-wider">
                     Ada beberapa kesalahan:
                 </h4>
@@ -25,16 +25,16 @@
     {{-- 💡 2. Tips (Di bawah Error) --}}
     <div class="rounded-xl border border-slate-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
         <div class="flex items-center gap-2 mb-3">
-            <flux:icon name="calendar" variant="mini" class="text-indigo-700 dark:text-indigo-400" />
+            <flux:icon name="calendar" variant="mini" class="text-[var(--focus-color)]" />
             <span class="font-bold text-slate-900 dark:text-gray-200 text-xs uppercase tracking-wider">Tips</span>
         </div>
 
         <div class="space-y-3">
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed" x-data="{
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
+                <p class="text-sm text-[var(--text-second)] leading-relaxed" x-data="{
                     {{-- JS Wrap diperbarui untuk mendukung dark mode pada tag strong --}}
-                    wrap: (txt) => `<strong class='text-blue-900 dark:text-blue-300 font-semibold'>${txt}</strong>`,
+                    wrap: (txt) => `<strong class='text-[var(--focus-color)] font-semibold'>${txt}</strong>`,
                 
                     get labels() {
                         const mapping = {
@@ -53,24 +53,24 @@
                     }
                 }">
                     Pastikan <span x-html="formatList(labels)"></span> yang dimasukkan adalah
-                    <strong class="text-slate-900 dark:text-gray-100 font-semibold">unik</strong> dan
-                    <strong class="text-slate-900 dark:text-gray-100 font-semibold">valid</strong>.
+                    <strong class="text-[var(--contrast-main-text)] font-semibold">unik</strong> dan
+                    <strong class="text-[var(--contrast-main-text)] font-semibold">valid</strong>.
                 </p>
             </div>
 
             <template x-if="$store.config?.typeModal == 'mahasiswa' || $store.config?.typeModal == 'file'" x-cloak>
                 <div class="flex items-start gap-3">
-                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                    <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
-                        Pastikan <strong class="text-blue-900 dark:text-blue-300 font-semibold">Tahun Angkatan</strong> minimal <strong class="text-slate-900 dark:text-gray-100 font-semibold">tahun 1960</strong>.
+                    <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
+                    <p class="text-sm text-[var(--text-second)] leading-relaxed">
+                        Pastikan <strong class="text-[var(--focus-color)] font-semibold">Tahun Angkatan</strong> minimal <strong class="text-[var(--contrast-main-text)] font-semibold">tahun 1960</strong>.
                     </p>
                 </div>
             </template>
 
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
-                    Pastikan <strong class="text-blue-900 dark:text-blue-300 font-semibold">Kode
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
+                <p class="text-sm text-[var(--text-second)] leading-relaxed">
+                    Pastikan <strong class="text-[var(--focus-color)] font-semibold">Kode
                      <span 
                         x-text="
                             $store.config?.typeModal === 'prodi' ? 'Program Studi' :
@@ -84,15 +84,15 @@
             </div>
 
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
-                    Pastikan semua kolom <strong class="text-slate-900 dark:text-gray-100 font-semibold">wajib diisi</strong> dengan benar.
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
+                <p class="text-sm text-[var(--text-second)] leading-relaxed">
+                    Pastikan semua kolom <strong class="text-[var(--contrast-main-text)] font-semibold">wajib diisi</strong> dengan benar.
                 </p>
             </div>
             
             <div class="flex items-start gap-3">
-                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0"></div>
-                <p class="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
+                <p class="text-sm text-[var(--text-second)] leading-relaxed">
                     Perubahan akan tersimpan segera setelah formulir dikirim.
                 </p>
             </div>
