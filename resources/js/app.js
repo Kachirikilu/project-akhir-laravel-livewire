@@ -120,6 +120,22 @@ document.addEventListener("alpine:init", () => {
         kode_jr: "",
         kode_fk: "",
 
+        selected_kode_pr: "",
+        selected_kode_jr: "",
+        selected_kode_fk: "",
+
+        nama_matkul: "",
+        digit_semester: "",
+        digit_mk: "",
+        semester: "",
+        kode_blok: "",
+        tipe_sks: "",
+        sks_kuliah: "",
+
+        nama_prodi_array: [],
+        prodi_id_array: [],
+        selected_kode_pr_array: [],
+
 
         setType(val) {
             this.typeModal = val;
@@ -145,7 +161,8 @@ document.addEventListener("alpine:init", () => {
             tahunAngkatan,
             status,
             idProdi,
-            namaProdi
+            namaProdi,
+            kodePr
         ) {
             this.email = email;
             this.password = password;
@@ -159,6 +176,9 @@ document.addEventListener("alpine:init", () => {
             this.status = status;
             this.prodi_id = idProdi;
             this.nama_prodi = namaProdi;
+
+            this.selected_kode_pr = kodePr;
+
         },
 
         setValueProdi(
@@ -179,9 +199,13 @@ document.addEventListener("alpine:init", () => {
             this.fakultas_id = idFakultas;
             this.nama_fakultas = namaFakultas;
 
-            this.kode_pr = kodePr,
-            this.kode_jr = kodeJr,
-            this.kode_fk = kodeFk
+            this.kode_pr = kodePr;
+            this.kode_jr = kodeJr;
+            this.kode_fk = kodeFk;
+
+            this.selected_kode_pr = kodePr;
+            this.selected_kode_jr = kodeJr;
+            this.selected_kode_fk = kodeFk;
         },
 
         setDeleteUser(val) {
@@ -208,6 +232,10 @@ document.addEventListener("alpine:init", () => {
             this.nama_jurusan = "";
             this.fakultas_id = "";
             this.nama_fakultas = "";
+            
+            this.selected_kode_pr = "";
+            this.selected_kode_jr = "";
+            this.selected_kode_fk = "";
         },
 
         reset() {
@@ -242,7 +270,23 @@ document.addEventListener("alpine:init", () => {
 
             this.kode_pr = "",
             this.kode_jr = "",
-            this.kode_fk = ""
+            this.kode_fk = "",
+
+            this.selected_kode_pr = "",
+            this.selected_kode_jr = "",
+            this.selected_kode_fk = "",
+
+            this.nama_matkul = "",
+            this.digit_semester = "",
+            this.digit_mk = "",
+            this.semester = "",
+            this.kode_blok = "",
+            this.tipe_sks = "",
+            this.sks_kuliah = "",
+
+            this.nama_prodi_array = [],
+            this.prodi_id_array = [],
+            this.selected_kode_pr_array = []
         },
     });
 });

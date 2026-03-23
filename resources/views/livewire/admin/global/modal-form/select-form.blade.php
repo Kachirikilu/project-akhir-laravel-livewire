@@ -1,8 +1,7 @@
-<div class="relative"
-    x-data="{
-        open: false,
-        value: $store.config?.{{ $modelString }}
-    }"
+<div class="relative" x-data="{
+    open: false,
+    value: $store.config?.{{ $modelString }}
+}"
     x-effect="
         if ($store.config?.isEdit === 0) {
             value = '';
@@ -10,8 +9,7 @@
             value = $store.config?.{{ $modelString }};
         }
     "
-    wire:key="select-form-{{ $modelString }}"
->
+    wire:key="select-form-{{ $modelString }}">
 
     <label for="{{ $modelString }}" class="block text-sm font-medium">
         {{ $labelString }}
@@ -34,32 +32,39 @@
 
         {{-- 2. Tombol Reset --}}
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
-            'xShow'   => 'value',
+            'xShow' => 'value',
             'xClick' => "value = ''",
-            'xAlpine' => $modelString
+            'xAlpine' => $modelString,
             // 'xColor' => $colorIcon
         ])
     </div>
 
     {{-- Dropdown Result --}}
-    <div x-show="open" x-transition.opacity x-cloak
+    <div x-show="open" x-cloak x-collapse.duration.300ms 
         class="bg-[var(--pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
 
-        @foreach ($xOptions as $option)
+        @foreach ($xOptions as $i => $option)
+            @php
+                $currentVal = isset($xValues[$i]) ? $xValues[$i] : $option;
+            @endphp
+
             <div wire:key="option-{{ $option }}"
                 @click="
                     value = '{{ $option }}'; 
-                    $store.config['{{ $modelString }}'] = value;
+                    {{-- $store.config['{{ $modelString }}'] = value; --}}
+                    $store.config['{{ $modelString }}'] = {{ is_numeric($currentVal) ? $currentVal : "'$currentVal'" }};
                     open = false
                 "
-                 class="px-4 py-2 cursor-pointer transition-colors duration-200
+                class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--pop-up-color)] border-[var(--focus-color)]
                 hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
                 {{-- border-b last:border-none  --}}
                 text-sm">
                 <div class="flex justify-between items-center my-1">
-                    <span class="text-[var(--contrast-main-text)] font-semibold leading-tight">{{ $option }}</span>
-                    <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs text-white px-2 py-1 rounded-md ml-2">Pilih</span>
+                    <span
+                        class="text-[var(--contrast-main-text)] font-semibold leading-tight">{{ $option }}</span>
+                    <span
+                        class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs text-white px-2 py-1 rounded-md ml-2">Pilih</span>
                 </div>
             </div>
         @endforeach

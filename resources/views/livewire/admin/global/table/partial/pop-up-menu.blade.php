@@ -39,7 +39,8 @@
                         '{{ $detail->tahun_angkatan ?? '' }}',
                         '{{ $detail->status ?? '' }}',
                         '{{ $detail->prodi_id ?? '' }}',
-                        '{{ $detail->prodi->prodi ?? '' }}'
+                        '{{ $detail->prodi->prodi ?? '' }}',
+                        '{{ $detail->prodi->kode ?? '' }}'
                     );
                     $flux.modal('user-modal').show();
                 } else if (editMode == 'editProdi') { 

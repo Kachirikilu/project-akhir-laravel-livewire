@@ -120,7 +120,7 @@
 
     @forelse($matkuls as $matkul)
         <tr wire:key="matkul-{{ $matkul->id }}" data-matkul-id="{{ $matkul->id }}"
-            class="border-[var(--border-table-color)] hover:bg-blue-200/60 dark:hover:bg-gray-700/60 transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
             
             <td class="{{ $secondKolom }} text-center">{{ $matkul->id }}</td>
             <td class="{{ $mainKolom }} text-center">{{ $matkul->kode ?? '-' }}</td>

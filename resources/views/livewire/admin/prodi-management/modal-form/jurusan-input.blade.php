@@ -28,6 +28,7 @@
             'typeXString' => 'fakultas',
             'nameXString' => 'Fakultas',
             'idString' => 'fakultas_id',
+            'kodeString' => 'selected_kode_fk',
             'searchString' => 'fakultas_search',
             'nameSearchString' => 'fakultas_name_search',
             'fetchString' => 'fetchFakultas',

@@ -16,7 +16,7 @@
             'iconString' => 'user-circle',
             'placeholder' => 'Masukkan Nama Lengkap',
             'message' => $errors->first('name'),
-            'isRequired' => 1,
+            'isRequired' => 1
         ])
 
         @include('livewire.admin.global.modal-form.input-form', [
@@ -28,7 +28,7 @@
             'iconString' => 'identification',
             'placeholder' => 'Masukkan NIM',
             'message' => $errors->first('nim'),
-            'isRequired' => 1,
+            'isRequired' => 1
         ])
 
         @include('livewire.admin.global.modal-form.input-form', [
@@ -40,7 +40,7 @@
             'iconString' => 'calendar-days',
             'placeholder' => 'Masukkan Tahun Angkatan',
             'message' => $errors->first('tahun_angkatan'),
-            'isRequired' => 1,
+            'isRequired' => 1
         ])
 
 
@@ -54,6 +54,7 @@
             'nameXString' => 'Program Studi',
             'noName' => 1,
             'idString' => 'prodi_id',
+            'kodeString' => 'selected_kode_pr',
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodi_name_search',
             'fetchString' => 'fetchProdi',
@@ -79,7 +80,7 @@
             // 'colorIcon' => $colorIcon,
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
-            'message' => $errors->first('status'),
+            'message' => $errors->first('status')
         ])
 
     </div>

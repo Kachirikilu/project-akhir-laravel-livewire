@@ -1,9 +1,11 @@
-<div>
+<div class="w-full min-w-full">
     {{-- ****************************************************** --}}
     {{-- 1. UPLOAD EXCEL FILE --}}
     {{-- ***********************F******************************* --}}
     <div
-        class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors duration-300">
+        class="p-4 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)]
+            shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+
         <h4 class="text-lg font-medium text-[var(--contrast-second-text)] border-b dark:border-neutral-700 pb-2">Upload
             File Excel</h4>
 
@@ -68,6 +70,7 @@
             'nameXString' => 'Program Studi',
             'noName' => 1,
             'idString' => 'prodi_id',
+            'kodeString' => 'selected_kode_pr',
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodi_name_search',
             'fetchString' => 'fetchProdi',
@@ -83,7 +86,7 @@
                 Data dari Excel akan tampil di sini setelah file diunggah.
             </div>
         @else
-            <div class="overflow-x-auto max-h-[55vh] overflow-y-auto border rounded-lg">
+            <div class="w-full overflow-x-auto max-h-[55vh] overflow-y-auto border rounded-lg">
 
                 <table wire:loading.class="opacity-50" wire:target="excel_file, parseExcelFile, removeParsedRow"
                     class="min-w-full border-collapse text-sm">

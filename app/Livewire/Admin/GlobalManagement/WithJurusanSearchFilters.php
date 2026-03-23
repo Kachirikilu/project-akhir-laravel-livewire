@@ -18,36 +18,76 @@ trait WithJurusanSearchFilters
 
     public $jurusan_id;
 
+    public $selected_kode_jr;
+
     public $jurusan_name_search = '';
 
     public $jurusan_results = [];
 
     public $selectedJurusanId = null;
 
+    // public function inputJurusanFilter()
+    // {
+    //     $searchTerm = '%'.$this->jurusanSearchQuery.'%';
+
+    //     if ((strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) && ! $this->selectedJurusanName) {
+
+    //         $this->jurusanSearchResults = Jurusan::query()
+    //             ->with('fakultas_rel')
+    //             ->where(function ($q) use ($searchTerm) {
+    //                 $q->where('nama_jurusan', 'like', $searchTerm)
+    //                     ->orWhere('id', 'like', $searchTerm)
+    //                     ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
+    //                     // 🔹 mencari berdasarkan fakultas
+    //                     ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
+    //                         $sq->where('nama_fakultas', 'like', $searchTerm)
+    //                             ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+    //                     });
+
+    //             })
+    //             ->limit(12)
+    //             ->get()
+    //             ->map(fn ($j) => [
+    //                 'id' => $j->id,
+    //                 'kode' => $j->kode_jr ?? $j->fakultas_rel->kode_fk ?? 'UNI',
+    //                 'jurusan' => $j->nama_jurusan,
+    //                 'fakultas' => $j->fakultas_rel?->nama_fakultas,
+    //             ])
+    //             ->toArray();
+
+    //     } elseif (empty($this->jurusanSearchQuery) || $this->selectedJurusanName) {
+    //         $this->jurusanSearchResults = $this->getJurusanbyUser();
+    //     } else {
+    //         $this->jurusanSearchResults = [];
+    //     }
+    // }
+
     public function inputJurusanFilter()
     {
         $searchTerm = '%'.$this->jurusanSearchQuery.'%';
 
-        if ((strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) && !$this->selectedJurusanName) {
+        if ((strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) && ! $this->selectedJurusanName) {
 
             $this->jurusanSearchResults = Jurusan::query()
                 ->with('fakultas_rel')
                 ->where(function ($q) use ($searchTerm) {
                     $q->where('nama_jurusan', 'like', $searchTerm)
+                        ->orWhere('kode_jr', 'like', $searchTerm) // 🔹 Cari berdasarkan kode jurusan
                         ->orWhere('id', 'like', $searchTerm)
                         ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                        // 🔹 mencari berdasarkan fakultas
+                        // 🔹 Mencari berdasarkan fakultas (Nama atau Kode)
                         ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
                             $sq->where('nama_fakultas', 'like', $searchTerm)
+                                ->orWhere('kode_fk', 'like', $searchTerm) // 🔹 Cari berdasarkan kode fakultas
                                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
                         });
-
                 })
                 ->limit(12)
                 ->get()
                 ->map(fn ($j) => [
                     'id' => $j->id,
-                    'kode' => $j->kode_jr ?? $j->fakultas_rel->kode_fk ?? 'UNI',
+                    // Mengambil kode jurusan, jika null ambil kode fakultas
+                    'kode' => $j->kode_jr ?? $j->fakultas_rel?->kode_fk ?? 'UNI',
                     'jurusan' => $j->nama_jurusan,
                     'fakultas' => $j->fakultas_rel?->nama_fakultas,
                 ])
@@ -62,15 +102,17 @@ trait WithJurusanSearchFilters
 
     public function resetJurusanFilter()
     {
-        $this->reset(['selectedJurusanId', 'selectedJurusanName', 'jurusanSearchQuery']);
+        $this->reset(['selectedJurusanId', 'selectedJurusanName', 'jurusanSearchQuery', 'selected_kode_jr']);
         $this->resetPage();
     }
 
     public function selectJurusanForFilter($id)
     {
-        $data = Jurusan::find($id);
+        $data = Jurusan::with('fakultas_rel')->find($id);
+
         if ($data) {
             $this->selectedJurusanId = $id;
+            $this->selected_kode_jr = $data->kode_jr ?? $data->fakultas_rel?->kode_fk ?? 'UNI';
             $this->selectedJurusanName = 'Jurusan '.$data->nama_jurusan;
             $this->jurusanSearchQuery = 'Jurusan '.$data->nama_jurusan;
             $this->jurusanSearchResults = [];
@@ -78,19 +120,92 @@ trait WithJurusanSearchFilters
         }
     }
 
+    // public function updatedJurusanNameSearch($value)
+    // {
+    //     $this->jurusan_id = null;
+    //     $this->selected_kode_jr = null;
+    //     $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+
+    //     if (strlen($value) > 0) {
+    //         $searchTerm = '%'.$value.'%';
+
+    //         $results = Jurusan::query()
+    //             ->with('fakultas_rel')
+    //             ->where(function ($q) use ($searchTerm) {
+    //                 $q->where('nama_jurusan', 'like', $searchTerm)
+    //                     ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
+    //                     ->orWhere('id', 'like', $searchTerm);
+    //             })
+    //             ->limit(12)
+    //             ->get();
+
+    //         $this->jurusan_results = $results->map(function ($jurusan) {
+    //             return [
+    //                 'id' => $jurusan->id,
+    //                 'kode' => $jurusan->kode_jr ?? $jurusan->fakultas_rel?->kode_fk ?? 'UNI',
+    //                 'jurusan' => $jurusan->nama_jurusan,
+    //                 'fakultas' => $jurusan->fakultas_rel?->nama_fakultas,
+    //             ];
+    //         })->toArray();
+
+    //         $exactMatch = $results->first(function ($jurusan) use ($value) {
+    //             $input = str($value)->lower()->trim();
+    //             $nama = str($jurusan->nama_jurusan)->lower();
+    //             $kode = str($jurusan->kode_jr)->lower();
+
+    //             return $input->is([
+    //                 $nama,
+    //                 "jurusan $nama",
+    //                 $kode,
+    //             ]);
+    //         });
+
+    //         if ($exactMatch) {
+    //             $this->jurusan_id = $exactMatch->id;
+    //             $this->selected_kode_jr = $exactMatch->kode_jr ?? $exactMatch->fakultas_rel?->kode_fk ?? 'UNI';
+    //             $this->jurusan_name_search = 'Jurusan '.$exactMatch->nama_jurusan;
+    //             $this->jurusan_results = [];
+    //         }
+
+    //     } else {
+    //         if (Auth::user()->admin?->prodi_id) {
+    //             $this->jurusan_results = $this->getJurusanbyUser();
+    //         } else {
+    //             $this->jurusan_results = Jurusan::with('fakultas_rel')
+    //                 ->orderBy('nama_jurusan')
+    //                 ->limit(12)
+    //                 ->get()
+    //                 ->map(fn ($j) => [
+    //                     'id' => $j->id,
+    //                     'kode' => $j->kode_jr ?? $j->fakultas_rel?->kode_fk ?? 'UNI',
+    //                     'jurusan' => $j->nama_jurusan,
+    //                     'fakultas' => $j->fakultas_rel?->nama_fakultas,
+    //                 ])->toArray();
+    //         }
+    //     }
+    // }
+
     public function updatedJurusanNameSearch($value)
     {
         $this->jurusan_id = null;
+        $this->selected_kode_jr = null;
         $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
 
         if (strlen($value) > 0) {
             $searchTerm = '%'.$value.'%';
 
             $results = Jurusan::query()
+                ->with('fakultas_rel')
                 ->where(function ($q) use ($searchTerm) {
                     $q->where('nama_jurusan', 'like', $searchTerm)
+                        ->orWhere('kode_jr', 'like', $searchTerm) // 🔹 Cari berdasarkan kode jurusan
                         ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                        ->orWhere('id', 'like', $searchTerm);
+                        ->orWhere('id', 'like', $searchTerm)
+                        // 🔹 Mencari berdasarkan fakultas (Nama atau Kode)
+                        ->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
+                            $sq->where('nama_fakultas', 'like', $searchTerm)
+                                ->orWhere('kode_fk', 'like', $searchTerm); // 🔹 Cari berdasarkan kode fakultas
+                        });
                 })
                 ->limit(12)
                 ->get();
@@ -98,7 +213,7 @@ trait WithJurusanSearchFilters
             $this->jurusan_results = $results->map(function ($jurusan) {
                 return [
                     'id' => $jurusan->id,
-                    'kode' => $jurusan->kode_jr ?? $jurusan->fakultas_rel->kode_fk ?? 'UNI',
+                    'kode' => $jurusan->kode_jr ?? $jurusan->fakultas_rel?->kode_fk ?? 'UNI',
                     'jurusan' => $jurusan->nama_jurusan,
                     'fakultas' => $jurusan->fakultas_rel?->nama_fakultas,
                 ];
@@ -107,11 +222,18 @@ trait WithJurusanSearchFilters
             $exactMatch = $results->first(function ($jurusan) use ($value) {
                 $input = str($value)->lower()->trim();
                 $nama = str($jurusan->nama_jurusan)->lower();
-                return $input->is([$nama, "jurusan $nama"]);
+                $kode = str($jurusan->kode_jr)->lower();
+
+                return $input->is([
+                    $nama,
+                    "jurusan $nama",
+                    $kode,
+                ]);
             });
 
             if ($exactMatch) {
                 $this->jurusan_id = $exactMatch->id;
+                $this->selected_kode_jr = $exactMatch->kode_jr ?? $exactMatch->fakultas_rel?->kode_fk ?? 'UNI';
                 $this->jurusan_name_search = 'Jurusan '.$exactMatch->nama_jurusan;
                 $this->jurusan_results = [];
             }
@@ -120,13 +242,13 @@ trait WithJurusanSearchFilters
             if (Auth::user()->admin?->prodi_id) {
                 $this->jurusan_results = $this->getJurusanbyUser();
             } else {
-                $this->jurusan_results = Jurusan::query()
+                $this->jurusan_results = Jurusan::with('fakultas_rel')
                     ->orderBy('nama_jurusan')
                     ->limit(12)
                     ->get()
                     ->map(fn ($j) => [
                         'id' => $j->id,
-                        'kode' => $j->kode_jr ?? $j->fakultas_rel->kode_fk ?? 'UNI',
+                        'kode' => $j->kode_jr ?? $j->fakultas_rel?->kode_fk ?? 'UNI',
                         'jurusan' => $j->nama_jurusan,
                         'fakultas' => $j->fakultas_rel?->nama_fakultas,
                     ])->toArray();
@@ -153,6 +275,7 @@ trait WithJurusanSearchFilters
                 'jurusans.kode_jr',
                 'jurusans.nama_jurusan',
                 'fakultas.nama_fakultas',
+                'fakultas.kode_fk',
             ]);
 
         $count = $results->count();
@@ -169,6 +292,7 @@ trait WithJurusanSearchFilters
                     'jurusans.kode_jr',
                     'jurusans.nama_jurusan',
                     'fakultas.nama_fakultas',
+                    'fakultas.kode_fk',
                 ]);
 
             $results = $results->concat($additional);
@@ -177,7 +301,7 @@ trait WithJurusanSearchFilters
         return $results->map(function ($item) {
             return [
                 'id' => $item->id,
-                'kode' => $item->kode_jr ?? $item->fakultas_rel->kode_fk ?? 'UNI',
+                'kode' => $item->kode_jr ?? $item->kode_fk ?? 'UNI',
                 'jurusan' => $item->nama_jurusan,
                 'fakultas' => $item->nama_fakultas,
             ];
@@ -198,13 +322,39 @@ trait WithJurusanSearchFilters
         $this->jurusan_id = $id;
         $this->jurusan_name_search = 'Jurusan '.$jurusanName;
         $this->jurusan_results = $this->getJurusanbyUser();
+
+        $data = Jurusan::with('fakultas_rel')->find($id);
+        if ($data) {
+            $this->selected_kode_jr = $data->kode_jr ?? $data->fakultas_rel?->kode_fk ?? 'UNI';
+        }
+
+        if (property_exists($this, 'prodi_id_array')) {
+            $this->prodi_id_array = [];
+            $this->selectedProdiNameArray = [];
+            $this->selected_kode_pr_array = [];
+            $this->prodi_name_search = '';
+        }
+
+        
+        if (method_exists($this, 'fetchProdi')) {
+            $this->fetchProdi(''); 
+        }
+
         $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
     }
 
     public function resetJurusanInput()
     {
         $this->jurusan_id = null;
+        $this->selected_kode_jr = null;
         $this->jurusan_name_search = '';
+
+        if (property_exists($this, 'prodi_id_array')) {
+            $this->prodi_id_array = [];
+            $this->selectedProdiNameArray = [];
+            $this->selected_kode_pr_array = [];
+        }
+
         $this->updatedJurusanNameSearch('');
         $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
     }

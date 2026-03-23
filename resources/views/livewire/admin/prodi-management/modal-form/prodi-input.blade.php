@@ -28,6 +28,7 @@
             'typeXString' => 'jurusan',
             'nameXString' => 'Jurusan',
             'idString' => 'jurusan_id',
+            'kodeString' => 'selected_kode_jr',
             'searchString' => 'jurusan_search',
             'nameSearchString' => 'jurusan_name_search',
             'fetchString' => 'fetchJurusan',

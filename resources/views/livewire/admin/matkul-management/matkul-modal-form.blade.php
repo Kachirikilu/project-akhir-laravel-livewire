@@ -9,8 +9,8 @@
 
         {{-- Loading Overlay --}}
         <div wire:loading wire:target="saveMK, updateMK">
-            <div class="absolute inset-0 z-50 bg-white/70 flex flex-col items-center justify-center rounded-xl">
-                <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-indigo-600" />
+             <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
+                <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
                 <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
             </div>
         </div>
@@ -19,21 +19,21 @@
         <div class="p-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
 
-                <template x-if="$store.config?.typeModal == 'mk'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
                     <flux:badge icon="academic-cap" color="emerald" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Program Studi' : 'Tambah Program Studi'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah' : 'Tingkat Program Studi'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mk-jurusan'" x-cloak>
                     <flux:badge icon="book-open" color="amber" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Jurusan' : 'Tambah Jurusan'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah' : 'Tingkat Jurusan'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
+                <template x-if="$store.config?.typeModal == 'mk-fakultas'" x-cloak>
                     <flux:badge icon="building-library" color="indigo" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Fakultas' : 'Tambah Fakultas'"></span>
+                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah' : 'Tingkat Fakultas'"></span>
                     </flux:badge>
                 </template>
 
@@ -46,16 +46,16 @@
             <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.config)"
                 enctype="multipart/form-data" id="mkForm">
 
-                <template x-if="$store.config?.typeModal == 'mk'" x-cloak>
-                    @include('livewire.admin.mk-management.modal-form.mk-input')
+                <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
+                    @include('livewire.admin.matkul-management.modal-form.mk-prodi-input')
                 </template>
 
-                <template x-if="$store.config?.typeModal == 'jurusan'" x-cloak>
-                    @include('livewire.admin.mk-management.modal-form.jurusan-input')
+                <template x-if="$store.config?.typeModal == 'mk-jurusan'" x-cloak>
+                    @include('livewire.admin.matkul-management.modal-form.mk-jurusan-input')
                 </template>
 
-                <template x-if="$store.config?.typeModal == 'fakultas'" x-cloak>
-                    @include('livewire.admin.mk-management.modal-form.fakultas-input')
+                <template x-if="$store.config?.typeModal == 'mk-fakultas'" x-cloak>
+                    @include('livewire.admin.matkul-management.modal-form.mk-fakultas-input')
                 </template>
 
                 {{-- 3. Footer / Button Action --}}
@@ -66,7 +66,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        @include('livewire.admin.mk-management.modal-form.message-form')
+                        @include('livewire.admin.matkul-management.modal-form.mk-message-form')
                         @include('livewire.admin.global.modal-form.button-form', [
                             'xType' => $mkType,
                             'targetX' => 'addMK, saveMK, editMK, updateMK',

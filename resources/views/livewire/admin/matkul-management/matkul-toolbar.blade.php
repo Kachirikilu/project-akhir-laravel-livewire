@@ -4,7 +4,7 @@
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" 
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
-                wire:target="addProdi">
+                wire:target="addMK">
                 Tambah Mata Kuliah
             </flux:button>
 
@@ -15,17 +15,17 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('prodi');
+                        $store.config?.setType('mk-prodi');
                         $store.config?.setEdit(0);
                         $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
-                        $flux.modal('prodi-modal').show();
-                        $wire.addProdi('prodi');
+                        $flux.modal('mk-modal').show();
+                        $wire.addMK('mk-prodi');
                     "
                     class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
                     <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Program Studi</span>
-                        <flux:icon wire:loading wire:target="addProdi('prodi')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addMK('mk-prodi')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
@@ -33,17 +33,17 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('jurusan');
+                        $store.config?.setType('mk-jurusan');
                         $store.config?.setEdit(0);
                         $store.config?.setColor('text-amber-700 dark:text-amber-400');
-                        $flux.modal('prodi-modal').show();
-                        $wire.addProdi('jurusan');
+                        $flux.modal('mk-modal').show();
+                        $wire.addMK('mk-jurusan');
                     "
                     class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                     <flux:icon name="book-open" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Jurusan</span>
-                        <flux:icon wire:loading wire:target="addProdi('jurusan')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addMK('jurusan')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
@@ -51,17 +51,17 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('fakultas');
+                        $store.config?.setType('mk-fakultas');
                         $store.config?.setEdit(0);
                         $store.config?.setColor('text-[var(--focus-color)]');
-                        $flux.modal('prodi-modal').show();
-                        $wire.addProdi('fakultas');
+                        $flux.modal('mk-modal').show();
+                        $wire.addMK('mk-fakultas');
                     "
                     class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
                     <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Fakultas</span>
-                        <flux:icon wire:loading wire:target="addProdi('fakultas')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addMK('fakultas')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>
@@ -69,17 +69,17 @@
                 {{-- Universitas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('universal');
+                        $store.config?.setType('mk-universal');
                         $store.config?.setEdit(0);
                         $store.config?.setColor('text-[var(--focus-color)]');
-                        $flux.modal('prodi-modal').show();
-                        $wire.addProdi('universal');
+                        $flux.modal('mk-modal').show();
+                        $wire.addMK('mk-universal');
                     "
                     class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
                     <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Universitas</span>
-                        <flux:icon wire:loading wire:target="addProdi('universal')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addMK('universal')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>

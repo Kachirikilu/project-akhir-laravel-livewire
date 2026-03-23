@@ -38,7 +38,7 @@
 
 
     {{-- DROPDOWN --}}
-    <div x-show="open" x-cloak
+    <div x-show="open" x-cloak x-collapse.duration.300ms
         class="bg-[var(--pop-up-color)] border-[var(--focus-color)] border absolute z-[100] w-full mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
         @forelse ($xSearchResults as $x)
             <div wire:key="x-{{ $x['id'] }}"

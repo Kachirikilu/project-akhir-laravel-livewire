@@ -7,7 +7,7 @@
     ">
 @endif
 
-<button x-data="{
+<button x-cloak x-data="{
     sortField: @entangle('sortField'),
     sortDirection: @entangle('sortDirection'),
     localDir: '{{ $sortDirection }}',

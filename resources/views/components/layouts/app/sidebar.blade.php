@@ -12,74 +12,72 @@
             --sidebar-width: 72px;
         }
 
-        :root { 
-            --wadah-color: #feffff;       /* sky-950 */
-            --border-wadah-color: #c0ced5;       /* sky-950 */
+:root { 
+    --wadah-color: #feffff;
+    --border-wadah-color: #e5cbd0; /* Kemerahan lembut */
 
-            --main-color: #075985;       /* sky-800 */
-            --hover-main-color: #066fa7;       /* sky-800 */
-            --border-main-color: #0284c7;     /* sky-600 */
-            --contrast-main-color: #075985;
-            
-            --main-text: #ffffff;        /* white */
-            --second-text: rgb(164, 166, 170);      /* gray-500 */
-            --contrast-main-text: #000000;
-            --contrast-second-text: #52525b;
-            --contrast-third-text: #818187; 
+    --main-color: #991b1b;       /* red-800 */
+    --hover-main-color: #b91c1c; /* red-700 */
+    --border-main-color: #dc2626; /* red-600 */
+    --contrast-main-color: #991b1b;
+    
+    --main-text: #ffffff;
+    --second-text: rgb(164, 166, 170);
+    --contrast-main-text: #000000;
+    --contrast-second-text: #52525b;
+    --contrast-third-text: #818187; 
 
-            --focus-color: #4f46e5;       /* bg-indigo-600 */
-            --hover-focus-color: #4338ca; /* hover:bg-indigo-700 */
+    /* Focus color diubah ke Rose/Pink agar harmonis dengan merah */
+    --focus-color: #e11d48;       /* rose-600 */
+    --hover-focus-color: #be123c; /* rose-700 */
 
-            --main-table-color: #eff0f1;
-            --second-table-color: #ffffff;
-            --sub-table-color: #f8fafc;
+    --main-table-color: #fcf1f1; /* Background tabel merah tipis */
+    --second-table-color: #ffffff;
+    --sub-table-color: #fffafb;
 
-            --main-table-trans: #eff0f1a0;
-            --second-table-trans: #ffffffa0;
-            --sub-table-trans: #f8fafca0;
+    --main-table-trans: #fcf1f1a0;
+    --second-table-trans: #ffffffa0;
+    --sub-table-trans: #fffafba0;
+    --hover-table-color: #fecaca99;
 
-            --border-table-color: #c4cdd8;
+    --border-table-color: #d8c4c4;
 
-            --pop-up-color: #eaedee;
-            --hover-pop-up-color: #d6dbdc;
+    --pop-up-color: #f3eded;
+    --hover-pop-up-color: #e9dbdb;
+}
 
-        }
+.dark {
+    --wadah-color: #1a1717;       /* Hitam kemerahan */
+    --border-wadah-color: #3f1e1e; 
 
-        .dark {
-            --wadah-color: #17191a;       /* sky-950 */
-            --border-wadah-color: #1e343f;       /* sky-950 */
+    --main-color: #450a0a;       /* red-950 */
+    --hover-main-color: #7f1d1d; /* red-900 */
+    --border-main-color: #991b1b; /* red-800 */
+    --contrast-main-color: #ffffff;
+    
+    --main-text: #e9e0e0;
+    --second-text: #a19292;
+    --contrast-main-text: #ffffff;
+    --contrast-second-text: #bdb6b6; 
+    --contrast-third-text: #a09999; 
 
-            --main-color: #082f49;       /* sky-950 */
-            --hover-main-color: #063e63;       /* sky-950 */
-            --border-main-color: #075985;     /* sky-800 */
-            --contrast-main-color: #ffffff;
-            
-            --main-text: #e0e3e9;        /* gray-400 */
-            --second-text: #9297a1;      /* gray-500 */
-            --contrast-main-text: #ffffff;
-            --contrast-second-text: #b6b6bd; 
-            --contrast-third-text: #9999a0; 
+    --focus-color: #fb7185;       /* rose-400 */
+    --hover-focus-color: #f43f5e; /* rose-500 */
 
-            --focus-color: #6668ec;       /* bg-indigo-500 */
-            --hover-focus-color: #6059e7; /* hover:bg-indigo-600 */
+    --main-table-color: #2d2525;
+    --second-table-color: #313030;
+    --sub-table-color: #352f2fa0;
+    --hover-table-color: #7f1d1d66;
 
-            /* --main-table-color: #1e272e;
-            --second-table-color: #2a333b;
-            --sub-table-color: #232c34;
-            --border-table-color: #0d1922; */
-            --main-table-color: #25292d;
-            --second-table-color: #303031;
-            --sub-table-color: #2f3235a0;
+    --main-table-trans: #2d2525a0;
+    --second-table-trans: #313030a0;
+    --sub-table-trans: #352f2fa0;
 
-            --main-table-trans: #25292da0;
-            --second-table-trans: #303031a0;
-            --sub-table-trans: #2f3235a0;
+    --border-table-color: #1f1414;
 
-            --border-table-color: #141a1f;
-
-            --pop-up-color: #191a1a;
-            --hover-pop-up-color: #252727;
-        }
+    --pop-up-color: #1a1919;
+    --hover-pop-up-color: #272525;
+}
 
         .sidebar-expanded {
             --sidebar-width: 256px;

@@ -323,12 +323,12 @@ trait WithProdiModal
 
     public function saveProdi($data)
     {
-        if (empty($data['jurusan_id'])) {
-            $data['jurusan_id'] = $this->jurusan_id;
-        }
-        if (empty($data['fakultas_id'])) {
-            $data['fakultas_id'] = $this->fakultas_id;
-        }
+        // if (empty($data['jurusan_id'])) {
+        $data['jurusan_id'] = $this->jurusan_id;
+        // }
+        // if (empty($data['fakultas_id'])) {
+        $data['fakultas_id'] = $this->fakultas_id;
+        // }
 
         $validated = $this->inputModalProdi(false, $data);
         $validated = $this->prepareData($validated);

@@ -7,7 +7,8 @@
         {{ $xClick ? $xClick . ';' : '' }} 
         {{ isset($xWire) ? '$wire.' . $xWire . ';' : '' }} 
         {{ isset($xWire2) ? '$wire.' . $xWire2 . ';' : '' }}
-        @if ($xAlpine ?? null) $store.config.{{ $xAlpine }} = '' @endif
+        @if ($xAlpine ?? null) $store.config.{{ $xAlpine }} = ''; @endif
+        @if ($xAlpine2 ?? null) $store.config.{{ $xAlpine2 }} = '' @endif
     "
     {{-- @if ($xLivewire ?? null) $wire.{{ $xLivewire }}; @endif --}}
     {{-- @if ($jurusan_id ?? null) 

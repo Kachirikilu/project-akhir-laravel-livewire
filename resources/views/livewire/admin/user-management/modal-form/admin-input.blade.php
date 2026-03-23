@@ -51,6 +51,7 @@
             'nameXString' => 'Program Studi',
             'noName' => 1,
             'idString' => 'prodi_id',
+            'kodeString' => 'selected_kode_pr',
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodi_name_search',
             'fetchString' => 'fetchProdi',

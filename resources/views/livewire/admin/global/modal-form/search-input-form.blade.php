@@ -2,35 +2,21 @@
     open: false,
     search: @entangle($nameSearchString).live,
     selectedId: @entangle($idString).live,
+    selectedKode: @entangle($kodeString).live,
     isManual: false
-}" {{-- x-init="
-    $watch('$store.config.{{ $idString }}', value => {
-            if ($store.config?.isEdit === 0) {
-                search = '';
-                selectedId = null;
-            } else if (!isManual) {
-                selectedId = value;
-
-                if('{{ $typeXString }}' == 'prodi') {
-                    search = $store.config?.{{ $modelString }};
-                } else {
-                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
-                }
-            }
-    })
-" --}}
+}"
     x-effect="
         if ($store.config?.isEdit === 0) {
             search = '';
             selectedId = null;
+            selectedKode = null;
         } else {
             selectedId2 = $store.config?.{{ $idString }};
-            {{-- search = $store.config?.{{ $modelString }}; --}}
-            {{-- isManual = true; --}}
 
             if (selectedId2 == '') {
                 search = '';
                 selectedId = null;
+                selectedKode = null;
             } else {
                 if('{{ $typeXString }}' == 'prodi') {
                     search = $store.config?.{{ $modelString }};
@@ -38,6 +24,7 @@
                     search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
                 }
                 selectedId = $store.config?.['{{ $idString }}'];
+                selectedKode = $store.config?.['{{ $kodeString }}'];
             }
         }
 "
@@ -70,10 +57,11 @@
         {{-- Tombol Reset --}}
         @include('livewire.admin.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
-            'xClick' => "search = ''; selectedId = null",
+            'xClick' => "search = ''; selectedId = null; selectedKode = null",
             'xWire' => $resetXInput,
             'xWire2' => $fetchString . '()',
             'xAlpine' => $idString,
+            'xAlpine2' => $kodeString
             // 'xLivewire' => $resetXInput
             // 'xColor' => $colorIcon
         ])
@@ -82,24 +70,29 @@
     {{-- Info Terpilih --}}
     <div x-show="selectedId && search" x-cloak>
         <p class="text-[var(--focus-color)] text-xs mt-1 font-medium italic">
-            Terpilih: <span x-text="search"></span> (ID: <span x-text="selectedId"></span>)
+            Terpilih: <span x-text="search" class="mx-1"></span> (Kode: <span x-text="selectedKode"></span>
+            <span class="mx-1">|</span>
+             ID: <span x-text="selectedId"></span>)
         </p>
     </div>
 
     {{-- DROPDOWN HASIL --}}
-    <div x-show="open" x-transition.opacity x-cloak
+    <div x-show="open" x-cloak x-collapse.duration.300ms
         class="bg-[var(--pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
 
         @forelse ($xResults as $x)
             <div wire:key="{{ $x[$typeXString] }}-{{ $x['id'] }}"
                 @click="
     let newSearch = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}';
+    let newKode = '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}';
 
     search = newSearch;
     selectedId = {{ $x['id'] }};
+    selectedKode = newKode;
     isManual = true;
 
     $store.config['{{ $idString }}'] = selectedId;
+    $store.config['{{ $kodeString }}'] = selectedKode;
     $store.config.{{ $modelString }} = '{{ $x[$typeXString] }}';
 
     open = false;

@@ -8,7 +8,7 @@ use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
 
 
 use App\Livewire\Admin\MatkulManagement\WithMatkulFilters;
-// use App\Livewire\Admin\MatkulManagement\WithMatkulModal;
+use App\Livewire\Admin\MatkulManagement\WithMatkulModal;
 // use App\Livewire\Admin\MatkulManagement\WithMatkulDelete;
 
 
@@ -26,7 +26,7 @@ class MataKuliahManagement extends Component
     use WithFakultasSearchFilters;
 
     use WithMatkulFilters;
-    // use WithMatkulModal;
+    use WithMatkulModal;
     // use WithMatkulDelete;
 
     use WithPagination;

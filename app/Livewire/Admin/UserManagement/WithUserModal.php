@@ -313,9 +313,11 @@ trait WithUserModal
 
     public function saveUser($data)
     {
-        if (empty($data['prodi_id']) == '') {
-            $data['prodi_id'] = $this->prodi_id;
-        }
+        
+        // if (empty($data['prodi_id'])) {
+        $data['prodi_id'] = $this->prodi_id;
+        // }
+        
         $validated = $this->inputModalUser(false, $data);
 
         try {
