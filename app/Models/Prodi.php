@@ -49,10 +49,10 @@ class Prodi extends Model
             if (! empty($kodeJurusan)) {
                 return $kodeJurusan;
             }
-            // $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
-            // if (! empty($kodeFakultas)) {
-            //     return $kodeFakultas;
-            // }
+            $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
+            if (! empty($kodeFakultas)) {
+                return $kodeFakultas;
+            }
             return null;
         });
     }
@@ -65,7 +65,7 @@ class Prodi extends Model
             }
             $kodeJurusan = $this->jurusan_rel?->kode_jr;
             if (! empty($kodeJurusan)) {
-                return $kodeJurusan;
+                return $kodeJurusan.' (Jurusan)';
             }
             $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
             if (! empty($kodeFakultas)) {

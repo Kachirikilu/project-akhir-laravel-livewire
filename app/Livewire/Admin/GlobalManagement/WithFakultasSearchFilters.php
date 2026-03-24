@@ -283,6 +283,14 @@ trait WithFakultasSearchFilters
             $this->selected_kode_fk = $data->kode_fk ?? 'UNI';
         }
 
+        if (property_exists($this, 'prodi_id_array')) {
+            $this->prodi_id_array = [];
+            $this->selectedProdiNameArray = [];
+            $this->selected_kode_pr_array = [];
+            $this->prodi_name_search = '';
+        }
+
+
         $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
     }
 
@@ -291,6 +299,13 @@ trait WithFakultasSearchFilters
         $this->fakultas_id = null;
         $this->selected_kode_fk = null;
         $this->fakultas_name_search = '';
+
+        if (property_exists($this, 'prodi_id_array')) {
+            $this->prodi_id_array = [];
+            $this->selectedProdiNameArray = [];
+            $this->selected_kode_pr_array = [];
+        }
+
         $this->updatedFakultasNameSearch('');
         $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
     }

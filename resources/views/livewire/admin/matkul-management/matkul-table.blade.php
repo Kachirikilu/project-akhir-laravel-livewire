@@ -123,8 +123,58 @@
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
             
             <td class="{{ $secondKolom }} text-center">{{ $matkul->id }}</td>
-            <td class="{{ $mainKolom }} text-center">{{ $matkul->kode ?? '-' }}</td>
-            <td class="{{ $secondKolom }}">{{ $matkul->nama_matkul ?? '-' }}</td>
+            {{-- <td class="{{ $mainKolom }} text-center">{{ $matkul->kode ?? '-' }}</td> --}}
+
+            <td class="{{ $mainKolom  }}">
+                <flux:dropdown>
+                    <button class="cursor-pointer">
+                        @switch($matkul->semester)
+                            {{-- Tahun 1: Biru/Cyan --}}
+                            @case(1)
+                                <flux:badge color="blue" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+                            @case(2)
+                                <flux:badge color="cyan" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+
+                            {{-- Tahun 2: Hijau/Emerald --}}
+                            @case(3)
+                                <flux:badge color="green" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+                            @case(4)
+                                <flux:badge color="emerald" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+
+                            {{-- Tahun 3: Kuning/Oranye --}}
+                            @case(5)
+                                <flux:badge color="yellow" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+                            @case(6)
+                                <flux:badge color="orange" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+
+                            {{-- Tahun 4: Merah/Ungu (Fase Tugas Akhir) --}}
+                            @case(7)
+                                <flux:badge color="red" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+                            @case(8)
+                                <flux:badge color="purple" size="sm">{{ $matkul->kode }}</flux:badge>
+                                @break
+                        @endswitch
+                    </button>
+                   
+                    @include('livewire.admin.matkul-management.modal-form.matkul-menu', [
+                        'x' => $matkul,
+                        'typeXString' => $matkul->tingkatan_mk,
+                        'editString' => 'editMK',
+                        'nameXString' => 'Mata Kuliah',
+                        'confirmDeleteString' => 'deleteMK',
+                    ])
+
+                </flux:dropdown>
+            </td>
+
+            <td class="{{ $secondKolom }}">{{ $matkul->matkul ?? '-' }}</td>
             <td class="{{ $secondKolom }} text-center">{{ $matkul->semester ?? '-' }}</td>
 
             {{-- <td class="px-6 py-4 text-sm text-[var(--contrast-second-text)]">{{ $matkul->sks ?? '-' }}</td> --}}
@@ -164,9 +214,9 @@
                         @endif
                     </button>
 
-                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                    @include('livewire.admin.matkul-management.modal-form.matkul-menu', [
                         'x' => $matkul,
-                        'typeXString' => $switchTable,
+                        'typeXString' => $matkul->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -176,13 +226,21 @@
             </td>
 
 
-            @include('livewire.admin.global.table.menu-aksi', [
-                'x' => $matkul,
-                'typeXString' => $switchTable,
-                'editString' => 'editMK',
-                'nameXString' => 'Mata Kuliah',
-                'confirmDeleteString' => 'deleteMK',
-            ])
+             <td class="{{ $secondKolom }}">
+                <flux:dropdown>
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
+                    </flux:button>
+                   
+                     @include('livewire.admin.matkul-management.modal-form.matkul-menu', [
+                        'x' => $matkul,
+                        'typeXString' => $matkul->tingkatan_mk,
+                        'editString' => 'editMK',
+                        'nameXString' => 'Mata Kuliah',
+                        'confirmDeleteString' => 'deleteMK',
+                    ])
+
+                </flux:dropdown>
+            </td>
         </tr>
     @empty
         <tr>

@@ -3,7 +3,7 @@
         <div class="grid sm:grid-cols-6 gap-1 items-end">
 
             <div class="sm:col-span-2">
-                @include('livewire.admin.matkul-management.modal-form.partial.kode-mk', ['kodeString' => 'selected_kode_pr'])
+                @include('livewire.admin.matkul-management.modal-form.partial.kode-mk')
             </div>
 
             <div class="sm:col-span-2">
@@ -19,7 +19,7 @@
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
                     'isRequired' => 1,
-                    'isFocusSelect' => 1
+                    'isFocusSelect' => 1,
                 ])
             </div>
         </div>
@@ -28,20 +28,22 @@
         @enderror
     </div>
 
-    @include('livewire.admin.global.modal-form.search-input-form', [
+    @include('livewire.admin.global.modal-form.search-input-array-form', [
         'xResults' => $prodi_results,
         'selectX' => 'selectProdi',
         'modelString' => 'nama_prodi',
-        'resetXInput' => 'resetProdiInput()',
+        // 'resetXInput' => 'resetProdiInput()',
         'typeXString' => 'prodi',
         'nameXString' => 'Program Studi',
-        'noName' => 1,
-        'idString' => 'prodi_id',
-        'kodeString' => 'selected_kode_pr',
+        // 'noName' => 1,
+        'idString' => 'prodi_id_array',
+        'kodeString' => 'selected_kode_pr_array',
         'searchString' => 'prodi_search',
         'nameSearchString' => 'prodi_name_search',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
+    
+        'selectedNameArray' => 'selectedProdiNameArray',
     ])
 
 
@@ -49,7 +51,9 @@
 
     <div x-data x-init="$watch('$store.config.prodi_id', value => console.log('prodi_id: ', value))"></div>
     <div x-data x-init="$watch('$store.config.kode_pr', value => console.log('kode_pr: ', value))"></div>
+
     <div x-data x-init="$watch('$store.config.selected_kode_pr', value => console.log('selected_kode_pr: ', value))"></div>
+    <div x-data x-init="$watch('$store.config.selected_kode_fk', value => console.log('selected_kode_fk: ', value))"></div>
 
     <div x-data x-init="$watch('$store.config.digit_semester', value => console.log('digit_semester: ', value))"></div>
     <div x-data x-init="$watch('$store.config.digit_mk', value => console.log('digit_mk: ', value))"></div>

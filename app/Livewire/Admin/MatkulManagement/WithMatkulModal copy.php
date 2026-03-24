@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\ProdiManagement;
+namespace App\Livewire\Admin\MatkulManagement;
+
+use App\Models\MataKuliah;
 
 use App\Models\Prodi;
 use App\Models\Fakultas;
@@ -10,43 +12,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-trait WithProdiModal
+trait WithMatkulModal
 {
     public $selected_id;
-
-    public $showProdiModal = false;
-
+    // public $showMKModal = false;
     public $isEditing = false;
 
-    public $prodiType;
+    // public $mkType;
+    public $prodi_id_2;
+    // public $jurusan_id_2;
+    // public $fakultas_id_2;
 
-    // public $prodi_id;
+    public $prodi_id_array_2 = [];
 
-    // public $jurusan_id;
-    public $jurusan_id_2;
-
-    // public $fakultas_id;
-    public $fakultas_id_2;
-
-    // public $nama_prodi;
-
-    // public $nama_strata;
-
-    // public $nama_jurusan;
-
-    // public $nama_fakultas;
-
-    // public $prodi_name_search;
-
-    // public $prodi_results;
-
-    // public $selectedProdiId;
-
-    // public $selectedJurusanId;
-
-    // public $selectedFakultasId;
-
-    protected $prodis = [
+    protected $matkuls = [
         // 'prodi_id' => 'required|exists:prodis,id',
         'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi',
         // 'nama_strata' => 'required|string|max:255',
@@ -56,7 +35,7 @@ trait WithProdiModal
         'nama_fakultas' => 'required|string|max:255|unique:fakultas,nama_fakultas',
     ];
 
-    public function addProdi($prodi)
+    public function addMK($mk)
     {
         if ($this->isEditing) {
             $this->resetInput();
@@ -65,19 +44,22 @@ trait WithProdiModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
-        $this->prodiType = $prodi;
-        $this->showProdiModal = true;
-        if ($prodi === 'prodi') {
+        $this->mkType = $mk;
+        $this->showMKModal = true;
+
+        if ($mk == 'mk-prodi' || $mk == 'mk-universitas') {
+            $this->updatedProdiNameSearch($this->prodi_name_search);
+        } elseif ($mk == 'mk-jurusan') {
             $this->updatedJurusanNameSearch($this->jurusan_name_search);
-        } elseif ($prodi === 'jurusan') {
+        } elseif ($mk == 'mk-fakultas') {
             $this->updatedFakultasNameSearch($this->fakultas_name_search);
         }
     }
 
-    public function editProdi($id, $type)
+    public function editMK($id, $type)
     {
         $this->selected_id = $id;
-        $this->prodiType = $type;
+        $this->mkType = $type;
         $this->isEditing = true;
 
         $this->resetValidation();
@@ -131,19 +113,19 @@ trait WithProdiModal
                 // $this->nama_fakultas = $fakultas->nama_fakultas;
             }
 
-            $this->showProdiModal = true;
+            $this->showMKModal = true;
 
         } catch (\Exception $e) {
             $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
         }
     }
 
-    private function inputModalProdi($isEditing, $data)
+    public function inputModalProdi($isEditing, $data)
     {
-        $prodis = [];
+        $matkuls = [];
 
         /* ===================== PROGRAM STUDI ===================== */
-        if ($this->prodiType === 'prodi') {
+        if ($this->mkType === 'prodi') {
 
             $kodePr = $data['kode_pr'] ?? null;
             if (! empty($kodePr) && ! empty($data['jurusan_id'])) {
@@ -160,13 +142,13 @@ trait WithProdiModal
                 }
             }
 
-            $prodis = [
+            $matkuls = [
                 'nama_prodi' => [
                     'required', 'string', 'max:255',
                     $this->uniqueRule('prodis', 'nama_prodi', $isEditing ? $this->selected_id : null),
                 ],
                 'kode_pr' => [
-                    'nullable', 'string', 'min:3', 'max:3',
+                    'nullable', 'string', 'max:3',
                     function ($attribute, $value, $fail) use ($data) {
                         if (empty($value)) {
                             return;
@@ -198,7 +180,7 @@ trait WithProdiModal
         }
 
         /* ===================== JURUSAN ===================== */
-        elseif ($this->prodiType === 'jurusan') {
+        elseif ($this->mkType === 'jurusan') {
 
             $kodeJr = $data['kode_jr'] ?? null;
             if (! empty($kodeJr) && ! empty($data['fakultas_id'])) {
@@ -210,13 +192,13 @@ trait WithProdiModal
                 }
             }
 
-            $prodis = [
+            $matkuls = [
                 'nama_jurusan' => [
                     'required', 'string', 'max:255',
                     $this->uniqueRule('jurusans', 'nama_jurusan', $isEditing ? $this->selected_id : null),
                 ],
                 'kode_jr' => [
-                    'nullable', 'string', 'min:3', 'max:3',
+                    'nullable', 'string', 'max:3',
                     // Tambahkan ini agar tetap dicek keunikan di tabel jurusans itu sendiri
                     $this->uniqueRule('jurusans', 'kode_jr', $isEditing ? $this->selected_id : null),
 
@@ -258,14 +240,14 @@ trait WithProdiModal
         }
 
         /* ===================== FAKULTAS ===================== */
-        elseif ($this->prodiType === 'fakultas') {
-            $prodis = [
+        elseif ($this->mkType === 'fakultas') {
+            $matkuls = [
                 'nama_fakultas' => [
                     'required', 'string', 'max:255',
                     $this->uniqueRule('fakultas', 'nama_fakultas', $isEditing ? $this->selected_id : null),
                 ],
                 'kode_fk' => [
-                    'required', 'string', 'min:3', 'max:3',
+                    'required', 'string', 'max:3',
                     function ($attribute, $value, $fail) {
                         if (empty($value)) {
                             return;
@@ -290,7 +272,7 @@ trait WithProdiModal
             ];
         }
 
-        return Validator::make($data, $prodis, $this->validationMessages())->validate();
+        return Validator::make($data, $matkuls, $this->validationMessages())->validate();
     }
 
     private function uniqueRule(string $table, string $column, $id = null)
@@ -308,12 +290,12 @@ trait WithProdiModal
 
     private function prepareData(array $validated)
     {
-        if ($this->prodiType === 'prodi') {
+        if ($this->mkType === 'prodi') {
             $validated['nama_prodi'] = $this->normalizeNama($validated['nama_prodi']);
-        } elseif ($this->prodiType === 'jurusan') {
+        } elseif ($this->mkType === 'jurusan') {
             $nama = preg_replace('/^jurusan\s+/i', '', trim($validated['nama_jurusan']));
             $validated['nama_jurusan'] = $this->normalizeNama($nama);
-        } elseif ($this->prodiType === 'fakultas') {
+        } elseif ($this->mkType === 'fakultas') {
             $nama = preg_replace('/^fakultas\s+/i', '', trim($validated['nama_fakultas']));
             $validated['nama_fakultas'] = $this->normalizeNama($nama);
         }
@@ -335,20 +317,20 @@ trait WithProdiModal
 
         try {
             DB::transaction(function () use ($validated) {
-                if ($this->prodiType === 'prodi') {
+                if ($this->mkType === 'prodi') {
                     Prodi::create([
                         'nama_prodi' => $validated['nama_prodi'],
                         'nama_strata' => ($validated['nama_strata'] ?? '') ?: 'Sarjana',
                         'jurusan_id' => $validated['jurusan_id'],
                         'kode_pr' => $validated['kode_pr'],
                     ]);
-                } elseif ($this->prodiType === 'jurusan') {
+                } elseif ($this->mkType === 'jurusan') {
                     Jurusan::create([
                         'nama_jurusan' => $validated['nama_jurusan'],
                         'fakultas_id' => $validated['fakultas_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
-                } elseif ($this->prodiType === 'fakultas') {
+                } elseif ($this->mkType === 'fakultas') {
                     Fakultas::create([
                         'nama_fakultas' => $validated['nama_fakultas'],
                         'kode_fk' => $validated['kode_fk'],
@@ -357,7 +339,7 @@ trait WithProdiModal
             });
 
             $this->resetInput();
-            $this->showProdiModal = false;
+            $this->showMKModal = false;
 
             $this->dispatch('prodi-saved');
             $this->dispatch('toast', message: '✅ Data berhasil ditambahkan!');
@@ -382,7 +364,7 @@ trait WithProdiModal
 
         try {
             DB::transaction(function () use ($validated) {
-                if ($this->prodiType === 'prodi') {
+                if ($this->mkType === 'prodi') {
                     Prodi::findOrFail($this->selected_id)->update([
                         'nama_prodi' => $validated['nama_prodi'],
                         'nama_strata' => ($validated['nama_strata'] ?? '') ?: 'Sarjana',
@@ -390,14 +372,14 @@ trait WithProdiModal
                         'kode_pr' => $validated['kode_pr'],
                     ]);
                     $message = 'Program Studi';
-                } elseif ($this->prodiType === 'jurusan') {
+                } elseif ($this->mkType === 'jurusan') {
                     Jurusan::findOrFail($this->selected_id)->update([
                         'nama_jurusan' => $validated['nama_jurusan'],
                         'fakultas_id' => $validated['fakultas_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
                     $message = 'Jurusan';
-                } elseif ($this->prodiType === 'fakultas') {
+                } elseif ($this->mkType === 'fakultas') {
                     Fakultas::findOrFail($this->selected_id)->update([
                         'nama_fakultas' => $validated['nama_fakultas'],
                         'kode_fk' => $validated['kode_fk'],
@@ -406,7 +388,7 @@ trait WithProdiModal
                 }
             });
 
-            $this->showProdiModal = false;
+            $this->showMKModal = false;
             $this->dispatch('toast', message: "✅ Data $message berhasil diperbarui!");
 
             $this->dispatch('refresh-data');
@@ -426,7 +408,6 @@ trait WithProdiModal
             'nama_prodi.unique' => 'Nama Program Studi sudah ada di database!',
             'nama_strata.required' => 'Nama Strata wajib diisi!',
             'nama_strata.in' => 'Nama Strata yang dipilih tidak sesuai dengan kategori yang diizinkan!',
-            'kode_pr.min' => 'Kode Program Studi tidak boleh kurang dari 3 karakter!',
             'kode_pr.max' => 'Kode Program Studi tidak boleh lebih dari 3 karakter!',
             'kode_pr.string' => 'Kode Program Studi harus berupa teks!',
             'kode_pr.unique' => 'Kode Program Studi ini sudah digunakan oleh Program Studi lain!',
@@ -437,7 +418,6 @@ trait WithProdiModal
             'nama_jurusan.required' => 'Nama Jurusan wajib diisi!',
             'nama_jurusan.max' => 'Nama Jurusan tidak boleh lebih dari 255 karakter!',
             'nama_jurusan.unique' => 'Nama Jurusan sudah ada di database!',
-            'kode_jr.min' => 'Kode Jurusan tidak boleh kurang dari 3 karakter!',
             'kode_jr.max' => 'Kode Jurusan tidak boleh lebih dari 3 karakter!',
             'kode_jr.string' => 'Kode Jurusan harus berupa teks!',
             'kode_jr.unique' => 'Kode Jurusan ini sudah terdaftar di database!',
@@ -449,7 +429,6 @@ trait WithProdiModal
             'nama_fakultas.max' => 'Nama Fakultas tidak boleh lebih dari 255 karakter!',
             'nama_fakultas.unique' => 'Nama Fakultas sudah ada di database!',
             'kode_fk.required' => 'Kode Fakultas wajib diisi!',
-            'kode_fk.min' => 'Kode Fakultas tidak boleh kurang dari 3 karakter!',
             'kode_fk.max' => 'Kode Fakultas tidak boleh lebih dari 3 karakter!',
             'kode_fk.unique' => 'Kode Fakultas sudah terdaftar di database!',
             'kode_fk.string' => 'Kode Fakultas harus berupa teks!',

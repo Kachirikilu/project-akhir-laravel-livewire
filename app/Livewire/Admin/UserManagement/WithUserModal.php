@@ -120,7 +120,7 @@ trait WithUserModal
         // }
     }
 
-    public function inputModalUser($isEditing, $data)
+    private function inputModalUser($isEditing, $data)
     {
         $rules = [
             'email' => [

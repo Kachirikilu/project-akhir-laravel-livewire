@@ -11,14 +11,14 @@ return new class extends Migration
         // Table Utama Mata Kuliah
         Schema::create('mata_kuliahs', function (Blueprint $table) {
             $table->id();
-            $table->enum('tingkatan_mk', [0, 1, 2, 3, 4])->default(1);
+            $table->enum('tingkatan_mk', [1, 2, 3, 4])->default(1);
             $table->string('kode_mk')->nullable();
             $table->char('digit_semester', 2);
-            $table->char('digit_mk', 2);
+            $table->char('digit_mk', 2)->nullable();
             $table->string('nama_matkul');
             $table->integer('semester');
             $table->integer('sks_kuliah')->default(1);
-            $table->enum('tipe_sks', [0, 1, 2, 3])->default(0);
+            $table->enum('tipe_sks', [1, 2, 3, 4])->default(1);
             $table->boolean('is_wajib')->default(true);
             $table->text('bahan_kajian')->nullable();
             $table->text('deskripsi')->nullable();

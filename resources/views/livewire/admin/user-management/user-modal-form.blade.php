@@ -1,18 +1,18 @@
 <flux:modal name="user-modal" wire:model="showUserModal" class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
 
+    {{-- Loading Overlay --}}
+    <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
+        <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
+            <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
+            <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
+        </div>
+    </div>
+
     <div class="flex flex-col h-full">
 
         {{-- @php
             $targetLoading = 'editUser'
         @endphp --}}
-
-        {{-- Loading Overlay --}}
-        <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
-            <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
-                <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
-            </div>
-        </div>
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
         <div class="p-6 pb-4 border-b">
@@ -57,7 +57,7 @@
                 </template>
 
                 {{-- 3. Footer/Tombol --}}
-               <div
+                <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
                     p-4 mt-4
                     {{-- dark:bg-neutral-900/50 dark:border-neutral-700/50  --}}

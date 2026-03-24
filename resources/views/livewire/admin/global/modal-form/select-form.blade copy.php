@@ -1,29 +1,15 @@
 <div class="relative" x-data="{
     open: false,
-    {{-- Ambil opsi dan value dari Blade ke JS --}}
-    options: @js($xOptions),
-    values: @js($xValues ?? $xOptions),
-    
-    {{-- Fungsi untuk mencari Label berdasarkan Value --}}
-    getLabel(val) {
-        if (val === '' || val === null || val === undefined) return '';
-        const index = this.values.indexOf(Number(val)); {{-- Gunakan Number() untuk memastikan tipe data --}}
-        return index !== -1 ? this.options[index] : val;
-    },
-    
-    value: '' {{-- Init kosong dulu --}}
+    value: $store.config?.{{ $modelString }}
 }"
-x-init="value = getLabel($store.config?.{{ $modelString }})"
-x-effect="
-    {{-- Reaktif: Jika nilai di store berubah, update tampilan teks --}}
-    const rawVal = $store.config?.{{ $modelString }};
-    if ($store.config?.isEdit === 0 && !rawVal) {
-        value = '';
-    } else {
-        value = getLabel(rawVal);
-    }
-"
-wire:key="select-form-{{ $modelString }}">
+    x-effect="
+        if ($store.config?.isEdit === 0) {
+            value = '';
+        } else {
+            value = $store.config?.{{ $modelString }};
+        }
+    "
+    wire:key="select-form-{{ $modelString }}">
 
     <label for="{{ $modelString }}" class="block text-sm font-medium">
         {{ $labelString }}

@@ -4,12 +4,6 @@
     items: @entangle($idString).live,
     itemNames: @entangle($selectedNameArray).live,
     itemKodes: @entangle($kodeString).live,
-    
-    init() {
-        if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemNames)) this.itemNames = [];
-        if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
-    },
 
     parentSelectedId: @entangle($parentIdString ?? null).live,
 
@@ -18,10 +12,8 @@
     },
 
     addItem(id, name, kode) {
-        // Ubah id menjadi Number atau String secara konsisten
-        let normalizedId = Number(id); 
-        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-            this.items.push(normalizedId);
+        if (!this.items.includes(id)) {
+            this.items.push(id);
             this.itemNames.push(name);
             this.itemKodes.push(kode);
         }

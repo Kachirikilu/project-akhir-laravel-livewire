@@ -6,7 +6,10 @@
             'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
             $padingKolom;
 
-        $mainKolom = 'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' . ' border-x ' . $padingKolom;
+        $mainKolom =
+            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
+            ' border-x ' .
+            $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
@@ -59,11 +62,10 @@
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
-            
+
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
-            <td
-                class="{{ $mainKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center">
                 {{ $x->kode_text ?? ($x->kode ?? '-') }}</td>
 
             @if ($switchTable === 'prodi')
@@ -79,8 +81,7 @@
                 {{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
-                <td
-                    class="{{ $mainKolom }} text-center">
+                <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)
@@ -102,7 +103,7 @@
                             @endswitch
                         </button>
 
-                        @include('livewire.admin.global.table.partial.pop-up-menu', [
+                        @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'editString' => 'editProdi',
@@ -113,13 +114,22 @@
                 </td>
             @endif
 
-            @include('livewire.admin.global.table.menu-aksi', [
-                'x' => $x,
-                'typeXString' => $switchTable,
-                'editString' => 'editProdi',
-                'nameXString' => $xNameString,
-                'confirmDeleteString' => 'deleteProdi',
-            ])
+            <td class="{{ $secondKolom }}">
+                <flux:dropdown>
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                        inset="top bottom">
+                    </flux:button>
+
+                    @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
+                        'x' => $x,
+                        'typeXString' => $switchTable,
+                        'editString' => 'editProdi',
+                        'nameXString' => $xNameString,
+                        'confirmDeleteString' => 'deleteProdi',
+                    ])
+
+                </flux:dropdown>
+            </td>
         </tr>
         @empty
             <tr>
@@ -128,7 +138,8 @@
                     'jurusan' => 5,
                     'fakultas' => 4,
                     default => 7,
-                } }}" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                } }}"
+                    class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada {{ $xNameString }} ditemukan!
                 </td>
             </tr>

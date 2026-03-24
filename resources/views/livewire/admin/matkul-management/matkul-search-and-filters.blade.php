@@ -16,7 +16,7 @@
             'totalTab3' => $totalUni,
             'tab1String' => 'wajib',
             'tab2String' => 'pilihan',
-            'tab3String' => 'universal',
+            'tab3String' => 'universitas',
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
@@ -26,7 +26,7 @@
     </div>
 
     {{-- BAGIAN SEARCH UTAMA --}}
-    <div x-show="activeFilter !== 'universal'" x-transition:enter="transition ease-out duration-1000"
+    <div x-show="activeFilter !== 'universitas'" x-transition:enter="transition ease-out duration-1000"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div x-show="activeFilter == 'universal'" x-transition:enter="transition ease-out duration-1000"
+    <div x-show="activeFilter == 'universitas'" x-transition:enter="transition ease-out duration-1000"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
@@ -82,7 +82,7 @@
     </div>
 
     {{-- BAGIAN SECONDARY SEARCH (Jurusan, & Fakultas) --}}
-    <div x-show="activeFilter !== 'universal'" x-transition:enter="transition ease-out duration-600"
+    <div x-show="activeFilter !== 'universitas'" x-transition:enter="transition ease-out duration-600"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
         x-transition:leave="transition ease-in duration-200"

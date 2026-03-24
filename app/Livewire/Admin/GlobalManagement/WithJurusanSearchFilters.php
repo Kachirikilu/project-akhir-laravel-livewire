@@ -334,7 +334,6 @@ trait WithJurusanSearchFilters
             $this->selected_kode_pr_array = [];
             $this->prodi_name_search = '';
         }
-
         
         if (method_exists($this, 'fetchProdi')) {
             $this->fetchProdi(''); 

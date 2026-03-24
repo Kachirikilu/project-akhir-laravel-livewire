@@ -6,7 +6,10 @@
             'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
             $padingKolom;
 
-        $mainKolom = 'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' . ' border-x ' . $padingKolom;
+        $mainKolom =
+            'bg-[var(--main-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]' .
+            ' border-x ' .
+            $padingKolom;
         $secondKolom = 'bg-[var(--second-table-trans)] text-[var(--contrast-second-text)] ' . $padingKolom;
 
         $headSubKolom =
@@ -20,19 +23,34 @@
     <x-slot:header>
         <tr>
 
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id', 'rowSpan' => 2, 'isMain' => 1, 'isCenter' => 1])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'id',
+                'rowSpan' => 2,
+                'isMain' => 1,
+                'isCenter' => 1,
+            ])
 
             @if ($filter == '')
-                @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role', 'rowSpan' => 2])
+                @include('livewire.admin.global.table.head-table', [
+                    'sortFieldString' => 'role',
+                    'rowSpan' => 2,
+                ])
             @else
                 <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Role</th>
             @endif
 
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name', 'headString' => 'Nama', 'rowSpan' => 2, 'isMain' => 1])
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email', 'rowSpan' => 2])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'name',
+                'headString' => 'Nama',
+                'rowSpan' => 2,
+                'isMain' => 1,
+            ])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'email',
+                'rowSpan' => 2,
+            ])
 
-            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" 
-                class="{{ $headSubKolom }}">
+            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" class="{{ $headSubKolom }}">
                 Identitas (ID)
             </th>
 
@@ -73,8 +91,17 @@
                 </th>
             @endif
 
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'status', 'rowSpan' => 2, 'isCenter' => 1])
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi', 'headString' => 'Program Studi', 'rowSpan' => 2, 'isMain' => 1])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'status',
+                'rowSpan' => 2,
+                'isCenter' => 1,
+            ])
+            @include('livewire.admin.global.table.head-table', [
+                'sortFieldString' => 'prodi',
+                'headString' => 'Program Studi',
+                'rowSpan' => 2,
+                'isMain' => 1,
+            ])
             <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Aksi</th>
 
         </tr>
@@ -90,21 +117,24 @@
                 'sortFieldString' => 'identity1',
                 'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
                 // 'isSubHeader' => 1,
-                'isCenter' => 1, 'isMain' => 1
+                'isCenter' => 1,
+                'isMain' => 1,
             ])
             @if ($filter !== 'mahasiswa')
                 @include('livewire.admin.global.table.head-table', [
                     'sortFieldString' => 'identity2',
                     'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'dosen' ? 'NIDN' : 'NIDK'),
                     // 'isSubHeader' => 1,
-                    'isCenter' => 1, 'isBorderR' => $filter == 'admin' ? 1 : 0
+                    'isCenter' => 1,
+                    'isBorderR' => $filter == 'admin' ? 1 : 0,
                 ])
                 @if ($filter !== 'admin')
                     @include('livewire.admin.global.table.head-table', [
                         'sortFieldString' => 'identity3',
                         'headString' => 'NIDK',
                         // 'isSubHeader' => 1,
-                        'isCenter' => 1,'isBorderR' => 1
+                        'isCenter' => 1,
+                        'isBorderR' => 1,
                     ])
                 @endif
             @endif
@@ -145,7 +175,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                    @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
@@ -163,7 +193,8 @@
                 </td>
             @endif
             @if ($filter == 'dosen' || $filter == '')
-                <td class="{{ $subKolom }} {{ ($filter == '' || $filter == 'dosen') ? 'border-r' : '' }} text-center">
+                <td
+                    class="{{ $subKolom }} {{ $filter == '' || $filter == 'dosen' ? 'border-r' : '' }} text-center">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
@@ -225,7 +256,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                    @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
@@ -238,12 +269,21 @@
             <td class="{{ $mainKolom }}">
                 {{ $detail->prodi->prodi ?? '-' }}</td>
 
-            @include('livewire.admin.global.table.menu-aksi', [
-                'x' => $user,
-                'nameXString' => 'Pengguna',
-                'editString' => 'editUser',
-                'confirmDeleteString' => 'deleteUser',
-            ])
+            <td class="{{ $secondKolom }}">
+                <flux:dropdown>
+                    <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
+                        inset="top bottom">
+                    </flux:button>
+
+                    @include('livewire.admin.user-management.modal-form.user-menu', [
+                        'x' => $user,
+                        'nameXString' => 'Pengguna',
+                        'editString' => 'editUser',
+                        'confirmDeleteString' => 'deleteUser',
+                    ])
+
+                </flux:dropdown>
+            </td>
         </tr>
 
         @empty

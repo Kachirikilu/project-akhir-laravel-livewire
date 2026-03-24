@@ -95,8 +95,7 @@ trait WithMatkulFilters
                                         ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '4'))
                                         ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '3'))
                                         ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '2'))
-                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '1'))
-                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '0'));
+                                        ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('tingkatan_mk', '1'));
                                 });
                             }
 
@@ -203,10 +202,10 @@ trait WithMatkulFilters
                 ->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
                 ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id');
             $prefixSql = "MAX(CASE 
-        WHEN mata_kuliahs.tingkatan_mk = 0 THEN UPPER(mata_kuliahs.kode_mk)
-        WHEN mata_kuliahs.tingkatan_mk = 1 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-        WHEN mata_kuliahs.tingkatan_mk = 2 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-        WHEN mata_kuliahs.tingkatan_mk = 3 THEN COALESCE(fakultas.kode_fk, 'UNI')
+        WHEN mata_kuliahs.tingkatan_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
+        WHEN mata_kuliahs.tingkatan_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+        WHEN mata_kuliahs.tingkatan_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+        WHEN mata_kuliahs.tingkatan_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
         ELSE 'UNI'
     END)";
             $query->groupBy('mata_kuliahs.id');

@@ -89,8 +89,8 @@ class MataKuliahManagement extends Component
             $query->where('is_wajib', true);
         } elseif ($this->filter === 'pilihan') {
             $query->where('is_wajib', false);
-        } elseif ($this->filter === 'universal') {
-            $query->where('tingkatan_mk', 5);
+        } elseif ($this->filter === 'universitas') {
+            $query->where('tingkatan_mk', 4);
         }
     }
 
@@ -163,7 +163,7 @@ class MataKuliahManagement extends Component
         $totalMatkuls = (clone $query)->count();
         $totalWajib = (clone $query)->where('is_wajib', true)->count();
         $totalPilihan = (clone $query)->where('is_wajib', false)->count();
-        $totalUni = (clone $query)->where('tingkatan_mk', 5)->count();
+        $totalUni = (clone $query)->where('tingkatan_mk', 4)->count();
 
         $globalQuery = $this->inputMainSearch();
         $totalTatapMuka = (clone $globalQuery)->where('tipe_sks', 1)->count();

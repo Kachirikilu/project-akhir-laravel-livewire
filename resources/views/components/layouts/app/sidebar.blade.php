@@ -12,72 +12,70 @@
             --sidebar-width: 72px;
         }
 
-:root { 
-    --wadah-color: #feffff;
-    --border-wadah-color: #e5cbd0; /* Kemerahan lembut */
+        :root { 
+            --wadah-color: #feffff;
+            --border-wadah-color: #e5cbd0;
 
-    --main-color: #991b1b;       /* red-800 */
-    --hover-main-color: #b91c1c; /* red-700 */
-    --border-main-color: #dc2626; /* red-600 */
-    --contrast-main-color: #991b1b;
-    
-    --main-text: #ffffff;
-    --second-text: rgb(164, 166, 170);
-    --contrast-main-text: #000000;
-    --contrast-second-text: #52525b;
-    --contrast-third-text: #818187; 
+            --main-color: #991b1b;
+            --hover-main-color: #b91c1c;
+            --border-main-color: #dc2626;
+            --contrast-main-color: #991b1b;
+            
+            --main-text: #ffffff;
+            --second-text: #a4a6aa;
+            --contrast-main-text: #000000;
+            --contrast-second-text: #52525b;
+            --contrast-third-text: #818187; 
 
-    /* Focus color diubah ke Rose/Pink agar harmonis dengan merah */
-    --focus-color: #e11d48;       /* rose-600 */
-    --hover-focus-color: #be123c; /* rose-700 */
+            --focus-color: #ea580c;
+            --hover-focus-color: #c2410c;
 
-    --main-table-color: #fcf1f1; /* Background tabel merah tipis */
-    --second-table-color: #ffffff;
-    --sub-table-color: #fffafb;
+            --main-table-color: #fcf1f1;
+            --second-table-color: #ffffff;
+            --sub-table-color: #fffafb;
 
-    --main-table-trans: #fcf1f1a0;
-    --second-table-trans: #ffffffa0;
-    --sub-table-trans: #fffafba0;
-    --hover-table-color: #fecaca99;
+            --main-table-trans: #fcf1f1a0;
+            --second-table-trans: #ffffffa0;
+            --sub-table-trans: #fffafba0;
+            --hover-table-color: #fecaca99;
 
-    --border-table-color: #d8c4c4;
+            --border-table-color: #d8c4c4;
 
-    --pop-up-color: #f3eded;
-    --hover-pop-up-color: #e9dbdb;
-}
+            --pop-up-color: #f3eded;
+            --hover-pop-up-color: #e9dbdb;
+        }
+        .dark {
+            --wadah-color: #1a1717;
+            --border-wadah-color: #3f1e1e; 
 
-.dark {
-    --wadah-color: #1a1717;       /* Hitam kemerahan */
-    --border-wadah-color: #3f1e1e; 
+            --main-color: #450a0a;
+            --hover-main-color: #7f1d1d;
+            --border-main-color: #991b1b;
+            --contrast-main-color: #ffffff;
+            
+            --main-text: #e9e0e0;
+            --second-text: #a19292;
+            --contrast-main-text: #ffffff;
+            --contrast-second-text: #bdb6b6; 
+            --contrast-third-text: #a09999; 
 
-    --main-color: #450a0a;       /* red-950 */
-    --hover-main-color: #7f1d1d; /* red-900 */
-    --border-main-color: #991b1b; /* red-800 */
-    --contrast-main-color: #ffffff;
-    
-    --main-text: #e9e0e0;
-    --second-text: #a19292;
-    --contrast-main-text: #ffffff;
-    --contrast-second-text: #bdb6b6; 
-    --contrast-third-text: #a09999; 
+            --focus-color: #fb923c;
+            --hover-focus-color: #f97316;
 
-    --focus-color: #fb7185;       /* rose-400 */
-    --hover-focus-color: #f43f5e; /* rose-500 */
+            --main-table-color: #2d2525;
+            --second-table-color: #313030;
+            --sub-table-color: #352f2fa0;
+            --hover-table-color: #7f1d1d66;
 
-    --main-table-color: #2d2525;
-    --second-table-color: #313030;
-    --sub-table-color: #352f2fa0;
-    --hover-table-color: #7f1d1d66;
+            --main-table-trans: #2d2525a0;
+            --second-table-trans: #313030a0;
+            --sub-table-trans: #352f2fa0;
 
-    --main-table-trans: #2d2525a0;
-    --second-table-trans: #313030a0;
-    --sub-table-trans: #352f2fa0;
+            --border-table-color: #1f1414;
 
-    --border-table-color: #1f1414;
-
-    --pop-up-color: #1a1919;
-    --hover-pop-up-color: #272525;
-}
+            --pop-up-color: #1a1919;
+            --hover-pop-up-color: #272525;
+        }
 
         .sidebar-expanded {
             --sidebar-width: 256px;

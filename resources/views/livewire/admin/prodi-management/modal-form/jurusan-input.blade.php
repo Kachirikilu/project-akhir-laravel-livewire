@@ -42,7 +42,8 @@
             'iconString' => 'hashtag',
             'placeholder' => 'Masukkan 3 huruf Kode Jurusan',
             'message' => $errors->first('kode_jr'),
-            'isKode' => 3
+            'isKode' => 3,
+            'isFocusSelect' => 1
         ])
 
     </div>

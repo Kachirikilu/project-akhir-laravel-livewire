@@ -378,81 +378,81 @@ trait WithProdiSearchFilters
         }
     }
 
-    // public function getProdibyUser()
-    // {
-    //     $admin = Auth::user()?->admin;
-    //     $userProdi = $admin ? $admin->prodi()->first() : null;
-
-    //     if (! $userProdi) {
-    //         return [];
-    //     }
-
-    //     $namaProdiUser = $userProdi->nama_prodi;
-    //     $jurusanIdUser = $userProdi->jurusan_id;
-    //     $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id;
-
-    //     $mainResults = Prodi::query()
-    //         ->join('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-    //         ->join('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
-    //         ->where('jurusans.fakultas_id', $fakultasIdUser)
-    //         ->orderByRaw('
-    //         CASE
-    //             WHEN prodis.nama_prodi = ? THEN 0
-    //             WHEN prodis.jurusan_id = ? THEN 1
-    //             WHEN jurusans.fakultas_id = ? THEN 2
-    //             ELSE 3
-    //         END ASC
-    //     ', [$namaProdiUser, $jurusanIdUser, $fakultasIdUser])
-    //         ->orderBy('prodis.nama_prodi', 'asc')
-    //         ->limit(12)
-    //         ->get([
-    //             'prodis.id',
-    //             'prodis.kode_pr',
-    //             'prodis.nama_prodi',
-    //             'jurusans.nama_jurusan',
-    //             'jurusans.kode_jr',
-    //             'fakultas.nama_fakultas',
-    //             'fakultas.kode_fk',
-    //         ]);
-
-    //     $countMain = $mainResults->count();
-
-    //     if ($countMain < 12) {
-
-    //         $remaining = 12 - $countMain;
-
-    //         $extraResults = Prodi::query()
-    //             ->join('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-    //             ->join('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
-    //             ->where('jurusans.fakultas_id', '!=', $fakultasIdUser)
-    //             ->whereNotIn('prodis.id', $mainResults->pluck('id'))
-    //             ->orderBy('prodis.nama_prodi', 'asc')
-    //             ->limit($remaining)
-    //             ->get([
-    //                 'prodis.id',
-    //                 'prodis.kode_pr',
-    //                 'prodis.nama_prodi',
-    //                 'jurusans.nama_jurusan',
-    //                 'jurusans.kode_jr',
-    //                 'fakultas.nama_fakultas',
-    //                 'fakultas.kode_fk',
-    //             ]);
-
-    //         $mainResults = $mainResults->concat($extraResults);
-    //     }
-
-    //     return $mainResults->map(function ($item) {
-    //         return [
-    //             'id' => $item->id,
-    //             'kode' => $item->kode_pr ?? $item->kode_jr ?? $item->kode_fk ?? 'UNI',
-    //             'prodi' => $item->nama_prodi,
-    //             'jurusan' => $item->nama_jurusan,
-    //             'fakultas' => $item->nama_fakultas,
-    //         ];
-    //     })->toArray();
-    // }
-
     public function getProdibyUser()
+    {
+        $admin = Auth::user()?->admin;
+        $userProdi = $admin ? $admin->prodi()->first() : null;
+
+        if (! $userProdi) {
+            return [];
+        }
+
+        $namaProdiUser = $userProdi->nama_prodi;
+        $jurusanIdUser = $userProdi->jurusan_id;
+        $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id;
+
+        $mainResults = Prodi::query()
+            ->join('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+            ->join('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+            ->where('jurusans.fakultas_id', $fakultasIdUser)
+            ->orderByRaw('
+            CASE
+                WHEN prodis.nama_prodi = ? THEN 0
+                WHEN prodis.jurusan_id = ? THEN 1
+                WHEN jurusans.fakultas_id = ? THEN 2
+                ELSE 3
+            END ASC
+        ', [$namaProdiUser, $jurusanIdUser, $fakultasIdUser])
+            ->orderBy('prodis.nama_prodi', 'asc')
+            ->limit(12)
+            ->get([
+                'prodis.id',
+                'prodis.kode_pr',
+                'prodis.nama_prodi',
+                'jurusans.nama_jurusan',
+                'jurusans.kode_jr',
+                'fakultas.nama_fakultas',
+                'fakultas.kode_fk',
+            ]);
+
+        $countMain = $mainResults->count();
+
+        if ($countMain < 12) {
+
+            $remaining = 12 - $countMain;
+
+            $extraResults = Prodi::query()
+                ->join('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                ->join('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                ->where('jurusans.fakultas_id', '!=', $fakultasIdUser)
+                ->whereNotIn('prodis.id', $mainResults->pluck('id'))
+                ->orderBy('prodis.nama_prodi', 'asc')
+                ->limit($remaining)
+                ->get([
+                    'prodis.id',
+                    'prodis.kode_pr',
+                    'prodis.nama_prodi',
+                    'jurusans.nama_jurusan',
+                    'jurusans.kode_jr',
+                    'fakultas.nama_fakultas',
+                    'fakultas.kode_fk',
+                ]);
+
+            $mainResults = $mainResults->concat($extraResults);
+        }
+
+        return $mainResults->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'kode' => $item->kode_pr ?? $item->kode_jr ?? $item->kode_fk ?? 'UNI',
+                'prodi' => $item->nama_prodi,
+                'jurusan' => $item->nama_jurusan,
+                'fakultas' => $item->nama_fakultas,
+            ];
+        })->toArray();
+    }
+
+    public function getProdibyUser2()
     {
         $admin = Auth::user()?->admin;
         $userProdi = $admin ? $admin->prodi()->first() : null;

@@ -28,7 +28,8 @@
             'placeholder' => 'Masukkan 3 huruf Kode Fakultas',
             'message' => $errors->first('kode_fk'),
             'isKode' => 3,
-            'isRequired' => 1
+            'isRequired' => 1,
+            'isFocusSelect' => 1
         ])
     </div>
 </div>

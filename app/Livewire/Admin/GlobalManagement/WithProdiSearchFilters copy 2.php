@@ -99,173 +99,91 @@ trait WithProdiSearchFilters
         }
     }
 
-    // public function updatedProdiNameSearch($value)
-    // {
-    //     $this->prodi_id = null;
-    //     $this->selected_kode_pr = null;
-    //     $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
-
-    //     if (strlen($value) > 0) {
-    //         $searchTerm = '%'.$value.'%';
-
-    //         $results = Prodi::query()
-    //             ->with(['jurusan_rel.fakultas_rel'])
-    //             ->where(function ($q) use ($searchTerm) {
-    //                 $q->where('nama_prodi', 'like', $searchTerm)
-    //                     ->orWhere('kode_pr', 'like', $searchTerm) // 🔹 Cari kode prodi
-    //                     ->orWhere('id', 'like', $searchTerm)
-    //                     ->orWhereHas('jurusan_rel', function ($sq) use ($searchTerm) {
-    //                         $sq->where('nama_jurusan', 'like', $searchTerm)
-    //                             ->orWhere('kode_jr', 'like', $searchTerm) // 🔹 Cari kode jurusan
-    //                             ->orWhereHas('fakultas_rel', function ($ssq) use ($searchTerm) {
-    //                                 $ssq->where('nama_fakultas', 'like', $searchTerm)
-    //                                     ->orWhere('kode_fk', 'like', $searchTerm); // 🔹 Cari kode fakultas
-    //                             });
-    //                     });
-    //             })
-    //             ->limit(12)
-    //             ->get();
-
-    //         $this->prodi_results = $results->map(function ($prodi) {
-    //             return [
-    //                 'id' => $prodi->id,
-    //                 'kode' => $prodi->kode_pr
-    //                     ?? $prodi->jurusan_rel?->kode_jr
-    //                     ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk
-    //                     ?? 'UNI',
-    //                 'prodi' => $prodi->nama_prodi,
-    //                 'jurusan' => $prodi->jurusan_rel?->nama_jurusan,
-    //                 'fakultas' => $prodi->jurusan_rel?->fakultas_rel?->nama_fakultas,
-    //             ];
-    //         })->toArray();
-
-    //         // 🔹 Exact Match sekarang mendukung Nama dan Kode Prodi
-    //         $exactMatch = $results->first(function ($prodi) use ($value) {
-    //             $input = str($value)->lower()->trim();
-    //             $nama = str($prodi->nama_prodi)->lower();
-    //             $kode = str($prodi->kode_pr)->lower();
-
-    //             return $input->is([$nama, $kode]);
-    //         });
-
-    //         if ($exactMatch) {
-    //             $this->prodi_id = $exactMatch->id;
-    //             $this->selected_kode_pr = $exactMatch->kode_pr
-    //                 ?? $exactMatch->jurusan_rel?->kode_jr
-    //                 ?? $exactMatch->jurusan_rel?->fakultas_rel?->kode_fk
-    //                 ?? 'UNI';
-    //             $this->prodi_name_search = $exactMatch->nama_prodi;
-    //             $this->prodi_results = [];
-    //         }
-
-    //     } else {
-    //         if (Auth::user()->admin?->prodi_id) {
-    //             $this->prodi_results = $this->getProdibyUser();
-    //         } else {
-    //             $this->prodi_results = Prodi::with(['jurusan_rel.fakultas_rel'])
-    //                 ->orderBy('nama_prodi')
-    //                 ->limit(12)
-    //                 ->get()
-    //                 ->map(fn ($p) => [
-    //                     'id' => $p->id,
-    //                     'kode' => $p->kode_pr
-    //                         ?? $p->jurusan_rel?->kode_jr
-    //                         ?? $p->jurusan_rel?->fakultas_rel?->kode_fk
-    //                         ?? 'UNI',
-    //                     'prodi' => $p->nama_prodi,
-    //                     'jurusan' => $p->jurusan_rel?->nama_jurusan,
-    //                     'fakultas' => $p->jurusan_rel?->fakultas_rel?->nama_fakultas,
-    //                 ])->toArray();
-    //         }
-    //     }
-    // }
-
     public function updatedProdiNameSearch($value)
-{
-    // 1. Reset State Awal
-    $this->prodi_id = null;
-    $this->selected_kode_pr = null;
-    $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+    {
+        // 1. Reset State Awal
+        $this->prodi_id = null;
+        $this->selected_kode_pr = null;
+        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
 
-    // 2. Inisialisasi Query Dasar (Gunakan select prodis.* untuk menghindari ID tertimpa join)
-    $query = Prodi::query()
-        ->select('prodis.*')
-        ->with(['jurusan_rel.fakultas_rel']);
+        // 2. Inisialisasi Query Dasar dengan Relasi
+        $query = Prodi::query()->with(['jurusan_rel.fakultas_rel']);
 
-    // 3. PRIORITAS: Filter Berdasarkan Mode Mata Kuliah (Scope Constraints)
-    if ($this->showMKModal) {
-        if (($this->mkType === 'mk-jurusan' || $this->mkType === 2) && filled($this->jurusan_id)) {
-            $query->where('prodis.jurusan_id', $this->jurusan_id);
-        } elseif (($this->mkType === 'mk-fakultas' || $this->mkType === 3) && filled($this->fakultas_id)) {
+        // 3. Filter Berdasarkan Mode Mata Kuliah (Scope Constraints)
+        if ($this->mkType === 'mk-jurusan' && filled($this->jurusan_id) && $this->showMKModal) {
+            $query->where('jurusan_id', $this->jurusan_id);
+        } elseif ($this->mkType === 'mk-fakultas' && filled($this->fakultas_id) && $this->showMKModal) {
             $query->whereHas('jurusan_rel', function ($q) {
                 $q->where('fakultas_id', $this->fakultas_id);
             });
         }
-    }
 
-    // 4. Logika Pencarian (Jika User Mengetik Sesuatu)
-    if (strlen($value) > 0) {
-        $searchTerm = '%' . $value . '%';
+        // 4. Logika Pencarian (Jika User Mengetik Sesuatu)
+        if (strlen($value) > 0) {
+            $searchTerm = '%'.$value.'%';
 
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('prodis.nama_prodi', 'like', $searchTerm)
-                ->orWhere('prodis.kode_pr', 'like', $searchTerm)
-                ->orWhere('prodis.id', 'like', $searchTerm)
-                ->orWhereHas('jurusan_rel', function ($sq) use ($searchTerm) {
-                    $sq->where('nama_jurusan', 'like', $searchTerm)
-                        ->orWhere('kode_jr', 'like', $searchTerm)
-                        ->orWhereHas('fakultas_rel', function ($ssq) use ($searchTerm) {
-                            $ssq->where('nama_fakultas', 'like', $searchTerm)
-                                ->orWhere('kode_fk', 'like', $searchTerm);
-                        });
-                });
-        });
+            $results = $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_prodi', 'like', $searchTerm)
+                    ->orWhere('kode_pr', 'like', $searchTerm)
+                    ->orWhere('id', 'like', $searchTerm)
+                    ->orWhereHas('jurusan_rel', function ($sq) use ($searchTerm) {
+                        $sq->where('nama_jurusan', 'like', $searchTerm)
+                            ->orWhere('kode_jr', 'like', $searchTerm)
+                            ->orWhereHas('fakultas_rel', function ($ssq) use ($searchTerm) {
+                                $ssq->where('nama_fakultas', 'like', $searchTerm)
+                                    ->orWhere('kode_fk', 'like', $searchTerm);
+                            });
+                    });
+            })
+                ->limit(12)
+                ->get();
 
-        $results = $query->limit(12)->get();
+            // Mapping Hasil Pencarian untuk Alpine/Dropdown
+            $this->prodi_results = $results->map(function ($prodi) {
+                return [
+                    'id' => $prodi->id,
+                    'kode' => $prodi->kode_pr
+                        ?? $prodi->jurusan_rel?->kode_jr
+                        ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk
+                        ?? 'UNI',
+                    'prodi' => $prodi->nama_prodi,
+                    'jurusan' => $prodi->jurusan_rel?->nama_jurusan,
+                    'fakultas' => $prodi->jurusan_rel?->fakultas_rel?->nama_fakultas,
+                ];
+            })->toArray();
 
-        // Mapping Hasil Pencarian
-        $this->prodi_results = $results->map(function ($prodi) {
-            return [
-                'id' => $prodi->id,
-                'kode' => $prodi->kode_pr ?: ($prodi->jurusan_rel?->kode_jr ?: ($prodi->jurusan_rel?->fakultas_rel?->kode_fk ?: 'UNI')),
-                'prodi' => $prodi->nama_prodi,
-                'jurusan' => $prodi->jurusan_rel?->nama_jurusan,
-                'fakultas' => $prodi->jurusan_rel?->fakultas_rel?->nama_fakultas,
-            ];
-        })->toArray();
+            // Cek Exact Match (Jika input user persis sama dengan Nama atau Kode)
+            $exactMatch = $results->first(function ($prodi) use ($value) {
+                $input = str($value)->lower()->trim();
+                $nama = str($prodi->nama_prodi)->lower();
+                $kode = str($prodi->kode_pr)->lower();
 
-        // Exact Match Logic
-        $exactMatch = $results->first(function ($prodi) use ($value) {
-            $input = str($value)->lower()->trim();
-            return $input->is([str($prodi->nama_prodi)->lower(), str($prodi->kode_pr)->lower()]);
-        });
+                return $input->is([$nama, $kode]);
+            });
 
-        if ($exactMatch) {
-            $this->prodi_id = $exactMatch->id;
-            $this->selected_kode_pr = $exactMatch->kode_pr ?: ($exactMatch->jurusan_rel?->kode_jr ?: 'UNI');
-            $this->prodi_name_search = $exactMatch->nama_prodi;
-            $this->prodi_results = [];
+            if ($exactMatch) {
+                $this->prodi_id = $exactMatch->id;
+                $this->selected_kode_pr = $exactMatch->kode_pr
+                    ?? $exactMatch->jurusan_rel?->kode_jr ?? $exactMatch->jurusan_rel?->fakultas_rel?->kode_fk
+                    ?? 'UNI';
+                $this->prodi_name_search = $exactMatch->nama_prodi;
+                $this->prodi_results = [];
+            }
         }
-    } 
-    // 5. Default State (Jika input kosong)
-    else {
-        if ($this->showMKModal && ($this->jurusan_id || $this->fakultas_id)) {
-            $this->prodi_results = $query->orderBy('prodis.nama_prodi')
+        // 5. Default State (Jika input kosong / pertama kali klik)
+        else {
+            $this->prodi_results = $query->orderBy('nama_prodi')
                 ->limit(12)
                 ->get()
-                ->map(fn($p) => [
+                ->map(fn ($p) => [
                     'id' => $p->id,
-                    'kode' => $p->kode_pr ?: ($p->jurusan_rel?->kode_jr ?: 'UNI'),
+                    'kode' => $p->kode_pr ?? $p->jurusan_rel?->kode_jr ?? $p->jurusan_rel?->fakultas_rel?->kode_fk ?? 'UNI',
                     'prodi' => $p->nama_prodi,
                     'jurusan' => $p->jurusan_rel?->nama_jurusan,
                     'fakultas' => $p->jurusan_rel?->fakultas_rel?->nama_fakultas,
                 ])->toArray();
-        } 
-        else {
-            $this->prodi_results = $this->getProdibyUser();
         }
     }
-}
 
 
     public function getProdibyUser()
@@ -287,11 +205,11 @@ trait WithProdiSearchFilters
 
         // --- 🔹 LOGIKA FILTER BERDASARKAN MK TYPE 🔹 ---
         // Jika mode Jurusan aktif, kunci prodi hanya di jurusan yang dipilih
-        if (($this->mkType === 'mk-jurusan' || $this->mkType === 2) && filled($this->jurusan_id) && $this->showMKModal) {
+        if ($this->mkType === 'mk-jurusan' && filled($this->jurusan_id) && $this->showMKModal) {
             $query->where('prodis.jurusan_id', $this->jurusan_id);
         }
         // Jika mode Fakultas aktif, kunci prodi hanya di fakultas yang dipilih
-        elseif (($this->mkType === 'mk-fakultas' || $this->mkType === 3) && filled($this->fakultas_id) && $this->showMKModal) {
+        elseif ($this->mkType === 'mk-fakultas' && filled($this->fakultas_id) && $this->showMKModal) {
             $query->where('jurusans.fakultas_id', $this->fakultas_id);
         }
         // Default: Filter berdasarkan Fakultas Admin (logika lama Anda)

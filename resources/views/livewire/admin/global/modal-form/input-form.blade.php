@@ -17,7 +17,6 @@
         </div>
         <input x-model="$store.config.{{ $modelString }}" 
             {{-- Tambahkan @focus untuk auto-select isi input --}}
-            @focus="$el.select()"
             
             name="{{ $modelString }}"
             x-bind:value="$store.config?.isEdit ? $el.value : ''" 
@@ -27,6 +26,10 @@
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
                 placeholder-[var(--contrast-third-text)]
                 w-full border rounded-lg pl-10 px-3 py-2 mt-1"
+
+            @if ($isFocusSelect ?? null)
+                @focus="$el.select()"
+            @endif
 
             @if (!empty($isKode) && $isKode > 0) 
                 maxlength="{{ $isKode }}"
@@ -45,7 +48,9 @@
         <flux:icon name="arrow-path" class="animate-spin h-4 w-4 text-gray-400"/>
     </div> --}}
     </div>
-    @error($modelString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-    @enderror
+    @if ($message ?? null)
+        @error($modelString)
+            <span class="text-red-500 text-sm mt-1 block">{{ $message ?? null }}</span>
+        @enderror
+    @endif
 </div>

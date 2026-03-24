@@ -9,7 +9,7 @@
             @include('livewire.admin.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalMatkuls,
+                'tabFilter' => $totalSemuaMK,
                 'tabString' => '',
                 'tabNameString' => 'Semua Mata Kuliah'
             ])

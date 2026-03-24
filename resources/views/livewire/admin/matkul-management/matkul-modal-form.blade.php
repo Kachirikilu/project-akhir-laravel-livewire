@@ -1,19 +1,19 @@
 <flux:modal name="mk-modal" wire:model="showMKModal" x-data @mk-saved.window="$store.config.reset()"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
 
+    {{-- Loading Overlay --}}
+    <div wire:loading wire:target="saveMK, updateMK">
+        <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
+            <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
+            <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
+        </div>
+    </div>
+
     <div class="flex flex-col h-full relative">
 
         {{-- @php
             $targetLoading = 'editMK'
         @endphp --}}
-
-        {{-- Loading Overlay --}}
-        <div wire:loading wire:target="saveMK, updateMK">
-             <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
-                <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-                <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
-            </div>
-        </div>
 
         {{-- 1. Header Modal --}}
         <div class="p-6 pb-4 border-b">
@@ -37,6 +37,12 @@
                     </flux:badge>
                 </template>
 
+                <template x-if="$store.config?.typeModal == 'mk-universitas'" x-cloak>
+                    <flux:badge icon="building-library" color="yellow" size="lg">
+                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah' : 'Tingkat Universitas'"></span>
+                    </flux:badge>
+                </template>
+
             </h3>
         </div>
 
@@ -46,20 +52,10 @@
             <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.config)"
                 enctype="multipart/form-data" id="mkForm">
 
-                <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
-                    @include('livewire.admin.matkul-management.modal-form.mk-prodi-input')
-                </template>
-
-                <template x-if="$store.config?.typeModal == 'mk-jurusan'" x-cloak>
-                    @include('livewire.admin.matkul-management.modal-form.mk-jurusan-input')
-                </template>
-
-                <template x-if="$store.config?.typeModal == 'mk-fakultas'" x-cloak>
-                    @include('livewire.admin.matkul-management.modal-form.mk-fakultas-input')
-                </template>
+                @include('livewire.admin.matkul-management.modal-form.matkul-input')
 
                 {{-- 3. Footer / Button Action --}}
-               <div
+                <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
                     p-4 mt-4
                     {{-- dark:bg-neutral-900/50 dark:border-neutral-700/50  --}}

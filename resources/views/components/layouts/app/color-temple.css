@@ -1,20 +1,21 @@
+/* Blue */
 :root {
-    --wadah-color: #feffff; /* sky-950 */
-    --border-wadah-color: #c0ced5; /* sky-950 */
+    --wadah-color: #feffff;
+    --border-wadah-color: #c0ced5;
 
-    --main-color: #075985; /* sky-800 */
-    --hover-main-color: #066fa7; /* sky-800 */
-    --border-main-color: #0284c7; /* sky-600 */
+    --main-color: #075985;
+    --hover-main-color: #066fa7;
+    --border-main-color: #0284c7;
     --contrast-main-color: #075985;
 
-    --main-text: #ffffff; /* white */
-    --second-text: rgb(164, 166, 170); /* gray-500 */
+    --main-text: #ffffff;
+    --second-text: #a4a6aa;
     --contrast-main-text: #000000;
     --contrast-second-text: #52525b;
     --contrast-third-text: #818187;
 
-    --focus-color: #4f46e5; /* bg-indigo-600 */
-    --hover-focus-color: #4338ca; /* hover:bg-indigo-700 */
+    --focus-color: #4f46e5;
+    --hover-focus-color: #4338ca;
 
     --main-table-color: #eff0f1;
     --second-table-color: #ffffff;
@@ -30,24 +31,23 @@
     --pop-up-color: #eaedee;
     --hover-pop-up-color: #d6dbdc;
 }
-
 .dark {
-    --wadah-color: #17191a; /* sky-950 */
-    --border-wadah-color: #1e343f; /* sky-950 */
+    --wadah-color: #17191a;
+    --border-wadah-color: #1e343f;
 
-    --main-color: #082f49; /* sky-950 */
-    --hover-main-color: #063e63; /* sky-950 */
-    --border-main-color: #075985; /* sky-800 */
+    --main-color: #082f49;
+    --hover-main-color: #063e63;
+    --border-main-color: #075985;
     --contrast-main-color: #ffffff;
 
-    --main-text: #e0e3e9; /* gray-400 */
-    --second-text: #9297a1; /* gray-500 */
+    --main-text: #e0e3e9;
+    --second-text: #9297a1;
     --contrast-main-text: #ffffff;
     --contrast-second-text: #b6b6bd;
     --contrast-third-text: #9999a0;
 
-    --focus-color: #6668ec; /* bg-indigo-500 */
-    --hover-focus-color: #6059e7; /* hover:bg-indigo-600 */
+    --focus-color: #6668ec;
+    --hover-focus-color: #6059e7;
 
     --main-table-color: #25292d;
     --second-table-color: #303031;
@@ -65,56 +65,55 @@
 }
 
 /* Red */
-:root {
+:root { 
     --wadah-color: #feffff;
-    --border-wadah-color: #e5cbd0; /* Kemerahan lembut */
+    --border-wadah-color: #e5cbd0;
 
-    --main-color: #991b1b; /* red-800 */
-    --hover-main-color: #b91c1c; /* red-700 */
-    --border-main-color: #dc2626; /* red-600 */
+    --main-color: #991b1b;
+    --hover-main-color: #b91c1c;
+    --border-main-color: #dc2626;
     --contrast-main-color: #991b1b;
-
+    
     --main-text: #ffffff;
-    --second-text: rgb(164, 166, 170);
+    --second-text: #a4a6aa;
     --contrast-main-text: #000000;
     --contrast-second-text: #52525b;
-    --contrast-third-text: #818187;
+    --contrast-third-text: #818187; 
 
-    --focus-color: #e11d48; /* rose-600 */
-    --hover-focus-color: #be123c; /* rose-700 */
+    --focus-color: #ea580c;
+    --hover-focus-color: #c2410c;
 
-    --main-table-color: #fcf1f1; /* Background tabel merah tipis */
+    --main-table-color: #fcf1f1;
     --second-table-color: #ffffff;
     --sub-table-color: #fffafb;
-    --hover-table-color: #fecaca99;
 
     --main-table-trans: #fcf1f1a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fffafba0;
+    --hover-table-color: #fecaca99;
 
     --border-table-color: #d8c4c4;
 
     --pop-up-color: #f3eded;
     --hover-pop-up-color: #e9dbdb;
 }
-
 .dark {
-    --wadah-color: #1a1717; /* Hitam kemerahan */
-    --border-wadah-color: #3f1e1e;
+    --wadah-color: #1a1717;
+    --border-wadah-color: #3f1e1e; 
 
-    --main-color: #450a0a; /* red-950 */
-    --hover-main-color: #7f1d1d; /* red-900 */
-    --border-main-color: #991b1b; /* red-800 */
+    --main-color: #450a0a;
+    --hover-main-color: #7f1d1d;
+    --border-main-color: #991b1b;
     --contrast-main-color: #ffffff;
-
+    
     --main-text: #e9e0e0;
     --second-text: #a19292;
     --contrast-main-text: #ffffff;
-    --contrast-second-text: #bdb6b6;
-    --contrast-third-text: #a09999;
+    --contrast-second-text: #bdb6b6; 
+    --contrast-third-text: #a09999; 
 
-    --focus-color: #fb7185; /* rose-400 */
-    --hover-focus-color: #f43f5e; /* rose-500 */
+    --focus-color: #fb923c;
+    --hover-focus-color: #f97316;
 
     --main-table-color: #2d2525;
     --second-table-color: #313030;

@@ -69,17 +69,17 @@
                 {{-- Universitas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mk-universal');
+                        $store.config?.setType('mk-universitas');
                         $store.config?.setEdit(0);
                         $store.config?.setColor('text-[var(--focus-color)]');
                         $flux.modal('mk-modal').show();
-                        $wire.addMK('mk-universal');
+                        $wire.addMK('mk-universitas');
                     "
-                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
-                    <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30">
+                    <flux:icon name="building-library" class="!text-yellow-600 dark:!text-yellow-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Universitas</span>
-                        <flux:icon wire:loading wire:target="addMK('universal')" name="arrow-path"
+                        <flux:icon wire:loading wire:target="addMK('universitas')" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>
                 </flux:menu.item>

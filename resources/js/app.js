@@ -136,6 +136,8 @@ document.addEventListener("alpine:init", () => {
         prodi_id_array: [],
         selected_kode_pr_array: [],
 
+        is_wajib: "",
+
 
         setType(val) {
             this.typeModal = val;
@@ -208,6 +210,39 @@ document.addEventListener("alpine:init", () => {
             this.selected_kode_fk = kodeFk;
         },
 
+        setValueMK(
+            tingkatanMode,
+            namaMatkul,
+            kodeBlok,
+            digitSemester,
+            digitMk,
+            namaProdi,
+            idProdi,
+            kodePr,
+            semester,
+            sksKuliah,
+            tipeSks,
+            isWajib
+        ) {
+            this.typeModal = tingkatanMode;
+            this.nama_matkul = namaMatkul;
+
+            this.kode_blok = kodeBlok;
+            this.digit_semester = digitSemester;
+            this.digit_mk = digitMk;
+
+            this.nama_prodi = namaProdi;
+            this.prodi_id = idProdi;
+            this.kode_pr = kodePr;
+
+            this.semester = semester;
+            this.sks_kuliah = sksKuliah;
+            this.tipe_sks = tipeSks; 
+            this.is_wajib = isWajib;
+
+            // this.kode_blok = jika ditit_semester nilai belakangnya 1 dan 2 jadi 'Reguler', tapi kalau 0 jadi 'Kerja Praktik / Tugas Akhir';
+        },
+
         setDeleteUser(val) {
             this.email_2 = val;
         },
@@ -228,6 +263,7 @@ document.addEventListener("alpine:init", () => {
             this.nama_strata = "";
             this.prodi_id = "";
             this.nama_prodi = "";
+            this.nama_prodi_2 = "";
             this.jurusan_id = "";
             this.nama_jurusan = "";
             this.fakultas_id = "";
@@ -286,7 +322,9 @@ document.addEventListener("alpine:init", () => {
 
             this.nama_prodi_array = [],
             this.prodi_id_array = [],
-            this.selected_kode_pr_array = []
+            this.selected_kode_pr_array = [],
+
+            this.is_wajib = ""
         },
     });
 });
