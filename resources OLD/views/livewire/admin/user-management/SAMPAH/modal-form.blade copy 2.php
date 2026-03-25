@@ -148,7 +148,7 @@
                                 <flux:icon.academic-cap variant="mini" class="text-gray-400" />
                             </div>
 
-                            <input autocomplete="off" wire:model.live.debounce.300ms="prodi_name_search"
+                            <input autocomplete="off" wire:model.live.debounce.300ms="prodiNameSearch"
                                 type="text" @focus="open = true; $event.target.select()"
                                 @click.outside="open = false" @keydown.escape.window="open = false"
                                 @keydown.enter.prevent="open = false" id="prodi_search"
@@ -156,7 +156,7 @@
                                 class="w-full border rounded-lg pl-10 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10">
 
                             {{-- Tombol Reset --}}
-                            @if ($prodi_id || strlen($prodi_name_search) > 0)
+                            @if ($prodi_id || strlen($prodiNameSearch) > 0)
                                 <button wire:click.prevent="resetProdiInput" type="button"
                                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition duration-150"
                                     title="Bersihkan Pilihan">
@@ -170,18 +170,18 @@
                         </div>
 
                         {{-- INFO PRODI TERPILIH --}}
-                        @if ($prodi_id && $prodi_name_search)
+                        @if ($prodi_id && $prodiNameSearch)
                             <p class="text-xs text-indigo-600 mt-1 font-medium italic">
-                                Terpilih: {{ $prodi_name_search }} (ID: {{ $prodi_id }})
+                                Terpilih: {{ $prodiNameSearch }} (ID: {{ $prodi_id }})
                             </p>
                         @endif
 
                         {{-- FLOATING RESULTS --}}
-                        <div x-show="open && ($wire.prodi_name_search.length > 0 || $wire.prodi_results.length > 0)"
+                        <div x-show="open && ($wire.prodiNameSearch.length > 0 || $wire.prodiResults.length > 0)"
                             x-transition.opacity x-cloak
                             class="absolute left-0 right-0 z-[100] mt-1 bg-white border border-gray-200 rounded-lg shadow-2xl max-h-60 overflow-y-auto overflow-x-hidden">
 
-                            @forelse ($prodi_results as $prodi)
+                            @forelse ($prodiResults as $prodi)
                                 <div wire:key="prodi-{{ $prodi['id'] }}"
                                     wire:click="selectProdi({{ $prodi['id'] }}, '{{ $prodi['nama_prodi'] }}')"
                                     @click="open = false"
@@ -204,7 +204,7 @@
                                     </div>
                                 </div>
                             @empty
-                                @if (strlen($prodi_name_search) > 0 && !$prodi_id)
+                                @if (strlen($prodiNameSearch) > 0 && !$prodi_id)
                                     <div class="p-4 text-center">
                                         <p class="text-sm text-gray-500 italic">Data tidak ditemukan</p>
                                     </div>

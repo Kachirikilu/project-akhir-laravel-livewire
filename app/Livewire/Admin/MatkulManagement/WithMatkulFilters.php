@@ -101,11 +101,9 @@ trait WithMatkulFilters
 
                             // Jika ada bagian ANGKA (misal: "10" atau "1102")
                             if (! empty($digitPart)) {
-                                // Jika user mengetik 1-2 digit, cari di digit_semester (tahun/ganjil-genap)
                                 if (strlen($digitPart) <= 2) {
                                     $sub->where('digit_semester', 'like', $digitPart.'%');
                                 }
-                                // Jika user mengetik lebih dari 2 digit, pecah ke semester dan urutan MK
                                 else {
                                     $dSem = substr($digitPart, 0, 2);
                                     $dMk = substr($digitPart, 2);

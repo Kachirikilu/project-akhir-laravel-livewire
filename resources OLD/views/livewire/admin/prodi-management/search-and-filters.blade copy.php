@@ -4,7 +4,7 @@
         <div class="flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
 
             {{-- Bagian Tab / Link (Kiri) --}}
-            @include('livewire.admin.global.search-and-filters.filter-mode', [
+            @include('livewire.global.search-and-filters.filter-mode', [
                 'typeXString' => 'strata',
                 'totalTab' => $totalProdis,
                 'totalTab1' => $totalSarjanas,
@@ -16,7 +16,7 @@
             ])
 
             {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-            @include('livewire.admin.global.search-and-filters.page-control', [
+            @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75],
             ])
 
@@ -26,7 +26,7 @@
 
     @if ($switchTable == 'prodi')
         <div class="order-2 sm:order-1 sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.main-search', [
+            @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' =>
                     $switchTable == 'prodi'
                         ? 'Cari Prodi, Strata, atau Jurusan...'
@@ -39,13 +39,13 @@
     <div class="grid grid-cols-1 sm:grid-cols-{{ $switchTable == 'prodi' ? '8 mt-2' : '9' }} gap-2 items-center w-full">
         @if ($switchTable !== 'fakultas')
             <div class="order-2 sm:order-1 sm:col-span-4 relative">
-                @include('livewire.admin.global.search-and-filters.secondary-search', [
-                    'selectedXNameString' => 'selectedJurusanName',
+                @include('livewire.global.search-and-filters.secondary-search', [
+                    'selectedXNameString' => 'jurusan_name',
                     'iconString' => 'book-open',
                     'placeholderString' => 'Filter berdasarkan Jurusan...',
                     'xSearchQueryString' => 'jurusanSearchQuery',
                     'selectedXId' => $selectedJurusanId,
-                    'selectedXName' => $selectedJurusanName,
+                    'selectedXName' => $jurusan_name,
                     'resetXFilterString' => 'resetJurusanFilter',
                     'xSearchQuery' => $jurusanSearchQuery,
                     'xSearchResults' => $jurusanSearchResults,
@@ -59,13 +59,13 @@
         @endif
 
         <div class="order-3 sm:order-2 sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
-                'selectedXNameString' => 'selectedFakultasName',
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'selectedXNameString' => 'fakultas_name',
                 'iconString' => 'building-office',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fakultasSearchQuery',
                 'selectedXId' => $selectedFakultasId,
-                'selectedXName' => $selectedFakultasName,
+                'selectedXName' => $fakultas_name,
                 'resetXFilterString' => 'resetFakultasFilter',
                 'xSearchQuery' => $fakultasSearchQuery,
                 'xSearchResults' => $fakultasSearchResults,
@@ -77,7 +77,7 @@
 
         @if ($switchTable !== 'prodi')
             <div class="order-1 sm:order-3 sm:col-span-1">
-                @include('livewire.admin.global.search-and-filters.page-control', [
+                @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => match ($switchTable) {
                         'jurusan' => [3, 5, 8, 10, 15, 25, 50],
                         'fakultas' => [3, 5, 8, 10],

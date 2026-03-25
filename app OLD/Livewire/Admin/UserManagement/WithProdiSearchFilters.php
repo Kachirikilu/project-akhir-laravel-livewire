@@ -14,13 +14,13 @@ trait WithProdiSearchFilters
 
     public $prodiSearchResults = [];
 
-    public $selectedProdiName = '';
+    public $prodi_name = '';
 
     public $prodi_id;
 
-    public $prodi_name_search = '';
+    public $prodiNameSearch = '';
 
-    public $prodi_results = [];
+    public $prodiResults = [];
 
     public $selectedProdiId = null;
 
@@ -57,7 +57,7 @@ trait WithProdiSearchFilters
 
     public function resetProdiFilter()
     {
-        $this->reset(['selectedProdiId', 'selectedProdiName', 'prodiSearchQuery']);
+        $this->reset(['selectedProdiId', 'prodi_name', 'prodiSearchQuery']);
         $this->resetPage();
     }
 
@@ -66,7 +66,7 @@ trait WithProdiSearchFilters
         $prodi = Prodi::find($prodiId);
         if ($prodi) {
             $this->selectedProdiId = $prodiId;
-            $this->selectedProdiName = $prodi->nama_prodi;
+            $this->prodi_name = $prodi->nama_prodi;
             $this->prodiSearchQuery = '';
             $this->resetPage();
         }
@@ -75,7 +75,7 @@ trait WithProdiSearchFilters
     public function updatedProdiNameSearch($value)
     {
         $this->prodi_id = null;
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
 
         if (strlen($value) > 0) {
             $searchTerm = '%'.$value.'%';
@@ -95,7 +95,7 @@ trait WithProdiSearchFilters
                 ->limit(12)
                 ->get();
 
-            $this->prodi_results = $results->map(function ($prodi) {
+            $this->prodiResults = $results->map(function ($prodi) {
                 return [
                     'id' => $prodi->id,
                     'prodi' => $prodi->nama_prodi,
@@ -110,15 +110,15 @@ trait WithProdiSearchFilters
 
             if ($exactMatch) {
                 $this->prodi_id = $exactMatch->id;
-                $this->prodi_name_search = $exactMatch->nama_prodi;
-                $this->prodi_results = [];
+                $this->prodiNameSearch = $exactMatch->nama_prodi;
+                $this->prodiResults = [];
             }
 
         } else {
             if (Auth::user()->admin?->prodi_id) {
-                $this->prodi_results = $this->getProdibyUser();
+                $this->prodiResults = $this->getProdibyUser();
             } else {
-                $this->prodi_results = Prodi::with(['jurusan_rel.fakultas_rel'])
+                $this->prodiResults = Prodi::with(['jurusan_rel.fakultas_rel'])
                     ->orderBy('nama_prodi')
                     ->limit(12)
                     ->get()
@@ -201,16 +201,16 @@ trait WithProdiSearchFilters
     public function selectProdi($prodiId, $prodiName)
     {
         $this->prodi_id = $prodiId;
-        $this->prodi_name_search = $prodiName;
+        $this->prodiNameSearch = $prodiName;
         $this->getProdibyUser();
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
     }
 
     public function resetProdiInput()
     {
         $this->prodi_id = null;
-        $this->prodi_name_search = '';
+        $this->prodiNameSearch = '';
         $this->updatedProdiNameSearch('');
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
     }
 }

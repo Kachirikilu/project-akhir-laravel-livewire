@@ -14,13 +14,13 @@ trait WithJurusanSearchFilters
 
     public $jurusanSearchResults = [];
 
-    public $selectedJurusanName = '';
+    public $jurusan_name = '';
 
     public $jurusan_id;
 
-    public $jurusan_name_search = '';
+    public $jurusanNameSearch = '';
 
-    public $jurusan_results = [];
+    public $jurusanResults = [];
 
     public $selectedJurusanId = null;
 
@@ -106,7 +106,7 @@ trait WithJurusanSearchFilters
 
     public function resetJurusanFilter()
     {
-        $this->reset(['selectedJurusanId', 'selectedJurusanName', 'jurusanSearchQuery']);
+        $this->reset(['selectedJurusanId', 'jurusan_name', 'jurusanSearchQuery']);
         $this->resetPage();
     }
 
@@ -115,7 +115,7 @@ trait WithJurusanSearchFilters
         $jurusan = Jurusan::find($jurusanId);
         if ($jurusan) {
             $this->selectedJurusanId = $jurusanId;
-            $this->selectedJurusanName = $jurusan->nama_jurusan;
+            $this->jurusan_name = $jurusan->nama_jurusan;
             $this->jurusanSearchQuery = '';
             $this->resetPage();
         }
@@ -124,7 +124,7 @@ trait WithJurusanSearchFilters
     public function updatedJurusanNameSearch($value)
     {
         $this->jurusan_id = null;
-        $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+        $this->resetErrorBag(['jurusan_id', 'jurusanNameSearch']);
 
         if (strlen($value) > 0) {
             $searchTerm = '%'.$value.'%';
@@ -137,7 +137,7 @@ trait WithJurusanSearchFilters
                 ->limit(12)
                 ->get();
 
-            $this->jurusan_results = $results->map(function ($jurusan) {
+            $this->jurusanResults = $results->map(function ($jurusan) {
                 return [
                     'id' => $jurusan->id,
                     'jurusan' => $jurusan->nama_jurusan,
@@ -151,15 +151,15 @@ trait WithJurusanSearchFilters
 
             if ($exactMatch) {
                 $this->jurusan_id = $exactMatch->id;
-                $this->jurusan_name_search = $exactMatch->nama_jurusan;
-                $this->jurusan_results = [];
+                $this->jurusanNameSearch = $exactMatch->nama_jurusan;
+                $this->jurusanResults = [];
             }
 
         } else {
             if (Auth::user()->admin?->prodi_id) {
-                $this->jurusan_results = $this->getJurusanbyUser();
+                $this->jurusanResults = $this->getJurusanbyUser();
             } else {
-                $this->jurusan_results = Jurusan::query()
+                $this->jurusanResults = Jurusan::query()
                     ->orderBy('nama_jurusan')
                     ->limit(12)
                     ->get()
@@ -221,16 +221,16 @@ trait WithJurusanSearchFilters
     public function selectJurusan($jurusanId, $jurusanName)
     {
         $this->jurusan_id = $jurusanId;
-        $this->jurusan_name_search = $jurusanName;
+        $this->jurusanNameSearch = $jurusanName;
         $this->getJurusanbyUser();
-        $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+        $this->resetErrorBag(['jurusan_id', 'jurusanNameSearch']);
     }
 
     public function resetJurusanInput()
     {
         $this->jurusan_id = null;
-        $this->jurusan_name_search = '';
+        $this->jurusanNameSearch = '';
         $this->updatedJurusanNameSearch('');
-        $this->resetErrorBag(['jurusan_id', 'jurusan_name_search']);
+        $this->resetErrorBag(['jurusan_id', 'jurusanNameSearch']);
     }
 }

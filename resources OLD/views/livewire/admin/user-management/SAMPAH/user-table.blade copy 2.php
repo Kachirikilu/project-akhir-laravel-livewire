@@ -182,7 +182,8 @@
                                     <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                         inset="top bottom"></flux:button>
 
-                                    <flux:menu>
+                                    <flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
                                         @if (Auth::user()?->admin)
                                             <flux:menu.item wire:click="editUser({{ $user->id }})"
                                                 class="!text-yellow-600 hover:!bg-yellow-100">

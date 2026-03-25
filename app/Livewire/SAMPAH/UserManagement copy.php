@@ -37,7 +37,7 @@ class UserManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
-        'selectedProdiName' => ['except' => ''],
+        'prodi_name' => ['except' => ''],
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc']
         
@@ -51,7 +51,7 @@ class UserManagement extends Component
         // 'nim' => ['except' => ''],
         // 'tahun_angkatan' => ['except' => ''],
         // 'prodi_id' => ['except' => ''],
-        // 'prodi_name_search' => ['except' => ''],
+        // 'prodiNameSearch' => ['except' => ''],
     ];
  
     public function updatedPerPage()

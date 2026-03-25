@@ -1,99 +1,15 @@
-// import Alpine from "alpinejs";
+const savedTheme = localStorage.getItem('app-theme') || 'blue';
+document.documentElement.setAttribute('data-theme', savedTheme);
 
-// window.Alpine = Alpine;
-
-// Alpine.store("config", {
-//     typeModal: "admin",
-//     isEdit: 0,
-//     colorIcon: "text-gray-700",
-
-//     email: "",
-//     password: "",
-//     name: "",
-//     nip: "",
-//     nitk: "",
-//     nidn: "",
-//     nidk: "",
-//     nim: "",
-//     tahun_angkatan: "",
-//     status: "",
-//     prodi_id: "",
-//     nama_prodi: "",
-
-//     setType(val) {
-//         this.typeModal = val;
-//     },
-
-//     setEdit(val) {
-//         this.isEdit = val;
-//     },
-
-//     setColor(val) {
-//         this.colorIcon = val;
-//     },
-
-//     setValueUser(
-//         email,
-//         password,
-//         name,
-//         nip,
-//         nitk,
-//         nidn,
-//         nidk,
-//         nim,
-//         tahunAngkatan,
-//         status,
-//         idProdi,
-//         namaProdi,
-//     ) {
-//         this.email = email;
-//         this.password = password;
-//         this.name = name;
-//         this.nip = nip;
-//         this.nitk = nitk;
-//         this.nidn = nidn;
-//         this.nidk = nidk;
-//         this.nim = nim;
-//         this.tahun_angkatan = tahunAngkatan;
-//         this.status = status;
-//         this.prodi_id = idProdi;
-//         this.nama_prodi = namaProdi;
-//     },
-
-//     setDeleteUser(val) {
-//         this.email = val;
-//     },
-
-//     reset() {
-//         this.typeModal = "admin";
-//         this.isEdit = 0;
-//         this.colorIcon = "text-gray-700";
-
-//         this.email = "";
-//         this.password = "";
-//         this.name = "";
-//         this.nip = "";
-//         this.nitk = "";
-//         this.nidn = "";
-//         this.nidk = "";
-//         this.nim = "";
-//         this.tahun_angkatan = "";
-//         this.status = "";
-//         this.prodi_id = "";
-//         this.nama_prodi = "";
-//     },
-// });
-
-// Alpine.start();
 document.addEventListener("alpine:init", () => {
     Alpine.store("config", {
         typeModal: "",
-        typeModal_2: "",
+        typeModal_delete: "",
         isEdit: 0,
         colorIcon: "",
 
         email: "",
-        email_2: "",
+        email_delete: "",
         password: "",
         name: "",
         nip: "",
@@ -106,25 +22,28 @@ document.addEventListener("alpine:init", () => {
         prodi_id: "",
 
         nama_prodi: "",
-        nama_prodi_2: "",
+        nama_prodi_delete: "",
 
         nama_strata: "",
         jurusan_id: "",
         nama_jurusan: "",
-        nama_jurusan_2: "",
+        nama_jurusan_delete: "",
         fakultas_id: "",
         nama_fakultas: "",
-        nama_fakultas_2: "",
+        nama_fakultas_delete: "",
 
         kode_pr: "",
         kode_jr: "",
         kode_fk: "",
+        kode_pr_delete: "",
 
-        selected_kode_pr: "",
-        selected_kode_jr: "",
-        selected_kode_fk: "",
+        prodi_kode: "",
+        jurusan_kode: "",
+        fakultas_kode: "",
 
         nama_matkul: "",
+        nama_matkul_delete: "",
+        kode_mk_delete: "",
         digit_semester: "",
         digit_mk: "",
         semester: "",
@@ -134,7 +53,7 @@ document.addEventListener("alpine:init", () => {
 
         nama_prodi_array: [],
         prodi_id_array: [],
-        selected_kode_pr_array: [],
+        prodi_kode_array: [],
 
         is_wajib: "",
 
@@ -179,7 +98,7 @@ document.addEventListener("alpine:init", () => {
             this.prodi_id = idProdi;
             this.nama_prodi = namaProdi;
 
-            this.selected_kode_pr = kodePr;
+            this.prodi_kode = kodePr;
 
         },
 
@@ -190,9 +109,7 @@ document.addEventListener("alpine:init", () => {
             namaJurusan,
             idFakultas,
             namaFakultas,
-            kodePr,
-            kodeJr,
-            kodeFk
+            kodePr
         ) {
             this.nama_prodi = namaProdi;
             this.nama_strata = strata;
@@ -205,9 +122,9 @@ document.addEventListener("alpine:init", () => {
             this.kode_jr = kodeJr;
             this.kode_fk = kodeFk;
 
-            this.selected_kode_pr = kodePr;
-            this.selected_kode_jr = kodeJr;
-            this.selected_kode_fk = kodeFk;
+            this.prodi_kode = kodePr;
+            this.jurusan_kode = kodePr;
+            this.fakultas_kode = kodePr;
         },
 
         setValueMK(
@@ -239,23 +156,32 @@ document.addEventListener("alpine:init", () => {
             this.sks_kuliah = sksKuliah;
             this.tipe_sks = tipeSks; 
             this.is_wajib = isWajib;
-
-            // this.kode_blok = jika ditit_semester nilai belakangnya 1 dan 2 jadi 'Reguler', tapi kalau 0 jadi 'Kerja Praktik / Tugas Akhir';
         },
 
         setDeleteUser(val) {
-            this.email_2 = val;
+            this.email_delete = val;
         },
         setDeleteProdi(
             namaProdi,
             namaJurusan,
             namaFakultas,
+            kodePrDelete,
             type
         ) {
-            this.nama_prodi_2 = namaProdi;
-            this.nama_jurusan_2 = namaJurusan;
-            this.nama_fakultas_2 = namaFakultas;
-            this.typeModal_2 = type;
+            this.nama_prodi_delete = namaProdi;
+            this.nama_jurusan_delete = namaJurusan;
+            this.nama_fakultas_delete = namaFakultas;
+            this.kode_pr_delete = kodePrDelete;
+            this.typeModal_delete = type;
+        },
+        setDeleteMK(
+            namaProdi,
+            kodeMkDelete
+            // type
+        ) {
+            this.nama_matkul_delete = namaProdi;
+            this.kode_mk_delete = kodeMkDelete;
+            // this.typeModal_delete = type;
         },
 
         resetSelect() {
@@ -263,25 +189,36 @@ document.addEventListener("alpine:init", () => {
             this.nama_strata = "";
             this.prodi_id = "";
             this.nama_prodi = "";
-            this.nama_prodi_2 = "";
+            this.nama_prodi_delete = "";
             this.jurusan_id = "";
             this.nama_jurusan = "";
             this.fakultas_id = "";
             this.nama_fakultas = "";
             
-            this.selected_kode_pr = "";
-            this.selected_kode_jr = "";
-            this.selected_kode_fk = "";
+            this.prodi_kode = "";
+            this.jurusan_kode = "";
+            this.fakultas_kode = "";
+
+            this.kode_blok = "";
+
+            this.semester = "";
+            this.sks_kuliah = "";
+            this.tipe_sks = ""; 
+            this.is_wajib = "";
+
+            this.nama_prodi_array = [];
+            this.prodi_id_array = [];
+            this.prodi_kode_array = [];
         },
 
         reset() {
             this.typeModal = "";
-            this.typeModal_2 = "";
+            this.typeModal_delete = "";
             this.isEdit = 0;
             this.colorIcon = "";
 
             this.email = "";
-            this.email_2 = "";
+            this.email_delete = "";
             this.password = "";
             this.name = "";
             this.nip = "";
@@ -294,37 +231,41 @@ document.addEventListener("alpine:init", () => {
             this.prodi_id = "";
 
             this.nama_prodi = "";
-            this.nama_prodi_2 = "";
+            this.nama_prodi_delete = "";
 
             this.nama_strata = "";
             this.jurusan_id = "";
             this.nama_jurusan = "";
-            this.nama_jurusan_2 = "";
+            this.nama_jurusan_delete = "";
             this.fakultas_id = "";
             this.nama_fakultas = "";
-            this.nama_fakultas_2 = "";
+            this.nama_fakultas_delete = "";
 
-            this.kode_pr = "",
-            this.kode_jr = "",
-            this.kode_fk = "",
+            this.kode_pr = "";
+            this.kode_jr = "";
+            this.kode_fk = "";
+            this.kode_pr_delete = ""
 
-            this.selected_kode_pr = "",
-            this.selected_kode_jr = "",
-            this.selected_kode_fk = "",
+            this.prodi_kode = "";
+            this.jurusan_kode = "";
+            this.fakultas_kode = "";
 
-            this.nama_matkul = "",
-            this.digit_semester = "",
-            this.digit_mk = "",
-            this.semester = "",
-            this.kode_blok = "",
-            this.tipe_sks = "",
-            this.sks_kuliah = "",
+            this.nama_matkul = "";
+            this.nama_matkul_delete = "";
+            this.kode_mk_delete = "";
+            this.digit_semester = "";
+            this.digit_mk = "";
+            
+            this.kode_blok = "";
 
-            this.nama_prodi_array = [],
-            this.prodi_id_array = [],
-            this.selected_kode_pr_array = [],
+            this.semester = "";
+            this.sks_kuliah = "";
+            this.tipe_sks = ""; 
+            this.is_wajib = "";
 
-            this.is_wajib = ""
+            this.nama_prodi_array = [];
+            this.prodi_id_array = [];
+            this.prodi_kode_array = [];
         },
     });
 });

@@ -2,11 +2,11 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'id'])
         {{-- Jurusan - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'jurusan'])
         {{-- Fakultas - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
 
@@ -17,7 +17,7 @@
             <td class="px-6 py-4 text-sm text-gray-700">{{ $jurusan->nama_jurusan ?? '-' }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">{{ $jurusan->fakultas ?? '-' }}</td>
 
-            @include('livewire.admin.global.table.menu-aksi', [
+            @include('livewire.global.table.menu-aksi', [
                 'x' => $jurusan,
                 'nameXString' => 'Jurusan',
                 'editString' => 'editJurusan',
@@ -34,7 +34,7 @@
 
 
     <x-slot:footer>
-        @include('livewire.admin.global.table.footer-table', [
+        @include('livewire.global.table.footer-table', [
             'typeXString' => $jurusans
         ])
     </x-slot:footer>

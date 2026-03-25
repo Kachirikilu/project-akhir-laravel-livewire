@@ -6,7 +6,7 @@
         {{-- Bagian Tab / Link (Kiri) --}}
         <div class="flex space-x-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
             {{-- Program Studi --}}
-            @include('livewire.admin.global.search-and-filters.partial.tab-filter', [
+            @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalProdis,
@@ -14,7 +14,7 @@
                 'tabNameString' => 'Program Studi'
             ])
             {{-- Tab Jurusan --}}
-            @include('livewire.admin.global.search-and-filters.partial.tab-filter', [
+            @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalJurusan,
@@ -22,7 +22,7 @@
                 'tabNameString' => 'Jurusan'
             ])
             {{-- Tab Fakultas --}}
-            @include('livewire.admin.global.search-and-filters.partial.tab-filter', [
+            @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalFakultas,

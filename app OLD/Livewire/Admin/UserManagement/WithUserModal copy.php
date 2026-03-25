@@ -47,7 +47,7 @@ trait WithUserModal
     //     $this->reset([
     //         'userId', 'email', 'password', 'name', 'nip', 'nim', 
     //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing', 
-    //         'prodi_name_search', 'showUserModal'
+    //         'prodiNameSearch', 'showUserModal'
     //     ]);
         
     //     $this->resetValidation();
@@ -84,9 +84,9 @@ trait WithUserModal
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
-            $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
+            $this->prodiNameSearch = $prodi ? $prodi->nama_prodi : '';
         } else {
-            $this->prodi_name_search = '';
+            $this->prodiNameSearch = '';
         }
         $this->getProdibyUser();
 
@@ -109,7 +109,7 @@ trait WithUserModal
     {
         $this->reset([
             'userId', 'email', 'password', 'name', 'nip', 'nim', 'tahun_angkatan', 
-            'prodi_id', 'prodi_name_search', 'prodi_results', 
+            'prodi_id', 'prodiNameSearch', 'prodiResults', 
             'roleType'
         ]);
         $this->resetErrorBag(); 
@@ -211,7 +211,7 @@ trait WithUserModal
             'nim' => $this->nim,
             'tahun_angkatan' => $this->tahun_angkatan,
             'prodi_id' => $this->prodi_id,
-            'prodi_name_search' => $this->prodi_name_search ?? '',
+            'prodiNameSearch' => $this->prodiNameSearch ?? '',
             'roleType' => $this->roleType,
             'isEditing' => $this->isEditing,
         ];
@@ -236,7 +236,7 @@ trait WithUserModal
             $this->nim = $data['nim'] ?? '';
             $this->tahun_angkatan = $data['tahun_angkatan'] ?? '';
             $this->prodi_id = $data['prodi_id'] ?? '';
-            $this->prodi_name_search = $data['prodi_name_search'] ?? '';
+            $this->prodiNameSearch = $data['prodiNameSearch'] ?? '';
         }
     }
 

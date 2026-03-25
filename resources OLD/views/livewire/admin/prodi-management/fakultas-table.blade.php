@@ -2,9 +2,9 @@
 
     <x-slot:header>
             {{-- ID - Sorting Angka --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'id'])
             {{-- Fakultas - Sorting A-Z --}}
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
 
@@ -14,7 +14,7 @@
             <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $fakultas->id }}</td>
             <td class="px-6 py-4 text-sm text-gray-700">Fakultas {{ $fakultas->fakultas ?? '-' }}</td>
 
-            @include('livewire.admin.global.table.menu-aksi', [
+            @include('livewire.global.table.menu-aksi', [
                 'x' => $fakultas,
                 'nameXString' => 'Fakultas',
                 'editString' => 'editFakultas',
@@ -32,7 +32,7 @@
 
 
     <x-slot:footer>
-        @include('livewire.admin.global.table.footer-table', [
+        @include('livewire.global.table.footer-table', [
             'typeXString' => $fakultass
         ])
     </x-slot:footer>

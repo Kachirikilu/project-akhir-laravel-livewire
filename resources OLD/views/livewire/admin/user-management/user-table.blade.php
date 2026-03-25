@@ -2,48 +2,48 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'id'])
 
         {{-- Role - Sorting A-Z --}}
         @if ($filter == '')
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'role'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'role'])
         @else
             <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Role</th>
         @endif
 
         {{-- Name - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'name'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'name'])
 
         {{-- NIP/NIM Dinamis --}}
-        @include('livewire.admin.global.table.head-table', [
+        @include('livewire.global.table.head-table', [
             'sortFieldString' => 'identity1',
             'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
         ])
 
         {{-- NITK/NIDN Dinamis --}}
         @if ($filter != 'mahasiswa')
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'identity2',
                 'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'admin' ? 'NITK' : 'NIDN'),
             ])
         @endif
 
         @if ($filter == 'dosen' || $filter == '')
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'identity3',
                 'headString' => 'NIDK',
             ])
         @endif
 
         {{-- Email - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'email'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'email'])
 
 
         {{-- Angkatan - Autocomplete Input --}}
         @if ($filter == 'mahasiswa')
             <th class="px-6 py-3 text-left">
                 <div class="flex flex-col gap-1 items-center">
-                    @include('livewire.admin.global.table.head-table', [
+                    @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'tahun_angkatan',
                         'headString' => 'Angkatan',
                         'withTh' => 0,
@@ -74,7 +74,7 @@
         @endif
 
         {{-- Prodi - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'prodi'])
 
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
@@ -111,7 +111,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                    @include('livewire.global.table.partial.pop-up-menu', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                         'editString' => 'editUser',
@@ -143,7 +143,7 @@
 
             <td class="px-6 py-4 text-sm text-gray-700">{{ $user->status ?? '-' }}
 
-                @include('livewire.admin.global.table.menu-aksi', [
+                @include('livewire.global.table.menu-aksi', [
                     'x' => $user,
                     'nameXString' => 'Pengguna',
                     'editString' => 'editUser',
@@ -167,7 +167,7 @@
 
 
         <x-slot:footer>
-            @include('livewire.admin.global.table.footer-table', [
+            @include('livewire.global.table.footer-table', [
                 'typeXString' => $users,
             ])
         </x-slot:footer>

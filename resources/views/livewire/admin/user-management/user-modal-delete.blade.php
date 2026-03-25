@@ -1,4 +1,4 @@
-<flux:modal name="user-delete" wire:model="showUserDelete" class="min-w-[20rem] max-w-md">
+<flux:modal name="user-delete" wire:model="showUserDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>
@@ -6,7 +6,7 @@
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.email_2 ? '***' + $store.config?.email_2 + '***' : 'Pengguna ini'">
+                    x-text="$store.config?.email_delete ? '***' + $store.config?.email_delete + '***' : '***Pengguna ini***'">
                 </strong>?
                 Tindakan ini tidak dapat dibatalkan.
             </flux:subheading>

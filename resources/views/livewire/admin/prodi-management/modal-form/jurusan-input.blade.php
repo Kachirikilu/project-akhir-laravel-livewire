@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">Input Jurusan</h4>
 
         {{-- 📧 Jurusan Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Nama Jurusan',
             'modelString' => 'nama_jurusan',
@@ -20,23 +20,23 @@
             'isRequired' => 1
         ])
 
-        @include('livewire.admin.global.modal-form.search-input-form', [
-            'xResults' => $fakultas_results,
+        @include('livewire.global.modal-form.search-input-form', [
+            'xResults' => $fakultasResults,
             'selectX' => 'selectFakultas',
             'modelString' => 'nama_fakultas',
             'resetXInput' => 'resetFakultasInput()',
             'typeXString' => 'fakultas',
             'nameXString' => 'Fakultas',
             'idString' => 'fakultas_id',
-            'kodeString' => 'selected_kode_fk',
+            'kodeString' => 'fakultas_kode',
             'searchString' => 'fakultas_search',
-            'nameSearchString' => 'fakultas_name_search',
+            'nameSearchString' => 'fakultasNameSearch',
             'fetchString' => 'fetchFakultas',
             'iconString' => 'building-library'
         ])
 
         {{-- 📧 Kode Jurusan Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             'labelString' => 'Kode Jurusan',
             'modelString' => 'kode_jr',
             'iconString' => 'hashtag',

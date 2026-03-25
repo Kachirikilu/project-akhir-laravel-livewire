@@ -23,7 +23,7 @@
     @endif
 
     {{-- 💡 2. Tips (Di bawah Error) --}}
-    <div class="rounded-xl border border-slate-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
+    <div class="rounded-xl bg-[var(--second-table-trans)] border-[var(--border-wadah-color)] border p-4 shadow-sm backdrop-blur-sm transition-colors duration-300">
         <div class="flex items-center gap-2 mb-3">
             <flux:icon name="calendar" variant="mini" class="text-[var(--focus-color)]" />
             <span class="font-bold text-slate-900 dark:text-gray-200 text-xs uppercase tracking-wider">Tips</span>

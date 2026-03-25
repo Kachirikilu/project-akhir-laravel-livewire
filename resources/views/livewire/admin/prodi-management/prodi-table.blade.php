@@ -24,30 +24,30 @@
 
         <tr>
 
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
                 'isCenter' => 1,
             ])
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
             ])
 
             @if ($switchTable === 'prodi')
-                @include('livewire.admin.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'prodi',
                     'headString' => 'Program Studi',
                 ])
             @endif
 
             @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-                @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'jurusan'])
             @endif
 
-            @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
 
             @if ($switchTable === 'prodi')
-                @include('livewire.admin.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'strata',
                     'isCenter' => 1,
                     'isMain' => 1,
@@ -147,7 +147,7 @@
 
 
         <x-slot:footer>
-            @include('livewire.admin.global.table.footer-table', [
+            @include('livewire.global.table.footer-table', [
                 'typeXString' => $xResults,
             ])
         </x-slot:footer>

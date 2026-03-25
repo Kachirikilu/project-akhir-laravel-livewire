@@ -54,7 +54,7 @@ trait WithUserModal
     //     $this->reset([
     //         'userId', 'email', 'password', 'name', 'nip', 'nim', 
     //         'tahun_angkatan', 'prodi_id', 'roleType', 'isEditing', 
-    //         'prodi_name_search', 'showUserModal'
+    //         'prodiNameSearch', 'showUserModal'
     //     ]);
         
     //     $this->resetValidation();
@@ -72,7 +72,7 @@ trait WithUserModal
         $this->roleType = $role;
         $this->showUserModal = true;
         $this->js("Flux.modal('user-modal').show()");
-        $this->updatedProdiNameSearch($this->prodi_name_search); 
+        $this->updatedProdiNameSearch($this->prodiNameSearch); 
         
     }
 
@@ -98,9 +98,9 @@ trait WithUserModal
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
-            $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
+            $this->prodiNameSearch = $prodi ? $prodi->nama_prodi : '';
         } else {
-            $this->prodi_name_search = '';
+            $this->prodiNameSearch = '';
         }
         $this->getProdibyUser();
 
@@ -342,7 +342,7 @@ trait WithUserModal
         ];
 
         if (!$keepProdi) {
-            $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
+            $fields = array_merge($fields, ['prodi_id', 'prodiNameSearch', 'prodiResults']);
         }
 
         $this->reset($fields);

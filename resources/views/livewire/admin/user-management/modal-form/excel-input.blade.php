@@ -61,8 +61,8 @@
     <div
         class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors">
 
-        @include('livewire.admin.global.modal-form.search-input-form', [
-            'xResults' => $prodi_results,
+        @include('livewire.global.modal-form.search-input-form', [
+            'xResults' => $prodiResults,
             'selectX' => 'selectProdi',
             'modelString' => 'nama_prodi',
             'resetXInput' => 'resetProdiInput()',
@@ -70,9 +70,9 @@
             'nameXString' => 'Program Studi',
             'noName' => 1,
             'idString' => 'prodi_id',
-            'kodeString' => 'selected_kode_pr',
+            'kodeString' => 'prodi_kode',
             'searchString' => 'prodi_search',
-            'nameSearchString' => 'prodi_name_search',
+            'nameSearchString' => 'prodiNameSearch',
             'fetchString' => 'fetchProdi',
             'iconString' => 'academic-cap',
         ])

@@ -23,10 +23,11 @@
             class="cursor-pointer w-full flex items-center gap-4 p-1 rounded-lg hover:bg-white/10 transition">
             <!-- Avatar -->
             @if (auth()->user()->profile_photo_path)
-                <img src="{{ auth()->user()->profile_photo_url }}" alt="avatar" class="w-8 h-8 rounded-lg object-cover">
+                <img src="{{ auth()->user()->profile_photo_url }}" alt="avatar"
+                    class="w-8 h-8 rounded-lg object-cover shrink-0">
             @else
                 <div
-                    class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-xs font-semibold text-white">
+                    class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-xs font-semibold text-white shrink-0">
                     {{ $userInitials }}
                 </div>
             @endif
@@ -37,7 +38,7 @@
                 x-transition:leave="transition-all duration-200 ease-in"
                 x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
                 class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
-                {{ auth()->user()->name }} qwd qwd wd qwd qwdqwdd
+                {{ auth()->user()->name }}
             </span>
 
             <!-- Chevron -->
@@ -49,7 +50,7 @@
 
     </div>
 
-    <flux:menu class="w-[224px] dark:!bg-gray-800">
+    <flux:menu class="w-[224px] !bg-[var(--main-table-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
         <flux:menu.radio.group>
             <div class="p-0 text-sm font-normal">
                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -58,9 +59,10 @@
                             <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}"
                                 class="h-full w-full object-cover">
                         @else
-                            <span
-                                class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 bg-[var(--contrast-main-color)] text-[var(--contrast-main-text)]">
-                                {{ $userInitials }}
+                            <span class="flex h-full w-full items-center justify-center rounded-lg 
+                                bg-[var(--main-color)] text-[var(--main-text)]
+                                border border-neutral-300 dark:border-neutral-700">
+                                    {{ $userInitials }}
                             </span>
                         @endif
                     </span>

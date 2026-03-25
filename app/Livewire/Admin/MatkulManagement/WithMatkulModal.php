@@ -2,10 +2,7 @@
 
 namespace App\Livewire\Admin\MatkulManagement;
 
-use App\Models\Fakultas;
-use App\Models\Jurusan;
 use App\Models\MataKuliah;
-use App\Models\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,167 +14,106 @@ trait WithMatkulModal
 
     public $showMKModal = false;
 
-    public $prodi_id_2;
+    // public $prodi_id_2;
 
-    public $prodi_id_array_2 = [];
+    // public $prodi_id_array_2 = [];
 
-    // public $prodi_id_array = [];
-    public $prodi_names = [];
+    // public $prodi_names = [];
 
-    public $prodi_kodes = [];
-    // public $prodi_id, $prodi_name_search;
-    // public $jurusan_id, $jurusan_name_search;
-    // public $fakultas_id, $fakultas_name_search;
+    // public $prodi_kodes = [];
 
-    protected $matkuls = [
-        'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi',
-        'jurusan_id' => 'required|exists:jurusans,id',
-        'nama_jurusan' => 'required|string|max:255|unique:jurusans,nama_jurusan',
-        'fakultas_id' => 'required|exists:fakultas,id',
-        'nama_fakultas' => 'required|string|max:255|unique:fakultas,nama_fakultas',
-    ]; // Ubah ini jadi validasi punya Mata Kuliah
-
-    public function addMK($mk)
+    public function addMK($tingkatan)
     {
-        if ($this->isEditing) {
-            $this->resetInput();
-        }
-        if ($mk !== 'mk-prodi') {
-            $this->resetInputProdi();
-        }
+        // if ($this->isEditing) {
+        //     $this->resetInput();
+        // }
+        // if ($tingkatan !== 'mk-prodi') {
+        $this->resetInput();
+        // }
 
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
-        $this->mkType = $mk;
+        $this->mkType = $tingkatan;
         $this->showMKModal = true;
 
-        if ($mk == 'mk-prodi' || $mk == 'mk-universitas') {
-            $this->updatedProdiNameSearch($this->prodi_name_search);
-        } elseif ($mk == 'mk-jurusan') {
-            $this->updatedJurusanNameSearch($this->jurusan_name_search);
-        } elseif ($mk == 'mk-fakultas') {
-            $this->updatedFakultasNameSearch($this->fakultas_name_search);
+        if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
+            $this->updatedProdiNameSearch($this->prodiNameSearch);
+        } elseif ($tingkatan == 'mk-jurusan') {
+            $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+        } elseif ($tingkatan == 'mk-fakultas') {
+            $this->updatedFakultasNameSearch($this->fakultasNameSearch);
         }
     }
-
-    // public function editMK($id, $tingkatan)
-    // {
-    //     $this->selected_id = $id;
-    //     $this->mkType = $tingkatan;
-    //     $this->isEditing = true;
-
-    //     $this->resetValidation();
-    //     $this->resetErrorBag();
-
-    //     try {
-    //         // Load relasi mendalam untuk mendapatkan nama Jurusan/Fakultas
-    //         // ... di dalam try editMK ...
-    //         $mk = MataKuliah::with(['prodis.jurusan.fakultas'])->findOrFail($id);
-
-    //         // SINKRONISASI ARRAY SECARA EKSPLISIT
-    //         $this->prodi_id_array = collect($mk->prodis)->pluck('id')->map(fn ($id) => (string) $id)->toArray();
-    //         $this->prodi_names = collect($mk->prodis)->pluck('nama_prodi')->toArray();
-    //         $this->prodi_kodes = collect($mk->prodis)->map(function ($p) {
-    //             return $p->kode_prodi ?? $p->kode_pr ?? '???';
-    //         })->toArray();
-
-    //         // Referensi Induk
-    //         $firstProdi = $mk->prodis->first();
-    //         if ($firstProdi) {
-    //             $this->prodi_id = $firstProdi->id;
-    //             $this->prodi_name_search = $firstProdi->nama_prodi;
-    //             $this->jurusan_id = $firstProdi->jurusan_id;
-    //             $this->jurusan_name_search = $firstProdi->jurusan->nama_jurusan ?? '';
-    //             $this->fakultas_id = $firstProdi->jurusan->fakultas_id ?? null;
-    //             $this->fakultas_name_search = $firstProdi->jurusan->fakultas->nama_fakultas ?? '';
-    //         }
-
-    //         $this->showMKModal = true;
-
-    //         dd($this->prodi_id_array);
-
-    //         // Kirim event khusus untuk memaksa Alpine me-refresh data
-    //         $this->dispatch('update-alpine-arrays', [
-    //             'ids' => $this->prodi_id_array,
-    //             'names' => $this->prodi_names,
-    //             'kodes' => $this->prodi_kodes,
-    //         ]);
-
-    //         // Pemicu Alpine untuk re-render array
-    //         $this->dispatch('refresh-component');
-    //         $this->dispatch('fill-modal-mk', mk: $mk);
-
-    //     } catch (\Exception $e) {
-    //         $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
-    //     }
-    // }
 
     public function editMK($id, $tingkatan)
     {
         $this->selected_id = $id;
-        $this->mkType = $tingkatan; 
+        $this->mkType = $tingkatan;
         $this->isEditing = true;
+
+        $this->resetInput();
+        $this->prodiResults = [];
 
         $this->resetValidation();
         $this->resetErrorBag();
 
-        if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedProdiNameSearch($this->prodi_name_search);
-        } elseif ($tingkatan == 2) {
-            $this->updatedJurusanNameSearch($this->jurusan_name_search);
-        } elseif ($tingkatan == 3) {
-            $this->updatedFakultasNameSearch($this->fakultas_name_search);
+        try {
+            $mk = MataKuliah::with(['prodis'])->findOrFail($id);
+
+            // Sesuaikan dengan $selectedNameArray
+            $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
+            $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
+            $this->prodi_kode_array = $mk->prodis->pluck('kode')->toArray();
+
+            $this->dispatch('refresh-component');
+
+            // 2. Ambil data Array (untuk Checkbox/Multi-select)
+            // $this->prodi_id_array_2 = $this->prodi_id_array;
+
+            // 3. Ambil data Hirarki dari Prodi Pertama sebagai referensi UI
+            $firstProdi = $mk->prodis->first();
+
+            if ($firstProdi) {
+                $this->jurusan_id = $firstProdi->jurusan_id;
+                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan_rel->jurusan ?? '';
+                $this->jurusan_kode = $firstProdi->jurusan_rel->kode ?? 'UNI';
+
+                $this->fakultas_id = $firstProdi->jurusan_rel->fakultas_id ?? null;
+                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
+                $this->fakultas_kode = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
+
+                if ($tingkatan == 'mk-prodi' || 'mk-universitas') {
+                    $this->prodi_id = $firstProdi->id;
+                    $this->prodiNameSearch = $firstProdi->prodi;
+                    $this->prodi_kode = $firstProdi->kode ?? 'UNI';
+                }
+            }
+
+            if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
+                $this->updatedProdiNameSearch($this->prodiNameSearch);
+            } elseif ($tingkatan == 'mk-jurusan') {
+                $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+            } elseif ($tingkatan == 'mk-fakultas') {
+                $this->updatedFakultasNameSearch($this->fakultasNameSearch);
+            }
+
+            // 4. Munculkan Modal
+            $this->showMKModal = true;
+
+            $this->dispatch('fill-modal-mk', mk: $mk);
+            $this->dispatch('refresh-component');
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
         }
-
-        // try {
-        // 1. Ambil data Mata Kuliah beserta relasi prodinya
-        $mk = MataKuliah::with(['prodis'])->findOrFail($id);
-
-        // Pastikan variabel ini adalah variabel yang di-entangle oleh $idString di Blade
-        $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
-        $this->selectedProdiNameArray = $mk->prodis->pluck('prodi')->toArray(); // Sesuaikan dengan $selectedNameArray
-        $this->selected_kode_pr_array = $mk->prodis->pluck('kode')->toArray();
-
-        // SANGAT PENTING: Jika menggunakan @entangle, terkadang kita butuh memicu refresh
-        $this->dispatch('refresh-component');
-
-        // 2. Ambil data Array (untuk Checkbox/Multi-select)
-        $this->prodi_id_array_2 = $this->prodi_id_array;
-
-        // 3. Ambil data Hirarki dari Prodi Pertama sebagai referensi UI
-        $firstProdi = $mk->prodis->first();
-
-        if ($firstProdi) {
-            $this->prodi_id = $firstProdi->id;
-            $this->prodi_name_search = $firstProdi->prodi;
-            $this->selected_kode_pr = $firstProdi->kode ?? 'UNI';
-
-            $this->jurusan_id = $firstProdi->jurusan_id;
-            $this->jurusan_name_search = 'Jurusan ' . $firstProdi->jurusan_rel->jurusan ?? '';
-            $this->selected_kode_jr = $firstProdi->jurusan_rel->kode ?? 'UNI';
-
-            $this->fakultas_id = $firstProdi->jurusan_rel->fakultas_id ?? null;
-            $this->fakultas_name_search = 'Fakultas ' . $firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
-            $this->selected_kode_fk = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
-        }
-
-        // 4. Munculkan Modal
-        $this->showMKModal = true;
-
-        // 5. Kirim data ke Alpine Store agar UI Frontend terupdate cepat
-        $this->dispatch('fill-modal-mk', mk: $mk);
-
-        // } catch (\Exception $e) {
-        //     $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
-        // }
     }
 
     private function inputModalMK($isEditing, $data)
     {
         $tingkatanMap = [
             'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
-            1 => 1, 2 => 2, 3 => 3, 4 => 4 
+            1 => 1, 2 => 2, 3 => 3, 4 => 4,
         ];
         $tingkatan = $tingkatanMap[$this->mkType] ?? 1;
         $targetProdiIds = ($tingkatan === 1) ? [$this->prodi_id] : ($this->prodi_id_array ?: []);
@@ -209,10 +145,7 @@ trait WithMatkulModal
 
                         if ($query->exists()) {
                             $namaProdi = DB::table('prodis')->where('id', $pId)->value('nama_prodi') ?? "Prodi ID: $pId";
-
                             $fail("Digit MK '$value' sudah terpakai di Program Studi: ***$namaProdi***.");
-
-                            // Opsional: Jika ingin berhenti di error pertama saja
                             break;
                         }
                     }
@@ -223,24 +156,20 @@ trait WithMatkulModal
             'is_wajib' => 'required|boolean',
         ];
 
-        // Tambahkan validasi prodi_id untuk tingkatan prodi
         if ($tingkatan === 1) {
             $rules['prodi_id'] = 'required|exists:prodis,id';
         } else {
             $rules['prodi_id_array'] = 'required|array|min:1';
         }
 
-        // Buat validator
         $validator = Validator::make($data, $rules, $this->validationMessages());
 
         if ($validator->fails()) {
-            // MEKANISME PENTING: Pindahkan error array manual ke ErrorBag Livewire
             foreach ($validator->errors()->toArray() as $key => $messages) {
                 foreach ($messages as $message) {
                     $this->addError($key, $message);
                 }
             }
-            // Lempar exception agar eksekusi saveMK terhenti
             $validator->validate();
         }
 
@@ -252,35 +181,29 @@ trait WithMatkulModal
         return ucwords(strtolower(trim($value)));
     }
 
+    private function generateTingkatanMap($tingkatan) {
+        $tingkatanMap = [
+            'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
+            1 => 1, 2 => 2, 3 => 3, 4 => 4,
+        ];
+        return $tingkatanMap[$this->mkType] ?? 1;
+    }
+
     private function generateKodePrefix($data, $tingkatan)
     {
-        if ($tingkatan === 4) {
+        if ($tingkatan === 1) { // Prodi
+            return $this->prodi_kode ?? $this->jurusan_kode ?? $this->fakultas_kode ?? 'UNI';
+        } elseif ($tingkatan === 2) { // Jurusan
+            return $this->jurusan_kode ?? $this->fakultas_kode ?? 'UNI';
+        } elseif ($tingkatan === 3) { // Fakultas
+            return $this->fakultas_kode ?? 'UNI';
+        } elseif ($tingkatan === 4) {
             return 'UNI';
         }
-        // dd($tingkatan, $this->selected_kode_pr, $this->selected_kode_jr, $this->selected_kode_fk);
-
-        // if ($tingkatan === 1) { // Prodi
-        //     return $data['selected_kode_pr'] ?? $data['selected_kode_jr'] ?? $data['selected_kode_fk'] ?? 'UNI';
-        // } elseif ($tingkatan === 2) { // Jurusan
-        //     return $data['selected_kode_jr'] ?? $data['selected_kode_fk'] ?? 'UNI';
-        // } elseif ($tingkatan === 3) { // Fakultas
-        //     return $data['selected_kode_fk'] ?? 'UNI';
-        // }
-
-        if ($tingkatan === 1) { // Prodi
-            return $this->selected_kode_pr ?? $this->selected_kode_jr ?? $this->selected_kode_fk ?? 'UNI';
-        } elseif ($tingkatan === 2) { // Jurusan
-            return $this->selected_kode_jr ?? $this->selected_kode_fk ?? 'UNI';
-        } elseif ($tingkatan === 3) { // Fakultas
-            return $this->selected_kode_fk ?? 'UNI';
-        }
-
-        return 'UNI';
     }
 
     public function saveMK($data)
     {
-        // Sinkronisasi data penting ke array $data sebelum divalidasi
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -288,11 +211,9 @@ trait WithMatkulModal
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
-        try {
+        // try {
             $validated = $this->inputModalMK(false, $data);
-
-            $tingkatanMap = ['mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4];
-            $tingkatan = $tingkatanMap[$this->mkType] ?? 1;
+            $tingkatan = $this->generateTingkatanMap($this->mkType);
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $tingkatan, $kodePrefix, $data) {
@@ -323,33 +244,24 @@ trait WithMatkulModal
             $this->dispatch('toast', message: '✅ Mata Kuliah berhasil ditambahkan!');
             $this->dispatch('refresh-data');
 
-        } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
-        }
+        // } catch (\Exception $e) {
+        //     $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
+        // }
     }
 
     public function updateMK($data)
     {
-        // 1. SINKRONISASI DATA SEBELUM VALIDASI
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
-        // Konversi tipe data manual (casting)
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
-        try {
-            // 2. VALIDASI
+        // try {
             $validated = $this->inputModalMK(true, $data);
-
-            // $tingkatanMap = ['mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4];
-            // $tingkatan = $tingkatanMap[$this->mkType] ?? 1;
-            // dd($this->mkType);
-            $kodePrefix = $this->generateKodePrefix($data, $this->mkType);
-
-            // dd($kodePrefix, $this->mkType);
-
+            $tingkatan = $this->generateTingkatanMap($this->mkType);
+            $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $data, $kodePrefix) {
                 $mk = MataKuliah::findOrFail($this->selected_id);
@@ -373,7 +285,6 @@ trait WithMatkulModal
                             ? [$this->prodi_id]
                             : ($this->prodi_id_array ?: []);
 
-                // Bersihkan array dari null/kosong dan reset indeks (0, 1, 2...)
                 $cleanIds = array_values(array_filter($targetIds));
 
                 // 5. SINKRONISASI RELASI PIVOT DENGAN SORT ORDER
@@ -390,59 +301,71 @@ trait WithMatkulModal
             $this->dispatch('toast', message: '✅ Mata Kuliah berhasil diperbarui!');
             $this->dispatch('refresh-data');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
-        }
+        // } catch (\Illuminate\Validation\ValidationException $e) {
+        //     throw $e;
+        // } catch (\Exception $e) {
+        //     $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
+        // }
     }
 
     public function validationMessages()
     {
         return [
+            'prodi_id.required' => 'Program Studi wajib diisi!',
+
+            'prodi_id_array.required' => 'Program Studi wajib diisi!',
+            'prodi_id_array.array' => 'Program Studi dalam bentuk Array!',
+            'prodi_id_array.min' => 'Program Studi minimal berisi satu data!',
+
             // Nama Mata Kuliah
-            'nama_matkul.required' => 'Nama Mata Kuliah wajib diisi.',
-            'nama_matkul.string' => 'Nama Mata Kuliah harus berupa teks.',
-            'nama_matkul.max' => 'Nama Mata Kuliah tidak boleh lebih dari 255 karakter.',
+            'nama_matkul.required' => 'Nama Mata Kuliah wajib diisi!',
+            'nama_matkul.string' => 'Nama Mata Kuliah harus berupa teks!',
+            'nama_matkul.max' => 'Nama Mata Kuliah tidak boleh lebih dari 255 karakter!',
 
             // Semester (Integer)
-            'semester.required' => 'Semester wajib diisi.',
-            'semester.integer' => 'Semester harus berupa angka.',
-            'semester.min' => 'Semester minimal adalah 1.',
-            'semester.max' => 'Semester maksimal adalah 8.',
+            'semester.required' => 'Semester wajib diisi!',
+            'semester.integer' => 'Semester harus berupa angka!',
+            'semester.min' => 'Semester minimal adalah 1!',
+            'semester.max' => 'Semester maksimal adalah 8!',
 
             // Digit Semester & Digit MK (String size 2)
-            'digit_semester.required' => 'Digit Semester wajib diisi.',
-            'digit_semester.size' => 'Digit Semester harus tepat 2 karakter (contoh: 01).',
+            'digit_semester.required' => 'Digit Semester wajib diisi!',
+            'digit_semester.size' => 'Digit Semester harus tepat 2 karakter (contoh: 01)!',
 
-            'digit_mk.required' => 'Digit MK wajib diisi.',
-            'digit_mk.size' => 'Digit MK harus tepat 2 karakter (contoh: 07).',
+            'digit_mk.required' => 'Digit MK wajib diisi!',
+            'digit_mk.size' => 'Digit MK harus tepat 2 karakter (contoh: 07)!',
 
             // SKS
-            'sks_kuliah.required' => 'SKS Mata Kuliah wajib diisi.',
-            'sks_kuliah.integer' => 'SKS harus berupa angka.',
-            'sks_kuliah.min' => 'SKS minimal adalah 1.',
+            'sks_kuliah.required' => 'SKS Mata Kuliah wajib diisi!',
+            'sks_kuliah.integer' => 'SKS harus berupa angka!',
+            'sks_kuliah.min' => 'SKS minimal adalah 1!',
 
             // Tipe SKS & Status Wajib
-            'tipe_sks.required' => 'Tipe SKS wajib dipilih.',
-            'tipe_sks.in' => 'Tipe SKS yang dipilih tidak valid.',
-            'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan.',
-            'is_wajib.boolean' => 'Format status wajib tidak valid.',
+            'tipe_sks.required' => 'Tipe SKS wajib dipilih!',
+            'tipe_sks.in' => 'Tipe SKS yang dipilih tidak valid!',
+            'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan!',
+            'is_wajib.boolean' => 'Format status wajib tidak valid!',
         ];
     }
 
     public function resetInput()
     {
-        $this->selected_id = null;
-        $this->prodi_id = null;
-        $this->prodi_id_array = [];
-        $this->resetErrorBag();
-    }
+        $this->prodiNameSearch = '';
+        $this->jurusanNameSearch = '';
+        $this->fakultasNameSearch = '';
 
-    public function resetInputProdi()
-    {
         $this->prodi_id = null;
-        $this->prodi_name_search = '';
+        $this->jurusan_id = null;
+        $this->fakultas_id = null;
+
+        $this->prodi_name = null;
+        $this->jurusan_name = null;
+        $this->fakultas_name = null;
+
+        $this->prodi_id_array = [];
+        $this->prodi_name_array = [];
+        $this->prodi_kode_array = [];
+        
         $this->resetErrorBag();
     }
 }

@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">Account Information</h4>
 
         {{-- 📧 Email Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Email',
             'modelString' => 'email',
@@ -22,7 +22,7 @@
 
         {{-- 🔒 Password Input --}}
         <template x-if="$store.config?.isEdit == 0" x-cloak>
-            @include('livewire.admin.global.modal-form.input-form', [
+            @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'labelString' => 'Password',
                 'modelString' => 'password',
@@ -34,7 +34,7 @@
             ])
         </template>
         <template x-if="$store.config?.isEdit == 1" x-cloak>
-            @include('livewire.admin.global.modal-form.input-form', [
+            @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'labelString' => 'Password',
                 'modelString' => 'password',

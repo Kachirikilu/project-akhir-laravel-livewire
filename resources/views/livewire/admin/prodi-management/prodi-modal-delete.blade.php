@@ -1,4 +1,4 @@
-<flux:modal name="prodi-delete" wire:model="showProdiDelete" class="min-w-[20rem] max-w-md">
+<flux:modal name="prodi-delete" wire:model="showProdiDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>
@@ -7,13 +7,17 @@
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="
-                            $store.config?.typeModal_2 == 'prodi' ? '***Program Studi ' + $store.config?.nama_prodi_2 + '***' : 
-                            ($store.config?.typeModal_2 == 'jurusan' ? '***Jurusan ' + $store.config?.nama_jurusan_2 + '***' : 
-                            ($store.config?.typeModal_2 == 'fakultas' ? '***Fakultas ' + $store.config?.nama_fakultas_2 + '***' : 'Data ini'))
+                            $store.config?.typeModal_delete == 'prodi' ? '***Program Studi ' + $store.config?.nama_prodi_delete + '***' : 
+                            ($store.config?.typeModal_delete == 'jurusan' ? '***Jurusan ' + $store.config?.nama_jurusan_delete + '***' : 
+                            ($store.config?.typeModal_delete == 'fakultas' ? '***Fakultas ' + $store.config?.nama_fakultas_delete + '***' : '***Data ini***'))
+                        ">
+                </strong> dengan <strong class="text-red-700 dark:text-red-400"
+                    x-text="
+                            '***Kode ' + $store.config?.kode_pr_delete + '***'
                         ">
                 </strong>?
                 Tindakan ini tidak dapat dibatalkan.
-            </flux:subheading>
+            </flux:subheading> 
         </div>
 
         <div class="flex gap-2">
@@ -32,9 +36,9 @@
                 class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
                 <span
                     x-text="
-                            $store.config?.typeModal_2 === 'prodi' ? 'Hapus Program Studi' : 
-                            ($store.config?.typeModal_2 === 'jurusan' ? 'Hapus Jurusan' : 
-                            ($store.config?.typeModal_2 === 'fakultas' ? 'Hapus Fakultas' : 'Hapus Data ini'))
+                            $store.config?.typeModal_delete === 'prodi' ? 'Ya, Hapus Program Studi' : 
+                            ($store.config?.typeModal_delete === 'jurusan' ? 'Ya, Hapus Jurusan' : 
+                            ($store.config?.typeModal_delete === 'fakultas' ? 'Ya, Hapus Fakultas' : 'Ya, Hapus Data ini'))
                         "
                     wire:loading.remove wire:target="destroyProdi">
                     Ya, Hapus Data

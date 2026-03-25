@@ -8,17 +8,17 @@ use Illuminate\Support\Facades\Auth;
 trait WithProdiAutocomplete
 {
     public $prodi_id;
-    public $prodi_name_search = '';
-    public $prodi_results = [];
+    public $prodiNameSearch = '';
+    public $prodiResults = [];
 
     public function updatedProdiNameSearch($value)
     {
         if (strlen($value) < 1) {
-            $this->prodi_results = [];
+            $this->prodiResults = [];
             return;
         }
 
-        $this->prodi_results = Prodi::where('nama_prodi', 'like', "%{$value}%")
+        $this->prodiResults = Prodi::where('nama_prodi', 'like', "%{$value}%")
             ->limit(5)
             ->get(['id', 'nama_prodi', 'fakultas'])
             ->toArray();
@@ -27,7 +27,7 @@ trait WithProdiAutocomplete
     public function selectProdi($id, $name)
     {
         $this->prodi_id = $id;
-        $this->prodi_name_search = $name;
-        $this->prodi_results = [];
+        $this->prodiNameSearch = $name;
+        $this->prodiResults = [];
     }
 }

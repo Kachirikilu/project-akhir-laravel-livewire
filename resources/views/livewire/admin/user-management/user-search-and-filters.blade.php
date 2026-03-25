@@ -2,7 +2,7 @@
     <div class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
 
         {{-- Bagian Tab / Link (Kiri) --}}
-        @include('livewire.admin.global.search-and-filters.filter-mode', [
+        @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Pengguna',
             'totalTab' => $totalUsers,
             'totalTab1' => $totalAdmins,
@@ -14,7 +14,7 @@
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-        @include('livewire.admin.global.search-and-filters.page-control', [
+        @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
         ])
 
@@ -23,21 +23,21 @@
     <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 items-center w-full">
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.main-search', [
+            @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
             ])
         </div>
 
         <div class="order-3 sm:order-2 sm:col-span-3 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
+            @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputProdiFilter',
                 'xSearchResultsString' => 'prodiSearchResults',
-                'selectedXNameString' => 'selectedProdiName',
+                'selectedXNameString' => 'prodi_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Program Studi...',
                 'xSearchQueryString' => 'prodiSearchQuery',
                 'selectedXId' => $selectedProdiId,
-                'selectedXName' => $selectedProdiName,
+                'selectedXName' => $prodi_name,
                 'resetXFilter' => 'resetProdiFilter()',
                 'xSearchQuery' => $prodiSearchQuery,
                 'xSearchResults' => $prodiSearchResults,
@@ -59,15 +59,15 @@
     <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
+            @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputJurusanFilter',
                 'xSearchResultsString' => 'jurusanSearchResults',
-                'selectedXNameString' => 'selectedJurusanName',
+                'selectedXNameString' => 'jurusan_name',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Jurusan...',
                 'xSearchQueryString' => 'jurusanSearchQuery',
                 'selectedXId' => $selectedJurusanId,
-                'selectedXName' => $selectedJurusanName,
+                'selectedXName' => $jurusan_name,
                 'resetXFilter' => 'resetJurusanFilter()',
                 'xSearchQuery' => $jurusanSearchQuery,
                 'xSearchResults' => $jurusanSearchResults,
@@ -78,15 +78,15 @@
         </div>
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
+            @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputFakultasFilter',
                 'xSearchResultsString' => 'fakultasSearchResults',
-                'selectedXNameString' => 'selectedFakultasName',
+                'selectedXNameString' => 'fakultas_name',
                 'iconString' => 'building-library',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fakultasSearchQuery',
                 'selectedXId' => $selectedFakultasId,
-                'selectedXName' => $selectedFakultasName,
+                'selectedXName' => $fakultas_name,
                 'resetXFilter' => 'resetFakultasFilter()',
                 'xSearchQuery' => $fakultasSearchQuery,
                 'xSearchResults' => $fakultasSearchResults,

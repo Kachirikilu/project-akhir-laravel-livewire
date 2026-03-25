@@ -53,7 +53,7 @@ class Prodi extends Model
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
-            return null;
+            return 'UNI';
         });
     }
 

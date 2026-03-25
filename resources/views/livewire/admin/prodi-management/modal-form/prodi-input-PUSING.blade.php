@@ -124,7 +124,7 @@
                     class="w-full border rounded-lg pl-10 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10 cursor-pointer">
 
                 {{-- 2. Tombol Reset --}}
-                @include('livewire.admin.global.search-and-filters.partial.reset-button', [
+                @include('livewire.global.search-and-filters.partial.reset-button', [
                     'xShow' => 'value',
                     'xClick' => "value = ''",
                     // 'xColor' => $colorIcon
@@ -200,7 +200,7 @@
                     class="w-full border rounded-lg pl-10 px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10">
 
                 {{-- Tombol Reset --}}
-                @include('livewire.admin.global.search-and-filters.partial.reset-button', [
+                @include('livewire.global.search-and-filters.partial.reset-button', [
                     'xShow' => 'search || selectedId',
                     'xClick' => "search = ''; selectedId = null",
                     'xWire' => $resetXInput,

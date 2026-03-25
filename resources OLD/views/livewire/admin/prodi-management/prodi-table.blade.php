@@ -2,15 +2,15 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'id'])
         {{-- Prodi - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'prodi'])
         {{-- Jurusan - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'jurusan'])
         {{-- Fakultas - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
         {{-- Strata - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'strata'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'strata'])
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
 
@@ -43,7 +43,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.global.table.partial.pop-up-menu', [
+                    @include('livewire.global.table.partial.pop-up-menu', [
                         'x' => $prodi,
                         'nameXString' => 'Program Studi',
                         'editString' => 'editProdi',
@@ -52,7 +52,7 @@
                 </flux:dropdown>
             </td>
 
-            @include('livewire.admin.global.table.menu-aksi', [
+            @include('livewire.global.table.menu-aksi', [
                 'x' => $prodi,
                 'nameXString' => 'Program Studi',
                 'editString' => 'editProdi',
@@ -69,7 +69,7 @@
 
 
         <x-slot:footer>
-            @include('livewire.admin.global.table.footer-table', [
+            @include('livewire.global.table.footer-table', [
                 'typeXString' => $prodis,
             ])
         </x-slot:footer>

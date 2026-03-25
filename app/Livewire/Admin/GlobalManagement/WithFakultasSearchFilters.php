@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\GlobalManagement;
+namespace App\Livewire\Global;
 
 use App\Models\Fakultas;
 use Illuminate\Support\Facades\Auth;
@@ -14,48 +14,24 @@ trait WithFakultasSearchFilters
 
     public $fakultasSearchResults = [];
 
-    public $selectedFakultasName = '';
+    public $fakultas_name = '';
 
     public $fakultas_id;
 
-    public $selected_kode_fk;
+    public $fakultas_kode;
 
-    public $fakultas_name_search = '';
+    public $fakultasNameSearch = '';
 
-    public $fakultas_results = [];
+    public $fakultasResults = [];
 
     public $selectedFakultasId = null;
 
-    // public function inputFakultasFilter()
-    // {
-    //     $searchTerm = '%'.$this->fakultasSearchQuery.'%';
-
-    //     if ((strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) && ! $this->selectedFakultasName) {
-    //         $this->fakultasSearchResults = Fakultas::query()
-    //             ->where(function ($q) use ($searchTerm) {
-    //                 $q->where('nama_fakultas', 'like', $searchTerm)
-    //                     ->orWhere('id', 'like', $searchTerm)
-    //                     ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-    //             })
-    //             ->limit(12)
-    //             ->get()
-    //             ->map(fn ($f) => [
-    //                 'id' => $f->id,
-    //                 'kode' => $f->kode_fk ?? 'UNI',
-    //                 'fakultas' => $f->nama_fakultas,
-    //             ])->toArray();
-    //     } elseif (empty($this->fakultasSearchQuery) || $this->selectedFakultasName) {
-    //         $this->fakultasSearchResults = $this->getFakultasbyUser();
-    //     } else {
-    //         $this->fakultasSearchResults = [];
-    //     }
-    // }
 
     public function inputFakultasFilter()
     {
         $searchTerm = '%'.$this->fakultasSearchQuery.'%';
 
-        if ((strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) && ! $this->selectedFakultasName) {
+        if ((strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) && ! $this->fakultas_name) {
 
             $this->fakultasSearchResults = Fakultas::query()
                 ->where(function ($q) use ($searchTerm) {
@@ -68,11 +44,11 @@ trait WithFakultasSearchFilters
                 ->get()
                 ->map(fn ($f) => [
                     'id' => $f->id,
-                    'kode' => $f->kode_fk ?? 'UNI',
-                    'fakultas' => $f->nama_fakultas,
+                    'kode' => $f->kode ?? 'UNI',
+                    'fakultas' => $f->fakultas,
                 ])->toArray();
 
-        } elseif (empty($this->fakultasSearchQuery) || $this->selectedFakultasName) {
+        } elseif (empty($this->fakultasSearchQuery) || $this->fakultas_name) {
             $this->fakultasSearchResults = $this->getFakultasbyUser();
         } else {
             $this->fakultasSearchResults = [];
@@ -81,7 +57,7 @@ trait WithFakultasSearchFilters
 
     public function resetFakultasFilter()
     {
-        $this->reset(['selectedFakultasId', 'selectedFakultasName', 'fakultasSearchQuery', 'selected_kode_fk']);
+        $this->reset(['selectedFakultasId', 'fakultas_name', 'fakultasSearchQuery', 'fakultas_kode']);
         $this->resetPage();
     }
 
@@ -90,77 +66,20 @@ trait WithFakultasSearchFilters
         $data = Fakultas::find($id);
         if ($data) {
             $this->selectedFakultasId = $id;
-            $this->selected_kode_fk = $data->kode_fk ?? 'UNI';
-            $this->selectedFakultasName = 'Fakultas '.$data->nama_fakultas;
-            $this->fakultasSearchQuery = 'Fakultas '.$data->nama_fakultas;
+            $this->fakultas_kode = $data->kode ?? 'UNI';
+            $this->fakultas_name = 'Fakultas '.$data->fakultas;
+            $this->fakultasSearchQuery = 'Fakultas '.$data->fakultas;
             $this->fakultasSearchResults = [];
             $this->resetPage();
         }
     }
 
-    // public function updatedFakultasNameSearch($value)
-    // {
-    //     $this->fakultas_id = null;
-    //     $this->selected_kode_fk = null;
-    //     $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
-
-    //     if (strlen($value) > 0) {
-    //         $searchTerm = '%'.$value.'%';
-
-    //         $results = Fakultas::query()
-    //             ->where(function ($q) use ($searchTerm) {
-    //                 $q->where('nama_fakultas', 'like', $searchTerm)
-    //                     ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm])
-    //                     ->orWhere('id', 'like', $searchTerm);
-    //             })
-    //             ->limit(12)
-    //             ->get();
-
-    //         $this->fakultas_results = $results->map(function ($fakultas) {
-    //             return [
-    //                 'id' => $fakultas->id,
-    //                 'kode' => $fakultas->kode_fk ?? 'UNI',
-    //                 'fakultas' => $fakultas->nama_fakultas,
-    //             ];
-    //         })->toArray();
-
-    //         $exactMatch = $results->first(function ($fakultas) use ($value) {
-    //             $input = str($value)->lower()->trim();
-    //             $kode = str($fakultas->kode_fk)->lower();
-    //             $nama = str($fakultas->nama_fakultas)->lower();
-
-    //             return $input->is([$nama, "fakultas $nama"]);
-    //         });
-
-    //         if ($exactMatch) {
-    //             $this->fakultas_id = $exactMatch->id;
-    //             $this->selected_kode_fk = $exactMatch->kode_fk ?? 'UNI';
-    //             $this->fakultas_name_search = 'Fakultas '.$exactMatch->nama_fakultas;
-    //             $this->fakultas_results = [];
-    //         }
-
-    //     } else {
-    //         if (Auth::user()->admin?->prodi_id) {
-    //             $this->fakultas_results = $this->getFakultasbyUser();
-    //         } else {
-    //             $this->fakultas_results = Fakultas::query()
-    //                 ->orderBy('nama_fakultas')
-    //                 ->limit(12)
-    //                 ->get()
-    //                 ->map(fn ($f) => [
-    //                     'id' => $f->id,
-    //                     'kode' => $f->kode_fk ?? 'UNI',
-    //                     'fakultas' => $f->nama_fakultas,
-    //                 ])->toArray();
-    //         }
-    //     }
-    // }
 
     public function updatedFakultasNameSearch($value)
     {
         $this->fakultas_id = null;
-        $this->selected_kode_fk = null;
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->fakultas_kode = null;
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
 
         if (strlen($value) > 0) {
             $searchTerm = '%'.$value.'%';
@@ -175,18 +94,18 @@ trait WithFakultasSearchFilters
                 ->limit(12)
                 ->get();
 
-            $this->fakultas_results = $results->map(function ($fakultas) {
+            $this->fakultasResults = $results->map(function ($fakultas) {
                 return [
                     'id' => $fakultas->id,
-                    'kode' => $fakultas->kode_fk ?? 'UNI',
-                    'fakultas' => $fakultas->nama_fakultas,
+                    'kode' => $fakultas->kode ?? 'UNI',
+                    'fakultas' => $fakultas->fakultas,
                 ];
             })->toArray();
 
             $exactMatch = $results->first(function ($fakultas) use ($value) {
                 $input = str($value)->lower()->trim();
-                $nama = str($fakultas->nama_fakultas)->lower();
-                $kode = str($fakultas->kode_fk)->lower();
+                $nama = str($fakultas->fakultas)->lower();
+                $kode = str($fakultas->kode)->lower();
 
                 // 🔹 Exact match sekarang mendukung nama, prefiks "fakultas", dan kode
                 return $input->is([
@@ -198,23 +117,23 @@ trait WithFakultasSearchFilters
 
             if ($exactMatch) {
                 $this->fakultas_id = $exactMatch->id;
-                $this->selected_kode_fk = $exactMatch->kode_fk ?? 'UNI';
-                $this->fakultas_name_search = 'Fakultas '.$exactMatch->nama_fakultas;
-                $this->fakultas_results = [];
+                $this->fakultas_kode = $exactMatch->kode ?? 'UNI';
+                $this->fakultasNameSearch = 'Fakultas '.$exactMatch->fakultas;
+                $this->fakultasResults = [];
             }
 
         } else {
             if (Auth::user()->admin?->prodi_id) {
-                $this->fakultas_results = $this->getFakultasbyUser();
+                $this->fakultasResults = $this->getFakultasbyUser();
             } else {
-                $this->fakultas_results = Fakultas::query()
+                $this->fakultasResults = Fakultas::query()
                     ->orderBy('nama_fakultas')
                     ->limit(12)
                     ->get()
                     ->map(fn ($f) => [
                         'id' => $f->id,
-                        'kode' => $f->kode_fk ?? 'UNI',
-                        'fakultas' => $f->nama_fakultas,
+                        'kode' => $f->kode ?? 'UNI',
+                        'fakultas' => $f->fakultas,
                     ])->toArray();
             }
         }
@@ -233,8 +152,8 @@ trait WithFakultasSearchFilters
                 ->get()
                 ->map(fn ($f) => [
                     'id' => $f->id,
-                    'kode' => $f->kode_fk ?? 'UNI',
-                    'fakultas' => $f->nama_fakultas,
+                    'kode' => $f->kode ?? 'UNI',
+                    'fakultas' => $f->fakultas,
                 ])->toArray();
         }
 
@@ -249,7 +168,7 @@ trait WithFakultasSearchFilters
                 ->where('id', '!=', $fakultasIdUser)
                 ->orderBy('nama_fakultas', 'asc')
                 ->limit(12 - $count)
-                ->get(['id', 'nama_fakultas', 'kode_fk']);
+                ->get(['id', 'kode_fk', 'nama_fakultas']);
 
             $results = $results->concat($additional);
         }
@@ -266,7 +185,7 @@ trait WithFakultasSearchFilters
     public function fetchFakultas($query = '')
     {
         if (empty($query) || $this->fakultas_id) {
-            $this->fakultas_results = $this->getFakultasbyUser();
+            $this->fakultasResults = $this->getFakultasbyUser();
 
             return;
         }
@@ -275,38 +194,38 @@ trait WithFakultasSearchFilters
     public function selectFakultas($id, $fakultasName)
     {
         $this->fakultas_id = $id;
-        $this->fakultas_name_search = 'Fakultas '.$fakultasName;
-        $this->fakultas_results = $this->getFakultasbyUser();
+        $this->fakultasNameSearch = 'Fakultas '.$fakultasName;
+        $this->fakultasResults = $this->getFakultasbyUser();
 
         $data = Fakultas::find($id);
         if ($data) {
-            $this->selected_kode_fk = $data->kode_fk ?? 'UNI';
+            $this->fakultas_kode = $data->kode_fk ?? 'UNI';
         }
 
         if (property_exists($this, 'prodi_id_array')) {
             $this->prodi_id_array = [];
-            $this->selectedProdiNameArray = [];
-            $this->selected_kode_pr_array = [];
-            $this->prodi_name_search = '';
+            $this->prodi_name_array = [];
+            $this->prodi_kode_array = [];
+            $this->prodiNameSearch = '';
         }
 
 
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
     }
 
     public function resetFakultasInput()
     {
         $this->fakultas_id = null;
-        $this->selected_kode_fk = null;
-        $this->fakultas_name_search = '';
+        $this->fakultas_kode = null;
+        $this->fakultasNameSearch = '';
 
         if (property_exists($this, 'prodi_id_array')) {
             $this->prodi_id_array = [];
-            $this->selectedProdiNameArray = [];
-            $this->selected_kode_pr_array = [];
+            $this->prodi_name_array = [];
+            $this->prodi_kode_array = [];
         }
 
         $this->updatedFakultasNameSearch('');
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
     }
 }

@@ -28,7 +28,7 @@ trait WithUserCrud
         $this->reset([
             'userId', 'email', 'password', 'name',
             'nip', 'nim', 'tahun_angkatan',
-            'prodi_id', 'prodi_name_search'
+            'prodi_id', 'prodiNameSearch'
         ]);
     }
 }

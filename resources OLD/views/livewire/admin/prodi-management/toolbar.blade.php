@@ -6,7 +6,7 @@
                 Tambah Pengguna
             </flux:button>
 
-            <flux:menu class="min-w-48">
+            <flux:menu class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
                 <flux:menu.heading>Pilih Role Pengguna</flux:menu.heading>
                 <flux:menu.separator />
 

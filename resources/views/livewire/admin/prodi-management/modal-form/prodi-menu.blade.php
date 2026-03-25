@@ -1,7 +1,9 @@
-<flux:menu>
-    @if (Auth::user()?->admin) @php
-        $editCall = "{$editString}({$x->id}, {$typeXString})";
-        $deleteCall = "{$confirmDeleteString}({$x->id}, {$typeXString})";
+@if (Auth::user()?->admin) 
+<flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
+    @php
+        $editCall = "{$editString}({$x->id}, '{$typeXString}')";
+        $deleteCall = "{$confirmDeleteString}({$x->id}, '{$typeXString}')";
     @endphp
 
         {{-- Tombol Edit --}}
@@ -28,8 +30,6 @@
                         '{{ $x->jurusan ?? '' }}',
                         '{{ $x->fakultas_id ?? '' }}',
                         '{{ $x->fakultas ?? '' }}',
-                        '{{ $x->kode ?? '' }}',
-                        '{{ $x->kode ?? '' }}',
                         '{{ $x->kode ?? '' }}'
                     );
                     $flux.modal('prodi-modal').show();
@@ -45,7 +45,6 @@
         </flux:menu.item>
 
         {{-- Logika Tombol Hapus --}}
-        @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
             <flux:menu.separator />
 
             <flux:menu.item
@@ -55,6 +54,7 @@
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->jurusan ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',
+                            '{{ $x->kode ?? '' }}',
                             '{{ $typeXString ?? '' }}'
                         );
                         $flux.modal('prodi-delete').show();
@@ -68,8 +68,8 @@
                         class="animate-spin h-4 w-4" />
                 </div>
             </flux:menu.item>
-        @endif {{-- Ini penutup @if logika hapus --}}
 
-    @endif {{-- Ini penutup @if Auth admin --}}
 
 </flux:menu>
+@endif
+

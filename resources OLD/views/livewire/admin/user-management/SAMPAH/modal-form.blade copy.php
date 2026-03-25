@@ -113,14 +113,14 @@
 
                         {{-- KONTROL INPUT DAN TOMBOL RESET --}}
                         <div class="relative mt-1">
-                            <input autocomplete="off" wire:model.live.debounce.300ms="prodi_name_search" type="text"
+                            <input autocomplete="off" wire:model.live.debounce.300ms="prodiNameSearch" type="text"
                                 @focus="open = true; $event.target.select()" @click.outside="open = false"
                                 @keydown.escape.window="open = false" @keydown.enter.prevent="open = false"
                                 id="prodi_search" placeholder="Cari Nama Program Studi"
                                 class="w-full border rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10">
 
                             {{-- Tombol Reset (Hanya muncul jika ada teks atau prodi sudah dipilih) --}}
-                            @if ($prodi_id || strlen($prodi_name_search) > 0)
+                            @if ($prodi_id || strlen($prodiNameSearch) > 0)
                                 <button wire:click.prevent="resetProdiInput" type="button"
                                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition duration-150"
                                     title="Bersihkan Pilihan">
@@ -133,9 +133,9 @@
                             @endif
                         </div>
                         {{-- AKHIR KONTROL INPUT --}}
-                        @if ($prodi_id && $prodi_name_search)
+                        @if ($prodi_id && $prodiNameSearch)
                             <p class="text-xs text-gray-500 mt-1">
-                                Prodi Terpilih: <span class="font-medium text-indigo-600">{{ $prodi_name_search }}
+                                Prodi Terpilih: <span class="font-medium text-indigo-600">{{ $prodiNameSearch }}
                                     (ID:
                                     {{ $prodi_id }})</span>
                             </p>
@@ -146,14 +146,14 @@
                         @error('prodi_id')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
-                        @error('prodi_name_search')
+                        @error('prodiNameSearch')
                             <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                         @enderror
 
                         {{-- <div x-show="open && prodiResultsCount >= 0" x-cloak @mousedown.prevent --}}
                         <div x-show="open" x-cloak
                             class="relative z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                            @forelse ($prodi_results as $prodi)
+                            @forelse ($prodiResults as $prodi)
                                 <div wire:key="prodi-{{ $prodi['id'] }}"
                                     wire:click="selectProdi({{ $prodi['id'] }}, '{{ $prodi['nama_prodi'] }}')"
                                     @click="open = false"
@@ -165,7 +165,7 @@
                                         {{ $prodi['id'] }}</span>
                                 </div>
                             @empty
-                                @if (strlen($prodi_name_search) > 0 && !$prodi_id)
+                                @if (strlen($prodiNameSearch) > 0 && !$prodi_id)
                                     <p class="p-2 text-sm text-gray-500">Tidak ada Prodi yang
                                         ditemukan.
                                     </p>
@@ -173,7 +173,7 @@
                             @endforelse
                         </div>
 
-                        @if (strlen($prodi_name_search) >= 2 && empty($prodi_results) && !$prodi_id)
+                        @if (strlen($prodiNameSearch) >= 2 && empty($prodiResults) && !$prodi_id)
                             <p x-show="!open" class="text-sm text-gray-500 mt-1">Tidak ada Prodi yang
                                 cocok.
                             </p>

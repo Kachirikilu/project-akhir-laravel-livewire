@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">Personal Information</h4>
 
         {{-- 👤 Nama Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Full Name',
             'modelString' => 'name',
@@ -19,7 +19,7 @@
             'isRequired' => 1
         ])
 
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Nomor Induk Mahasiswa (NIM)',
             'modelString' => 'nim',
@@ -31,7 +31,7 @@
             'isRequired' => 1
         ])
 
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Tahun Angkatan',
             'modelString' => 'tahun_angkatan',
@@ -45,8 +45,8 @@
 
 
         {{-- @include('livewire.admin.user-management.modal-form.partial.prodi-input-form') --}}
-        @include('livewire.admin.global.modal-form.search-input-form', [
-            'xResults' => $prodi_results,
+        @include('livewire.global.modal-form.search-input-form', [
+            'xResults' => $prodiResults,
             'selectX' => 'selectProdi',
             'modelString' => 'nama_prodi',
             'resetXInput' => 'resetProdiInput()',
@@ -54,15 +54,15 @@
             'nameXString' => 'Program Studi',
             'noName' => 1,
             'idString' => 'prodi_id',
-            'kodeString' => 'selected_kode_pr',
+            'kodeString' => 'prodi_kode',
             'searchString' => 'prodi_search',
-            'nameSearchString' => 'prodi_name_search',
+            'nameSearchString' => 'prodiNameSearch',
             'fetchString' => 'fetchProdi',
             'iconString' => 'academic-cap'
         ])
 
         {{-- 📧 Status Input --}}
-        @include('livewire.admin.global.modal-form.select-form', [
+        @include('livewire.global.modal-form.select-form', [
             'labelString' => 'Status',
             'modelString' => 'status',
             'xOptions' => [

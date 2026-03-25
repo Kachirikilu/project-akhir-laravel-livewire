@@ -32,11 +32,11 @@ class Jurusan extends Model
             if (!empty($this->attributes['kode_jr'])) {
                 return $this->attributes['kode_jr'];
             }
-            // $kodeFakultas = $this->fakultas_rel?->kode_fk;
-            // if (!empty($kodeFakultas)) {
-            //     return $kodeFakultas;
-            // }
-            return null;
+            $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            if (!empty($kodeFakultas)) {
+                return $kodeFakultas;
+            }
+            return 'UNI';
         });
     }
 

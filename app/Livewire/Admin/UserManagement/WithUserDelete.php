@@ -39,17 +39,25 @@ trait WithUserDelete
             $user = User::findOrFail($this->userIdToDelete);
             $user->delete();
 
-            $this->js("Flux.toast('Pengguna berhasil dihapus!')");
+            $this->js("Flux.toast('Pengguna {$this->userEmailToDelete} berhasil dihapus!')");
+            $this->cleanupDeleteState();
+            $this->dispatch('refresh-data'); 
             
-            $this->userIdToDelete = null;
-            $this->userEmailToDelete = null;
-
-            $this->resetPage();
-            $this->showUserDelete = false;
+            if (method_exists($this, 'resetPage')) {
+                $this->resetPage();
+            }
+            
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus!' })");
             $this->showUserDelete = false;
         }
+    }
+
+    private function cleanupDeleteState()
+    {
+        $this->userIdToDelete = null;
+        $this->userEmailToDelete = null;
+        $this->showUserDelete = false;
     }
 }

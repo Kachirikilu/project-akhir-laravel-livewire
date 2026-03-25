@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Admin\GlobalManagement\WithJurusanSearchFilters;
-use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
@@ -41,7 +41,7 @@ class ProgramStudiManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    // public $selectedProdiName = '';
+    // public $prodi_name = '';
 
     protected $listeners = ['refresh-table' => 'refreshProdisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
@@ -54,8 +54,8 @@ class ProgramStudiManagement extends Component
         'sortField' => ['except' => 'prodi'],
         'sortDirection' => ['except' => 'asc'],
 
-        // 'selectedJurusanName' => ['except' => null],
-        // 'selectedFakultasName' => ['except' => null]
+        // 'jurusan_name' => ['except' => null],
+        // 'fakultas_name' => ['except' => null]
     ];
 
     public function updatedPerPage()

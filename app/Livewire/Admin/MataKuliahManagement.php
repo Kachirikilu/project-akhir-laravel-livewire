@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Admin\GlobalManagement\WithProdiSearchFilters;
-use App\Livewire\Admin\GlobalManagement\WithJurusanSearchFilters;
-use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 
 
 use App\Livewire\Admin\MatkulManagement\WithMatkulFilters;
 use App\Livewire\Admin\MatkulManagement\WithMatkulModal;
-// use App\Livewire\Admin\MatkulManagement\WithMatkulDelete;
+use App\Livewire\Admin\MatkulManagement\WithMatkulDelete;
 
 
 use App\Models\Prodi;
@@ -27,7 +27,7 @@ class MataKuliahManagement extends Component
 
     use WithMatkulFilters;
     use WithMatkulModal;
-    // use WithMatkulDelete;
+    use WithMatkulDelete;
 
     use WithPagination;
 
@@ -53,9 +53,9 @@ class MataKuliahManagement extends Component
         'sortField' => ['except' => 'nama_matkul'],
         'sortDirection' => ['except' => 'asc'],
 
-        // 'selectedProdiName' => ['except' => null],
-        // 'selectedJurusanName' => ['except' => null],
-        // 'selectedFakultasName' => ['except' => null]
+        // 'prodi_name' => ['except' => null],
+        // 'jurusan_name' => ['except' => null],
+        // 'fakultas_name' => ['except' => null]
     ];
 
     public function updatedPerPage()
@@ -112,7 +112,7 @@ class MataKuliahManagement extends Component
 
     //     }
 
-    //     return view('livewire.admin.matkul-management', [
+    //     return view('livewire.staff.matkul-management', [
     //         'matkuls' => $matkuls,
     //         'totalMatkuls' => (clone $baseQuery)->count(),
     //         'totalWajib' => (clone $baseQuery)->where('is_wajib', true)->count(),
@@ -174,7 +174,7 @@ class MataKuliahManagement extends Component
 
         $this->buttonMKFilter($query);
 
-        return view('livewire.admin.matkul-management', [
+        return view('livewire.staff.matkul-management', [
             'matkuls' => $query->paginate($this->perPage),
             'totalMatkuls' => $totalMatkuls,
             'totalWajib' => $totalWajib,

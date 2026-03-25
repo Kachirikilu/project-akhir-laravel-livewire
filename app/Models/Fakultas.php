@@ -23,7 +23,12 @@ class Fakultas extends Model
     }
 
     protected function kode(): Attribute {
-        return Attribute::get(fn() => $this->kode_fk);
+        return Attribute::get(function () {
+            if (!empty($this->attributes['kode_fk'])) {
+                return $this->attributes['kode_fk'];
+            }
+            return 'UNI';
+        });
     }
 
     protected function fakultas(): Attribute {

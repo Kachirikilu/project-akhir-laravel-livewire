@@ -14,13 +14,13 @@ trait WithFakultasSearchFilters
 
     public $fakultasSearchResults = [];
 
-    public $selectedFakultasName = '';
+    public $fakultas_name = '';
 
     public $fakultas_id;
 
-    public $fakultas_name_search = '';
+    public $fakultasNameSearch = '';
 
-    public $fakultas_results = [];
+    public $fakultasResults = [];
 
     public $selectedFakultasId = null;
 
@@ -68,7 +68,7 @@ trait WithFakultasSearchFilters
 
     public function resetFakultasFilter()
     {
-        $this->reset(['selectedFakultasId', 'selectedFakultasName', 'fakultasSearchQuery']);
+        $this->reset(['selectedFakultasId', 'fakultas_name', 'fakultasSearchQuery']);
         $this->resetPage();
     }
 
@@ -77,7 +77,7 @@ trait WithFakultasSearchFilters
         $fakultas = Fakultas::find($fakultasId);
         if ($fakultas) {
             $this->selectedFakultasId = $fakultasId;
-            $this->selectedFakultasName = 'Fakultas '.$fakultas->nama_fakultas;
+            $this->fakultas_name = 'Fakultas '.$fakultas->nama_fakultas;
             $this->fakultasSearchQuery = '';
             $this->resetPage();
         }
@@ -86,7 +86,7 @@ trait WithFakultasSearchFilters
     public function updatedFakultasNameSearch($value)
     {
         $this->fakultas_id = null;
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
 
         if (strlen($value) > 0) {
             $searchTerm = '%'.$value.'%';
@@ -99,7 +99,7 @@ trait WithFakultasSearchFilters
                 ->limit(12)
                 ->get();
 
-            $this->fakultas_results = $results->map(function ($fakultas) {
+            $this->fakultasResults = $results->map(function ($fakultas) {
                 return [
                     'id' => $fakultas->id,
                     'fakultas' => $fakultas->nama_fakultas,
@@ -112,15 +112,15 @@ trait WithFakultasSearchFilters
 
             if ($exactMatch) {
                 $this->fakultas_id = $exactMatch->id;
-                $this->fakultas_name_search = $exactMatch->nama_fakultas;
-                $this->fakultas_results = [];
+                $this->fakultasNameSearch = $exactMatch->nama_fakultas;
+                $this->fakultasResults = [];
             }
 
         } else {
             if (Auth::user()->admin?->prodi_id) {
-                $this->fakultas_results = $this->getFakultasbyUser();
+                $this->fakultasResults = $this->getFakultasbyUser();
             } else {
-                $this->fakultas_results = Fakultas::query()
+                $this->fakultasResults = Fakultas::query()
                     ->orderBy('nama_fakultas')
                     ->limit(12)
                     ->get()
@@ -171,16 +171,16 @@ trait WithFakultasSearchFilters
     public function selectFakultas($fakultasId, $fakultasName)
     {
         $this->fakultas_id = $fakultasId;
-        $this->fakultas_name_search = $fakultasName;
+        $this->fakultasNameSearch = $fakultasName;
         $this->getFakultasbyUser();
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
     }
 
     public function resetFakultasInput()
     {
         $this->fakultas_id = null;
-        $this->fakultas_name_search = '';
+        $this->fakultasNameSearch = '';
         $this->updatedFakultasNameSearch('');
-        $this->resetErrorBag(['fakultas_id', 'fakultas_name_search']);
+        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
     }
 }

@@ -1,7 +1,8 @@
-<flux:menu>
+<flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
     @if (Auth::user()?->admin) @php
-        $editCall = "{$editString}({$x->id}, {$typeXString})";
-        $deleteCall = "{$confirmDeleteString}({$x->id}, {$typeXString})";
+        $editCall = "{$editString}({$x->id}, '{$typeXString}')";
+        $deleteCall = "{$confirmDeleteString}({$x->id})";
     @endphp
 
         {{-- Tombol Edit --}}
@@ -48,8 +49,6 @@
             </div>
         </flux:menu.item>
 
-        {{-- Logika Tombol Hapus --}}
-        @if (Auth::id() != $x->id || ($nameXString ?? '') != 'Pengguna')
             <flux:menu.separator />
 
             <flux:menu.item
@@ -57,10 +56,8 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
                         $store.config?.setDeleteProdi(
-                            '{{ $x->prodi ?? '' }}',
-                            '{{ $x->jurusan ?? '' }}',
-                            '{{ $x->fakultas ?? '' }}',
-                            '{{ $typeXString ?? '' }}'
+                            '{{ $x->matkul ?? '' }}',
+                            '{{ $x->kode ?? '' }}'
                         );
                         $flux.modal('mk-delete').show();
                 "
@@ -73,7 +70,6 @@
                         class="animate-spin h-4 w-4" />
                 </div>
             </flux:menu.item>
-        @endif {{-- Ini penutup @if logika hapus --}}
 
     @endif {{-- Ini penutup @if Auth admin --}}
 

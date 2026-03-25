@@ -8,7 +8,7 @@
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
         class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
-        @include('livewire.admin.global.search-and-filters.filter-mode', [
+        @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Strata',
             'totalTab' => $totalProdis,
             'totalTab1' => $totalSarjanas,
@@ -20,7 +20,7 @@
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-        @include('livewire.admin.global.search-and-filters.page-control', [
+        @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75],
         ])
     </div>
@@ -30,7 +30,7 @@
         :class="activeTab === 'prodi' ? 'sm:grid-cols-8' : 'sm:grid-cols-9'">
 
         {{-- <div class="order-2 sm:order-1 sm:col-span-8 relative">
-            @include('livewire.admin.global.search-and-filters.main-search', [
+            @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => match ($switchTable) {
                     'prodi' => 'Cari Program Studi, Jurusan, atau Fakultas...',
                     'jurusan' => 'Cari Jurusan, Fakultas, atau ID Jurusan...',
@@ -48,7 +48,7 @@
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
                 {{-- class="order-2 sm:order-1 sm:col-span-8 relative"> --}}
                 class="col-start-1 row-start-1">
-                @include('livewire.admin.global.search-and-filters.main-search', [
+                @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Program Studi, Jurusan, atau Fakultas...',
                 ])
             </div>
@@ -59,7 +59,7 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
                 class="col-start-1 row-start-1">
-                @include('livewire.admin.global.search-and-filters.main-search', [
+                @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Jurusan atau relasinya...',
                 ])
             </div>
@@ -70,7 +70,7 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
                 class="col-start-1 row-start-1">
-                @include('livewire.admin.global.search-and-filters.main-search', [
+                @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Fakultas atau relasinya...',
                 ])
             </div>
@@ -79,7 +79,7 @@
 
         {{-- Page Control untuk Jurusan/Fakultas --}}
         {{-- <div x-show="activeTab !== 'prodi'" class="order-1 sm:order-3 sm:col-span-1">
-            @include('livewire.admin.global.search-and-filters.page-control', [
+            @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => match ($switchTable) {
                     'jurusan' => [3, 5, 8, 10, 15, 25, 50],
                     'fakultas' => [3, 5, 8, 10],
@@ -89,13 +89,13 @@
             ])
         </div> --}}
         <div x-show="activeTab === 'jurusan'" class="order-1 sm:order-3 sm:col-span-1">
-            @include('livewire.admin.global.search-and-filters.page-control', [
+            @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
                 'withFull' => 0,
             ])
         </div>
         <div x-show="activeTab === 'fakultas'" class="order-1 sm:order-3 sm:col-span-1">
-            @include('livewire.admin.global.search-and-filters.page-control', [
+            @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => [3, 5, 8, 10],
                 'withFull' => 0,
             ])
@@ -106,15 +106,15 @@
     <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
+            @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputJurusanFilter',
                 'xSearchResultsString' => 'jurusanSearchResults',
-                'selectedXNameString' => 'selectedJurusanName',
+                'selectedXNameString' => 'jurusan_name',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Jurusan...',
                 'xSearchQueryString' => 'jurusanSearchQuery',
                 'selectedXId' => $selectedJurusanId,
-                'selectedXName' => $selectedJurusanName,
+                'selectedXName' => $jurusan_name,
                 'resetXFilter' => 'resetJurusanFilter()',
                 'xSearchQuery' => $jurusanSearchQuery,
                 'xSearchResults' => $jurusanSearchResults,
@@ -125,15 +125,15 @@
         </div>
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
+            @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputFakultasFilter',
                 'xSearchResultsString' => 'fakultasSearchResults',
-                'selectedXNameString' => 'selectedFakultasName',
+                'selectedXNameString' => 'fakultas_name',
                 'iconString' => 'building-library',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fakultasSearchQuery',
                 'selectedXId' => $selectedFakultasId,
-                'selectedXName' => $selectedFakultasName,
+                'selectedXName' => $fakultas_name,
                 'resetXFilter' => 'resetFakultasFilter()',
                 'xSearchQuery' => $fakultasSearchQuery,
                 'xSearchResults' => $fakultasSearchResults,

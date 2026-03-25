@@ -3,6 +3,7 @@
 
 <head>
     @include('partials.head')
+    {{-- @fluxStyles --}}
     <style>
         [x-cloak] {
             display: none !important;
@@ -10,71 +11,6 @@
 
         :root {
             --sidebar-width: 72px;
-        }
-
-        :root { 
-            --wadah-color: #feffff;
-            --border-wadah-color: #e5cbd0;
-
-            --main-color: #991b1b;
-            --hover-main-color: #b91c1c;
-            --border-main-color: #dc2626;
-            --contrast-main-color: #991b1b;
-            
-            --main-text: #ffffff;
-            --second-text: #a4a6aa;
-            --contrast-main-text: #000000;
-            --contrast-second-text: #52525b;
-            --contrast-third-text: #818187; 
-
-            --focus-color: #ea580c;
-            --hover-focus-color: #c2410c;
-
-            --main-table-color: #fcf1f1;
-            --second-table-color: #ffffff;
-            --sub-table-color: #fffafb;
-
-            --main-table-trans: #fcf1f1a0;
-            --second-table-trans: #ffffffa0;
-            --sub-table-trans: #fffafba0;
-            --hover-table-color: #fecaca99;
-
-            --border-table-color: #d8c4c4;
-
-            --pop-up-color: #f3eded;
-            --hover-pop-up-color: #e9dbdb;
-        }
-        .dark {
-            --wadah-color: #1a1717;
-            --border-wadah-color: #3f1e1e; 
-
-            --main-color: #450a0a;
-            --hover-main-color: #7f1d1d;
-            --border-main-color: #991b1b;
-            --contrast-main-color: #ffffff;
-            
-            --main-text: #e9e0e0;
-            --second-text: #a19292;
-            --contrast-main-text: #ffffff;
-            --contrast-second-text: #bdb6b6; 
-            --contrast-third-text: #a09999; 
-
-            --focus-color: #fb923c;
-            --hover-focus-color: #f97316;
-
-            --main-table-color: #2d2525;
-            --second-table-color: #313030;
-            --sub-table-color: #352f2fa0;
-            --hover-table-color: #7f1d1d66;
-
-            --main-table-trans: #2d2525a0;
-            --second-table-trans: #313030a0;
-            --sub-table-trans: #352f2fa0;
-
-            --border-table-color: #1f1414;
-
-            --pop-up-color: #1a1919;
-            --hover-pop-up-color: #272525;
         }
 
         .sidebar-expanded {
@@ -152,14 +88,26 @@
 
             {{-- Navigasi --}}
             <nav class="flex-1 space-y-1 no-scrollbar">
-                @php
-                    $navItems = [
-                        ['icon' => 'home', 'route' => 'dashboard', 'label' => 'Dashboard'],
-                        ['icon' => 'user', 'route' => 'user-management', 'label' => 'User Management'],
-                        ['icon' => 'academic-cap', 'route' => 'program-studi-management', 'label' => 'Study Program'],
-                        ['icon' => 'rectangle-stack', 'route' => 'mata-kuliah-management', 'label' => 'Mata Kuliah'],
-                    ];
-                @endphp
+            @php
+                $user = Auth::user();
+                
+                $allNavItems = [
+                    ['icon' => 'home', 'route' => 'dashboard', 'label' => 'Dashboard', 'roles' => ['admin', 'dosen', 'mahasiswa']],
+                    ['icon' => 'user', 'route' => 'user-management', 'label' => 'User Management', 'roles' => ['admin']],
+                    ['icon' => 'academic-cap', 'route' => 'program-studi-management', 'label' => 'Study Program', 'roles' => ['admin']],
+                    ['icon' => 'rectangle-stack', 'route' => 'mata-kuliah-management', 'label' => 'Mata Kuliah', 'roles' => ['admin', 'dosen']],
+                    ['icon' => 'clipboard-document-list', 'route' => 'rps-management', 'label' => 'RPS Management', 'roles' => ['admin', 'dosen']],
+                ];
+
+                $navItems = array_filter($allNavItems, function($item) use ($user) {
+                    if ($user->admin) {
+                        return in_array('admin', $item['roles']);
+                    } elseif ($user->dosen) {
+                        return in_array('dosen', $item['roles']);
+                    }
+                    return false;
+                });
+            @endphp
 
                 @foreach ($navItems as $item)
                     <a href="{{ route($item['route']) }}" wire:navigate
@@ -193,8 +141,21 @@
 
             <flux:spacer />
 
-            {{-- Dark Mode Switcher --}}
-            <livewire:navigation.dark-mode />
+
+
+            <div class="relative h-16 w-full flex items-center">
+                {{-- Container Induk dengan posisi relatif untuk mengunci anak-anaknya --}}
+                
+                <div class="absolute transition-all duration-500 ease-in-out"
+                    :class="expanded ? '-translate-y-8 opacity-100' : 'translate-y-0 opacity-100'">
+                    <livewire:navigation.dark-mode />
+                </div>
+
+                <div class="absolute transition-all duration-500 ease-in-out"
+                    :class="expanded ? 'translate-y-4 translate-x-0 opacity-100' : 'translate-x-12 opacity-0 pointer-events-none'">
+                    <livewire:navigation.color-mode />
+                </div>
+            </div>
 
 
             {{-- Profile --}}
@@ -212,10 +173,15 @@
         :style="isDesktop ? `padding-left: var(--sidebar-width)` : ''">
         <div class="py-2 lg:py-6 px-0 2xl:px-6 transition-all duration-300"
             :class="expanded ? 'md:px-0 xl:px-2' : 'md:px-2 lg:px-4 xl:px-4'">
+            {{-- <flux:toast /> --}}
             {{ $slot }}
         </div>
     </main>
 
+    {{-- @persist('toast') --}}
+        {{-- <x-flux::toaster /> --}}
+        {{-- <flux:toast /> --}}
+    {{-- @endpersist --}}
     @fluxScripts
 </body>
 

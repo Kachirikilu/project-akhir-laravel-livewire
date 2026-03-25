@@ -23,7 +23,7 @@
     <x-slot:header>
         <tr>
 
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
                 'rowSpan' => 2,
                 'isMain' => 1,
@@ -31,7 +31,7 @@
             ])
 
             @if ($filter == '')
-                @include('livewire.admin.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'role',
                     'rowSpan' => 2,
                 ])
@@ -39,13 +39,13 @@
                 <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Role</th>
             @endif
 
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'name',
                 'headString' => 'Nama',
                 'rowSpan' => 2,
                 'isMain' => 1,
             ])
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'email',
                 'rowSpan' => 2,
             ])
@@ -59,7 +59,7 @@
                 <th rowspan="2" class="{{ $headKolom }} text-center relative">
                     <div class="flex flex-col gap-1 items-center">
 
-                        @include('livewire.admin.global.table.head-table', [
+                        @include('livewire.global.table.head-table', [
                             'sortFieldString' => 'tahun_angkatan',
                             'headString' => 'Angkatan',
                             'withTh' => 0,
@@ -75,7 +75,7 @@
                                     class="mt-1 text-[10px] w-13 border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
 
                                 {{-- Tombol Reset --}}
-                                @include('livewire.admin.global.search-and-filters.partial.reset-button', [
+                                @include('livewire.global.search-and-filters.partial.reset-button', [
                                     'xShow' => 'value',
                                     'xClick' => "value = ''",
                                     'xWire' => 'resetInputAngkatan()',
@@ -91,12 +91,12 @@
                 </th>
             @endif
 
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'status',
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'prodi',
                 'headString' => 'Program Studi',
                 'rowSpan' => 2,
@@ -113,7 +113,7 @@
         {{-- $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'), --}}
 
         <tr>
-            @include('livewire.admin.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'identity1',
                 'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
                 // 'isSubHeader' => 1,
@@ -121,7 +121,7 @@
                 'isMain' => 1,
             ])
             @if ($filter !== 'mahasiswa')
-                @include('livewire.admin.global.table.head-table', [
+                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'identity2',
                     'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'dosen' ? 'NIDN' : 'NIDK'),
                     // 'isSubHeader' => 1,
@@ -129,7 +129,7 @@
                     'isBorderR' => $filter == 'admin' ? 1 : 0,
                 ])
                 @if ($filter !== 'admin')
-                    @include('livewire.admin.global.table.head-table', [
+                    @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'identity3',
                         'headString' => 'NIDK',
                         // 'isSubHeader' => 1,
@@ -302,7 +302,7 @@
 
 
         <x-slot:footer>
-            @include('livewire.admin.global.table.footer-table', [
+            @include('livewire.global.table.footer-table', [
                 'typeXString' => $users,
             ])
         </x-slot:footer>

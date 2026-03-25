@@ -2,7 +2,7 @@
     <div class="flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
 
         {{-- Bagian Tab / Link (Kiri) --}}
-        @include('livewire.admin.global.search-and-filters.filter-mode', [
+        @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'pengguna',
             'totalTab' => $totalUsers,
             'totalTab1' => $totalAdmins,
@@ -14,7 +14,7 @@
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
-        @include('livewire.admin.global.search-and-filters.page-control', [
+        @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
         ])
 
@@ -23,19 +23,19 @@
     <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 items-center w-full">
 
         <div class="sm:col-span-4 relative">
-            @include('livewire.admin.global.search-and-filters.main-search', [
+            @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari Nama, Email, atau ID Pengguna...',
             ])
         </div>
 
         <div class="order-3 sm:order-2 sm:col-span-3 relative">
-            @include('livewire.admin.global.search-and-filters.secondary-search', [
-                'selectedXNameString' => 'selectedProdiName',
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'selectedXNameString' => 'prodi_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Program Studi...',
                 'xSearchQueryString' => 'prodiSearchQuery',
                 'selectedXId' => $selectedProdiId,
-                'selectedXName' => $selectedProdiName,
+                'selectedXName' => $prodi_name,
                 'resetXFilterString' => 'resetProdiFilter',
                 'xSearchQuery' => $prodiSearchQuery,
                 'xSearchResults' => $prodiSearchResults,

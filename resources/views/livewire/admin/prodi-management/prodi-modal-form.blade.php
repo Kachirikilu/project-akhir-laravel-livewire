@@ -1,9 +1,9 @@
 <flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @prodi-saved.window="$store.config.reset()"
-    class="sm:w-full md:w-3xl max-w-4xl h-[98vh]">
+    class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveProdi, updateProdi">
-        <div class="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center rounded-xl">
+        <div class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
         </div>
@@ -68,7 +68,7 @@
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.prodi-management.modal-form.prodi-message-form')
-                        @include('livewire.admin.global.modal-form.button-form', [
+                        @include('livewire.global.modal-form.button-form', [
                             'xType' => $prodiType,
                             'targetX' => 'addProdi, saveProdi, editProdi, updateProdi',
                         ])

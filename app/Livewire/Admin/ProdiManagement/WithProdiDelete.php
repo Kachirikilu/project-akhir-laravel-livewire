@@ -12,9 +12,9 @@ trait WithProdiDelete
 
     public $prodiIdToDelete;
 
-    public $typeNamaToDelete;
+    public $prodiNamaToDelete;
 
-    public $typeForDelete;
+    public $prodiForDelete;
 
     public $notFoundText;
 
@@ -37,39 +37,47 @@ trait WithProdiDelete
         }
 
         $this->prodiIdToDelete = $id;
-        $this->typeNamaToDelete = $prodiType->nama_prodi ?? $prodiType->nama_jurusan ?? $prodiType->nama_fakultas;
-        $this->typeForDelete = $type;
+        $this->prodiNamaToDelete = $prodiType->nama_prodi ?? $prodiType->nama_jurusan ?? $prodiType->nama_fakultas;
+        $this->prodiForDelete = $type;
         $this->showProdiDelete = true;
     }
 
     public function destroyProdi()
     {
-        if (!$this->prodiIdToDelete) {
-            return;
-        }
+        if (!$this->prodiIdToDelete) return;
+
+        $models = [
+            'prodi' => Prodi::class,
+            'jurusan' => Jurusan::class,
+            'fakultas' => Fakultas::class,
+        ];
 
         try {
-            if ($this->typeForDelete == 'prodi') {
-                $prodiType = Prodi::findOrFail($this->prodiIdToDelete);
-            } elseif ($this->typeForDelete == 'jurusan') {
-                $prodiType = Jurusan::findOrFail($this->prodiIdToDelete);
-            } elseif ($this->typeForDelete == 'fakultas') {
-                $prodiType = Fakultas::findOrFail($this->prodiIdToDelete);
+            $modelClass = $models[$this->prodiForDelete] ?? null;
+            
+            if ($modelClass) {
+                $data = $modelClass::findOrFail($this->prodiIdToDelete);
+                $data->delete();
+                
+                $this->js("Flux.toast('Data {$this->prodiNamaToDelete} berhasil dihapus!')");
             }
 
-            $prodiType->delete();
-
-            $this->js("Flux.toast('{$this->notFoundText} berhasil dihapus!')");
-
-            $this->prodiIdToDelete = null;
-            $this->typeNamaToDelete = null;
-
-            $this->resetPage();
-            $this->showProdiDelete = false;
+            $this->cleanupDeleteState();
+            $this->dispatch('refresh-data'); 
+            if (method_exists($this, 'resetPage')) {
+                $this->resetPage();
+            }
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus!' })");
+            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus data!' })");
             $this->showProdiDelete = false;
         }
+    }
+
+    private function cleanupDeleteState()
+    {
+        $this->prodiIdToDelete = null;
+        $this->prodiNamaToDelete = null;
+        $this->showProdiDelete = false;
     }
 }

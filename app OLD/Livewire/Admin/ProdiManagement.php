@@ -45,7 +45,7 @@ class ProdiManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
-        'selectedProdiName' => ['except' => ''],
+        'prodi_name' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
     ];
 

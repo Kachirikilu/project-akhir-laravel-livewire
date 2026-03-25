@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['is_staff'])->group(function () {
         Route::view('mata-kuliah-management', 'mata-kuliah-management')->name('mata-kuliah-management');
+        Route::view('rps-management', 'rps-management')->name('rps-management');
     });
 
     Route::redirect('settings', 'settings/profile');

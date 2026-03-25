@@ -60,16 +60,16 @@ trait WithUserModal
 
     public function addUser($role)
     {
-        if ($this->isEditing) {
-            $this->resetInput();
-        }
+        // if ($this->isEditing) {
+        //     $this->resetInput();
+        // }
 
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
         $this->roleType = $role;
         $this->showUserModal = true;
-        $this->updatedProdiNameSearch($this->prodi_name_search);
+        $this->updatedProdiNameSearch($this->prodiNameSearch);
     }
 
     public function editUser($id)
@@ -96,12 +96,12 @@ trait WithUserModal
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
-            $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
+            $this->prodiNameSearch = $prodi ? $prodi->nama_prodi : '';
         } else {
-            $this->prodi_name_search = '';
+            $this->prodiNameSearch = '';
         }
         $this->getProdibyUser();
-        $this->fetchProdi($this->prodi_name_search);
+        $this->fetchProdi($this->prodiNameSearch);
 
         // $this->name = $user->name;
         $this->roleType = strtolower($user->role);
@@ -317,7 +317,10 @@ trait WithUserModal
         // if (empty($data['prodi_id'])) {
         $data['prodi_id'] = $this->prodi_id;
         // }
-        
+        if (empty($data['status'])) {
+            $data['status'] = 'Aktif';
+        }
+
         $validated = $this->inputModalUser(false, $data);
 
         try {
@@ -340,7 +343,7 @@ trait WithUserModal
                     $identity1Input = $validated['nim'];
                 }
                 $prodiInput = $validated['prodi_id'];
-                $statusInput = ($validated['status'] ?? '') ?: 'Aktif';
+                $statusInput = $validated['status'];
 
                 if ($this->roleType === 'admin') {
                     Admin::create([
@@ -390,6 +393,9 @@ trait WithUserModal
             ($this->prodi_id == $this->prodi_id_2) || ($this->prodi_id !== $this->prodi_id_2)) {
             $data['prodi_id'] = $this->prodi_id;
         } 
+        if (empty($data['status'])) {
+            $data['status'] = 'Aktif';
+        }
         $validated = $this->inputModalUser(true, $data);
 
         try {
@@ -414,7 +420,7 @@ trait WithUserModal
                     $identity1Input = $validated['nim'];
                 }
                 $prodiInput = $validated['prodi_id'];
-                $statusInput = ($validated['status'] ?? '') ?: 'Aktif';
+                $statusInput = $validated['status'];
 
                 if ($this->roleType === 'admin') {
                     $user->admin->update(
@@ -486,7 +492,7 @@ trait WithUserModal
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
             'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
-            'status.required' => 'Status user wajib dipilih!',
+            'status.required' => 'Status pengguna wajib dipilih!',
             'status.in' => 'Status yang dipilih tidak sesuai dengan kategori yang diizinkan!',
         ];
     }
@@ -503,7 +509,7 @@ trait WithUserModal
         ];
 
         // if (! $keepProdi) {
-        //     $fields = array_merge($fields, ['prodi_id', 'prodi_name_search', 'prodi_results']);
+        //     $fields = array_merge($fields, ['prodi_id', 'prodiNameSearch', 'prodiResults']);
         // }
 
         $this->reset($fields);

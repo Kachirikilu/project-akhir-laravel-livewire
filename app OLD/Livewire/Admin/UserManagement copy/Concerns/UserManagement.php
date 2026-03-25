@@ -40,11 +40,11 @@ class UserManagement extends Component
     public $prodiSearchQuery = '';
     public $prodiSearchResults = [];
     public $selectedProdiId = null;
-    public $selectedProdiName = '';
+    public $prodi_name = '';
 
     // --- PROPERTI UNTUK AUTOCOMPLETE MODAL ---
-    public $prodi_name_search = '';
-    public $prodi_results = [];
+    public $prodiNameSearch = '';
+    public $prodiResults = [];
     // ----------------------------------------
 
     protected $updatesQueryString = ['search', 'filter', 'prodiSearchQuery'];
@@ -122,7 +122,7 @@ class UserManagement extends Component
 
 
         // 6. LOGIKA AUTOCOMPLETE PRODI UNTUK MODAL (Telah disederhanakan)
-        // Logika pengisian awal prodi_results dipindahkan ke updatedProdiNameSearch dan showAddModal/editUser
+        // Logika pengisian awal prodiResults dipindahkan ke updatedProdiNameSearch dan showAddModal/editUser
         if ($this->perPage == 0) {
             $this->showPerPage = true;
         }
@@ -153,7 +153,7 @@ class UserManagement extends Component
         $prodi = Prodi::find($prodiId);
         if ($prodi) {
             $this->selectedProdiId = $prodiId;
-            $this->selectedProdiName = $prodi->nama_prodi;
+            $this->prodi_name = $prodi->nama_prodi;
             $this->prodiSearchQuery = '';
             $this->resetPage();
         }
@@ -162,24 +162,24 @@ class UserManagement extends Component
     public function resetProdiFilter()
     {
         $this->selectedProdiId = null;
-        $this->selectedProdiName = '';
+        $this->prodi_name = '';
         $this->prodiSearchQuery = '';
         $this->resetPage();
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'filter', 'selectedProdiId', 'selectedProdiName', 'prodiSearchQuery']);
+        $this->reset(['search', 'filter', 'selectedProdiId', 'prodi_name', 'prodiSearchQuery']);
         $this->resetPage();
     }
 
     public function updatedProdiNameSearch($value)
     {
         $this->prodi_id = null;
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
 
         if (strlen($value) === 0) {
-            $this->prodi_results = [];
+            $this->prodiResults = [];
         }
 
         if (strlen($value) > 0) {
@@ -190,7 +190,7 @@ class UserManagement extends Component
                 ->limit(5)
                 ->get(['id', 'nama_prodi', 'fakultas']);
 
-            $this->prodi_results = $results->toArray();
+            $this->prodiResults = $results->toArray();
 
             $exactMatch = $results->filter(function ($prodi) use ($value) {
                 return strtolower($prodi->nama_prodi) === strtolower($value);
@@ -198,14 +198,14 @@ class UserManagement extends Component
             
             if ($exactMatch) {
                 $this->prodi_id = $exactMatch->id;
-                $this->prodi_name_search = $exactMatch->nama_prodi;
-                $this->prodi_results = []; 
+                $this->prodiNameSearch = $exactMatch->nama_prodi;
+                $this->prodiResults = []; 
             }
         } else {
             if (optional(Auth::user()->admin?->prodi)->fakultas) {
                 $this->getProdibyUser();
             } else {
-                $this->prodi_results = Prodi::orderBy('nama_prodi')->limit(5)->get(['id', 'nama_prodi', 'fakultas'])->toArray();
+                $this->prodiResults = Prodi::orderBy('nama_prodi')->limit(5)->get(['id', 'nama_prodi', 'fakultas'])->toArray();
             }   
         }   
     }
@@ -214,10 +214,10 @@ class UserManagement extends Component
         $fakultas = Auth::user()?->admin?->prodi?->fakultas;
 
         if (!$fakultas) {
-            return $this->prodi_results = [];
+            return $this->prodiResults = [];
         }
 
-        return $this->prodi_results = Prodi::where('fakultas', $fakultas)
+        return $this->prodiResults = Prodi::where('fakultas', $fakultas)
             ->orderBy('nama_prodi')
             ->limit(5)
             ->get(['id', 'nama_prodi', 'fakultas'])
@@ -227,16 +227,16 @@ class UserManagement extends Component
     public function selectProdi($prodiId, $prodiName)
     {
         $this->prodi_id = $prodiId;
-        $this->prodi_name_search = $prodiName;
+        $this->prodiNameSearch = $prodiName;
         $this->getProdibyUser();
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']); 
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']); 
     }
     public function resetProdiInput()
     {
         $this->prodi_id = null;
-        $this->prodi_name_search = '';
+        $this->prodiNameSearch = '';
         $this->updatedProdiNameSearch(''); 
-        $this->resetErrorBag(['prodi_id', 'prodi_name_search']);
+        $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
     }
 
     public function showAddModal($role)
@@ -252,7 +252,7 @@ class UserManagement extends Component
     {
         $this->reset([
             'userId', 'email', 'password', 'name', 'nip', 'nim', 'tahun_angkatan', 
-            'prodi_id', 'prodi_name_search', 'prodi_results', 
+            'prodi_id', 'prodiNameSearch', 'prodiResults', 
             'roleType'
         ]);
         $this->resetErrorBag(); 
@@ -273,8 +273,8 @@ class UserManagement extends Component
 
         $rules['prodi_id'] = 'required|exists:prodis,id';
         
-        if (!$this->prodi_id || empty($this->prodi_name_search)) {
-            $this->addError('prodi_name_search', 'Program Studi harus dipilih dari daftar yang tersedia atau diketik dengan nama yang benar.');
+        if (!$this->prodi_id || empty($this->prodiNameSearch)) {
+            $this->addError('prodiNameSearch', 'Program Studi harus dipilih dari daftar yang tersedia atau diketik dengan nama yang benar.');
             $this->prodi_id = null; // Pastikan ID kosong jika validasi gagal
             return; 
         }
@@ -323,9 +323,9 @@ class UserManagement extends Component
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
-            $this->prodi_name_search = $prodi ? $prodi->nama_prodi : '';
+            $this->prodiNameSearch = $prodi ? $prodi->nama_prodi : '';
         } else {
-            $this->prodi_name_search = '';
+            $this->prodiNameSearch = '';
         }
         $this->getProdibyUser();
 
@@ -361,8 +361,8 @@ class UserManagement extends Component
         }
 
         // --- VALIDASI TAMBAHAN UNTUK UI/UX AUTOCOMPLETE ---
-        if (!$this->prodi_id || empty($this->prodi_name_search)) {
-            $this->addError('prodi_name_search', 'Program Studi harus dipilih dari daftar yang tersedia atau diketik dengan nama yang benar.');
+        if (!$this->prodi_id || empty($this->prodiNameSearch)) {
+            $this->addError('prodiNameSearch', 'Program Studi harus dipilih dari daftar yang tersedia atau diketik dengan nama yang benar.');
             $this->prodi_id = null; 
             return; 
         }

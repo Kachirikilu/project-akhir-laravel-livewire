@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">Input Fakultas</h4>
 
         {{-- 📧 Fakultas Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Nama Fakultas',
             'modelString' => 'nama_fakultas',
@@ -21,7 +21,7 @@
         ])
 
         {{-- 📧 Kode Fakultas Input --}}
-        @include('livewire.admin.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.input-form', [
             'labelString' => 'Kode Fakultas',
             'modelString' => 'kode_fk',
             'iconString' => 'hashtag',

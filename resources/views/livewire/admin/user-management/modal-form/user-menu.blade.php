@@ -1,8 +1,11 @@
-<flux:menu>
-    @if (Auth::user()?->admin) @php
-        $editCall = "{$editString}({$x->id})";
-        $deleteCall = "{$confirmDeleteString}({$x->id})";
-    @endphp
+@if (Auth::user()?->admin)
+    <flux:menu
+        class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
+        @php
+            $editCall = "{$editString}({$x->id})";
+            $deleteCall = "{$confirmDeleteString}({$x->id})";
+        @endphp
 
         {{-- Tombol Edit --}}
         <flux:menu.item
@@ -38,7 +41,8 @@
                     );
                     $flux.modal('user-modal').show();
             "
-            wire:click="{{ $editCall }}" class="!text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
+            wire:click="{{ $editCall }}"
+            class="!text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
             <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
             <div class="flex justify-between items-center w-full">
@@ -61,7 +65,8 @@
                         );
                         $flux.modal('user-delete').show();
                 "
-                wire:click="{{ $deleteCall }}" class="!text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
+                wire:click="{{ $deleteCall }}"
+                class="!text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
@@ -72,6 +77,6 @@
             </flux:menu.item>
         @endif {{-- Ini penutup @if logika hapus --}}
 
-    @endif {{-- Ini penutup @if Auth admin --}}
 
-</flux:menu>
+    </flux:menu>
+@endif

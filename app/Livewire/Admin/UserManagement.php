@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Admin\GlobalManagement\WithProdiSearchFilters;
-use App\Livewire\Admin\GlobalManagement\WithJurusanSearchFilters;
-use App\Livewire\Admin\GlobalManagement\WithFakultasSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 
 use App\Livewire\Admin\UserManagement\WithUserFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
@@ -55,11 +55,11 @@ class UserManagement extends Component
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc'],
 
-        // 'selectedProdiName' => ['except' => null],
-        // 'selectedJurusanName' => ['except' => null],
-        // 'selectedFakultasName' => ['except' => null]
+        // 'prodi_name' => ['except' => null],
+        // 'jurusan_name' => ['except' => null],
+        // 'fakultas_name' => ['except' => null]
 
-        // 'selectedProdiName' => ['except' => ''],
+        // 'prodi_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
         // 'isEditing' => ['except' => false],
         // 'showUserModal' => ['except' => false],
@@ -70,7 +70,7 @@ class UserManagement extends Component
         // 'nim' => ['except' => ''],
         // 'tahun_angkatan' => ['except' => ''],
         // 'prodi_id' => ['except' => ''],
-        // 'prodi_name_search' => ['except' => ''],
+        // 'prodiNameSearch' => ['except' => ''],
     ];
 
     public function updatedPerPage()

@@ -2,15 +2,15 @@
 
     <x-slot:header>
         {{-- ID - Sorting Angka --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'id'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'id'])
         {{-- Prodi - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'prodi'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'prodi'])
         {{-- Jurusan - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'jurusan'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'jurusan'])
         {{-- Fakultas - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'fakultas'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
         {{-- Strata - Sorting A-Z --}}
-        @include('livewire.admin.global.table.head-table', ['sortFieldString' => 'strata'])
+        @include('livewire.global.table.head-table', ['sortFieldString' => 'strata'])
         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
     </x-slot:header>
 
@@ -43,7 +43,8 @@
                         @endswitch
                     </button>
 
-                    <flux:menu>
+                    <flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
                         @if (Auth::user()?->admin)
                             <flux:menu.item wire:click="editUser({{ $prodi->id }})"
                                 class="!text-yellow-600 hover:!bg-yellow-100">
@@ -77,7 +78,8 @@
                     <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
                     </flux:button>
 
-                    <flux:menu>
+                    <flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
                         @if (Auth::user()?->admin)
                             <flux:menu.item wire:click="editUser({{ $prodi->id }})"
                                 class="!text-yellow-600 hover:!bg-yellow-100">
@@ -119,7 +121,7 @@
 
 
         <x-slot:footer>
-            @include('livewire.admin.global.table.footer-table', [
+            @include('livewire.global.table.footer-table', [
                 'typeXString' => $prodis,
             ])
         </x-slot:footer>

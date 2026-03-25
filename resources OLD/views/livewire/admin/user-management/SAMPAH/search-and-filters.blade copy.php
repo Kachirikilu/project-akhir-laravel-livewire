@@ -92,7 +92,7 @@
             @endif
         </div>
 
-        <div x-data="{ open: false, selectedName: @entangle('selectedProdiName').live }" class="sm:col-span-3 relative">
+        <div x-data="{ open: false, selectedName: @entangle('prodi_name').live }" class="sm:col-span-3 relative">
 
             <div class="relative w-full sm:flex-1">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -106,7 +106,7 @@
                     :class="{ 'pr-10': selectedName }" autocomplete="off" />
 
 
-                @if ($selectedProdiId || $selectedProdiName)
+                @if ($selectedProdiId || $prodi_name)
                     <button type="button" wire:click="resetProdiFilter" $wire.prodiSearchQuery = ''; open=false"
                         class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition duration-150"
                         title="Bersihkan Filter">

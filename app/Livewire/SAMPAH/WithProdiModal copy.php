@@ -33,9 +33,9 @@ trait WithProdiModal
 
     // public $nama_fakultas;
 
-    public $prodi_name_search;
+    public $prodiNameSearch;
 
-    // public $prodi_results;
+    // public $prodiResults;
 
     // public $selectedProdiId;
 
@@ -65,9 +65,9 @@ trait WithProdiModal
         $this->prodiType = $prodi;
         $this->showProdiModal = true;
         if ($prodi === 'prodi') {
-            $this->updatedJurusanNameSearch($this->jurusan_name_search);
+            $this->updatedJurusanNameSearch($this->jurusanNameSearch);
         } elseif ($prodi === 'jurusan') {
-            $this->updatedFakultasNameSearch($this->fakultas_name_search);
+            $this->updatedFakultasNameSearch($this->fakultasNameSearch);
         }
     }
 
@@ -92,32 +92,32 @@ trait WithProdiModal
                 // $this->nama_prodi = $prodi->nama_prodi;
                 // $this->nama_strata = $prodi->nama_strata;
                 $this->jurusan_id = $prodi->jurusan_id;
-                $this->jurusan_name_search = $prodi->jurusan_rel->nama_jurusan ?? '';
+                $this->jurusanNameSearch = $prodi->jurusan_rel->nama_jurusan ?? '';
 
                 if ($this->jurusan_id) {
                     $jurusan = Jurusan::find($this->jurusan_id);
-                    $this->jurusan_name_search = $jurusan ? 'Jurusan '.$jurusan->nama_jurusan : '';
+                    $this->jurusanNameSearch = $jurusan ? 'Jurusan '.$jurusan->nama_jurusan : '';
                 } else {
-                    $this->jurusan_name_search = '';
+                    $this->jurusanNameSearch = '';
                 }
                 $this->getJurusanbyUser();
-                $this->fetchJurusan($this->jurusan_name_search);
+                $this->fetchJurusan($this->jurusanNameSearch);
 
             } elseif ($type === 'jurusan') {
                 $jurusan = Jurusan::with('fakultas_rel')->findOrFail($id);
                 $this->selected_id = $jurusan->id;
                 // $this->nama_jurusan = $jurusan->nama_jurusan;
                 $this->fakultas_id = $jurusan->fakultas_id;
-                $this->fakultas_name_search = $jurusan->fakultas_rel->nama_fakultas ?? '';
+                $this->fakultasNameSearch = $jurusan->fakultas_rel->nama_fakultas ?? '';
 
                 if ($this->fakultas_id) {
                     $fakultas = Fakultas::find($this->fakultas_id);
-                    $this->fakultas_name_search = $fakultas ? 'Fakultas '.$fakultas->nama_fakultas : '';
+                    $this->fakultasNameSearch = $fakultas ? 'Fakultas '.$fakultas->nama_fakultas : '';
                 } else {
-                    $this->fakultas_name_search = '';
+                    $this->fakultasNameSearch = '';
                 }
                 $this->getFakultasbyUser();
-                $this->fetchFakultas($this->fakultas_name_search);
+                $this->fetchFakultas($this->fakultasNameSearch);
 
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
@@ -316,7 +316,7 @@ trait WithProdiModal
         //     'prodi_id' => $this->prodi_id,
         //     'jurusan_id' => $this->jurusan_id,
         //     'fakultas_id' => $this->fakultas_id,
-        //     'prodi_name_search' => $this->prodi_name_search,
+        //     'prodiNameSearch' => $this->prodiNameSearch,
         // ]);
 
         if (empty($data['fakultas_id'])) {
@@ -458,12 +458,12 @@ trait WithProdiModal
     {
         $fields = [
             // 'nama_prodi', 'nama_strata', 'nama_jurusan', 'nama_fakultas',
-            'jurusan_id', 'fakultas_id', 'jurusan_name_search', 'fakultas_name_search',
+            'jurusan_id', 'fakultas_id', 'jurusanNameSearch', 'fakultasNameSearch',
         ];
 
         if (! $keepProdi) {
-            $fields = array_merge($fields, ['prodi_id', 'prodi_name_search'
-            // , 'prodi_results'
+            $fields = array_merge($fields, ['prodi_id', 'prodiNameSearch'
+            // , 'prodiResults'
             ]);
         }
 
