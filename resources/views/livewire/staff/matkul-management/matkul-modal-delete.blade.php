@@ -1,19 +1,23 @@
-<flux:modal name="mk-delete" wire:model="showMKDelete" class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="mk-delete" wire:model="showMKDelete"
+    class="min-w-[20rem] max-w-md !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Konfirmasi Hapus</flux:heading>
+            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400"
+                    x-show="$store.config?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="$store.config?.nama_matkul_delete ? '*** Mata Kuliah' + $store.config?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
                     ">
-                </strong> dengan 
+                </strong> dengan
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="$store.config?.kode_mk_delete ? '*** Kode' + $store.config?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                <span x-show="$store.config?.isForceDelete">
+                    Tindakan ini tidak dapat dibatalkan!
+                </span>
             </flux:subheading>
         </div>
 
@@ -31,8 +35,7 @@
             <flux:button wire:click="destroyMK" wire:loading.attr="disabled" wire:target="deleteMK, destroyMK"
                 type="submit" variant="primary"
                 class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
-                <span
-                    wire:loading.remove wire:target="destroyMK">Ya, Hapus Mata Kuliah
+                <span wire:loading.remove wire:target="destroyMK">Ya, Hapus Mata Kuliah
                 </span>
 
                 <span wire:loading wire:target="destroyMK">

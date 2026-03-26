@@ -83,7 +83,8 @@ trait WithMatkulModal
                 $this->fakultasNameSearch = 'Fakultas '.$firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
                 $this->fakultas_kode = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
 
-                if ($tingkatan == 'mk-prodi' || 'mk-universitas') {
+                // dd($tingkatan);
+                if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
                     $this->prodi_id = $firstProdi->id;
                     $this->prodiNameSearch = $firstProdi->prodi;
                     $this->prodi_kode = $firstProdi->kode ?? 'UNI';
@@ -258,12 +259,12 @@ trait WithMatkulModal
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
-        // try {
+        try {
             $validated = $this->inputModalMK(true, $data);
             $tingkatan = $this->generateTingkatanMap($this->mkType);
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
-            DB::transaction(function () use ($validated, $data, $kodePrefix) {
+            DB::transaction(function () use ($validated, $tingkatan, $data, $kodePrefix) {
                 $mk = MataKuliah::findOrFail($this->selected_id);
 
                 // 3. UPDATE DATA UTAMA
@@ -281,7 +282,7 @@ trait WithMatkulModal
                 ]);
 
                 // 4. LOGIKA TARGET IDs
-                $targetIds = ($this->mkType === 1)
+                $targetIds = ($tingkatan === 1)
                             ? [$this->prodi_id]
                             : ($this->prodi_id_array ?: []);
 
@@ -301,11 +302,11 @@ trait WithMatkulModal
             $this->dispatch('toast', message: '✅ Mata Kuliah berhasil diperbarui!');
             $this->dispatch('refresh-data');
 
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     throw $e;
-        // } catch (\Exception $e) {
-        //     $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
-        // }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
+        }
     }
 
     public function validationMessages()

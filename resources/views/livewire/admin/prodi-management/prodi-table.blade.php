@@ -66,7 +66,42 @@
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
             <td class="{{ $mainKolom }} text-center">
-                {{ $x->kode_text ?? ($x->kode ?? '-') }}</td>
+                <flux:dropdown>
+                    <flux:button variant="ghost" size="sm" class="cursor-pointer">
+                        @switch($x->tingkatanProdi)
+                            @case(1)
+                                <flux:badge icon="academic-cap" color="emerald" size="sm">
+                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                </flux:badge>
+                            @break
+
+                            @case(2)
+                                <flux:badge icon="book-open" color="amber" size="sm">
+                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                </flux:badge>
+                            @break
+
+                            @case(3)
+                                <flux:badge icon="building-library" color="indigo" size="sm">
+                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                </flux:badge>
+                            @break
+
+                            @default
+                                <flux:badge icon="globe-alt" color="red" size="sm">
+                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                </flux:badge>
+                        @endswitch
+                    </flux:button>
+
+                    {{-- Pastikan di dalam include ini isinya adalah <flux:menu> ... </flux:menu> --}}
+                    @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
+                        'x' => $x,
+                        'typeXString' => $switchTable,
+                        'nameXString' => $xNameString,
+                    ])
+                </flux:dropdown>
+            </td>
 
             @if ($switchTable === 'prodi')
                 <td class="{{ $secondKolom }}">{{ $x->prodi ?? '-' }}</td>
@@ -106,15 +141,13 @@
                         @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
-                            'editString' => 'editProdi',
-                            'nameXString' => $xNameString,
-                            'confirmDeleteString' => 'deleteProdi',
+                            'nameXString' => $xNameString
                         ])
                     </flux:dropdown>
                 </td>
             @endif
 
-            <td class="{{ $secondKolom }}">
+            <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -123,9 +156,7 @@
                     @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
                         'x' => $x,
                         'typeXString' => $switchTable,
-                        'editString' => 'editProdi',
-                        'nameXString' => $xNameString,
-                        'confirmDeleteString' => 'deleteProdi',
+                        'nameXString' => $xNameString
                     ])
 
                 </flux:dropdown>

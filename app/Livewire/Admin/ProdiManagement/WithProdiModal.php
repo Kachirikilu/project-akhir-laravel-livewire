@@ -387,7 +387,7 @@ trait WithProdiModal
         $validated = $this->inputModalProdi(true, $data);
         $validated = $this->prepareData($validated);
 
-        try {
+        // try {
             DB::transaction(function () use ($validated) {
                 if ($this->prodiType === 'prodi') {
                     Prodi::findOrFail($this->selected_id)->update([
@@ -396,32 +396,29 @@ trait WithProdiModal
                         'jurusan_id' => $validated['jurusan_id'],
                         'kode_pr' => $validated['kode_pr'],
                     ]);
-                    $message = 'Program Studi';
                 } elseif ($this->prodiType === 'jurusan') {
                     Jurusan::findOrFail($this->selected_id)->update([
                         'nama_jurusan' => $validated['nama_jurusan'],
                         'fakultas_id' => $validated['fakultas_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
-                    $message = 'Jurusan';
                 } elseif ($this->prodiType === 'fakultas') {
                     Fakultas::findOrFail($this->selected_id)->update([
                         'nama_fakultas' => $validated['nama_fakultas'],
                         'kode_fk' => $validated['kode_fk'],
                     ]);
-                    $message = 'Fakultas';
                 }
             });
 
             $this->showProdiModal = false;
-            $this->dispatch('toast', message: "✅ Data $message berhasil diperbarui!");
+            $this->dispatch('toast', message: "✅ Data berhasil diperbarui!");
 
             $this->dispatch('refresh-data');
 
-        } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
-            $this->showProdiDelete = false;
-        }
+        // } catch (\Exception $e) {
+        //     $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
+        //     $this->showProdiDelete = false;
+        // }
     }
 
     public function validationMessages()

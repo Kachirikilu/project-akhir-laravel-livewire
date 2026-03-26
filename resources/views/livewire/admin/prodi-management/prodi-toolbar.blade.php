@@ -17,6 +17,7 @@
                     @click="
                         $store.config?.setType('prodi');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
@@ -35,6 +36,7 @@
                     @click="
                         $store.config?.setType('jurusan');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-amber-700 dark:text-amber-400');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('jurusan');
@@ -53,6 +55,7 @@
                     @click="
                         $store.config?.setType('fakultas');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-[var(--focus-color)]');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');

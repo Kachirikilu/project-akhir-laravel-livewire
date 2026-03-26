@@ -177,9 +177,7 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna',
-                        'editString' => 'editUser',
-                        'confirmDeleteString' => 'deleteUser',
+                        'nameXString' => 'Pengguna'
                     ])
 
                 </flux:dropdown>
@@ -258,9 +256,7 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna',
-                        'editString' => 'editUser',
-                        'confirmDeleteString' => 'deleteUser',
+                        'nameXString' => 'Pengguna'
                     ])
 
                 </flux:dropdown>
@@ -269,7 +265,7 @@
             <td class="{{ $mainKolom }}">
                 {{ $detail->prodi->prodi ?? '-' }}</td>
 
-            <td class="{{ $secondKolom }}">
+            <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -277,9 +273,7 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna',
-                        'editString' => 'editUser',
-                        'confirmDeleteString' => 'deleteUser',
+                        'nameXString' => 'Pengguna'
                     ])
 
                 </flux:dropdown>

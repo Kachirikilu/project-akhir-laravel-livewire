@@ -28,7 +28,7 @@ class Dosen extends Model
     }
     public function prodi(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class);
+        return $this->belongsTo(Prodi::class)->withTrashed();
     }
 
     protected static function booted()

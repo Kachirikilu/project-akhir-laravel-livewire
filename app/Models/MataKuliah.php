@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MataKuliah extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'mata_kuliahs';
 
     protected $fillable = [
@@ -26,6 +29,7 @@ class MataKuliah extends Model
     public function prodis()
     {
         return $this->belongsToMany(Prodi::class, 'prodi_pivot_mk', 'mk_id', 'prodi_id')
+                    ->withTrashed()
                     ->withPivot('sort_order')
                     ->orderBy('prodi_pivot_mk.sort_order', 'asc');
     }

@@ -4,14 +4,14 @@
         class="bg-white rounded-lg w-full max-w-4xl lg:w-4/5 transform transition-all duration-200 ease-out scale-100 max-h-[90vh] flex flex-col">
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
-        <div class="p-6 pb-4 border-b">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
                 {{ $isEditing ? 'Edit ' . ucfirst($roleType) : 'Tambah ' . ucfirst($roleType) }}
             </h3>
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="p-6 pb-flex-1 overflow-y-auto space-y-6">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-flex-1 overflow-y-auto space-y-6">
             <form wire:submit.prevent="{{ $isEditing ? 'updateUser' : 'saveUser' }}" id="userForm">
 
                 {{-- ****************************************************** --}}

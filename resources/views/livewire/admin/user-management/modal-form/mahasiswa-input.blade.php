@@ -58,7 +58,8 @@
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodiNameSearch',
             'fetchString' => 'fetchProdi',
-            'iconString' => 'academic-cap'
+            'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchProdi'
         ])
 
         {{-- 📧 Status Input --}}

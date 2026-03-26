@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Admin extends Model
 {
     use HasFactory;
+    
     protected $table = 'admins';
 
     protected $fillable = [
@@ -27,7 +28,7 @@ class Admin extends Model
     }
     public function prodi(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class);
+        return $this->belongsTo(Prodi::class)->withTrashed();
     }
 
     protected static function booted()

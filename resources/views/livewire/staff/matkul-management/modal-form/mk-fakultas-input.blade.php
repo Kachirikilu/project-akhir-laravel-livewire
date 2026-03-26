@@ -42,6 +42,7 @@
         'nameSearchString' => 'fakultasNameSearch',
         'fetchString' => 'fetchFakultas',
         'iconString' => 'building-library',
+        'wireLoading' => 'fetchFakultas'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -62,7 +63,8 @@
         'selectedNameArray' => 'prodi_name_array',
         'parentIdString' => 'fakultas_id',
         'nameXParent' => 'Fakultas',
-        'wireLoading' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
+        'wireLoading' => 'fetchProdi',
+        'wireLoadingParent' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
     ])
 
 

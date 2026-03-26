@@ -13,7 +13,7 @@ trait WithProdiFilters
 
     public $filter = '';
 
-    public $sortField = 'prodi';
+    public $sortField = 'kode';
 
     public $sortDirection = 'asc';
 

@@ -211,7 +211,7 @@ trait WithMatkulModal
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
-        // try {
+        try {
             $validated = $this->inputModalMK(false, $data);
             $tingkatan = $this->generateTingkatanMap($this->mkType);
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
@@ -244,9 +244,9 @@ trait WithMatkulModal
             $this->dispatch('toast', message: '✅ Mata Kuliah berhasil ditambahkan!');
             $this->dispatch('refresh-data');
 
-        // } catch (\Exception $e) {
-        //     $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
+        }
     }
 
     public function updateMK($data)

@@ -2,7 +2,7 @@
 
     <div class="flex flex-col h-full">
         {{-- 1. Header Modal (Tetap di Atas) --}}
-        <div class="p-6 pb-4 border-b">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
 
                 @php
@@ -36,7 +36,7 @@
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="p-6 pb-flex-1 overflow-y-auto space-y-6">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-flex-1 overflow-y-auto space-y-6">
             <form wire:submit.prevent="{{ $isEditing ? 'updateUser' : 'saveUser' }}" id="userForm">
 
                 {{-- ****************************************************** --}}

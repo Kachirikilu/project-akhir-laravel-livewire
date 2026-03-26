@@ -32,7 +32,8 @@
             'searchString' => 'fakultas_search',
             'nameSearchString' => 'fakultasNameSearch',
             'fetchString' => 'fetchFakultas',
-            'iconString' => 'building-library'
+            'iconString' => 'building-library',
+            'wireLoading' => 'fetchFakultas'
         ])
 
         {{-- 📧 Kode Jurusan Input --}}

@@ -15,22 +15,22 @@
         @endphp --}}
 
         {{-- 1. Header Modal (Tetap di Atas) --}}
-        <div class="p-6 pb-4 border-b">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
                 <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna Admin</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna - Admin</flux:badge>
                 </template>
                 <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="lime" size="lg">Tambah Pengguna Dosen</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="lime" size="lg">Tambah Pengguna - Dosen</flux:badge>
                 </template>
                 <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="cyan" size="lg">Tambah Pengguna Mahasiswa</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="cyan" size="lg">Tambah Pengguna - Mahasiswa</flux:badge>
                 </template>
             </h3>
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="p-6 pb-flex-1 overflow-y-auto space-y-6">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-flex-1 overflow-y-auto space-y-6">
 
             <form
                 @if ($roleType == 'file') wire:submit.prevent="saveAllRows"

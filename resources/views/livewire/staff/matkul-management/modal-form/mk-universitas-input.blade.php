@@ -44,6 +44,7 @@
         'iconString' => 'academic-cap',
     
         'selectedNameArray' => 'prodi_name_array',
+        'wireLoading' => 'fetchProdi'
     ])
 
 

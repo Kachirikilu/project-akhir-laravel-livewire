@@ -41,6 +41,7 @@
         'nameSearchString' => 'jurusanNameSearch',
         'fetchString' => 'fetchJurusan',
         'iconString' => 'book-open',
+        'wireLoading' => 'fetchJurusan'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -61,6 +62,7 @@
         'selectedNameArray' => 'prodi_name_array',
         'parentIdString' => 'jurusan_id',
         'nameXParent' => 'Jurusan',
+        'wireLoading' => 'fetchProdi',
         'wireLoadingParent' => 'selectJurusan, resetJurusanInput, selectJurusanForFilter, resetJurusanFilter',
     ])
 

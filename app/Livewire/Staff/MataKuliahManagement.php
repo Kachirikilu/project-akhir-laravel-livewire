@@ -41,6 +41,8 @@ class MataKuliahManagement extends Component
 
     // public $selectedMatkulName = '';
 
+    public $showDeleted = false;
+
     protected $listeners = ['refresh-table' => 'refreshMatkulsList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
@@ -50,8 +52,9 @@ class MataKuliahManagement extends Component
         'filter' => ['except' => ''],
         // 'selectedMatkulName' => ['except' => ''],
         'switchTable' => ['except' => ''],
-        'sortField' => ['except' => 'nama_matkul'],
+        'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted'  => ['except' => false]
 
         // 'prodi_name' => ['except' => null],
         // 'jurusan_name' => ['except' => null],
@@ -160,12 +163,18 @@ class MataKuliahManagement extends Component
             $query->where('tipe_sks', 4);
         }
 
+        $globalQuery = $this->inputMainSearch();
+
+        if ($this->showDeleted) {
+            $query->onlyTrashed();
+            $globalQuery->onlyTrashed();
+        }
+
         $totalMatkuls = (clone $query)->count();
         $totalWajib = (clone $query)->where('is_wajib', true)->count();
         $totalPilihan = (clone $query)->where('is_wajib', false)->count();
         $totalUni = (clone $query)->where('tingkatan_mk', 4)->count();
 
-        $globalQuery = $this->inputMainSearch();
         $totalTatapMuka = (clone $globalQuery)->where('tipe_sks', 1)->count();
         $totalPraktikum = (clone $globalQuery)->where('tipe_sks', 2)->count();
         $totalPraktekLapangan = (clone $globalQuery)->where('tipe_sks', 3)->count();

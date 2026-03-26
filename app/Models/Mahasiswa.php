@@ -35,6 +35,6 @@ class Mahasiswa extends Model
 
     public function prodi(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class);
+        return $this->belongsTo(Prodi::class)->withTrashed();
     }
 }

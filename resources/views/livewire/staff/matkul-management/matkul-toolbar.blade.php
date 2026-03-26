@@ -56,7 +56,7 @@
                         $store.config?.setType('mk-fakultas');
                         $store.config?.setEdit(0);
                         $store.config?.resetSelect();
-                        $store.config?.setColor('text-[var(--focus-color)]');
+                        $store.config?.setColor('text-indigo-700 dark:text-indigo-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-fakultas');
                     "
@@ -75,12 +75,12 @@
                         $store.config?.setType('mk-universitas');
                         $store.config?.setEdit(0);
                         $store.config?.resetSelect();
-                        $store.config?.setColor('text-[var(--focus-color)]');
+                        $store.config?.setColor('text-red-700 dark:text-red-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-universitas');
                     "
-                    class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30">
-                    <flux:icon name="building-library" class="!text-yellow-600 dark:!text-yellow-400 mr-2 h-4 w-4" />
+                    class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                    <flux:icon name="globe-alt" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Universitas</span>
                         <flux:icon wire:loading wire:target="addMK('universitas')" name="arrow-path"

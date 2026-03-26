@@ -14,7 +14,7 @@ trait WithMatkulFilters
 
     public $filter = '';
 
-    public $sortField = 'matkul';
+    public $sortField = 'kode';
 
     public $sortDirection = 'asc';
 
@@ -55,7 +55,14 @@ trait WithMatkulFilters
                     $q->orWhere('is_wajib', 0);
                 }
 
-                // 4. Cari berdasarkan Tipe SKS (Tatap Muka, TM, Praktikum, dll)
+                // 4. Cari berdasarkan "Digit MK" (No Urut 01, 02, dst)
+                if (preg_match('/^\d+$/', $search)) { 
+                    $q->orWhere('digit_mk', $search);
+                } else {
+                    $q->orWhere('digit_mk', 'LIKE', '%' . $search . '%');
+                }
+
+                // 5. Cari berdasarkan Tipe SKS (Tatap Muka, TM, Praktikum, dll)
                 $tipeMap = [
                     'tm' => 1, 'tatap muka' => 1, 'teori' => 1,
                     'pr' => 2, 'praktikum' => 2, 'praktek' => 2,
@@ -68,10 +75,9 @@ trait WithMatkulFilters
                     $q->orWhere('tipe_sks', $tipeMap[$searchLower]);
                 }
 
-                // 5. Cari berdasarkan Kode Lengkap atau Terpenggal (Partial Code Search)
+                // 6. Cari berdasarkan Kode Lengkap atau Terpenggal (Partial Code Search)
                 $cleanSearch = strtoupper($search);
 
-                // Kita cek apakah input mengandung unsur huruf (prefix) atau angka (digit)
                 if (preg_match('/[A-Z]/', $cleanSearch) || preg_match('/[0-9]/', $cleanSearch)) {
                     $q->orWhere(function ($sq) use ($cleanSearch) {
                         // Pisahkan Huruf dan Angka dari input user
@@ -189,6 +195,8 @@ trait WithMatkulFilters
             $query->orderBy('sks_kuliah', $this->sortDirection);
         } elseif ($this->sortField === 'wajib') {
             $query->orderBy('is_wajib', $this->sortDirection);
+        } elseif ($this->sortField === 'digit_mk') {
+            $query->orderBy('digit_mk', $this->sortDirection);
         } elseif (in_array($this->sortField, ['sks_tm', 'sks_pr', 'sks_pl', 'sks_sm'])) {
             $typeMap = ['sks_tm' => 1, 'sks_pr' => 2, 'sks_pl' => 3, 'sks_sm' => 4];
             $targetType = $typeMap[$this->sortField];

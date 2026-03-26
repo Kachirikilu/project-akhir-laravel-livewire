@@ -43,6 +43,8 @@ class ProgramStudiManagement extends Component
 
     // public $prodi_name = '';
 
+    public $showDeleted = false;
+
     protected $listeners = ['refresh-table' => 'refreshProdisList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
@@ -51,8 +53,9 @@ class ProgramStudiManagement extends Component
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
-        'sortField' => ['except' => 'prodi'],
+        'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted'  => ['except' => false]
 
         // 'jurusan_name' => ['except' => null],
         // 'fakultas_name' => ['except' => null]
@@ -150,6 +153,9 @@ class ProgramStudiManagement extends Component
         $this->inputFakultasFilter();
 
         $baseQuery = $this->inputMainSearch();
+        $queryJurusan = $this->inputJurusanSearch();
+        $queryFakultas = $this->inputFakultasSearch();
+
         $query = clone $baseQuery;
 
         $this->buttonStrataFilter($query);
@@ -158,8 +164,12 @@ class ProgramStudiManagement extends Component
         $jurusans = collect();
         $fakultass = collect();
 
-        $queryJurusan = $this->inputJurusanSearch();
-        $queryFakultas = $this->inputFakultasSearch();
+        if ($this->showDeleted) {
+            $query->onlyTrashed();
+            $baseQuery->onlyTrashed();
+            $queryJurusan->onlyTrashed();
+            $queryFakultas->onlyTrashed();
+        }
 
         if ($this->switchTable === 'prodi') {
             $prodis = $query->paginate($this->perPage);

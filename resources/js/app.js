@@ -6,6 +6,7 @@ document.addEventListener("alpine:init", () => {
         typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
+        isForceDelete: 0,
         colorIcon: "",
 
         email: "",
@@ -119,8 +120,8 @@ document.addEventListener("alpine:init", () => {
             this.nama_fakultas = namaFakultas;
 
             this.kode_pr = kodePr;
-            this.kode_jr = kodeJr;
-            this.kode_fk = kodeFk;
+            this.kode_jr = kodePr;
+            this.kode_fk = kodePr;
 
             this.prodi_kode = kodePr;
             this.jurusan_kode = kodePr;
@@ -158,30 +159,34 @@ document.addEventListener("alpine:init", () => {
             this.is_wajib = isWajib;
         },
 
-        setDeleteUser(val) {
+
+        setDeleteUser(val, forceDelete) {
             this.email_delete = val;
+            this.isForceDelete = forceDelete;
         },
         setDeleteProdi(
             namaProdi,
             namaJurusan,
             namaFakultas,
             kodePrDelete,
-            type
+            type,
+            forceDelete
         ) {
             this.nama_prodi_delete = namaProdi;
             this.nama_jurusan_delete = namaJurusan;
             this.nama_fakultas_delete = namaFakultas;
             this.kode_pr_delete = kodePrDelete;
             this.typeModal_delete = type;
+            this.isForceDelete = forceDelete;
         },
         setDeleteMK(
             namaProdi,
-            kodeMkDelete
-            // type
+            kodeMkDelete,
+            forceDelete
         ) {
             this.nama_matkul_delete = namaProdi;
             this.kode_mk_delete = kodeMkDelete;
-            // this.typeModal_delete = type;
+            this.isForceDelete = forceDelete;
         },
 
         resetSelect() {
@@ -210,11 +215,14 @@ document.addEventListener("alpine:init", () => {
             this.prodi_id_array = [];
             this.prodi_kode_array = [];
         },
-
+        // resetForceDelete() {
+        //     this.isForceDelete = 0;
+        // },
         reset() {
             this.typeModal = "";
             this.typeModal_delete = "";
             this.isEdit = 0;
+            this.isForceDelete = 0;
             this.colorIcon = "";
 
             this.email = "";

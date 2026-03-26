@@ -18,27 +18,34 @@ trait WithProdiDelete
 
     public $notFoundText;
 
-    public function deleteProdi($id, $type)
+    public $isPermanentDelete = false;
+
+    private function getModels()
     {
-        $models = [
+        return [
             'prodi' => Prodi::class,
             'jurusan' => Jurusan::class,
             'fakultas' => Fakultas::class,
         ];
+    }
 
-        $modelClass = $models[$type] ?? null;
-        $prodiType = $modelClass ? $modelClass::find($id) : null;
+    public function deleteProdi($id, $type, $isTrashed = false)
+    {
+        $modelClass = $this->getModels()[$type] ?? null;
+        
+        $data = $isTrashed 
+            ? $modelClass::withTrashed()->find($id) 
+            : $modelClass::find($id);
 
-        $this->notFoundText = ($type === 'prodi') ? 'Program Studi' : ucfirst($type);
-
-        if (! $prodiType) {
-            $this->js("Flux.toast({ variant: 'danger', text: '{$this->notFoundText} tidak ditemukan!' })");
+        if (!$data) {
+            $this->js("Flux.toast({ variant: 'danger', text: 'Data tidak ditemukan!' })");
             return;
         }
 
         $this->prodiIdToDelete = $id;
-        $this->prodiNamaToDelete = $prodiType->nama_prodi ?? $prodiType->nama_jurusan ?? $prodiType->nama_fakultas;
+        $this->prodiNamaToDelete = $data->nama_prodi ?? $data->nama_jurusan ?? $data->nama_fakultas;
         $this->prodiForDelete = $type;
+        $this->isPermanentDelete = $isTrashed;
         $this->showProdiDelete = true;
     }
 
@@ -46,31 +53,39 @@ trait WithProdiDelete
     {
         if (!$this->prodiIdToDelete) return;
 
-        $models = [
-            'prodi' => Prodi::class,
-            'jurusan' => Jurusan::class,
-            'fakultas' => Fakultas::class,
-        ];
-
         try {
-            $modelClass = $models[$this->prodiForDelete] ?? null;
-            
-            if ($modelClass) {
-                $data = $modelClass::findOrFail($this->prodiIdToDelete);
+            $modelClass = $this->getModels()[$this->prodiForDelete] ?? null;
+            $data = $modelClass::withTrashed()->findOrFail($this->prodiIdToDelete);
+
+            if ($this->isPermanentDelete) {
+                $data->forceDelete();
+                $message = "Data {$this->prodiNamaToDelete} BERHASIL DIHAPUS PERMANEN!";
+            } else {
                 $data->delete();
-                
-                $this->js("Flux.toast('Data {$this->prodiNamaToDelete} berhasil dihapus!')");
+                $message = "Data {$this->prodiNamaToDelete} berhasil dipindahkan ke sampah!";
             }
 
+            $this->js("Flux.toast('{$message}')");
             $this->cleanupDeleteState();
-            $this->dispatch('refresh-data'); 
-            if (method_exists($this, 'resetPage')) {
-                $this->resetPage();
-            }
+            $this->dispatch('refresh-data');
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal menghapus data!' })");
-            $this->showProdiDelete = false;
+            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses permintaan!' })");
+        }
+    }
+
+    public function restoreProdi($id, $type)
+    {
+        try {
+            $modelClass = $this->getModels()[$type] ?? null;
+            $data = $modelClass::withTrashed()->findOrFail($id);
+            $data->restore();
+            
+            $nama = $data->nama_prodi ?? $data->nama_jurusan ?? $data->nama_fakultas;
+            $this->js("Flux.toast('Data {$nama} berhasil dipulihkan!')");
+            $this->dispatch('refresh-data');
+        } catch (\Exception $e) {
+            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan data!' })");
         }
     }
 

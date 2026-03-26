@@ -13,9 +13,11 @@
             {{-- wire:loading.class="opacity-50"  --}}
                 wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
-                filterBy,
+                filterBy, showDeleted,
                 saveAllRows, processImport, saveUserInternal,
-                saveUser, updateUser, destroyUser, saveProdi, updateProdi, destroyProdi,
+                saveUser, updateUser, destroyUser, restoreUser,
+                saveProdi, updateProdi, destroyProdi, restoreProdi,
+                saveMK, updateMK, destroyMK, restoreMK,
                 search, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
                 class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">
                 {{ $slot }}

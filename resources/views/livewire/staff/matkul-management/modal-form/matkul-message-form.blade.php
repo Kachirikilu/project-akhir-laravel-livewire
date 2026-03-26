@@ -68,7 +68,7 @@
             <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
             <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
                 Pastikan <strong class="text-[var(--focus-color)] font-semibold">Kode Mata Kuliah
-                </strong> terpenuhi (contoh: <strong><span class="italic">TKE1107</span></strong>).
+                </strong> terpenuhi (contoh: <strong class="text-[var(--focus-color)] font-semibold"><span class="italic">TKE1107</span></strong>).
             </p>
         </div>
 

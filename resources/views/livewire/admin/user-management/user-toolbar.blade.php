@@ -16,6 +16,7 @@
                     @click="
                         $store.config?.setType('admin');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-red-700 dark:text-red-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
@@ -35,6 +36,7 @@
                     @click="
                         $store.config?.setType('dosen');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-lime-700 dark:text-lime-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
@@ -53,6 +55,7 @@
                     @click="
                         $store.config?.setType('mahasiswa');
                         $store.config?.setEdit(0);
+                        $store.config?.resetSelect();
                         $store.config?.setColor('text-cyan-700 dark:text-cyan-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');

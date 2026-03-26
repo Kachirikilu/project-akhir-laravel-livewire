@@ -32,7 +32,8 @@
             'searchString' => 'jurusan_search',
             'nameSearchString' => 'jurusanNameSearch',
             'fetchString' => 'fetchJurusan',
-            'iconString' => 'book-open'
+            'iconString' => 'book-open',
+            'wireLoading' => 'fetchJurusan'
         ])
 
         {{-- 📧 Kode Program Studi Input --}}

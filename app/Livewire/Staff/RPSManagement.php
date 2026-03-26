@@ -39,6 +39,8 @@ class MataKuliahManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public $showDeleted = false;
+
     // public $selectedMatkulName = '';
 
     protected $listeners = ['refresh-table' => 'refreshMatkulsList',
@@ -52,6 +54,7 @@ class MataKuliahManagement extends Component
         'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'nama_matkul'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted'  => ['except' => false]
 
         // 'prodi_name' => ['except' => null],
         // 'jurusan_name' => ['except' => null],

@@ -16,7 +16,7 @@
         @endphp --}}
 
         {{-- 1. Header Modal --}}
-        <div class="p-6 pb-4 border-b">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
 
                 <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
@@ -38,7 +38,7 @@
                 </template>
 
                 <template x-if="$store.config?.typeModal == 'mk-universitas'" x-cloak>
-                    <flux:badge icon="building-library" color="yellow" size="lg">
+                    <flux:badge icon="globe-alt" color="red" size="lg">
                         <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah - Universitas' : 'Mata Kuliah - Universitas'"></span>
                     </flux:badge>
                 </template>

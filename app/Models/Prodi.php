@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Prodi extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'jurusan_id',
@@ -21,7 +23,7 @@ class Prodi extends Model
 
     public function jurusan_rel()
     {
-        return $this->belongsTo(Jurusan::class, 'jurusan_id');
+        return $this->belongsTo(Jurusan::class, 'jurusan_id')->withTrashed();
     }
 
     public function mata_kuliahs()
@@ -65,13 +67,30 @@ class Prodi extends Model
             }
             $kodeJurusan = $this->jurusan_rel?->kode_jr;
             if (! empty($kodeJurusan)) {
-                return $kodeJurusan.' (Jurusan)';
+                return $kodeJurusan;
             }
             $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
-                return $kodeFakultas.' (Fakultas)';
+                return $kodeFakultas;
             }
-            return null;
+            return 'UNI';
+        });
+    }
+    protected function tingkatanProdi(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! empty($this->attributes['kode_pr'])) {
+                return 1;
+            }
+            $kodeJurusan = $this->jurusan_rel?->kode_jr;
+            if (! empty($kodeJurusan)) {
+                return 2;
+            }
+            $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
+            if (! empty($kodeFakultas)) {
+                return 3;
+            }
+            return 4;
         });
     }
 

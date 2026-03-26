@@ -2,7 +2,7 @@
 
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Konfirmasi Hapus</flux:heading>
+            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400" x-show="$store.config?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
@@ -16,7 +16,9 @@
                             '***Kode ' + $store.config?.kode_pr_delete + '***'
                         ">
                 </strong>?
-                Tindakan ini tidak dapat dibatalkan.
+                <span x-show="$store.config?.isForceDelete">
+                    Tindakan ini tidak dapat dibatalkan!
+                </span>
             </flux:subheading> 
         </div>
 
@@ -48,16 +50,8 @@
                     Menghapus...
                 </span>
             </flux:button>
-            {{-- </flux:modal.close> --}}
 
         </div>
     </div>
-    {{-- <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('close-delete-modal', () => {
-                Flux.modal('user-delete').hide()
-            })
-        })
-    </script> --}}
 
 </flux:modal>

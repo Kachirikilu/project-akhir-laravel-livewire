@@ -48,12 +48,15 @@ class UserManagement extends Component
     protected $listeners = ['refresh-table' => 'refreshUsersList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
+    public $showDeleted = false;
+
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted'  => ['except' => false]
 
         // 'prodi_name' => ['except' => null],
         // 'jurusan_name' => ['except' => null],
@@ -119,6 +122,11 @@ class UserManagement extends Component
 
         $query = clone $baseQuery;
         $this->buttonRoleFilter($query);
+
+        if ($this->showDeleted) {
+            $query->onlyTrashed();
+            $baseQuery->onlyTrashed();
+        }
 
         return view('livewire.admin.user-management', [
             'users' => $query->paginate($this->perPage),
