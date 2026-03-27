@@ -50,6 +50,7 @@ trait WithUserDelete
             $this->js("Flux.toast('{$message}')");
             $this->cleanupDeleteState();
             $this->dispatch('refresh-data'); 
+            $this->showUserDelete = false;
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -57,6 +58,8 @@ trait WithUserDelete
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses permintaan!' })");
+            $this->dispatch('refresh-data');
+            $this->showUserDelete = false;
         }
     }
 
@@ -71,6 +74,7 @@ trait WithUserDelete
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan pengguna!' })");
+            $this->dispatch('refresh-data');
         }
     }
 

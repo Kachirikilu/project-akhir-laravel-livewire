@@ -3,15 +3,15 @@
 namespace App\Models\Auth;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
@@ -31,16 +31,17 @@ class User extends Authenticatable
 
     /**
      * The accessors to append to the model's array form.
+     *
      * * @var array
      */
     protected $appends = [
-        'profile_photo_url', 
+        'profile_photo_url',
         'name',
         'identity1',
         'identity2',
         'identity3',
         'role',
-        'status'
+        'status',
     ];
 
     /**
@@ -68,6 +69,79 @@ class User extends Authenticatable
         ];
     }
 
+    public function scopeSearchUser($query, $search)
+    {
+        if (empty($search)) {
+            return $query;
+        }
+
+        $searchTerm = '%'.trim($search).'%';
+        $searchLower = str($search)->lower();
+
+        return $query->where(function ($q) use ($searchTerm, $searchLower, $search) {
+            // 1. Search di Tabel Users Utama
+            $q->where('email', 'like', $searchTerm);
+
+            if (is_numeric($search)) {
+                $q->orWhere('id', $search);
+            }
+
+            // 2. Definisi Role dan Field Spesifiknya
+            $roleConfigs = [
+                'admin' => ['name', 'nip', 'nitk', 'status'],
+                'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
+                'mahasiswa' => ['name', 'nim', 'tahun_angkatan', 'status'],
+            ];
+
+            foreach ($roleConfigs as $role => $fields) {
+                // Pencarian berdasarkan identitas role (NIP, Nama, dll)
+                $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
+                    $r->where(function ($sub) use ($searchTerm, $fields) {
+                        foreach ($fields as $field) {
+                            $sub->orWhere($field, 'like', $searchTerm);
+                        }
+                    });
+                });
+
+                // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
+                $q->orWhereHas("$role.prodi", function ($p) use ($searchTerm) {
+                    $p->where('nama_prodi', 'like', $searchTerm)
+                        ->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
+                            $j->where('nama_jurusan', 'like', $searchTerm)
+                                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
+                                ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
+                                    $f->where('nama_fakultas', 'like', $searchTerm)
+                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                                });
+                        });
+                });
+
+                // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
+                if ($searchLower->contains($role)) {
+                    $q->orWhereHas($role);
+                }
+            }
+        });
+    }
+
+    public function scopeInLocationUser($query, $type, $id)
+    {
+        if (!$id) return $query;
+
+        return $query->where(function ($q) use ($type, $id) {
+            $roles = ['admin', 'dosen', 'mahasiswa'];
+            foreach ($roles as $role) {
+                $q->orWhereHas($role . ($type !== 'prodi' ? '.prodi' : ''), function ($r) use ($type, $id) {
+                    if ($type === 'prodi') $r->where('prodi_id', $id);
+                    if ($type === 'jurusan') $r->where('jurusan_id', $id);
+                    if ($type === 'fakultas') {
+                        $r->whereHas('jurusan_rel', fn($j) => $j->where('fakultas_id', $id));
+                    }
+                });
+            }
+        });
+    }
+
     /**
      * Get the user's initials
      */
@@ -84,62 +158,87 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->name ?? $this->email;
         });
     }
 
-    // protected function identity1(): Attribute
-    // {
-    //     return Attribute::get(function () {
-    //         if ($this->admin) return $this->admin->nip;
-    //         if ($this->dosen) return $this->dosen->nip;
-    //         if ($this->mahasiswa) return $this->mahasiswa->nim;
-    //         return null;
-    //     });
-    // }
     protected function identity1(): Attribute
     {
         return Attribute::get(function () {
             $value = null;
 
-            if ($this->admin) $value = $this->admin->nip;
-            elseif ($this->dosen) $value = $this->dosen->nip;
-            elseif ($this->mahasiswa) $value = $this->mahasiswa->nim;
+            if ($this->admin) {
+                $value = $this->admin->nip;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nip;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->nim;
+            }
+
             return empty($value) ? null : $value;
         });
     }
+
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
             $value = null;
 
-            if ($this->admin) $value = $this->admin->nitk;
-            elseif ($this->dosen) $value = $this->dosen->nidn;
+            if ($this->admin) {
+                $value = $this->admin->nitk;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nidn;
+            }
+
             return empty($value) ? null : $value;
         });
     }
+
     protected function identity3(): Attribute
     {
         return Attribute::get(function () {
             $value = $this->dosen?->nidk;
+
             return $value ?: null;
         });
     }
-    public function getRoleAttribute(): string
+
+    public function role(): Attribute
     {
-        if ($this->admin) return 'Admin';
-        if ($this->dosen) return 'Dosen';
-        if ($this->mahasiswa) return 'Mahasiswa';
-        return 'User';
+        return Attribute::get(function () {
+
+            if ($this->admin) {
+                return 'Admin';
+            }
+            if ($this->dosen) {
+                return 'Dosen';
+            }
+            if ($this->mahasiswa) {
+                return 'Mahasiswa';
+            }
+
+            return 'User';
+
+        });
     }
+
     protected function status(): Attribute
     {
         return Attribute::get(function () {
 
-        if ($this->admin) return $this->admin->status;
-        if ($this->dosen) return $this->dosen->status;
-        if ($this->mahasiswa) return $this->mahasiswa->status;
-        return 'Tidak Ada';
+            if ($this->admin) {
+                return $this->admin->status;
+            }
+            if ($this->dosen) {
+                return $this->dosen->status;
+            }
+            if ($this->mahasiswa) {
+                return $this->mahasiswa->status;
+            }
+
+            return 'Tidak Ada';
+
         });
     }
 
@@ -147,15 +246,16 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
+
     public function dosen(): HasOne
     {
         return $this->hasOne(Dosen::class);
     }
+
     public function mahasiswa(): HasOne
     {
         return $this->hasOne(Mahasiswa::class);
     }
-
 
     /**
      * Dapatkan URL foto profil pengguna.
@@ -167,6 +267,7 @@ class User extends Authenticatable
             if ($this->profile_photo_path) {
                 return Storage::disk('public')->url($this->profile_photo_path);
             }
+
             return $this->defaultProfilePhotoUrl();
         });
     }
@@ -179,7 +280,7 @@ class User extends Authenticatable
     {
         $name = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=0080FF';
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=0080FF';
     }
 
     protected static function booted()

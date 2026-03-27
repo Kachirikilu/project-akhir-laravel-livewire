@@ -65,6 +65,7 @@ trait WithMatkulDelete
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses: ' . $e->getMessage() })");
+            $this->dispatch('refresh-data');
             $this->showMKDelete = false;
         }
     }
@@ -83,6 +84,7 @@ trait WithMatkulDelete
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan Mata Kuliah!' })");
+            $this->dispatch('refresh-data');
         }
     }
 

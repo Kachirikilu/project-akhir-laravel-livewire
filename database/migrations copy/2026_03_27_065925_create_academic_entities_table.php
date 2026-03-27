@@ -11,16 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rps', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
-            $table->string('tahun_akademik', 9);
-            $table->boolean('is_draf')->default(true);
-            $table->date('tanggal_revisi')->nullable();
-            $table->softDeletes();
-            $table->timestamps();
-        });
-
         Schema::create('cpls', function (Blueprint $table) {
             $table->id();
             $table->string('kode_cpl');
@@ -65,12 +55,11 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('rps');
-        Schema::dropIfExists('cpls');
-        Schema::dropIfExists('cpmks');
-        Schema::dropIfExists('sub_cpmks');
-        Schema::dropIfExists('referensis');
+        Schema::dropIfExists('academic_entities');
     }
 };

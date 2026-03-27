@@ -68,9 +68,12 @@ trait WithProdiDelete
             $this->js("Flux.toast('{$message}')");
             $this->cleanupDeleteState();
             $this->dispatch('refresh-data');
+            $this->showProdiDelete = false;
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses permintaan!' })");
+            $this->dispatch('refresh-data');
+            $this->showProdiDelete = false;
         }
     }
 
@@ -84,8 +87,12 @@ trait WithProdiDelete
             $nama = $data->nama_prodi ?? $data->nama_jurusan ?? $data->nama_fakultas;
             $this->js("Flux.toast('Data {$nama} berhasil dipulihkan!')");
             $this->dispatch('refresh-data');
+            $this->showProdiDelete = false;
+            
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan data!' })");
+            $this->dispatch('refresh-data');
+            $this->showProdiDelete = false;
         }
     }
 

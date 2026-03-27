@@ -25,16 +25,25 @@ trait WithRPSFilters
     public function inputRPSSearch()
     {
         $query = RPS::query()->with(['mataKuliah.prodis']);
-        $searchTerm = '%' . trim($this->search) . '%';
+        $search = trim($this->search);
+        $searchTerm = '%' . $search . '%';
 
-        if (!empty($this->search)) {
-            $query->where(function ($q) use ($searchTerm) {
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search, $searchTerm) {
                 $q->whereHas('mataKuliah', function ($mq) use ($searchTerm) {
                     $mq->where('nama_matkul', 'like', $searchTerm)
-                       ->orWhere('kode_mk', 'like', $searchTerm);
+                    ->orWhere('kode_mk', 'like', $searchTerm);
                 })
-                ->orWhere('tahun_akademik', 'like', $searchTerm)
-                ->orWhere('status', 'like', $searchTerm);
+                ->orWhere('tahun_akademik', 'like', $searchTerm);
+
+                $searchLower = strtolower($search);
+                
+                if (in_array($searchLower, ['draf', 'draft', 'konsep', 'aseli'])) {
+                    $q->orWhere('is_draf', true);
+                } 
+                elseif (in_array($searchLower, ['aktif', 'active', 'publish', 'published', 'siap'])) {
+                    $q->orWhere('is_draf', false);
+                }
             });
         }
 

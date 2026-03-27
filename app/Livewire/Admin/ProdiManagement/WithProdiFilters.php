@@ -40,17 +40,11 @@ trait WithProdiFilters
                 $q->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
                     $jq->where('nama_jurusan', 'like', $searchTerm)
                         ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
-                    // if (is_numeric($this->search)) {
-                    //     $jq->orWhere('jurusans.id', $this->search);
-                    // }
                 });
                 // Fakultas
                 $q->orWhereHas('jurusan_rel.fakultas_rel', function ($fq) use ($searchTerm) {
                     $fq->where('nama_fakultas', 'like', $searchTerm)
                         ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-                    // if (is_numeric($this->search)) {
-                    //     $fq->orWhere('fakultas.id', $this->search);
-                    // }
                 });
 
             });
@@ -76,52 +70,6 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
-    // public function buttonStrataFilter($query)
-    // {
-    //     // 1. Terapkan filter relasi Fakultas/Jurusan pada query utama
-    //     $query->when($this->selectedFakultasId, function ($q) {
-    //         $q->whereHas('jurusan_rel', function ($rel) {
-    //             $rel->where('fakultas_id', $this->selectedFakultasId);
-    //         });
-    //     });
-
-    //     $query->when($this->selectedJurusanId, function ($q) {
-    //         $q->where('jurusan_id', $this->selectedJurusanId);
-    //     });
-
-    //     // 2. Hitung semua statistik (Total, Sarjana, Magister, Doktor) dalam SATU query
-    //     $stats = Prodi::query()
-    //         ->when($this->selectedFakultasId, function ($q) {
-    //             $q->whereExists(function ($sub) {
-    //                 $sub->select(\DB::raw(1))
-    //                     ->from('jurusans')
-    //                     ->whereColumn('jurusans.id', 'prodis.jurusan_id')
-    //                     ->where('fakultas_id', $this->selectedFakultasId);
-    //             });
-    //         })
-    //         ->when($this->selectedJurusanId, function ($q) {
-    //             $q->where('jurusan_id', $this->selectedJurusanId);
-    //         })
-    //         ->selectRaw("
-    //             COUNT(*) as total,
-    //             SUM(CASE WHEN nama_strata = 'Sarjana' THEN 1 ELSE 0 END) as sarjana,
-    //             SUM(CASE WHEN nama_strata = 'Magister' THEN 1 ELSE 0 END) as magister,
-    //             SUM(CASE WHEN nama_strata = 'Doktor' THEN 1 ELSE 0 END) as doktor
-    //         ")->first();
-
-    //     // 3. Terapkan filter strata untuk tampilan tabel utama
-    //     if (in_array($this->filter, ['sarjana', 'magister', 'doktor'])) {
-    //         $query->where('nama_strata', ucfirst($this->filter));
-    //     }
-
-    //     return [
-    //         $stats->total ?? 0,
-    //         $stats->sarjana ?? 0,
-    //         $stats->magister ?? 0,
-    //         $stats->doktor ?? 0
-    //     ];
-    // }
-
     public function resetInputFilter()
     {
         $this->reset(['search', 'filter']);
@@ -144,7 +92,15 @@ trait WithProdiFilters
         $query->select('prodis.*');
 
         if ($this->sortField === 'prodi') {
-            $query->orderBy('prodis.nama_prodi', $this->sortDirection);
+            $query->orderBy('prodis.nama_prodi', $this->sortDirection)
+                ->orderByRaw("
+                    CASE 
+                        WHEN nama_strata = 'Sarjana' THEN 1 
+                        WHEN nama_strata = 'Magister' THEN 2 
+                        WHEN nama_strata = 'Doktor' THEN 3 
+                        ELSE 4 
+                    END " . $this->sortDirection
+                );
         } elseif ($this->sortField === 'jurusan') {
             $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
                 ->orderBy('jurusans.nama_jurusan', $this->sortDirection);

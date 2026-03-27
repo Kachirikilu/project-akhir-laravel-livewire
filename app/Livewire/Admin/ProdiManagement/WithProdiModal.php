@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Jurusan;
-
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -20,36 +19,12 @@ trait WithProdiModal
 
     public $prodiType;
 
-    // public $prodi_id;
-
-    // public $jurusan_id;
     public $jurusan_id_2;
 
-    // public $fakultas_id;
     public $fakultas_id_2;
 
-    // public $nama_prodi;
-
-    // public $nama_strata;
-
-    // public $nama_jurusan;
-
-    // public $nama_fakultas;
-
-    // public $prodiNameSearch;
-
-    // public $prodiResults;
-
-    // public $selectedProdiId;
-
-    // public $selectedJurusanId;
-
-    // public $selectedFakultasId;
-
     protected $prodis = [
-        // 'prodi_id' => 'required|exists:prodis,id',
         'nama_prodi' => 'required|string|max:255|unique:prodis,nama_prodi',
-        // 'nama_strata' => 'required|string|max:255',
         'jurusan_id' => 'required|exists:jurusans,id',
         'nama_jurusan' => 'required|string|max:255|unique:jurusans,nama_jurusan',
         'fakultas_id' => 'required|exists:fakultas,id',
@@ -58,10 +33,6 @@ trait WithProdiModal
 
     public function addProdi($prodi)
     {
-        // if ($this->isEditing) {
-        //     $this->resetInput();
-        // }
-
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
@@ -83,25 +54,20 @@ trait WithProdiModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        // $this->nama_prodi = $this->nama_jurusan = $this->nama_fakultas
-        //  = $this->nama_strata
-        // = null;
         $this->jurusan_id = $this->fakultas_id = $this->selected_id = null;
 
         try {
             if ($type === 'prodi') {
                 $prodi = Prodi::with('jurusan_rel')->findOrFail($id);
                 $this->selected_id = $prodi->id;
-                // $this->nama_prodi = $prodi->nama_prodi;
-                // $this->nama_strata = $prodi->nama_strata;
                 $this->jurusan_id = $prodi->jurusan_id ?? null;
                 $this->jurusan_id_2 = $prodi->jurusan_id ?? null;
 
-                $this->jurusanNameSearch = $prodi->jurusan_rel->nama_jurusan ?? '';
+                $this->jurusanNameSearch = $prodi->jurusan ?? '';
 
                 if ($this->jurusan_id) {
                     $jurusan = Jurusan::find($this->jurusan_id);
-                    $this->jurusanNameSearch = $jurusan ? 'Jurusan '.$jurusan->nama_jurusan : '';
+                    $this->jurusanNameSearch = $jurusan ? 'Jurusan '.$jurusan->jurusan : '';
                 } else {
                     $this->jurusanNameSearch = '';
                 }
@@ -111,14 +77,14 @@ trait WithProdiModal
             } elseif ($type === 'jurusan') {
                 $jurusan = Jurusan::with('fakultas_rel')->findOrFail($id);
                 $this->selected_id = $jurusan->id;
-                // $this->nama_jurusan = $jurusan->nama_jurusan;
+
                 $this->fakultas_id = $jurusan->fakultas_id;
                 $this->fakultas_id_2 = $jurusan->fakultas_id;
-                $this->fakultasNameSearch = $jurusan->fakultas_rel->nama_fakultas ?? '';
+                $this->fakultasNameSearch = $jurusan->fakultas_rel->fakultas ?? '';
 
                 if ($this->fakultas_id) {
                     $fakultas = Fakultas::find($this->fakultas_id);
-                    $this->fakultasNameSearch = $fakultas ? 'Fakultas '.$fakultas->nama_fakultas : '';
+                    $this->fakultasNameSearch = $fakultas ? 'Fakultas '.$fakultas->fakultas : '';
                 } else {
                     $this->fakultasNameSearch = '';
                 }
@@ -128,7 +94,6 @@ trait WithProdiModal
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
                 $this->selected_id = $fakultas->id;
-                // $this->nama_fakultas = $fakultas->nama_fakultas;
             }
 
             $this->showProdiModal = true;
@@ -148,13 +113,12 @@ trait WithProdiModal
             $kodePr = $data['kode_pr'] ?? null;
             if (! empty($kodePr) && ! empty($data['jurusan_id'])) {
                 $jurusan = DB::table('jurusans')->find($data['jurusan_id']);
-                $kodeJr = $jurusan->kode_jr ?? null;
-                // Jika tidak ada kode_jr, ambil kode_fk
+                $kodeJr = $jurusan->kode_jr;
+
                 if (empty($kodeJr) && $jurusan) {
                     $fakultas = DB::table('fakultas')->find($jurusan->fakultas_id);
-                    $kodeJr = $fakultas->kode_fk ?? null;
+                    $kodeJr = $fakultas->kode_fk;
                 }
-                // Jika sama → kosongkan kode_pr
                 if ($kodePr === $kodeJr) {
                     $data['kode_pr'] = null;
                 }
@@ -175,16 +139,13 @@ trait WithProdiModal
                         $jurusan = DB::table('jurusans')->find($data['jurusan_id']);
                         $fakultasId = $jurusan ? $jurusan->fakultas_id : null;
 
-                        // 1. Gagal jika dipakai Jurusan lain (bukan induknya)
                         $otherJr = DB::table('jurusans')->where('kode_jr', $value)->where('id', '!=', $data['jurusan_id'])->exists();
-                        // 2. Gagal jika dipakai Fakultas lain (bukan kakeknya)
                         $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $fakultasId)->exists();
-                        // 3. Gagal jika dipakai Prodi lain yang beda Jurusan
                         $otherPr = DB::table('prodis')->where('kode_pr', $value)->where('jurusan_id', '!=', $data['jurusan_id'])->exists();
 
                         if (empty($data['jurusan_id'])) {
                             $fail('Isi terlebih dahulu Jurusan!');
-                        } else if ($otherJr || $otherFk || $otherPr) {
+                        } elseif ($otherJr || $otherFk || $otherPr) {
                             $fail('Kode Program Studi ini sudah digunakan oleh instansi di luar silsilah Anda!');
                         }
                     },
@@ -204,7 +165,6 @@ trait WithProdiModal
             if (! empty($kodeJr) && ! empty($data['fakultas_id'])) {
                 $fakultas = DB::table('fakultas')->find($data['fakultas_id']);
                 $kodeFk = $fakultas->kode_fk ?? null;
-                // Jika sama → kosongkan kode_jr
                 if ($kodeJr === $kodeFk) {
                     $data['kode_jr'] = null;
                 }
@@ -217,7 +177,6 @@ trait WithProdiModal
                 ],
                 'kode_jr' => [
                     'nullable', 'string', 'min:3', 'max:3',
-                    // Tambahkan ini agar tetap dicek keunikan di tabel jurusans itu sendiri
                     $this->uniqueRule('jurusans', 'kode_jr', $isEditing ? $this->selected_id : null),
 
                     function ($attribute, $value, $fail) use ($data) {
@@ -232,7 +191,6 @@ trait WithProdiModal
                             ->exists();
 
                         // 2. Gagal jika dipakai Jurusan lain yang beda Fakultas
-                        // (Sudah tercover uniqueRule di atas sebenarnya, tapi ini untuk proteksi silsilah)
                         $otherJr = DB::table('jurusans')
                             ->where('kode_jr', $value)
                             ->where('fakultas_id', '!=', $data['fakultas_id'])
@@ -248,7 +206,7 @@ trait WithProdiModal
 
                         if (empty($data['fakultas_id'])) {
                             $fail('Isi terlebih dahulu Fakultas!');
-                        } else if ($otherFk || $otherJr || $otherPr) {
+                        } elseif ($otherFk || $otherJr || $otherPr) {
                             $fail('Kode Jurusan ini sudah digunakan oleh instansi di luar lingkup Fakultas Anda!');
                         }
                     },
@@ -309,10 +267,14 @@ trait WithProdiModal
     private function prepareData(array $validated)
     {
         if ($this->prodiType === 'prodi') {
-            $validated['nama_prodi'] = $this->normalizeNama($validated['nama_prodi']);
+            $pattern = '/\b(s1|s2|s3|sarjana|magister|doktor)\b/i';
+            $namaBersih = preg_replace($pattern, '', $validated['nama_prodi']);
+            $validated['nama_prodi'] = $this->normalizeNama(trim($namaBersih));
+
         } elseif ($this->prodiType === 'jurusan') {
             $nama = preg_replace('/^jurusan\s+/i', '', trim($validated['nama_jurusan']));
             $validated['nama_jurusan'] = $this->normalizeNama($nama);
+
         } elseif ($this->prodiType === 'fakultas') {
             $nama = preg_replace('/^fakultas\s+/i', '', trim($validated['nama_fakultas']));
             $validated['nama_fakultas'] = $this->normalizeNama($nama);
@@ -323,12 +285,9 @@ trait WithProdiModal
 
     public function saveProdi($data)
     {
-        // if (empty($data['jurusan_id'])) {
         $data['jurusan_id'] = $this->jurusan_id;
-        // }
-        // if (empty($data['fakultas_id'])) {
         $data['fakultas_id'] = $this->fakultas_id;
-        // }
+
         if (empty($data['nama_strata'])) {
             $data['nama_strata'] = 'Sarjana';
         }
@@ -360,12 +319,14 @@ trait WithProdiModal
             });
 
             $this->resetInput();
+            $this->dispatch('toast', message: '✅ Data berhasil ditambahkan!');
+            $this->dispatch('refresh-data');
             $this->showProdiModal = false;
 
-            $this->dispatch('prodi-saved');
-            $this->dispatch('toast', message: '✅ Data berhasil ditambahkan!');
         } catch (\Exception $e) {
             $this->dispatch('toast', message: '❌ Terjadi kesalahan saat menambahkan data!');
+            $this->dispatch('refresh-data');
+            $this->showProdiModal = false;
         }
     }
 
@@ -378,15 +339,14 @@ trait WithProdiModal
         if ((empty($data['fakultas_id']) && $this->fakultas_id !== $this->fakultas_id_2) ||
             ($this->fakultas_id == $this->fakultas_id_2) || ($this->fakultas_id !== $this->fakultas_id_2)) {
             $data['fakultas_id'] = $this->fakultas_id;
-        } 
+        }
 
         if (empty($data['nama_strata'])) {
             $data['nama_strata'] = 'Sarjana';
         }
-        
+
         $validated = $this->inputModalProdi(true, $data);
         $validated = $this->prepareData($validated);
-
 
         try {
             DB::transaction(function () use ($validated) {
@@ -411,13 +371,13 @@ trait WithProdiModal
                 }
             });
 
-            $this->showProdiModal = false;
-            $this->dispatch('toast', message: "✅ Data berhasil diperbarui!");
-
+            $this->dispatch('toast', message: '✅ Data berhasil diperbarui!');
             $this->dispatch('refresh-data');
+            $this->showProdiModal = false;
 
         } catch (\Exception $e) {
             $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
+            $this->dispatch('refresh-data');
             $this->showProdiDelete = false;
         }
     }

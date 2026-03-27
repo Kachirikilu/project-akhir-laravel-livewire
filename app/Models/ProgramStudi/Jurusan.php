@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Jurusan extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['fakultas_id', 'nama_jurusan', 'kode_jr'];
-    protected $appends = ['jurusan', 'kode', 'fakultas'];
+    protected $fillable = ['fakultas_id', 'kode_jr', 'nama_jurusan'];
+    protected $appends = ['kode', 'jurusan', 'fakultas'];
 
     public function fakultas_rel()
     {
@@ -23,6 +24,26 @@ class Jurusan extends Model
     public function prodis(): HasMany
     {
         return $this->hasMany(Prodi::class);
+    }
+
+    public function scopeSearchJurusan(Builder $query, $searchTerm)
+    {
+        $searchTerm = '%' . trim($searchTerm) . '%';
+
+        return $query->where(function ($q) use ($searchTerm) {
+            // 1. Filter dasar Jurusan
+            $q->where('nama_jurusan', 'like', $searchTerm)
+                ->orWhere('kode_jr', 'like', $searchTerm)
+                ->orWhere('id', 'like', $searchTerm)
+                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
+
+            // 2. Filter berdasarkan Fakultas (Relasi)
+            $q->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
+                $sq->where('nama_fakultas', 'like', $searchTerm)
+                    ->orWhere('kode_fk', 'like', $searchTerm)
+                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+            });
+        });
     }
 
     protected function jurusan(): Attribute {

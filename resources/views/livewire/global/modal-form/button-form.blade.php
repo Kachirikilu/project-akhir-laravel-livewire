@@ -3,7 +3,7 @@
 
         {{-- Button Simpan Excel (Green) --}}
         <template x-if="$store.config?.typeModal == 'file'" x-cloak>
-            <flux:button @click="$store.config?.reset()" type="submit" variant="primary"
+            <flux:button type="submit" variant="primary"
                 wire:loading.attr="disabled" 
                 wire:target="excel_file, parseExcelFile, processImport, saveAllRows, saveUserInternal"
                 class="cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white border-none transition-all duration-200 shadow-sm dark:shadow-green-500/20">

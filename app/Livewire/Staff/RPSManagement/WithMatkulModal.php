@@ -14,22 +14,9 @@ trait WithMatkulModal
 
     public $showMKModal = false;
 
-    // public $prodi_id_2;
-
-    // public $prodi_id_array_2 = [];
-
-    // public $prodi_names = [];
-
-    // public $prodi_kodes = [];
-
     public function addMK($tingkatan)
     {
-        // if ($this->isEditing) {
-        //     $this->resetInput();
-        // }
-        // if ($tingkatan !== 'mk-prodi') {
         $this->resetInput();
-        // }
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -37,11 +24,11 @@ trait WithMatkulModal
         $this->mkType = $tingkatan;
         $this->showMKModal = true;
 
-        if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
+        if ($tingkatan == 1 || $tingkatan == 4) {
             $this->updatedProdiNameSearch($this->prodiNameSearch);
-        } elseif ($tingkatan == 'mk-jurusan') {
+        } elseif ($tingkatan == 2) {
             $this->updatedJurusanNameSearch($this->jurusanNameSearch);
-        } elseif ($tingkatan == 'mk-fakultas') {
+        } elseif ($tingkatan == 3) {
             $this->updatedFakultasNameSearch($this->fakultasNameSearch);
         }
     }
@@ -61,17 +48,12 @@ trait WithMatkulModal
         try {
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
 
-            // Sesuaikan dengan $selectedNameArray
             $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
             $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
             $this->prodi_kode_array = $mk->prodis->pluck('kode')->toArray();
 
             $this->dispatch('refresh-component');
 
-            // 2. Ambil data Array (untuk Checkbox/Multi-select)
-            // $this->prodi_id_array_2 = $this->prodi_id_array;
-
-            // 3. Ambil data Hirarki dari Prodi Pertama sebagai referensi UI
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
@@ -83,23 +65,21 @@ trait WithMatkulModal
                 $this->fakultasNameSearch = 'Fakultas '.$firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
                 $this->fakultas_kode = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
 
-                // dd($tingkatan);
-                if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
+                if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->prodi_id = $firstProdi->id;
                     $this->prodiNameSearch = $firstProdi->prodi;
                     $this->prodi_kode = $firstProdi->kode ?? 'UNI';
                 }
             }
 
-            if ($tingkatan == 'mk-prodi' || $tingkatan == 'mk-universitas') {
+            if ($tingkatan == 1 || $tingkatan == 4) {
                 $this->updatedProdiNameSearch($this->prodiNameSearch);
-            } elseif ($tingkatan == 'mk-jurusan') {
+            } elseif ($tingkatan == 2) {
                 $this->updatedJurusanNameSearch($this->jurusanNameSearch);
-            } elseif ($tingkatan == 'mk-fakultas') {
+            } elseif ($tingkatan == 3) {
                 $this->updatedFakultasNameSearch($this->fakultasNameSearch);
             }
 
-            // 4. Munculkan Modal
             $this->showMKModal = true;
 
             $this->dispatch('fill-modal-mk', mk: $mk);
@@ -112,11 +92,11 @@ trait WithMatkulModal
 
     private function inputModalMK($isEditing, $data)
     {
-        $tingkatanMap = [
-            'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
-            1 => 1, 2 => 2, 3 => 3, 4 => 4,
-        ];
-        $tingkatan = $tingkatanMap[$this->mkType] ?? 1;
+        // $tingkatanMap = [
+        //     'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
+        //     1 => 1, 2 => 2, 3 => 3, 4 => 4,
+        // ];
+        $tingkatan = $this->mkType ?? 1;
         $targetProdiIds = ($tingkatan === 1) ? [$this->prodi_id] : ($this->prodi_id_array ?: []);
 
         $rules = [
@@ -182,13 +162,13 @@ trait WithMatkulModal
         return ucwords(strtolower(trim($value)));
     }
 
-    private function generateTingkatanMap($tingkatan) {
-        $tingkatanMap = [
-            'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
-            1 => 1, 2 => 2, 3 => 3, 4 => 4,
-        ];
-        return $tingkatanMap[$this->mkType] ?? 1;
-    }
+    // private function generateTingkatanMap($tingkatan) {
+    //     $tingkatanMap = [
+    //         'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
+    //         1 => 1, 2 => 2, 3 => 3, 4 => 4,
+    //     ];
+    //     return $tingkatanMap[$this->mkType] ?? 1;
+    // }
 
     private function generateKodePrefix($data, $tingkatan)
     {
@@ -212,16 +192,16 @@ trait WithMatkulModal
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
-        // try {
+        try {
             $validated = $this->inputModalMK(false, $data);
-            $tingkatan = $this->generateTingkatanMap($this->mkType);
+            $tingkatan = $this->mkType;
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $tingkatan, $kodePrefix, $data) {
 
                 $mk = MataKuliah::create([
                     'tingkatan_mk' => $tingkatan,
-                    'kode_mk' => $kodePrefix,
+                    // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
                     'nama_matkul' => $this->normalizeNama($validated['nama_matkul']),
@@ -245,9 +225,9 @@ trait WithMatkulModal
             $this->dispatch('toast', message: '✅ Mata Kuliah berhasil ditambahkan!');
             $this->dispatch('refresh-data');
 
-        // } catch (\Exception $e) {
-        //     $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
+        }
     }
 
     public function updateMK($data)
@@ -261,7 +241,7 @@ trait WithMatkulModal
 
         try {
             $validated = $this->inputModalMK(true, $data);
-            $tingkatan = $this->generateTingkatanMap($this->mkType);
+            $tingkatan = $this->mkType;
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $tingkatan, $data, $kodePrefix) {
@@ -269,7 +249,7 @@ trait WithMatkulModal
 
                 // 3. UPDATE DATA UTAMA
                 $mk->update([
-                    'kode_mk' => $kodePrefix,
+                    // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
                     'nama_matkul' => $this->normalizeNama($validated['nama_matkul']),
@@ -291,7 +271,6 @@ trait WithMatkulModal
                 // 5. SINKRONISASI RELASI PIVOT DENGAN SORT ORDER
                 $syncData = [];
                 foreach ($cleanIds as $index => $id) {
-                    // Menjadikan index loop sebagai urutan di database
                     $syncData[$id] = ['sort_order' => $index];
                 }
 

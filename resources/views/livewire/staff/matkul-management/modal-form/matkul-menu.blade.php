@@ -5,7 +5,7 @@
         @php
             $isTrashed = $x->trashed();
 
-            $editCall = "editMK($x->id, '$typeXString')";
+            $editCall = "editMK($x->id, $typeXString)";
             $deleteCall = "deleteMK($x->id, $isTrashed)";
             $restoreCall = "restoreMK($x->id)";
         @endphp
@@ -23,15 +23,15 @@
                 $store.config?.setEdit(1);
 
                 const colors = {
-                    'mk-prodi': 'text-emerald-700 dark:text-emerald-400',
-                    'mk-jurusan': 'text-amber-700 dark:text-amber-400',
-                    'mk-fakultas': 'text-indigo-700 dark:text-indigo-400',
-                    'mk-universitas': 'text-red-700 dark:text-red-400'
+                    '1': 'text-emerald-700 dark:text-emerald-400',
+                    '2': 'text-amber-700 dark:text-amber-400',
+                    '3': 'text-indigo-700 dark:text-indigo-400',
+                    '4': 'text-red-700 dark:text-red-400'
                 };
                 $store.config?.setColor(colors[type] ?? 'text-gray-700');
 
                     $store.config?.setValueMK(
-                        '{{ $matkul->tingkatan_mode ?? '' }}',
+                        '{{ $matkul->tingkatan_mk ?? '' }}',
                         '{{ $matkul->matkul ?? '' }}',
                         '{{ $matkul->kode_blok ?? '' }}',
                         '{{ $matkul->digit_semester ?? '' }}',

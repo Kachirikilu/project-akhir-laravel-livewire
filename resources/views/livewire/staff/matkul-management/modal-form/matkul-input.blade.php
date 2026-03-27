@@ -45,19 +45,19 @@
 
 
 
-            <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
+            <template x-if="$store.config?.typeModal == 1" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-prodi-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-jurusan'" x-cloak>
+            <template x-if="$store.config?.typeModal == 2" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-jurusan-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-fakultas'" x-cloak>
+            <template x-if="$store.config?.typeModal == 3" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-fakultas-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-universitas'" x-cloak>
+            <template x-if="$store.config?.typeModal == 4" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-universitas-input')
             </template>
         </div>

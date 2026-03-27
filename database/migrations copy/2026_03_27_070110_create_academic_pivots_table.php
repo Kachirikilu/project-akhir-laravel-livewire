@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Dosen Pengajar (RPS - Dosen)
+        // Dosen Pengajar (RPS - User)
         Schema::create('rps_pivot_dosen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
@@ -24,6 +24,20 @@ return new class extends Migration
             $table->boolean('is_ketua')->default(false);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
+        });
+
+        // Prodis - CPL (Ownership)
+        Schema::create('prodi_pivot_cpl', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
+            $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
+        });
+
+        // CPMK - CPL
+        Schema::create('cpmk_pivot_cpl', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
+            $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
         });
 
         // RPS - CPMK
@@ -42,40 +56,20 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
         });
 
-        // CPMK - CPL
-        Schema::create('cpmk_pivot_cpl', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
-            $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
-            $table->integer('sort_order')->default(0);
-        });
-
-        // Prodis - CPL (Ownership)
-        Schema::create('prodi_pivot_cpl', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
-            $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
-            $table->integer('sort_order')->default(0);
-        });
-
         // RPS - Referensi
         Schema::create('rps_pivot_referensi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
-            $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
-            $table->integer('sort_order')->default(0);
+            $table->foreignId('referensi_id')->constrained('referensis')->onDelete('cascade');
+            $table->string('kategori')->default('utama');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('rps_pivot_dosen');
-        Schema::dropIfExists('rps_pivot_cpmk');
-        Schema::dropIfExists('cpmk_pivot_scpmk');
-        Schema::dropIfExists('cpmk_pivot_cpl');
-        Schema::dropIfExists('prodi_pivot_cpl');
-        Schema::dropIfExists('rps_pivot_referensi');
-
-
+        Schema::dropIfExists('academic_pivots');
     }
 };

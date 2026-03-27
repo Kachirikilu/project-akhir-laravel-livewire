@@ -37,8 +37,6 @@ class MataKuliahManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    // public $selectedMatkulName = '';
-
     public $showDeleted = false;
 
     protected $listeners = ['refresh-table' => 'refreshMatkulsList',
@@ -48,15 +46,10 @@ class MataKuliahManagement extends Component
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
-        // 'selectedMatkulName' => ['except' => ''],
         'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted'  => ['except' => false]
-
-        // 'prodi_name' => ['except' => null],
-        // 'jurusan_name' => ['except' => null],
-        // 'fakultas_name' => ['except' => null]
     ];
 
     public function updatedPerPage()
@@ -69,21 +62,6 @@ class MataKuliahManagement extends Component
         $this->resetPage();
     }
 
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-    //     // $this->syncSortField($table);
-
-    //     // if ($table == 'jurusan' && $this->perPage > 50) {
-    //     //     $this->perPage = 50;
-    //     // }
-    //     // if ($table == 'fakultas' && $this->perPage > 10) {
-    //     //     $this->perPage = 10;
-    //     // }
-
-    //     $this->resetPage();
-    // }
-
     public function buttonMKFilter($query)
     {
         if ($this->filter === 'wajib') {
@@ -94,33 +72,6 @@ class MataKuliahManagement extends Component
             $query->where('tingkatan_mk', 4);
         }
     }
-
-    // public function render()
-    // {
-    //     $baseQuery = $this->inputMKSearch();
-    //     $query = clone $baseQuery;
-    //     $this->buttonMKFilter($query);
-
-    //     if ($this->switchTable === 'matkuls') {
-    //         $matkuls = $query->paginate($this->perPage);
-    //     } elseif ($this->switchTable === 'tatap_muka') {
-
-    //     } elseif ($this->switchTable === 'praktikum') {
-
-    //     } elseif ($this->switchTable === 'praktek_lapangan') {
-
-    //     } elseif ($this->switchTable === 'simulasi') {
-
-    //     }
-
-    //     return view('livewire.staff.matkul-management', [
-    //         'matkuls' => $matkuls,
-    //         'totalMatkuls' => (clone $baseQuery)->count(),
-    //         'totalWajib' => (clone $baseQuery)->where('is_wajib', true)->count(),
-    //         'totalPilihan' => (clone $baseQuery)->where('is_wajib', false)->count(),
-    //         'totalUni' => (clone $baseQuery)->where('tingkatan_mk', 5)->count(),
-    //     ]);
-    // }
 
     private function syncSortField($table, $sortField)
     {

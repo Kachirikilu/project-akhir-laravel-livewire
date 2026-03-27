@@ -41,8 +41,6 @@ class ProgramStudiManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
-    // public $prodi_name = '';
-
     public $showDeleted = false;
 
     protected $listeners = ['refresh-table' => 'refreshProdisList',
@@ -56,9 +54,6 @@ class ProgramStudiManagement extends Component
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted'  => ['except' => false]
-
-        // 'jurusan_name' => ['except' => null],
-        // 'fakultas_name' => ['except' => null]
     ];
 
     public function updatedPerPage()
@@ -101,44 +96,6 @@ class ProgramStudiManagement extends Component
         $this->resetPage();
     }
 
-    // public function render()
-    // {
-    //     $query = $this->inputProdiSearch();
-    //     $queryJurusan = $this->inputJurusanSearch();
-    //     $queryFakultas = $this->inputFakultasSearch();
-
-    //     $countTotal = $this->buttonStrataFilter($query);
-
-    //     if ($this->switchTable === 'jurusan' && $this->sortField === 'prodi') {
-    //         $this->sortField = 'jurusan';
-    //         if ($this->perPage > 50) {
-    //             $this->perPage = 50;
-    //         }
-    //     } elseif ($this->switchTable === 'fakultas' && $this->sortField === 'prodi') {
-    //         $this->sortField = 'fakultas';
-    //         if ($this->perPage > 10) {
-    //             $this->perPage = 10;
-    //         }
-    //     }
-
-    //     $this->inputFakultasFilter();
-    //     $this->inputJurusanFilter();
-
-    //     $totalJurusanCount = (clone $queryJurusan)->count();
-    //     $totalFakultasCount = (clone $queryFakultas)->count();
-
-    //     return view('livewire.admin.prodi-management', [
-    //         'prodis' => $query->paginate($this->perPage),
-    //         'jurusans' => $queryJurusan->paginate($this->perPage),
-    //         'fakultass' => $queryFakultas->paginate($this->perPage),
-    //         'totalProdis' => $countTotal[0],
-    //         'totalSarjanas' => $countTotal[1],
-    //         'totalMagisters' => $countTotal[2],
-    //         'totalDoktors' => $countTotal[3],
-    //         'totalJurusan' => $totalJurusanCount,
-    //         'totalFakultas' => $totalFakultasCount
-    //     ]);
-    // }
 
     public function buttonStrataFilter($query)
     {

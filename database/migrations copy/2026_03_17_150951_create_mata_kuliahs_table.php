@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Table Utama Mata Kuliah
         Schema::create('mata_kuliahs', function (Blueprint $table) {
             $table->id();
             $table->enum('tingkatan_mk', [1, 2, 3, 4])->default(1);
@@ -21,15 +22,14 @@ return new class extends Migration
             $table->boolean('is_wajib')->default(true);
             $table->text('bahan_kajian')->nullable();
             $table->text('deskripsi')->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
 
+        // Table Pivot Prodi - Mata Kuliah
         Schema::create('prodi_pivot_mk', function (Blueprint $table) {
             $table->id();
             $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
-            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }

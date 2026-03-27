@@ -62,8 +62,6 @@
             'xWire2' => $fetchString . '()',
             'xAlpine' => $idString,
             'xAlpine2' => $kodeString,
-            // 'xLivewire' => $resetXInput
-            // 'xColor' => $colorIcon
         ])
     </div>
 

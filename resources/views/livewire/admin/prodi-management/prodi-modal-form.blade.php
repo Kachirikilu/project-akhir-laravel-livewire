@@ -1,4 +1,4 @@
-<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @prodi-saved.window="$store.config.reset()"
+<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data="reset()"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}

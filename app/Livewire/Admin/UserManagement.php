@@ -30,7 +30,6 @@ class UserManagement extends Component
     use WithFakultasSearchFilters;
 
     use WithUserFilters;
-    // use WithProdiFilters;
     use WithJurusanFilters;
     use WithFakultasFilters;
 
@@ -57,10 +56,6 @@ class UserManagement extends Component
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc'],
         'showDeleted'  => ['except' => false]
-
-        // 'prodi_name' => ['except' => null],
-        // 'jurusan_name' => ['except' => null],
-        // 'fakultas_name' => ['except' => null]
 
         // 'prodi_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],

@@ -26,7 +26,6 @@ trait WithFakultasSearchFilters
 
     public $selectedFakultasId = null;
 
-
     public function inputFakultasFilter()
     {
         $searchTerm = '%'.$this->fakultasSearchQuery.'%';
@@ -34,17 +33,12 @@ trait WithFakultasSearchFilters
         if ((strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) && ! $this->fakultas_name) {
 
             $this->fakultasSearchResults = Fakultas::query()
-                ->where(function ($q) use ($searchTerm) {
-                    $q->where('nama_fakultas', 'like', $searchTerm)
-                        ->orWhere('kode_fk', 'like', $searchTerm) // 🔹 Cari berdasarkan kode fakultas (Contoh: 'FT', 'FK')
-                        ->orWhere('id', 'like', $searchTerm)
-                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-                })
+                ->searchFakultas($searchTerm)
                 ->limit(12)
                 ->get()
                 ->map(fn ($f) => [
                     'id' => $f->id,
-                    'kode' => $f->kode ?? 'UNI',
+                    'kode' => $f->kode,
                     'fakultas' => $f->fakultas,
                 ])->toArray();
 
@@ -66,14 +60,13 @@ trait WithFakultasSearchFilters
         $data = Fakultas::find($id);
         if ($data) {
             $this->selectedFakultasId = $id;
-            $this->fakultas_kode = $data->kode ?? 'UNI';
+            $this->fakultas_kode = $data->kode;
             $this->fakultas_name = 'Fakultas '.$data->fakultas;
             $this->fakultasSearchQuery = 'Fakultas '.$data->fakultas;
             $this->fakultasSearchResults = [];
             $this->resetPage();
         }
     }
-
 
     public function updatedFakultasNameSearch($value)
     {
@@ -85,19 +78,14 @@ trait WithFakultasSearchFilters
             $searchTerm = '%'.$value.'%';
 
             $results = Fakultas::query()
-                ->where(function ($q) use ($searchTerm) {
-                    $q->where('nama_fakultas', 'like', $searchTerm)
-                        ->orWhere('kode_fk', 'like', $searchTerm) // 🔹 Tambahkan pencarian kode fakultas
-                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm])
-                        ->orWhere('id', 'like', $searchTerm);
-                })
+                ->searchFakultas($searchTerm)
                 ->limit(12)
                 ->get();
 
             $this->fakultasResults = $results->map(function ($fakultas) {
                 return [
                     'id' => $fakultas->id,
-                    'kode' => $fakultas->kode ?? 'UNI',
+                    'kode' => $fakultas->kode,
                     'fakultas' => $fakultas->fakultas,
                 ];
             })->toArray();
@@ -107,7 +95,6 @@ trait WithFakultasSearchFilters
                 $nama = str($fakultas->fakultas)->lower();
                 $kode = str($fakultas->kode)->lower();
 
-                // 🔹 Exact match sekarang mendukung nama, prefiks "fakultas", dan kode
                 return $input->is([
                     $nama,
                     "fakultas $nama",
@@ -117,7 +104,7 @@ trait WithFakultasSearchFilters
 
             if ($exactMatch) {
                 $this->fakultas_id = $exactMatch->id;
-                $this->fakultas_kode = $exactMatch->kode ?? 'UNI';
+                $this->fakultas_kode = $exactMatch->kode;
                 $this->fakultasNameSearch = 'Fakultas '.$exactMatch->fakultas;
                 $this->fakultasResults = [];
             }
@@ -132,7 +119,7 @@ trait WithFakultasSearchFilters
                     ->get()
                     ->map(fn ($f) => [
                         'id' => $f->id,
-                        'kode' => $f->kode ?? 'UNI',
+                        'kode' => $f->kode,
                         'fakultas' => $f->fakultas,
                     ])->toArray();
             }
@@ -143,44 +130,29 @@ trait WithFakultasSearchFilters
     {
         $user = Auth::user()?->admin ?? Auth::user()?->dosen ?? Auth::user()?->mahasiswa;
         $userProdi = $user ? $user->prodi()->first() : null;
-
         $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id ?? null;
 
         if (! $fakultasIdUser) {
-            return Fakultas::query()
-                ->orderBy('nama_fakultas', 'asc')
+            return Fakultas::orderBy('nama_fakultas', 'asc')
                 ->limit(12)
                 ->get()
                 ->map(fn ($f) => [
                     'id' => $f->id,
-                    'kode' => $f->kode ?? 'UNI',
+                    'kode' => $f->kode,
                     'fakultas' => $f->fakultas,
                 ])->toArray();
         }
 
-        $results = Fakultas::query()
-            ->where('id', $fakultasIdUser)
-            ->get(['id', 'nama_fakultas', 'kode_fk']);
+        $results = Fakultas::orderBy('nama_fakultas', 'asc')
+            ->get()
+            ->sortBy(fn ($f) => $f->id === $fakultasIdUser ? 0 : 1)
+            ->take(12);
 
-        $count = $results->count();
-
-        if ($count < 12) {
-            $additional = Fakultas::query()
-                ->where('id', '!=', $fakultasIdUser)
-                ->orderBy('nama_fakultas', 'asc')
-                ->limit(12 - $count)
-                ->get(['id', 'kode_fk', 'nama_fakultas']);
-
-            $results = $results->concat($additional);
-        }
-
-        return $results->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'kode' => $item->kode_fk ?? 'UNI',
-                'fakultas' => $item->nama_fakultas,
-            ];
-        })->toArray();
+        return $results->map(fn ($f) => [
+            'id' => $f->id,
+            'kode' => $f->kode,
+            'fakultas' => $f->fakultas,
+        ])->toArray();
     }
 
     public function fetchFakultas($query = '')
@@ -200,7 +172,7 @@ trait WithFakultasSearchFilters
 
         $data = Fakultas::find($id);
         if ($data) {
-            $this->fakultas_kode = $data->kode_fk ?? 'UNI';
+            $this->fakultas_kode = $data->kode;
         }
 
         if (property_exists($this, 'prodi_id_array')) {
@@ -209,7 +181,6 @@ trait WithFakultasSearchFilters
             $this->prodi_kode_array = [];
             $this->prodiNameSearch = '';
         }
-
 
         $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
     }

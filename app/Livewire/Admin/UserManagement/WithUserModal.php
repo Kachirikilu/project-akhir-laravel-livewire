@@ -24,26 +24,6 @@ trait WithUserModal
 
     public $user_id;
 
-    // public $email;
-
-    // public $password;
-
-    // public $name;
-
-    // public $nip;
-
-    // public $nitk;
-
-    // public $nidn;
-
-    // public $nidk;
-
-    // public $nim;
-
-    // public $tahun_angkatan;
-
-    // public $status;
-
     public $prodi_id_2;
 
     protected $rules = [
@@ -61,10 +41,6 @@ trait WithUserModal
 
     public function addUser($role)
     {
-        // if ($this->isEditing) {
-        //     $this->resetInput();
-        // }
-
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
@@ -90,10 +66,8 @@ trait WithUserModal
 
         $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
         $this->user_id = $user->id;
-        // $this->email = $user->email;
         $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
         $this->prodi_id_2 = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
-        // $this->status = $user->admin->status ?? $user->dosen->status ?? $user->mahasiswa->status ?? null;
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
@@ -104,21 +78,7 @@ trait WithUserModal
         $this->getProdibyUser();
         $this->fetchProdi($this->prodiNameSearch);
 
-        // $this->name = $user->name;
         $this->roleType = strtolower($user->role);
-
-        // if (! $user->mahasiswa) {
-        //     $this->nip = $user->identity1;
-        //     if ($user->admin) {
-        //         $this->nitk = $user->identity2;
-        //     } else {
-        //         $this->nidn = $user->identity2;
-        //         $this->nidk = $user->identity3;
-        //     }
-        // } else {
-        //     $this->nim = $user->identity1;
-        //     $this->tahun_angkatan = $user->mahasiswa->tahun_angkatan;
-        // }
     }
 
     private function inputModalUser($isEditing, $data)
@@ -379,12 +339,14 @@ trait WithUserModal
             });
 
             $this->resetInput();
-            $this->showUserModal = false;
-            $this->dispatch('user-saved');
             $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan!');
+            $this->dispatch('refresh-data');
+            $this->showUserModal = false;
 
         } catch (\Exception $e) {
             $this->dispatch('toast', message: '❌ Terjadi kesalahan saat menambahkan data!');
+            $this->dispatch('refresh-data');
+            $this->showUserModal = false;
         }
     }
 
@@ -455,15 +417,18 @@ trait WithUserModal
                 }
             });
 
-            $this->showUserModal = false;
             $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui!');
+            $this->dispatch('refresh-data');
+            $this->showUserModal = false;
 
             if (Auth::id() === $user->id) {
                 $this->dispatch('profile-updated');
             }
         } catch (\Exception $e) {
             $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
+            $this->dispatch('refresh-data');
             $this->showUserDelete = false;
+
         }
     }
 

@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Fakultas extends Model
 {
     use SoftDeletes;
     
-    protected $fillable = ['nama_fakultas', 'kode_fk'];
-    protected $appends = ['fakultas', 'kode'];
+    protected $fillable = ['kode_fk', 'nama_fakultas'];
+    protected $appends = ['kode', 'fakultas'];
 
     public function jurusans(): HasMany 
     {
@@ -24,6 +25,18 @@ class Fakultas extends Model
     {
         return $this->hasManyThrough(Prodi::class, Jurusan::class);
     }
+
+    public function scopeSearchFakultas(Builder $query, $searchTerm)
+{
+    $searchTerm = '%' . trim($searchTerm) . '%';
+
+    return $query->where(function ($q) use ($searchTerm) {
+        $q->where('nama_fakultas', 'like', $searchTerm)
+            ->orWhere('kode_fk', 'like', $searchTerm)
+            ->orWhere('id', 'like', $searchTerm)
+            ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+    });
+}
 
     protected function kode(): Attribute {
         return Attribute::get(function () {

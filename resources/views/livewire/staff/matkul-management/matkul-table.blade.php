@@ -151,7 +151,7 @@
 
                     @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
                         'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mode,
+                        'typeXString' => $matkul->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -204,7 +204,7 @@
 
                     @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
                         'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mode,
+                        'typeXString' => $matkul->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -252,7 +252,7 @@
 
                     @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
                         'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mode,
+                        'typeXString' => $matkul->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -270,7 +270,7 @@
 
                     @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
                         'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mode,
+                        'typeXString' => $matkul->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',

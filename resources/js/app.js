@@ -190,6 +190,9 @@ document.addEventListener("alpine:init", () => {
         },
 
         resetSelect() {
+            this.email = "";
+            this.password = "";
+            
             this.status = "";
             this.nama_strata = "";
             this.prodi_id = "";
@@ -204,6 +207,7 @@ document.addEventListener("alpine:init", () => {
             this.jurusan_kode = "";
             this.fakultas_kode = "";
 
+            this.nama_matkul = "";
             this.kode_blok = "";
 
             this.semester = "";
