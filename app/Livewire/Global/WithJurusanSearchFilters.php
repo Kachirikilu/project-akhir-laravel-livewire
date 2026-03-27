@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Global;
 
-use App\Models\Jurusan;
+use App\Models\ProgramStudi\Jurusan;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 

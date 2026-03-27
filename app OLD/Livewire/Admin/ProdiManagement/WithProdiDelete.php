@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\User;
+use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
 trait WithProdiDelete

@@ -15,10 +15,10 @@ use App\Livewire\Admin\UserManagement\WithUserExcel;
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
+use App\Models\Auth\User;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -118,14 +118,14 @@ class UserManagement extends Component
 
         $this->syncSortField($this->filter, $this->sortField);
 
-        $baseQuery = $this->inputMainSearch();
+        $queryUser = $this->inputUserSearch();
 
-        $query = clone $baseQuery;
+        $query = clone $queryUser;
         $this->buttonRoleFilter($query);
 
         if ($this->showDeleted) {
             $query->onlyTrashed();
-            $baseQuery->onlyTrashed();
+            $queryUser->onlyTrashed();
         }
 
         return view('livewire.admin.user-management', [
@@ -134,10 +134,10 @@ class UserManagement extends Component
             // 'totalAdmins' => Admin::count(),
             // 'totalDosens' => Dosen::count(),
             // 'totalMahasiswas' => Mahasiswa::count(),
-            'totalUsers' => (clone $baseQuery)->count(),
-            'totalAdmins' => (clone $baseQuery)->whereHas('admin')->count(),
-            'totalDosens' => (clone $baseQuery)->whereHas('dosen')->count(),
-            'totalMahasiswas' => (clone $baseQuery)->whereHas('mahasiswa')->count(),
+            'totalUsers' => (clone $queryUser)->count(),
+            'totalAdmins' => (clone $queryUser)->whereHas('admin')->count(),
+            'totalDosens' => (clone $queryUser)->whereHas('dosen')->count(),
+            'totalMahasiswas' => (clone $queryUser)->whereHas('mahasiswa')->count(),
         ]);
     }
 }

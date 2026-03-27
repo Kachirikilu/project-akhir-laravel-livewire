@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
-use App\Models\Prodi;
+use App\Models\Auth\User;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -477,7 +477,7 @@ trait WithUserModal
         // Lookup program studi by nama_prodi
         $prodiName = $data['program studi'] ?? null;
         if ($prodiName) {
-            $this->prodi_id = \App\Models\Prodi::where('nama_prodi', $prodiName)->value('id');
+            $this->prodi_id = \App\Models\ProgramStudi\Prodi::where('nama_prodi', $prodiName)->value('id');
             
             if (!$this->prodi_id) {
                 throw new \Exception("Program studi '$prodiName' tidak ditemukan di database");

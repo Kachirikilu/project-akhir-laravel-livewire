@@ -97,7 +97,7 @@ class ProdiManagement extends Component
             }
         }
 
-        $totalJurusanQuery = \App\Models\Jurusan::query();
+        $totalJurusanQuery = \App\Models\ProgramStudi\Jurusan::query();
         if ($this->switchTable === 'jurusan' && ! empty($this->search)) {
             $totalJurusanQuery->where(function ($q) {
                 $q->where('nama_jurusan', 'like', "%{$this->search}%")
@@ -110,7 +110,7 @@ class ProdiManagement extends Component
         }
         $totalJurusan = $totalJurusanQuery->count();
 
-        $totalFakultasQuery = \App\Models\Fakultas::query();
+        $totalFakultasQuery = \App\Models\ProgramStudi\Fakultas::query();
         if ($this->switchTable === 'fakultas' && ! empty($this->search)) {
             $totalFakultasQuery->where(function ($q) {
                 $q->where('nama_fakultas', 'like', "%{$this->search}%")

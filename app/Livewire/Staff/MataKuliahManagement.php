@@ -6,15 +6,13 @@ use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 
-
 use App\Livewire\Staff\MatkulManagement\WithMatkulFilters;
 use App\Livewire\Staff\MatkulManagement\WithMatkulModal;
 use App\Livewire\Staff\MatkulManagement\WithMatkulDelete;
 
-
-use App\Models\Prodi;
-use App\Models\Jurusan;
-use App\Models\Fakultas;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -99,7 +97,7 @@ class MataKuliahManagement extends Component
 
     // public function render()
     // {
-    //     $baseQuery = $this->inputMainSearch();
+    //     $baseQuery = $this->inputMKSearch();
     //     $query = clone $baseQuery;
     //     $this->buttonMKFilter($query);
 
@@ -151,7 +149,7 @@ class MataKuliahManagement extends Component
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        $query = $this->inputMainSearch();
+        $query = $this->inputMKSearch();
 
         if ($this->switchTable === 'tatap_muka') {
             $query->where('tipe_sks', 1);
@@ -163,7 +161,7 @@ class MataKuliahManagement extends Component
             $query->where('tipe_sks', 4);
         }
 
-        $globalQuery = $this->inputMainSearch();
+        $globalQuery = $this->inputMKSearch();
 
         if ($this->showDeleted) {
             $query->onlyTrashed();

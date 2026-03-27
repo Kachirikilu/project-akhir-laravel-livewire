@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
-use App\Models\Prodi;
+use App\Models\Auth\User;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;

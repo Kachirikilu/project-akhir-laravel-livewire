@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
+use App\Models\Auth\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;

@@ -3,7 +3,7 @@
 namespace App\Livewire\Staff\MatkulManagement;
 
 
-use App\Models\MataKuliah;
+use App\Models\Akademik\MataKuliah;
 use Livewire\WithPagination;
 
 trait WithMatkulFilters
@@ -23,7 +23,7 @@ trait WithMatkulFilters
         $this->resetPage();
     }
 
-    public function inputMainSearch()
+    public function inputMKSearch()
     {
         $query = MataKuliah::query()->with(['prodis.jurusan_rel.fakultas_rel']);
         $search = trim($this->search);
@@ -155,7 +155,7 @@ trait WithMatkulFilters
         //     }
         // }
 
-        $this->sortFieldOrder($query);
+        $this->sortFieldOrderMK($query);
 
         return $query;
     }
@@ -183,7 +183,7 @@ trait WithMatkulFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrder($query)
+    public function sortFieldOrderMK($query)
     {
         $query->select('mata_kuliahs.*');
 

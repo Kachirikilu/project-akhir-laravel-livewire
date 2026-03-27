@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Jurusan;
+use App\Models\ProgramStudi\Jurusan;
 use Livewire\WithPagination;
 
 trait WithJurusanFilters

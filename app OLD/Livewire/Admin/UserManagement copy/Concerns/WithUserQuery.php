@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\UserManagement\Concerns;
 
-use App\Models\User;
+use App\Models\Auth\User;
 
 trait WithUserQuery
 {

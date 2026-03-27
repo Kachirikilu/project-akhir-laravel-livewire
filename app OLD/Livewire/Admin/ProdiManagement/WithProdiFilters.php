@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Prodi;
+use App\Models\ProgramStudi\Prodi;
 use Livewire\WithPagination;
 
 trait WithProdiFilters

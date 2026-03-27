@@ -2,138 +2,89 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
+
+use App\Livewire\Staff\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
+use App\Livewire\Staff\RPSManagement\WithSubCPMKFilters;
+use App\Livewire\Staff\RPSManagement\WithCPLFilters;
+use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
 
-use App\Livewire\Staff\MatkulManagement\WithMatkulFilters;
-use App\Livewire\Staff\MatkulManagement\WithMatkulModal;
-use App\Livewire\Staff\MatkulManagement\WithMatkulDelete;
-
-
-use App\Models\Prodi;
-use App\Models\Jurusan;
-use App\Models\Fakultas;
-
+use App\Models\Akademik\Cpl;
+use App\Models\Akademik\Cpmk;
+use App\Models\Akademik\Referensi;
+use App\Models\Akademik\Rps;
+use App\Models\Akademik\SubCpmk;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class MataKuliahManagement extends Component
+class RpsManagement extends Component
 {
     use WithProdiSearchFilters;
     use WithJurusanSearchFilters;
     use WithFakultasSearchFilters;
 
-    use WithMatkulFilters;
-    use WithMatkulModal;
-    use WithMatkulDelete;
+    use WithRPSFilters;
+    use WithCPMKFilters;
+    use WithSubCPMKFilters;
+    use WithCPLFilters;
+    use WithReferensiFilters;
+    use WithDosenFilters;
+
 
     use WithPagination;
 
-    public $showModal = false;
+    public $switchTable = 'rps';
 
     public $perPage = 8;
 
-    public $switchTable = '';
+    public $search = '';
 
-    protected $paginationTheme = 'tailwind';
+    public $filter = ''; // Khusus RPS (draft, published)
 
     public $showDeleted = false;
 
-    // public $selectedMatkulName = '';
-
-    protected $listeners = ['refresh-table' => 'refreshMatkulsList',
-        'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
+    protected $paginationTheme = 'tailwind';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
+        'switchTable' => ['except' => 'rps'],
         'filter' => ['except' => ''],
-        // 'selectedMatkulName' => ['except' => ''],
-        'switchTable' => ['except' => ''],
-        'sortField' => ['except' => 'nama_matkul'],
-        'sortDirection' => ['except' => 'asc'],
-        'showDeleted'  => ['except' => false]
-
-        // 'prodi_name' => ['except' => null],
-        // 'jurusan_name' => ['except' => null],
-        // 'fakultas_name' => ['except' => null]
+        'showDeleted' => ['except' => false],
     ];
 
-    public function updatedPerPage()
+    public function updatedSearch()
     {
         $this->resetPage();
     }
-
-    public function refreshMatkulsList()
-    {
-        $this->resetPage();
-    }
-
-    // public function switchingTable($table)
-    // {
-    //     $this->switchTable = $table;
-    //     // $this->syncSortField($table);
-
-    //     // if ($table == 'jurusan' && $this->perPage > 50) {
-    //     //     $this->perPage = 50;
-    //     // }
-    //     // if ($table == 'fakultas' && $this->perPage > 10) {
-    //     //     $this->perPage = 10;
-    //     // }
-
-    //     $this->resetPage();
-    // }
-
-    public function buttonMKFilter($query)
-    {
-        if ($this->filter === 'wajib') {
-            $query->where('is_wajib', true);
-        } elseif ($this->filter === 'pilihan') {
-            $query->where('is_wajib', false);
-        } elseif ($this->filter === 'universitas') {
-            $query->where('tingkatan_mk', 4);
-        }
-    }
-
-    // public function render()
-    // {
-    //     $baseQuery = $this->inputMainSearch();
-    //     $query = clone $baseQuery;
-    //     $this->buttonMKFilter($query);
-
-    //     if ($this->switchTable === 'matkuls') {
-    //         $matkuls = $query->paginate($this->perPage);
-    //     } elseif ($this->switchTable === 'tatap_muka') {
-
-    //     } elseif ($this->switchTable === 'praktikum') {
-
-    //     } elseif ($this->switchTable === 'praktek_lapangan') {
-
-    //     } elseif ($this->switchTable === 'simulasi') {
-
-    //     }
-
-    //     return view('livewire.staff.matkul-management', [
-    //         'matkuls' => $matkuls,
-    //         'totalMatkuls' => (clone $baseQuery)->count(),
-    //         'totalWajib' => (clone $baseQuery)->where('is_wajib', true)->count(),
-    //         'totalPilihan' => (clone $baseQuery)->where('is_wajib', false)->count(),
-    //         'totalUni' => (clone $baseQuery)->where('tingkatan_mk', 5)->count(),
-    //     ]);
-    // }
 
     private function syncSortField($table, $sortField)
     {
-        if ($table == 'tatap_muka' && ($sortField == 'sks_pr' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
-            $this->sortField = 'sks_tm';
-        } elseif ($table == 'praktikum' && ($sortField == 'sks_tm' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
-            $this->sortField = 'sks_pr';
-        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_sm')) {
-            $this->sortField = 'sks_pl';
-        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_pl')) {
-            $this->sortField = 'sks_sm';
+        if ($table == 'rps') {
+            if (! in_array($sortField, ['tahun_akademik', 'status', 'created_at'])) {
+                $this->sortField = 'created_at';
+            }
+        } elseif ($table == 'cpmk') {
+            if (! in_array($sortField, ['kode_cpmk', 'digit_cpmk', 'deskripsi'])) {
+                $this->sortField = 'kode_cpmk';
+            }
+        } elseif ($table == 'scpmk') {
+            if (! in_array($sortField, ['kode_scpmk', 'digit_scpmk', 'bobot'])) {
+                $this->sortField = 'kode_scpmk';
+            }
+        } elseif ($table == 'cpl') {
+            if (! in_array($sortField, ['kode_cpl', 'deskripsi'])) {
+                $this->sortField = 'kode_cpl';
+            }
+        } elseif ($table == 'ref') {
+            if (! in_array($sortField, ['judul', 'penulis', 'tahun'])) {
+                $this->sortField = 'judul';
+            }
         }
     }
 
@@ -141,9 +92,59 @@ class MataKuliahManagement extends Component
     {
         $this->switchTable = $table;
         $this->syncSortField($table, $this->sortField);
-
         $this->resetPage();
     }
+
+    // public function render()
+    // {
+    //     $this->inputProdiFilter();
+    //     $this->inputJurusanFilter();
+    //     $this->inputFakultasFilter();
+
+    //     $query = $this->inputRPSSearch();
+
+    //     if ($this->switchTable === 'rps') {
+    //         // Asumsi RPS adalah default, bisa ditambahkan filter khusus jika perlu
+    //     } elseif ($this->switchTable === 'cpmk') {
+    //         // Jika model berbeda, pastikan inputRPSSearch() menghandle pergantian Model
+    //     } elseif ($this->switchTable === 'scpmk') {
+    //         // Logika filter scpmk
+    //     }
+
+    //     // 2. Logika Soft Deletes (Toggle Sampah)
+    //     $queryRPS = $this->inputRPSSearch();
+    //     $queryCPMK = $this->inputCPMKSearch();
+    //     $querySCPMK = $this->inputSCPMKSearch();
+    //     $queryCPL = $this->inputCPLSearch();
+    //     $queryRef = $this->inputRefSearch();
+
+    //     if ($this->showDeleted) {
+    //         $query->onlyTrashed();
+    //         $queryRPS->onlyTrashed();
+    //     }
+
+    //     $totalRPS = (clone $queryRPS)->count();
+    //     $totalAktif = (clone $queryRPS)->where('status', 'published')->count();
+    //     $totalDraf = (clone $queryRPS)->where('status', 'draft')->count();
+
+    //     $countCPMK = Cpmk::count();
+    //     $countSCPMK = SubCpmk::count();
+    //     $countCPL = Cpl::count();
+    //     $countRef = Referensi::count();
+
+    //     // 4. Eksekusi Query dengan Pagination
+    //     return view('livewire.staff.rps-management', [
+    //         'items' => $query->paginate($this->perPage),
+    //         'totalRPS' => $totalRPS,
+    //         'totalAktif' => $totalAktif,
+    //         'totalDraf' => $totalDraf,
+
+    //         'totalCPMK' => $countCPMK,
+    //         'totalSCPMK' => $countSCPMK,
+    //         'totalCPL' => $countCPL,
+    //         'totalRef' => $countRef,
+    //     ]);
+    // }
 
     public function render()
     {
@@ -151,44 +152,37 @@ class MataKuliahManagement extends Component
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        $query = $this->inputMainSearch();
+        // Ambil semua query secara terpisah untuk menghitung badge statistik
+        $queryRPS = $this->inputRPSSearch();
+        $queryCPMK = $this->inputCPMKSearch();
+        $querySCPMK = $this->inputSCPMKSearch();
+        $queryCPL = $this->inputCPLSearch();
+        $queryRef = $this->inputRefSearch();
+        $queryDosen = $this->inputDosenSearch();
 
-        if ($this->switchTable === 'tatap_muka') {
-            $query->where('tipe_sks', 1);
-        } elseif ($this->switchTable === 'praktikum') {
-            $query->where('tipe_sks', 2);
-        } elseif ($this->switchTable === 'praktek_lapangan') {
-            $query->where('tipe_sks', 3);
-        } elseif ($this->switchTable === 'simulasi') {
-            $query->where('tipe_sks', 4);
+        if ($this->showDeleted) {
+            $queryRPS->onlyTrashed();
+            $queryCPMK->onlyTrashed();
+            $querySCPMK->onlyTrashed();
+            $queryCPL->onlyTrashed();
+            $queryRef->onlyTrashed();
+            $queryDosen->onlyTrashed();
         }
 
-        $totalMatkuls = (clone $query)->count();
-        $totalWajib = (clone $query)->where('is_wajib', true)->count();
-        $totalPilihan = (clone $query)->where('is_wajib', false)->count();
-        $totalUni = (clone $query)->where('tingkatan_mk', 4)->count();
-
-        $globalQuery = $this->inputMainSearch();
-        $totalTatapMuka = (clone $globalQuery)->where('tipe_sks', 1)->count();
-        $totalPraktikum = (clone $globalQuery)->where('tipe_sks', 2)->count();
-        $totalPraktekLapangan = (clone $globalQuery)->where('tipe_sks', 3)->count();
-        $totalSimulasi = (clone $globalQuery)->where('tipe_sks', 4)->count();
-        $totalSemuaMK = (clone $globalQuery)->count();
-
-        $this->buttonMKFilter($query);
-
         return view('livewire.staff.rps-management', [
-            'matkuls' => $query->paginate($this->perPage),
-            'totalMatkuls' => $totalMatkuls,
-            'totalWajib' => $totalWajib,
-            'totalPilihan' => $totalPilihan,
-            'totalUni' => $totalUni,
+            'rps' => $queryRPS->paginate($this->perPage),
+            'cpmk' => $queryCPMK->paginate($this->perPage),
+            'scpmk' => $querySCPMK->paginate($this->perPage),
+            'cpl' => $queryCPL->paginate($this->perPage),
+            'ref' => $queryRef->paginate($this->perPage),
+            'dosen' => $queryDosen->paginate($this->perPage),
 
-            'totalSemuaMK' => $totalSemuaMK,
-            'totalTatapMuka' => $totalTatapMuka,
-            'totalPraktikum' => $totalPraktikum,
-            'totalPraktekLapangan' => $totalPraktekLapangan,
-            'totalSimulasi' => $totalSimulasi,
+            'totalRPS' => (clone $queryRPS)->count(),
+            'totalCPMK' => (clone $queryCPMK)->count(),
+            'totalSCPMK' => (clone $querySCPMK)->count(),
+            'totalCPL' => (clone $queryCPL)->count(),
+            'totalRef' => (clone $queryRef)->count(),
+            'totalDosen' => (clone $queryDosen)->count(),
         ]);
     }
 }

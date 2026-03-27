@@ -12,9 +12,9 @@ use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 
-use App\Models\Prodi;
-use App\Models\Jurusan;
-use App\Models\Fakultas;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -103,7 +103,7 @@ class ProgramStudiManagement extends Component
 
     // public function render()
     // {
-    //     $query = $this->inputMainSearch();
+    //     $query = $this->inputProdiSearch();
     //     $queryJurusan = $this->inputJurusanSearch();
     //     $queryFakultas = $this->inputFakultasSearch();
 
@@ -152,11 +152,11 @@ class ProgramStudiManagement extends Component
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        $baseQuery = $this->inputMainSearch();
+        $queryProdi = $this->inputProdiSearch();
         $queryJurusan = $this->inputJurusanSearch();
         $queryFakultas = $this->inputFakultasSearch();
 
-        $query = clone $baseQuery;
+        $query = clone $queryProdi;
 
         $this->buttonStrataFilter($query);
 
@@ -166,7 +166,7 @@ class ProgramStudiManagement extends Component
 
         if ($this->showDeleted) {
             $query->onlyTrashed();
-            $baseQuery->onlyTrashed();
+            $queryProdi->onlyTrashed();
             $queryJurusan->onlyTrashed();
             $queryFakultas->onlyTrashed();
         }
@@ -189,10 +189,10 @@ class ProgramStudiManagement extends Component
             // 'totalDoktors' => Prodi::where('nama_strata', 'Doktor')->count(),
             // 'totalJurusan' => Jurusan::count(),
             // 'totalFakultas' => Fakultas::count()
-            'totalProdis' => (clone $baseQuery)->count(),
-            'totalSarjanas' => (clone $baseQuery)->where('nama_strata', 'Sarjana')->count(),
-            'totalMagisters' => (clone $baseQuery)->where('nama_strata', 'Magister')->count(),
-            'totalDoktors' => (clone $baseQuery)->where('nama_strata', 'Doktor')->count(),
+            'totalProdis' => (clone $queryProdi)->count(),
+            'totalSarjanas' => (clone $queryProdi)->where('nama_strata', 'Sarjana')->count(),
+            'totalMagisters' => (clone $queryProdi)->where('nama_strata', 'Magister')->count(),
+            'totalDoktors' => (clone $queryProdi)->where('nama_strata', 'Doktor')->count(),
             'totalJurusan' => (clone $queryJurusan)->count(),
             'totalFakultas' => (clone $queryFakultas)->count()
         ]);

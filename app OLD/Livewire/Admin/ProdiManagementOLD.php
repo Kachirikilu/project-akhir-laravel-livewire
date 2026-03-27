@@ -4,10 +4,10 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\Prodi;
-use App\Models\Mahasiswa;
-use App\Models\Dosen;
-use App\Models\Admin;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\Auth\Mahasiswa;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Admin;
 
 class ProdiManagement extends Component
 {

@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Prodi;
-use App\Models\Fakultas;
-use App\Models\Jurusan;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Jurusan;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -387,7 +387,8 @@ trait WithProdiModal
         $validated = $this->inputModalProdi(true, $data);
         $validated = $this->prepareData($validated);
 
-        // try {
+
+        try {
             DB::transaction(function () use ($validated) {
                 if ($this->prodiType === 'prodi') {
                     Prodi::findOrFail($this->selected_id)->update([
@@ -415,10 +416,10 @@ trait WithProdiModal
 
             $this->dispatch('refresh-data');
 
-        // } catch (\Exception $e) {
-        //     $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
-        //     $this->showProdiDelete = false;
-        // }
+        } catch (\Exception $e) {
+            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
+            $this->showProdiDelete = false;
+        }
     }
 
     public function validationMessages()

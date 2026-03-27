@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\Prodi;
-use App\Models\User;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\Auth\User;
 use Livewire\WithPagination;
 
 trait WithUserFilters

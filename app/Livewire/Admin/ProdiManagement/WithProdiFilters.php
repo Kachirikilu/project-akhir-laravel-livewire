@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Prodi;
+use App\Models\ProgramStudi\Prodi;
 use Livewire\WithPagination;
 
 trait WithProdiFilters
@@ -22,7 +22,7 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
-    public function inputMainSearch()
+    public function inputProdiSearch()
     {
         $query = Prodi::query()->with(['jurusan_rel.fakultas_rel']);
         $searchTerm = '%'.$this->search.'%';
@@ -65,7 +65,7 @@ trait WithProdiFilters
             });
         }
 
-        $this->sortFieldOrder($query);
+        $this->sortFieldOrderProdi($query);
 
         return $query;
     }
@@ -139,7 +139,7 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrder($query)
+    public function sortFieldOrderProdi($query)
     {
         $query->select('prodis.*');
 

@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\User;
+use App\Models\Auth\User;
 
-// use App\Models\Prodi;
-// use App\Models\Jurusan;
-// use App\Models\Fakultas;
+// use App\Models\ProgramStudi\Prodi;
+// use App\Models\ProgramStudi\Jurusan;
+// use App\Models\ProgramStudi\Fakultas;
 
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
@@ -35,7 +35,7 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function inputMainSearch()
+    public function inputUserSearch()
     {
         $query = User::query()->with(['admin', 'dosen', 'mahasiswa']);
         $searchTerm = '%'.$this->search.'%';
@@ -141,7 +141,7 @@ trait WithUserFilters
             });
         }
 
-        $this->sortFieldOrder($query);
+        $this->sortFieldOrderUser($query);
 
         return $query;
     }
@@ -299,7 +299,7 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrder($query)
+    public function sortFieldOrderUser($query)
     {
 
         if (! empty($this->searchAngkatan) && $this->filter === 'mahasiswa') {

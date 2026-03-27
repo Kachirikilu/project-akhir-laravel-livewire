@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Fakultas;
+use App\Models\ProgramStudi\Fakultas;
 use Livewire\WithPagination;
 
 trait WithFakultasFilters

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\UserManagement\Concerns;
 
-use App\Models\User;
+use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
 trait WithUserDelete

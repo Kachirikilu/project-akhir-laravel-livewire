@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Admin\UserManagement\Concerns;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
+use App\Models\Auth\User;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
 use Illuminate\Support\Facades\Hash;
 
 trait WithUserCrud

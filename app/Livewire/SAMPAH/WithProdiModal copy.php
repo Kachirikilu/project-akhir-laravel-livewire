@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Fakultas;
-use App\Models\Jurusan;
-use App\Models\Prodi;
+use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;

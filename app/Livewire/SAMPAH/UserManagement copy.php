@@ -5,10 +5,10 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Dosen;
-use App\Models\Mahasiswa;
+use App\Models\Auth\User;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
 
 use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Admin\UserManagement\WithUserDelete;

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin\ProdiManagement;
 
-use App\Models\Fakultas;
+use App\Models\ProgramStudi\Fakultas;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 

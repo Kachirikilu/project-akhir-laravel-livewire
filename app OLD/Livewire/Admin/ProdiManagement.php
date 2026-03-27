@@ -10,9 +10,9 @@ use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 // use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 
-use App\Models\Jurusan;
-use App\Models\Prodi;
-use App\Models\Fakultas;
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\Component;
 use Livewire\WithPagination;
