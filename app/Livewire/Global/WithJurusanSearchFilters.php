@@ -28,13 +28,12 @@ trait WithJurusanSearchFilters
 
     public function inputJurusanFilter()
     {
-        $searchTerm = '%'.$this->jurusanSearchQuery.'%';
+        $search = trim($this->jurusanSearchQuery);
 
-        if ((strlen($this->jurusanSearchQuery) > 1 || is_numeric($this->jurusanSearchQuery)) && ! $this->jurusan_name) {
-
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->jurusan_name) {
             $this->jurusanSearchResults = Jurusan::query()
                 ->with('fakultas_rel')
-                ->searchJurusan($searchTerm)
+                ->searchJurusan($search)
                 ->limit(12)
                 ->get()
                 ->map(fn ($j) => [
@@ -45,7 +44,7 @@ trait WithJurusanSearchFilters
                 ])
                 ->toArray();
 
-        } elseif (empty($this->jurusanSearchQuery) || $this->jurusan_name) {
+        } elseif (empty($search) || $this->jurusan_name) {
             $this->jurusanSearchResults = $this->getJurusanbyUser();
         } else {
             $this->jurusanSearchResults = [];
@@ -79,11 +78,10 @@ trait WithJurusanSearchFilters
         $this->resetErrorBag(['jurusan_id', 'jurusanNameSearch']);
 
         if (strlen($value) > 0) {
-            $searchTerm = '%'.$value.'%';
 
             $results = Jurusan::query()
                 ->with('fakultas_rel')
-                ->searchJurusan($searchTerm)
+                ->searchJurusan($value)
                 ->limit(12)
                 ->get();
 
@@ -119,7 +117,8 @@ trait WithJurusanSearchFilters
             if (Auth::user()->admin?->prodi_id) {
                 $this->jurusanResults = $this->getJurusanbyUser();
             } else {
-                $this->jurusanResults = Jurusan::with('fakultas_rel')
+                $this->jurusanResults = Jurusan::query()
+                    ->with('fakultas_rel')
                     ->orderBy('nama_jurusan')
                     ->limit(12)
                     ->get()
@@ -135,14 +134,18 @@ trait WithJurusanSearchFilters
 
     public function getJurusanbyUser()
     {
-        $user = Auth::user()?->admin ?? Auth::user()?->dosen ?? Auth::user()?->mahasiswa;
-        $userProdi = $user ? $user->prodi()->first() : null;
+        // $user = Auth::user()?->admin ?? Auth::user()?->dosen ?? Auth::user()?->mahasiswa;
+        // $userProdi = $user ? $user->prodi()->first() : null;
+        // $jurusanIdUser = $userProdi->jurusan_id ?? null;
+        // $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id ?? null;
 
-        $jurusanIdUser = $userProdi->jurusan_id ?? null;
-        $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id ?? null;
+        $user = Auth::user();
+        $jurusanIdUser = $user->jurusan_id ?? null;
+        $fakultasIdUser = $user->fakultas_id ?? null;
 
         if (! $jurusanIdUser) {
-            return Jurusan::with('fakultas_rel')
+            return Jurusan::query()
+                ->with('fakultas_rel')
                 ->orderBy('nama_jurusan', 'asc')
                 ->limit(12)
                 ->get()
@@ -154,14 +157,16 @@ trait WithJurusanSearchFilters
                 ])->toArray();
         }
 
-        $results = Jurusan::with('fakultas_rel')
+        $results = Jurusan::query()
+            ->with('fakultas_rel')
             ->where('fakultas_id', $fakultasIdUser)
             ->get()
             ->sortBy(fn ($j) => $j->id === $jurusanIdUser ? 0 : 1)
             ->take(12);
 
         if ($results->count() < 12) {
-            $additional = Jurusan::with('fakultas_rel')
+            $additional = Jurusan::query()
+                ->with('fakultas_rel')
                 ->where('fakultas_id', '!=', $fakultasIdUser)
                 ->whereNotIn('id', $results->pluck('id'))
                 ->orderBy('nama_jurusan', 'asc')

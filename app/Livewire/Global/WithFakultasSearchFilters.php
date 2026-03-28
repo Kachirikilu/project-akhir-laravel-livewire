@@ -28,12 +28,12 @@ trait WithFakultasSearchFilters
 
     public function inputFakultasFilter()
     {
-        $searchTerm = '%'.$this->fakultasSearchQuery.'%';
+        $search = $this->fakultasSearchQuery;
 
-        if ((strlen($this->fakultasSearchQuery) > 1 || is_numeric($this->fakultasSearchQuery)) && ! $this->fakultas_name) {
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fakultas_name) {
 
             $this->fakultasSearchResults = Fakultas::query()
-                ->searchFakultas($searchTerm)
+                ->searchFakultas($search)
                 ->limit(12)
                 ->get()
                 ->map(fn ($f) => [
@@ -42,7 +42,7 @@ trait WithFakultasSearchFilters
                     'fakultas' => $f->fakultas,
                 ])->toArray();
 
-        } elseif (empty($this->fakultasSearchQuery) || $this->fakultas_name) {
+        } elseif (empty($search) || $this->fakultas_name) {
             $this->fakultasSearchResults = $this->getFakultasbyUser();
         } else {
             $this->fakultasSearchResults = [];
@@ -75,10 +75,9 @@ trait WithFakultasSearchFilters
         $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
 
         if (strlen($value) > 0) {
-            $searchTerm = '%'.$value.'%';
 
             $results = Fakultas::query()
-                ->searchFakultas($searchTerm)
+                ->searchFakultas($value)
                 ->limit(12)
                 ->get();
 
@@ -128,12 +127,12 @@ trait WithFakultasSearchFilters
 
     public function getFakultasbyUser()
     {
-        $user = Auth::user()?->admin ?? Auth::user()?->dosen ?? Auth::user()?->mahasiswa;
-        $userProdi = $user ? $user->prodi()->first() : null;
-        $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id ?? null;
+        $user = Auth::user();
+        $fakultasIdUser = $user->fakultas_id ?? null;
 
         if (! $fakultasIdUser) {
-            return Fakultas::orderBy('nama_fakultas', 'asc')
+            return Fakultas::query()
+                ->orderBy('nama_fakultas', 'asc')
                 ->limit(12)
                 ->get()
                 ->map(fn ($f) => [
@@ -143,7 +142,8 @@ trait WithFakultasSearchFilters
                 ])->toArray();
         }
 
-        $results = Fakultas::orderBy('nama_fakultas', 'asc')
+        $results = Fakultas::query()
+            ->orderBy('nama_fakultas', 'asc')
             ->get()
             ->sortBy(fn ($f) => $f->id === $fakultasIdUser ? 0 : 1)
             ->take(12);

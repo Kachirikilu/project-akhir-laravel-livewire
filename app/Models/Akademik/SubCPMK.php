@@ -15,6 +15,8 @@ class SubCpmk extends Model
 
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(Cpmk::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id');
+        return $this->belongsToMany(Cpmk::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id')
+                    ->withPivot('sort_order')
+                    ->withTimestamps();
     }
 }

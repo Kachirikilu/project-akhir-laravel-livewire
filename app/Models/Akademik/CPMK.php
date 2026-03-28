@@ -14,18 +14,21 @@ class Cpmk extends Model
 
     public function rps(): BelongsToMany
     {
-        return $this->belongsToMany(Rps::class, 'rps_pivot_cpmk', 'cpmk_id', 'rps_id');
+        return $this->belongsToMany(Rps::class, 'rps_pivot_cpmk', 'rps_id', 'cpmk_id')
+                    ->withTimestamps();
     }
 
-    public function subCpmks(): BelongsToMany
+    public function sub_cpmks(): BelongsToMany
     {
         return $this->belongsToMany(SubCpmk::class, 'cpmk_pivot_scpmk', 'cpmk_id', 'scpmk_id')
                     ->withPivot('sort_order')
-                    ->orderBy('pivot_sort_order');
+                    ->withTimestamps();
     }
 
     public function cpls(): BelongsToMany
     {
-        return $this->belongsToMany(Cpl::class, 'cpmk_pivot_cpl', 'cpl_id', 'cpmk_id');
+        return $this->belongsToMany(Cpl::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
+                    ->withPivot('sort_order');
+        ;
     }
 }

@@ -58,17 +58,17 @@ trait WithMatkulModal
 
             if ($firstProdi) {
                 $this->jurusan_id = $firstProdi->jurusan_id;
-                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan_rel->jurusan ?? '';
-                $this->jurusan_kode = $firstProdi->jurusan_rel->kode ?? 'UNI';
+                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan;
+                $this->jurusan_kode = $firstProdi->kode;
 
-                $this->fakultas_id = $firstProdi->jurusan_rel->fakultas_id ?? null;
-                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
-                $this->fakultas_kode = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
+                $this->fakultas_id = $firstProdi->fakultas_id;
+                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->fakultas;
+                $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->prodi_id = $firstProdi->id;
                     $this->prodiNameSearch = $firstProdi->prodi;
-                    $this->prodi_kode = $firstProdi->kode ?? 'UNI';
+                    $this->prodi_kode = $firstProdi->kode;
                 }
             }
 

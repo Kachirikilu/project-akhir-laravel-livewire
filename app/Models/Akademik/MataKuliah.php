@@ -196,4 +196,108 @@ class MataKuliah extends Model
     {
         return Attribute::get(fn () => $this->is_wajib == 1 ? 'Wajib' : 'Pilihan');
     }
+
+
+    public function scopeSearchMK($query, $search)
+    {
+        $search = trim($search);
+        $searchTerm = '%' . $search . '%';
+
+        return $query->where(function ($q) use ($search, $searchTerm) {
+            // 1. Cari Nama & Kode Manual
+            $q->where('mata_kuliahs.nama_matkul', 'like', $searchTerm)
+                ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
+
+            // 2. Cari Semester (dengan Regex)
+            $cleanSearch = $search;
+            if (preg_match('/(?:s|sem|semester)\s*(\d+)/i', $search, $matches)) {
+                $cleanSearch = $matches[1];
+            }
+
+            if (is_numeric($cleanSearch)) {
+                $q->orWhere(function ($sub) use ($cleanSearch, $search) {
+                    $sub->where('mata_kuliahs.id', $search)
+                        ->orWhere('mata_kuliahs.semester', $cleanSearch);
+                });
+            }
+
+            // 3. Wajib atau Pilihan
+            if (strtolower($search) === 'wajib') {
+                $q->orWhere('mata_kuliahs.is_wajib', 1);
+            } elseif (strtolower($search) === 'pilihan') {
+                $q->orWhere('mata_kuliahs.is_wajib', 0);
+            }
+
+            // 4. Digit MK
+            if (preg_match('/^\d+$/', $search)) {
+                $q->orWhere('mata_kuliahs.digit_mk', $search);
+            } else {
+                $q->orWhere('mata_kuliahs.digit_mk', 'LIKE', $searchTerm);
+            }
+
+            // 5. Tipe SKS
+            $tipeMap = [
+                'tm' => 1, 'tatap muka' => 1, 'teori' => 1,
+                'pr' => 2, 'praktikum' => 2, 'praktek' => 2,
+                'pl' => 3, 'praktek lapangan' => 3, 'lapangan' => 3,
+                'sm' => 4, 'simulasi' => 4, 'studio' => 4,
+            ];
+            $searchLower = strtolower($search);
+            if (array_key_exists($searchLower, $tipeMap)) {
+                $q->orWhere('mata_kuliahs.tipe_sks', $tipeMap[$searchLower]);
+            }
+
+            // 6. Partial Code Search (Prefix & Digits)
+            $cleanSearchUpper = strtoupper($search);
+            if (preg_match('/[A-Z0-9]/', $cleanSearchUpper)) {
+                $q->orWhere(function ($sq) use ($cleanSearchUpper) {
+                    $prefixPart = preg_replace('/[^A-Z]/', '', $cleanSearchUpper);
+                    $digitPart = preg_replace('/[^0-9]/', '', $cleanSearchUpper);
+
+                    $sq->where(function ($sub) use ($prefixPart, $digitPart) {
+                        if (!empty($prefixPart)) {
+                            $sub->where(function ($low) use ($prefixPart) {
+                                $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
+                                    ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
+                                        $pro->where('kode_pr', 'like', $prefixPart . '%')
+                                            ->orWhereHas('jurusan_rel', function ($jur) use ($prefixPart) {
+                                                $jur->where('kode_jr', 'like', $prefixPart . '%')
+                                                    ->orWhereHas('fakultas_rel', function ($fak) use ($prefixPart) {
+                                                        $fak->where('kode_fk', 'like', $prefixPart . '%');
+                                                    });
+                                            });
+                                    })
+                                    ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('tingkatan_mk', '4'));
+                            });
+                        }
+
+                        if (!empty($digitPart)) {
+                            if (strlen($digitPart) <= 2) {
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart . '%');
+                            } else {
+                                $dSem = substr($digitPart, 0, 2);
+                                $dMk = substr($digitPart, 2);
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $dSem . '%')
+                                    ->where('mata_kuliahs.digit_mk', 'like', $dMk . '%');
+                            }
+                        }
+                    });
+                });
+            }
+
+            // 7. Silsilah (Prodi/Jurusan/Fakultas)
+            $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
+                $pq->where('nama_prodi', 'like', $searchTerm)
+                    ->orWhere('kode_pr', 'like', $searchTerm)
+                    ->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
+                        $jq->where('nama_jurusan', 'like', $searchTerm)
+                            ->orWhere('kode_jr', 'like', $searchTerm)
+                            ->orWhereHas('fakultas_rel', function ($fq) use ($searchTerm) {
+                                $fq->where('nama_fakultas', 'like', $searchTerm)
+                                    ->orWhere('kode_fk', 'like', $searchTerm);
+                            });
+                    });
+            });
+        });
+    }
 }

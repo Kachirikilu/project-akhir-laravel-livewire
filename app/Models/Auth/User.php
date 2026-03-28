@@ -69,61 +69,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function scopeSearchUser($query, $search)
-    {
-        if (empty($search)) {
-            return $query;
-        }
-
-        $searchTerm = '%'.trim($search).'%';
-        $searchLower = str($search)->lower();
-
-        return $query->where(function ($q) use ($searchTerm, $searchLower, $search) {
-            // 1. Search di Tabel Users Utama
-            $q->where('email', 'like', $searchTerm);
-
-            if (is_numeric($search)) {
-                $q->orWhere('id', $search);
-            }
-
-            // 2. Definisi Role dan Field Spesifiknya
-            $roleConfigs = [
-                'admin' => ['name', 'nip', 'nitk', 'status'],
-                'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
-                'mahasiswa' => ['name', 'nim', 'tahun_angkatan', 'status'],
-            ];
-
-            foreach ($roleConfigs as $role => $fields) {
-                // Pencarian berdasarkan identitas role (NIP, Nama, dll)
-                $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
-                    $r->where(function ($sub) use ($searchTerm, $fields) {
-                        foreach ($fields as $field) {
-                            $sub->orWhere($field, 'like', $searchTerm);
-                        }
-                    });
-                });
-
-                // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
-                $q->orWhereHas("$role.prodi", function ($p) use ($searchTerm) {
-                    $p->where('nama_prodi', 'like', $searchTerm)
-                        ->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
-                            $j->where('nama_jurusan', 'like', $searchTerm)
-                                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                                ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
-                                    $f->where('nama_fakultas', 'like', $searchTerm)
-                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-                                });
-                        });
-                });
-
-                // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
-                if ($searchLower->contains($role)) {
-                    $q->orWhereHas($role);
-                }
-            }
-        });
-    }
-
     public function scopeInLocationUser($query, $type, $id)
     {
         if (!$id) return $query;
@@ -257,6 +202,31 @@ class User extends Authenticatable
         return $this->hasOne(Mahasiswa::class);
     }
 
+    protected function prodiId(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->admin?->prodi_id 
+                ?? $this->dosen?->prodi_id 
+                ?? $this->mahasiswa?->prodi_id;
+        });
+    }
+
+    protected function jurusanId(): Attribute
+    {
+        return Attribute::get(function () {
+            $prodi = $this->admin?->prodi ?? $this->dosen?->prodi ?? $this->mahasiswa?->prodi;
+            return $prodi?->jurusan_id;
+        });
+    }
+
+    protected function fakultasId(): Attribute
+    {
+        return Attribute::get(function () {
+            $prodi = $this->admin?->prodi ?? $this->dosen?->prodi ?? $this->mahasiswa?->prodi;
+            return $prodi?->jurusan_rel?->fakultas_id;
+        });
+    }
+
     /**
      * Dapatkan URL foto profil pengguna.
      * * Accessor akan membuat properti profile_photo_url
@@ -288,6 +258,62 @@ class User extends Authenticatable
         static::deleting(function ($user) {
             if ($user->profile_photo_path) {
                 Storage::disk('public')->delete($user->profile_photo_path);
+            }
+        });
+    }
+
+
+    public function scopeSearchUser($query, $search)
+    {
+        if (empty($search)) {
+            return $query;
+        }
+
+        $searchTerm = '%'.trim($search).'%';
+        $searchLower = str($search)->lower();
+
+        return $query->where(function ($q) use ($searchTerm, $searchLower, $search) {
+            // 1. Search di Tabel Users Utama
+            $q->where('email', 'like', $searchTerm);
+
+            if (is_numeric($search)) {
+                $q->orWhere('id', $search);
+            }
+
+            // 2. Definisi Role dan Field Spesifiknya
+            $roleConfigs = [
+                'admin' => ['name', 'nip', 'nitk', 'status'],
+                'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
+                'mahasiswa' => ['name', 'nim', 'tahun_angkatan', 'status'],
+            ];
+
+            foreach ($roleConfigs as $role => $fields) {
+                // Pencarian berdasarkan identitas role (NIP, Nama, dll)
+                $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
+                    $r->where(function ($sub) use ($searchTerm, $fields) {
+                        foreach ($fields as $field) {
+                            $sub->orWhere($field, 'like', $searchTerm);
+                        }
+                    });
+                });
+
+                // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
+                $q->orWhereHas("$role.prodi", function ($p) use ($searchTerm) {
+                    $p->where('nama_prodi', 'like', $searchTerm)
+                        ->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
+                            $j->where('nama_jurusan', 'like', $searchTerm)
+                                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
+                                ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
+                                    $f->where('nama_fakultas', 'like', $searchTerm)
+                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                                });
+                        });
+                });
+
+                // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
+                if ($searchLower->contains($role)) {
+                    $q->orWhereHas($role);
+                }
             }
         });
     }

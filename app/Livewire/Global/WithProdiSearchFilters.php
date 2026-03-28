@@ -39,11 +39,11 @@ trait WithProdiSearchFilters
     public function inputProdiFilter()
     {
         $search = trim($this->prodiSearchQuery);
-        $searchTerm = '%'.$search.'%';
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->prodi_name) {
-            $this->prodiSearchResults = Prodi::with(['jurusan_rel.fakultas_rel'])
-                ->searchProdi($searchTerm)
+            $this->prodiSearchResults = Prodi::query()
+                ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
+                ->searchProdi($search)
                 ->limit(12)
                 ->get()
                 ->map(fn ($p) => [
@@ -69,7 +69,7 @@ trait WithProdiSearchFilters
 
     public function selectProdiForFilter($id)
     {
-        $data = Prodi::with(['jurusan_rel.fakultas_rel'])->find($id);
+        $data = Prodi::with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->find($id);
 
         if ($data) {
             $this->selectedProdiId = $id;
@@ -91,7 +91,7 @@ trait WithProdiSearchFilters
         // 2. Inisialisasi Query Dasar (Gunakan select prodis.* untuk menghindari ID tertimpa join)
         $query = Prodi::query()
             ->select('prodis.*')
-            ->with(['jurusan_rel.fakultas_rel']);
+            ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
 
         // 3. PRIORITAS: Filter Berdasarkan Mode Mata Kuliah (Scope Constraints)
         if ($this->showMKModal) {
@@ -106,10 +106,9 @@ trait WithProdiSearchFilters
 
         // 4. Logika Pencarian (Jika User Mengetik Sesuatu)
         if (strlen($value) > 0) {
-            $searchTerm = '%'.$value.'%';
-
-            $query->searchProdi($searchTerm);
-            $results = $query->limit(12)->get();
+            $results = $query
+                ->searchProdi($value)
+                ->limit(12)->get();
 
             // Mapping Hasil Pencarian
             $this->prodiResults = $results->map(function ($prodi) {
@@ -272,9 +271,16 @@ trait WithProdiSearchFilters
         $user = Auth::user()?->admin ?? Auth::user()?->dosen ?? Auth::user()?->mahasiswa;
         $userProdi = $user ? $user->prodi()->first() : null;
 
+        $user = Auth::user();
+        $prodiIdUser = $user->prodi_id ?? null;
+        $jurusanIdUser = $user->jurusan_id ?? null;
+        $fakultasIdUser = $user->fakultas_id ?? null;
+        
+
         // Jika tidak ada user/prodi, kembalikan 12 prodi pertama secara simpel
-        if (! $userProdi) {
-            return Prodi::with(['jurusan_rel.fakultas_rel'])
+        if (! $prodiIdUser) {
+            return Prodi::query()
+                ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
                 ->orderBy('nama_prodi', 'asc')
                 ->limit(12)
                 ->get()
@@ -287,26 +293,24 @@ trait WithProdiSearchFilters
                 ])->toArray();
         }
 
-        $fakultasIdUser = $userProdi->jurusan_rel?->fakultas_id;
+        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
 
-        $query = Prodi::with(['jurusan_rel.fakultas_rel']);
-
-        if (in_array($this->mkType, ['mk-jurusan', 2]) && filled($this->jurusan_id) && $this->showMKModal) {
+        if (($this->mkType == 2) && filled($this->jurusan_id) && $this->showMKModal) {
             $query->where('jurusan_id', $this->jurusan_id);
-        } elseif (in_array($this->mkType, ['mk-fakultas', 3]) && filled($this->fakultas_id) && $this->showMKModal) {
+        } elseif (($this->mkType == 3) && filled($this->fakultas_id) && $this->showMKModal) {
             $query->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->fakultas_id));
         } else {
             $query->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', $fakultasIdUser));
         }
 
-        $mainResults = $query->get()->sortBy(function ($p) use ($userProdi, $fakultasIdUser) {
-            if ($p->id === $userProdi->id) {
+        $mainResults = $query->get()->sortBy(function ($p) use ($prodiIdUser, $jurusanIdUser, $fakultasIdUser) {
+            if ($p->id === $prodiIdUser) {
                 return 0;
             }
-            if ($p->jurusan_id === $userProdi->jurusan_id) {
+            if ($p->jurusan_id === $jurusanIdUser) {
                 return 1;
             }
-            if ($p->jurusan_rel?->fakultas_id === $fakultasIdUser) {
+            if ($p->fakultas_id === $fakultasIdUser) {
                 return 2;
             }
 
@@ -314,7 +318,7 @@ trait WithProdiSearchFilters
         })->take(12);
 
         if ($mainResults->count() < 12 && empty($this->mkType)) {
-            $extra = Prodi::with(['jurusan_rel.fakultas_rel'])
+            $extra = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
                 ->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', '!=', $fakultasIdUser))
                 ->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
@@ -346,7 +350,7 @@ trait WithProdiSearchFilters
         $this->prodi_id = $id;
         $this->prodiNameSearch = $prodiName;
 
-        $data = Prodi::with(['jurusan_rel.fakultas_rel'])->find($id);
+        $data = Prodi::with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->find($id);
         if ($data) {
             $this->prodi_kode = $data->kode;
         }

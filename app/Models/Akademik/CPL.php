@@ -16,11 +16,13 @@ class Cpl extends Model
 
     public function prodis(): BelongsToMany
     {
-        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'prodi_id');
+        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'prodi_id', 'cpl_id')
+                    ->withPivot('sort_order');
     }
-
+    
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(Cpmk::class, 'cpl_pivot_cpmk', 'cpl_id', 'cpmk_id');
+        return $this->belongsToMany(Cpmk::class, 'cpmk_pivot_cpl', 'cpl_id', 'cpmk_id')
+                    ->withPivot('sort_order');
     }
 }

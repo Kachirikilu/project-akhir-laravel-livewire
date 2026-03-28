@@ -66,12 +66,12 @@ trait WithUserModal
 
         $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
         $this->user_id = $user->id;
-        $this->prodi_id = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
-        $this->prodi_id_2 = $user->admin->prodi_id ?? $user->dosen->prodi_id ?? $user->mahasiswa->prodi_id ?? null;
+        $this->prodi_id = $user->prodi_id;
+        $this->prodi_id_2 = $user->prodi_id;
 
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
-            $this->prodiNameSearch = $prodi ? $prodi->nama_prodi : '';
+            $this->prodiNameSearch = $prodi ? $prodi->prodi : '';
         } else {
             $this->prodiNameSearch = '';
         }

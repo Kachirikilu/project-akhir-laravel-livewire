@@ -25,7 +25,14 @@ class Rps extends Model
     {
         return $this->belongsToMany(Cpmk::class, 'rps_pivot_cpmk', 'rps_id', 'cpmk_id')
                     ->withPivot('sort_order')
-                    ->orderBy('pivot_sort_order');
+                    ->orderBy('pivot_sort_order')
+                    ->withTimestamps();
+    }
+
+    public function referensis(): BelongsToMany
+    {
+        return $this->belongsToMany(Referensi::class, 'rps_pivot_referensi', 'rps_id', 'ref_id')
+                    ->withPivot(['kategori', 'sort_order']);
     }
 
     public function dosens(): BelongsToMany
@@ -33,11 +40,5 @@ class Rps extends Model
         return $this->belongsToMany(Dosen::class, 'rps_pivot_dosen', 'rps_id', 'dosen_id')
                     ->withPivot(['peran', 'is_ketua', 'sort_order'])
                     ->withTimestamps();
-    }
-
-    public function referensis(): BelongsToMany
-    {
-        return $this->belongsToMany(Referensi::class, 'rps_pivot_referensi', 'rps_id', 'referensi_id')
-                    ->withPivot('kategori');
     }
 }

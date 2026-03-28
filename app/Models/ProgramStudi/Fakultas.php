@@ -26,18 +26,6 @@ class Fakultas extends Model
         return $this->hasManyThrough(Prodi::class, Jurusan::class);
     }
 
-    public function scopeSearchFakultas(Builder $query, $searchTerm)
-{
-    $searchTerm = '%' . trim($searchTerm) . '%';
-
-    return $query->where(function ($q) use ($searchTerm) {
-        $q->where('nama_fakultas', 'like', $searchTerm)
-            ->orWhere('kode_fk', 'like', $searchTerm)
-            ->orWhere('id', 'like', $searchTerm)
-            ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-    });
-}
-
     protected function kode(): Attribute {
         return Attribute::get(function () {
             if (!empty($this->attributes['kode_fk'])) {
@@ -57,5 +45,18 @@ class Fakultas extends Model
 
     protected function fakultas(): Attribute {
         return Attribute::get(fn() => $this->nama_fakultas);
+    }
+
+
+    public function scopeSearchFakultas(Builder $query, $searchTerm)
+    {
+        $searchTerm = '%' . trim($searchTerm) . '%';
+
+        return $query->where(function ($q) use ($searchTerm) {
+            $q->where('nama_fakultas', 'like', $searchTerm)
+                ->orWhere('kode_fk', 'like', $searchTerm)
+                ->orWhere('id', 'like', $searchTerm)
+                ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+        });
     }
 }

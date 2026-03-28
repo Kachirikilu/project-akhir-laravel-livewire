@@ -12,23 +12,10 @@ trait WithJurusanFilters
     public function inputJurusanSearch()
     {
         $query = Jurusan::query()->with(['fakultas_rel', 'prodis']);
-        $searchTerm = '%'.$this->search.'%';
+        $search = trim($this->search);
 
-        if (! empty($this->search)) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('jurusans.nama_jurusan', 'like', $searchTerm)
-                    ->orWhereRaw("CONCAT('Jurusan ', jurusans.nama_jurusan) LIKE ?", [$searchTerm]);
-                if (is_numeric($this->search)) {
-                    $q->orWhere('jurusans.id', $this->search);
-                }
-                $q->orWhereHas('fakultas_rel', function ($r) use ($searchTerm) {
-                    $r->where('nama_fakultas', 'like', $searchTerm);
-                });
-                $q->orWhereHas('prodis', function ($r) use ($searchTerm) {
-                    $r->where('nama_prodi', 'like', $searchTerm);
-                });
-
-            });
+        if (! empty($search)) {
+            $query->searchJurusan($search)->get();
         }
 
         if (! empty($this->selectedFakultasId)) {

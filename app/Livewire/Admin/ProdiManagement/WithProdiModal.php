@@ -80,7 +80,7 @@ trait WithProdiModal
 
                 $this->fakultas_id = $jurusan->fakultas_id;
                 $this->fakultas_id_2 = $jurusan->fakultas_id;
-                $this->fakultasNameSearch = $jurusan->fakultas_rel->fakultas ?? '';
+                $this->fakultasNameSearch = $jurusan->fakultas ?? '';
 
                 if ($this->fakultas_id) {
                     $fakultas = Fakultas::find($this->fakultas_id);

@@ -12,22 +12,23 @@ trait WithFakultasFilters
     public function inputFakultasSearch()
     {
         $query = Fakultas::query()->with(['jurusans.prodis']);
-        $searchTerm = '%'.$this->search.'%';
+        $search = trim($this->search);
 
-        if (! empty($this->search)) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_fakultas', 'like', $searchTerm);
-                if (is_numeric($this->search)) {
-                    $q->orWhere('id', $this->search);
-                }
-                $q->orWhereHas('jurusans', function ($r) use ($searchTerm) {
-                    $r->where('nama_jurusan', 'like', $searchTerm);
-                });
-                $q->orWhereHas('jurusans.prodis', function ($r) use ($searchTerm) {
-                    $r->where('nama_prodi', 'like', $searchTerm);
-                });
+        if (! empty($search)) {
+            $query->searchFakultas($search)->get();
+            // $query->where(function ($q) use ($searchTerm) {
+            //     $q->where('nama_fakultas', 'like', $searchTerm);
+            //     if (is_numeric($this->search)) {
+            //         $q->orWhere('id', $this->search);
+            //     }
+            //     $q->orWhereHas('jurusans', function ($r) use ($searchTerm) {
+            //         $r->where('nama_jurusan', 'like', $searchTerm);
+            //     });
+            //     $q->orWhereHas('jurusans.prodis', function ($r) use ($searchTerm) {
+            //         $r->where('nama_prodi', 'like', $searchTerm);
+            //     });
 
-            });
+            // });
         }
 
         if (! empty($this->selectedFakultasId)) {

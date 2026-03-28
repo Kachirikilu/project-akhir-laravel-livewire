@@ -24,30 +24,11 @@ trait WithProdiFilters
 
     public function inputProdiSearch()
     {
-        $query = Prodi::query()->with(['jurusan_rel.fakultas_rel']);
-        $searchTerm = '%'.$this->search.'%';
+        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
+        $search = trim($this->search);
 
-        if (! empty($this->search)) {
-            $query->where(function ($q) use ($searchTerm) {
-                // Prodi
-                $q->where('nama_prodi', 'like', $searchTerm)
-                    ->orWhere('nama_strata', 'like', $searchTerm);
-
-                if (is_numeric($this->search)) {
-                    $q->orWhere('prodis.id', $this->search);
-                }
-                // Jurusan
-                $q->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
-                    $jq->where('nama_jurusan', 'like', $searchTerm)
-                        ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
-                });
-                // Fakultas
-                $q->orWhereHas('jurusan_rel.fakultas_rel', function ($fq) use ($searchTerm) {
-                    $fq->where('nama_fakultas', 'like', $searchTerm)
-                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-                });
-
-            });
+        if (! empty($search)) {
+            $query->searchProdi($search)->get();
         }
 
         if (! empty($this->selectedJurusanId)) {

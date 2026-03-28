@@ -16,6 +16,7 @@ class Referensi extends Model
 
     public function rps(): BelongsToMany
     {
-        return $this->belongsToMany(Rps::class, 'rps_pivot_referensi', 'referensi_id', 'rps_id');
+        return $this->belongsToMany(Rps::class, 'rps_pivot_referensi', 'rps_id', 'ref_id')
+                    ->withPivot('sort_order');
     }
 }

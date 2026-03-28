@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // CPMK - Sub-CPMK
@@ -40,6 +41,7 @@ return new class extends Migration
             $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
             $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
             $table->integer('sort_order')->default(0);
+            $table->timestamps();
         });
 
         // CPMK - CPL

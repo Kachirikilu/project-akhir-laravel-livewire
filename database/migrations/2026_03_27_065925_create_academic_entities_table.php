@@ -31,8 +31,7 @@ return new class extends Migration
 
         Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
-            $table->char('kode_cpmk', 3);
-            $table->string('digit_cpmk', 4);
+            $table->string('kode_cpmk', 10);
             $table->text('deskripsi');
             $table->softDeletes();
             $table->timestamps();
@@ -40,8 +39,7 @@ return new class extends Migration
 
         Schema::create('sub_cpmks', function (Blueprint $table) {
             $table->id();
-            $table->char('kode_scpmk', 4);
-            $table->string('digit_scpmk', 6);
+            $table->string('kode_scpmk', 10);
             $table->text('deskripsi');
             $table->text('materi');
             $table->text('indikator');
@@ -55,6 +53,7 @@ return new class extends Migration
 
         Schema::create('referensis', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_ref', 10);
             $table->string('judul');
             $table->string('penulis');
             $table->year('tahun');

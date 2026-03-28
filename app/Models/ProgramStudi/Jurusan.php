@@ -26,26 +26,6 @@ class Jurusan extends Model
         return $this->hasMany(Prodi::class);
     }
 
-    public function scopeSearchJurusan(Builder $query, $searchTerm)
-    {
-        $searchTerm = '%' . trim($searchTerm) . '%';
-
-        return $query->where(function ($q) use ($searchTerm) {
-            // 1. Filter dasar Jurusan
-            $q->where('nama_jurusan', 'like', $searchTerm)
-                ->orWhere('kode_jr', 'like', $searchTerm)
-                ->orWhere('id', 'like', $searchTerm)
-                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
-
-            // 2. Filter berdasarkan Fakultas (Relasi)
-            $q->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
-                $sq->where('nama_fakultas', 'like', $searchTerm)
-                    ->orWhere('kode_fk', 'like', $searchTerm)
-                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
-            });
-        });
-    }
-
     protected function jurusan(): Attribute {
         return Attribute::get(fn() => $this->nama_jurusan);
     }
@@ -64,19 +44,19 @@ class Jurusan extends Model
         });
     }
 
-    protected function kodeText(): Attribute
-    {
-        return Attribute::get(function () {
-            if (!empty($this->attributes['kode_jr'])) {
-                return $this->attributes['kode_jr'];
-            }
-            $kodeFakultas = $this->fakultas_rel?->kode_fk;
-            if (!empty($kodeFakultas)) {
-                return $kodeFakultas;
-            }
-            return 'UNI';
-        });
-    }
+    // protected function kodeText(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         if (!empty($this->attributes['kode_jr'])) {
+    //             return $this->attributes['kode_jr'];
+    //         }
+    //         $kodeFakultas = $this->fakultas_rel?->kode_fk;
+    //         if (!empty($kodeFakultas)) {
+    //             return $kodeFakultas;
+    //         }
+    //         return 'UNI';
+    //     });
+    // }
     protected function tingkatanProdi(): Attribute
     {
         return Attribute::get(function () {
@@ -93,5 +73,26 @@ class Jurusan extends Model
 
     protected function fakultas(): Attribute {
         return Attribute::get(fn() => $this->fakultas_rel?->nama_fakultas);
+    }
+
+
+    public function scopeSearchJurusan(Builder $query, $searchTerm)
+    {
+        $searchTerm = '%' . trim($searchTerm) . '%';
+
+        return $query->where(function ($q) use ($searchTerm) {
+            // 1. Filter dasar Jurusan
+            $q->where('nama_jurusan', 'like', $searchTerm)
+                ->orWhere('kode_jr', 'like', $searchTerm)
+                ->orWhere('id', 'like', $searchTerm)
+                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
+
+            // 2. Filter berdasarkan Fakultas (Relasi)
+            $q->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
+                $sq->where('nama_fakultas', 'like', $searchTerm)
+                    ->orWhere('kode_fk', 'like', $searchTerm)
+                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+            });
+        });
     }
 }
