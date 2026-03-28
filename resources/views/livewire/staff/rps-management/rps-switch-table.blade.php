@@ -9,41 +9,41 @@
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalSemuaMK,
-                'tabString' => '',
-                'tabNameString' => 'Semua Mata Kuliah'
+                'tabFilter' => $totalRPS,
+                'tabString' => 'rps',
+                'tabNameString' => 'RPS'
             ])
             {{-- Tab Tatap Muka --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalTatapMuka,
-                'tabString' => 'tatap_muka',
-                'tabNameString' => 'Tatap Muka'
+                'tabFilter' => $totalCPMK,
+                'tabString' => 'cpmk',
+                'tabNameString' => 'CPMK'
             ])
             {{-- Tab Praktikum --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalPraktikum,
-                'tabString' => 'praktikum',
-                'tabNameString' => 'Praktikum'
+                'tabFilter' => $totalSCPMK,
+                'tabString' => 'scpmk',
+                'tabNameString' => 'Sub-CPMK'
             ])
             {{-- Tab Praktek Lapangan --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalPraktekLapangan,
-                'tabString' => 'praktek_lapangan',
-                'tabNameString' => 'Praktek Lapangan'
+                'tabFilter' => $totalCPL,
+                'tabString' => 'cpl',
+                'tabNameString' => 'CPL'
             ])
             {{-- Tab Simulasi --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalSimulasi,
-                'tabString' => 'simulasi',
-                'tabNameString' => 'Simulasi'
+                'tabFilter' => $totalRef,
+                'tabString' => 'ref',
+                'tabNameString' => 'Referensi'
             ])
         </div>
 

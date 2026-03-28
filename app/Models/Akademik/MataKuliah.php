@@ -19,7 +19,7 @@ class MataKuliah extends Model
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
 
-    protected $appends = ['tingkatan_mode', 'kode', 'kode_blok', 'matkul', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
+    protected $appends = ['kode', 'kode_blok', 'matkul', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
 
     public function prodis()
     {
@@ -29,18 +29,18 @@ class MataKuliah extends Model
             ->orderBy('prodi_pivot_mk.sort_order', 'asc');
     }
 
-    protected function tingkatanMode(): Attribute
-    {
-        return Attribute::get(function () {
-            return match ((int) $this->tingkatan_mk) {
-                1 => 'mk-prodi',
-                2 => 'mk-jurusan',
-                3 => 'mk-fakultas',
-                4 => 'mk-universitas',
-                default => 'mk',
-            };
-        });
-    }
+    // protected function tingkatanMode(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return match ((int) $this->tingkatan_mk) {
+    //             1 => 'mk-prodi',
+    //             2 => 'mk-jurusan',
+    //             3 => 'mk-fakultas',
+    //             4 => 'mk-universitas',
+    //             default => 'mk',
+    //         };
+    //     });
+    // }
 
     protected function kode(): Attribute
     {
@@ -63,7 +63,7 @@ class MataKuliah extends Model
                 $prefix = $prefixDefault ?? 'UNI';
             }
 
-            return $prefix.$this->digit_semester.$this->digit_mk;
+            return $prefix.'-'.$this->digit_semester.$this->digit_mk;
         });
     }
 

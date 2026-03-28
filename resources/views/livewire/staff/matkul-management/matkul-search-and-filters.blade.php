@@ -10,7 +10,7 @@
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Opsi',
-            'totalTab' => $totalMatkuls,
+            'totalTab' => $totalAllOpsi,
             'totalTab1' => $totalWajib,
             'totalTab2' => $totalPilihan,
             'totalTab3' => $totalUni,

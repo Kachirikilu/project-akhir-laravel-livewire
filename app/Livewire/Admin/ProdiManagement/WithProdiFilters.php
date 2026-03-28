@@ -13,10 +13,6 @@ trait WithProdiFilters
 
     public $filter = '';
 
-    public $sortField = 'kode';
-
-    public $sortDirection = 'asc';
-
     public function updatingSearch()
     {
         $this->resetPage();
@@ -25,7 +21,7 @@ trait WithProdiFilters
     public function inputProdiSearch()
     {
         $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
-        $search = trim($this->search);
+        $search = $this->search;
 
         if (! empty($search)) {
             $query->searchProdi($search)->get();
@@ -70,51 +66,55 @@ trait WithProdiFilters
 
     public function sortFieldOrderProdi($query)
     {
-        $query->select('prodis.*');
-
-        if ($this->sortField === 'prodi') {
-            $query->orderBy('prodis.nama_prodi', $this->sortDirection)
-                ->orderByRaw("
-                    CASE 
-                        WHEN nama_strata = 'Sarjana' THEN 1 
-                        WHEN nama_strata = 'Magister' THEN 2 
-                        WHEN nama_strata = 'Doktor' THEN 3 
-                        ELSE 4 
-                    END " . $this->sortDirection
-                );
-        } elseif ($this->sortField === 'jurusan') {
-            $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-                ->orderBy('jurusans.nama_jurusan', $this->sortDirection);
-        } elseif ($this->sortField === 'fakultas') {
-            $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-                ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
-                ->orderBy('fakultas.nama_fakultas', $this->sortDirection);
-        } elseif ($this->sortField === 'strata') {
-            $query->orderBy('prodis.nama_strata', $this->sortDirection);
-        } elseif ($this->sortField === 'kode') {
-            if ($this->switchTable === 'prodi') {
-                $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
-                    ->select('prodis.*')
-                    ->orderByRaw('COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk) '.$this->sortDirection);
-            } elseif ($this->switchTable === 'jurusan') {
-                $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
-                    ->select('jurusans.*')
-                    ->orderByRaw('COALESCE(jurusans.kode_jr, fakultas.kode_fk) '.$this->sortDirection);
-            } elseif ($this->switchTable === 'fakultas') {
-                $query->orderBy('kode_fk', $this->sortDirection);
-            }
-        } else {
-            $query->orderBy('prodis.id', $this->sortDirection);
-        }
-
         if ($this->filter === 'jurusan') {
             $query->whereHas('jurusan_rel');
         } elseif ($this->filter === 'fakultas') {
             $query->whereHas('jurusan_rel.fakultas');
         }
 
-        return $query;
+        $primaryTable = $this->switchTable . 's';
+        $query->select("$primaryTable.*");
+
+        return match ($this->sortField) {
+            'prodi'    => $this->applyProdiNameSort($query),
+            'jurusan'  => $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                                ->orderBy('jurusans.nama_jurusan', $this->sortDirection),
+            'fakultas' => $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                                ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                                ->orderBy('fakultas.nama_fakultas', $this->sortDirection),
+            'strata'   => $query->orderBy('prodis.nama_strata', $this->sortDirection),
+            'kode'     => $this->applyProdiKodeSort($query),
+            default    => $query->orderBy("$primaryTable.id", $this->sortDirection),
+        };
+    }
+
+    private function applyProdiNameSort($query)
+    {
+        return $query->orderBy('prodis.nama_prodi', $this->sortDirection)
+            ->orderByRaw("
+                CASE 
+                    WHEN nama_strata = 'Sarjana' THEN 1 
+                    WHEN nama_strata = 'Magister' THEN 2 
+                    WHEN nama_strata = 'Doktor' THEN 3 
+                    ELSE 4 
+                END " . $this->sortDirection
+            );
+    }
+
+    private function applyProdiKodeSort($query)
+    {
+        if (in_array($this->switchTable, ['prodi', 'jurusan'])) {
+            $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id');
+        }
+
+        $orderByRaw = match ($this->switchTable) {
+            'prodi'    => "COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk)",
+            'jurusan'  => "COALESCE(jurusans.kode_jr, fakultas.kode_fk)",
+            'fakultas' => "fakultas.kode_fk",
+            default    => "prodis.id"
+        };
+
+        return $query->orderByRaw("$orderByRaw {$this->sortDirection}");
     }
 }

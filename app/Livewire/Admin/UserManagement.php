@@ -44,6 +44,10 @@ class UserManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public $sortField = 'name';
+
+    public $sortDirection = 'asc';
+
     protected $listeners = ['refresh-table' => 'refreshUsersList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
@@ -54,8 +58,7 @@ class UserManagement extends Component
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'sortField' => ['except' => 'name'],
-        'sortDirection' => ['except' => 'asc'],
-        'showDeleted'  => ['except' => false]
+        'sortDirection' => ['except' => 'asc']
 
         // 'prodi_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
@@ -93,7 +96,7 @@ class UserManagement extends Component
         if ($filter != '' && $sortField == 'role') {
             $this->sortField = 'name';
         } elseif ($filter != 'mahasiswa' && $sortField == 'tahun_angkatan') {
-            $this->sortField = 'name';
+            $this->sortField = 'status';
         } elseif ($filter == 'mahasiswa' && $sortField == 'identity2') {
             $this->sortField = 'identity1';
         } elseif ($filter != 'dosen' && $sortField == 'identity3') {

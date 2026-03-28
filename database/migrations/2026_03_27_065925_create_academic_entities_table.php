@@ -56,8 +56,8 @@ return new class extends Migration
             $table->string('kode_ref', 10);
             $table->string('judul');
             $table->string('penulis');
-            $table->year('tahun');
             $table->string('penerbit');
+            $table->year('tahun');
             $table->string('link')->nullable();
             $table->softDeletes();
             $table->timestamps();

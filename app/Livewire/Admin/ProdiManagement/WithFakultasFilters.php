@@ -11,8 +11,8 @@ trait WithFakultasFilters
 
     public function inputFakultasSearch()
     {
-        $query = Fakultas::query()->with(['jurusans.prodis']);
-        $search = trim($this->search);
+        $query = Fakultas::query()->with(['jurusans', 'jurusans.prodis']);
+        $search = $this->search;
 
         if (! empty($search)) {
             $query->searchFakultas($search)->get();

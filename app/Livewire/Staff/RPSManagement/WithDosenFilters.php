@@ -12,12 +12,12 @@ trait WithDosenFilters
     public function inputDosenSearch()
     {
         $query = Dosen::query();
-        $searchTerm = '%' . trim($this->search) . '%';
+        $search = '%' . trim($this->search) . '%';
 
         if (!empty($this->search)) {
-            $query->where('name', 'like', $searchTerm)
-                  ->orWhere('nip', 'like', $searchTerm)
-                  ->orWhere('nidn', 'like', $searchTerm);
+            $query->where('name', 'like', $search)
+                  ->orWhere('nip', 'like', $search)
+                  ->orWhere('nidn', 'like', $search);
         }
 
         $this->sortFieldOrderDosen($query);
@@ -35,7 +35,7 @@ trait WithDosenFilters
         } elseif ($this->sortField === 'nidn') {
             $query->orderBy('nidn', $this->sortDirection);
         } else {
-            $query->orderBy('dosens.id', 'desc');
+            $query->orderBy('dosens.id', $this->sortDirection);
         }
 
         return $query;

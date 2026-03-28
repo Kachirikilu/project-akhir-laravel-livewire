@@ -5,38 +5,30 @@ namespace App\Livewire\Staff;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-
-use App\Livewire\Staff\RPSManagement\WithRPSFilters;
-use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
-use App\Livewire\Staff\RPSManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\RPSManagement\WithCPLFilters;
-use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
-
-
+use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Staff\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\RPSManagement\WithSubCPMKFilters;
 use App\Models\Akademik\Cpl;
 use App\Models\Akademik\Cpmk;
-use App\Models\Akademik\Referensi;
 use App\Models\Akademik\Rps;
-use App\Models\Akademik\SubCpmk;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class RpsManagement extends Component
 {
-    use WithProdiSearchFilters;
-    use WithJurusanSearchFilters;
-    use WithFakultasSearchFilters;
-
-    use WithRPSFilters;
-    use WithCPMKFilters;
-    use WithSubCPMKFilters;
     use WithCPLFilters;
-    use WithReferensiFilters;
+    use WithCPMKFilters;
     use WithDosenFilters;
-
-
+    use WithFakultasSearchFilters;
+    use WithJurusanSearchFilters;
     use WithPagination;
+    use WithProdiSearchFilters;
+    use WithReferensiFilters;
+    use WithRPSFilters;
+    use WithSubCPMKFilters;
 
     public $switchTable = 'rps';
 
@@ -44,48 +36,57 @@ class RpsManagement extends Component
 
     public $search = '';
 
-    public $filter = ''; // Khusus RPS (draft, published)
+    public $filter = '';
 
     public $showDeleted = false;
 
     protected $paginationTheme = 'tailwind';
+
+    public $sortField = 'kode';
+
+    public $sortDirection = 'asc';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
         'switchTable' => ['except' => 'rps'],
         'filter' => ['except' => ''],
-        'showDeleted' => ['except' => false],
+        'sortField' => ['except' => 'kode'],
+        'sortDirection' => ['except' => 'asc']
     ];
 
     public function updatedSearch()
     {
         $this->resetPage();
-    }
+     }
 
     private function syncSortField($table, $sortField)
     {
-        if ($table == 'rps') {
-            if (! in_array($sortField, ['tahun_akademik', 'status', 'created_at'])) {
-                $this->sortField = 'created_at';
-            }
-        } elseif ($table == 'cpmk') {
-            if (! in_array($sortField, ['kode_cpmk', 'digit_cpmk', 'deskripsi'])) {
-                $this->sortField = 'kode_cpmk';
-            }
-        } elseif ($table == 'scpmk') {
-            if (! in_array($sortField, ['kode_scpmk', 'digit_scpmk', 'bobot'])) {
-                $this->sortField = 'kode_scpmk';
-            }
-        } elseif ($table == 'cpl') {
-            if (! in_array($sortField, ['kode_cpl', 'deskripsi'])) {
-                $this->sortField = 'kode_cpl';
-            }
-        } elseif ($table == 'ref') {
-            if (! in_array($sortField, ['judul', 'penulis', 'tahun'])) {
-                $this->sortField = 'judul';
+        $columns = [
+            'rps'   => [1 => 'id', 2 => 'kode', 3 => 'matkul', 4 => 'tahun_akademik', 5 => 'status', 6 => 'tanggal_revisi'],
+            'cpmk'  => [1 => 'id', 2 => 'kode', 3 => 'deskripsi'],
+            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'indikator', 6 => 'bobot'],
+            'cpl'   => [1 => 'id', 2 => 'kode', 3 => 'deskripsi'],
+            'ref'   => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link'],
+        ];
+
+        if (!isset($columns[$table])) return;
+
+        $targetCols = $columns[$table];
+
+        $currentPos = 1;
+        foreach ($columns as $cols) {
+            $pos = array_search($sortField, $cols);
+            if ($pos !== false) {
+                $currentPos = $pos;
+                break;
             }
         }
+
+        $maxPosInTarget = max(array_keys($targetCols));
+        $finalPos = min($currentPos, $maxPosInTarget);
+
+        $this->sortField = $targetCols[$finalPos];
     }
 
     public function switchingTable($table)
@@ -95,70 +96,36 @@ class RpsManagement extends Component
         $this->resetPage();
     }
 
-    // public function render()
-    // {
-    //     $this->inputProdiFilter();
-    //     $this->inputJurusanFilter();
-    //     $this->inputFakultasFilter();
-
-    //     $query = $this->inputRPSSearch();
-
-    //     if ($this->switchTable === 'rps') {
-    //         // Asumsi RPS adalah default, bisa ditambahkan filter khusus jika perlu
-    //     } elseif ($this->switchTable === 'cpmk') {
-    //         // Jika model berbeda, pastikan inputRPSSearch() menghandle pergantian Model
-    //     } elseif ($this->switchTable === 'scpmk') {
-    //         // Logika filter scpmk
-    //     }
-
-    //     // 2. Logika Soft Deletes (Toggle Sampah)
-    //     $queryRPS = $this->inputRPSSearch();
-    //     $queryCPMK = $this->inputCPMKSearch();
-    //     $querySCPMK = $this->inputSCPMKSearch();
-    //     $queryCPL = $this->inputCPLSearch();
-    //     $queryRef = $this->inputRefSearch();
-
-    //     if ($this->showDeleted) {
-    //         $query->onlyTrashed();
-    //         $queryRPS->onlyTrashed();
-    //     }
-
-    //     $totalRPS = (clone $queryRPS)->count();
-    //     $totalAktif = (clone $queryRPS)->where('status', 'published')->count();
-    //     $totalDraf = (clone $queryRPS)->where('status', 'draft')->count();
-
-    //     $countCPMK = Cpmk::count();
-    //     $countSCPMK = SubCpmk::count();
-    //     $countCPL = Cpl::count();
-    //     $countRef = Referensi::count();
-
-    //     // 4. Eksekusi Query dengan Pagination
-    //     return view('livewire.staff.rps-management', [
-    //         'items' => $query->paginate($this->perPage),
-    //         'totalRPS' => $totalRPS,
-    //         'totalAktif' => $totalAktif,
-    //         'totalDraf' => $totalDraf,
-
-    //         'totalCPMK' => $countCPMK,
-    //         'totalSCPMK' => $countSCPMK,
-    //         'totalCPL' => $countCPL,
-    //         'totalRef' => $countRef,
-    //     ]);
-    // }
-
     public function render()
     {
         $this->inputProdiFilter();
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        // Ambil semua query secara terpisah untuk menghitung badge statistik
-        $queryRPS = $this->inputRPSSearch();
-        $queryCPMK = $this->inputCPMKSearch();
+        $queryRPS   = $this->inputRPSSearch();
+        // $queryRPS = $this->inputRPSSearch()
+        // ->when($this->showDeleted, fn($q) => $q->onlyTrashed());
+        // $totalRPS = (clone $queryRPS)->distinct('rps.id')->count('rps.id');
+
+        $baseData = $this->inputRPSSearch()
+            ->when($this->showDeleted, fn($q) => $q->onlyTrashed())
+            ->get(['rps.id', 'rps.mk_id', 'rps.tahun_akademik', 'rps.is_draf', 'rps.tanggal_revisi'])
+            ->unique('id');
+
+        $queryCPMK  = $this->inputCPMKSearch();
         $querySCPMK = $this->inputSCPMKSearch();
-        $queryCPL = $this->inputCPLSearch();
-        $queryRef = $this->inputRefSearch();
+        $queryCPL   = $this->inputCPLSearch();
+        $queryRef   = $this->inputRefSearch();
         $queryDosen = $this->inputDosenSearch();
+
+        $queryCPMK2 = clone $queryCPMK;
+        $querySCPMK2 = clone $querySCPMK;
+        $queryCPL2 = clone $queryCPL;
+        $queryRef2 = clone $queryRef;
+        $queryDosen2 = clone $queryDosen;
+
+        // $queryJr = clone $queryJurusan;
+        // $queryFk = clone $queryFakultas;
 
         if ($this->showDeleted) {
             $queryRPS->onlyTrashed();
@@ -166,23 +133,51 @@ class RpsManagement extends Component
             $querySCPMK->onlyTrashed();
             $queryCPL->onlyTrashed();
             $queryRef->onlyTrashed();
-            $queryDosen->onlyTrashed();
+
+            $queryCPMK2->onlyTrashed();
+            $querySCPMK2->onlyTrashed();
+            $queryCPL2->onlyTrashed();
+            $queryRef2  ->onlyTrashed();
+            // $queryDosen->onlyTrashed();
         }
 
-        return view('livewire.staff.rps-management', [
-            'rps' => $queryRPS->paginate($this->perPage),
-            'cpmk' => $queryCPMK->paginate($this->perPage),
-            'scpmk' => $querySCPMK->paginate($this->perPage),
-            'cpl' => $queryCPL->paginate($this->perPage),
-            'ref' => $queryRef->paginate($this->perPage),
-            'dosen' => $queryDosen->paginate($this->perPage),
+        $data = [
+            'rps' => collect(),
+            'cpmk' => collect(),
+            'scpmk' => collect(),
+            'cpl' => collect(),
+            'ref' => collect()
+            // 'dosen' => collect()
+        ];
 
-            'totalRPS' => (clone $queryRPS)->count(),
-            'totalCPMK' => (clone $queryCPMK)->count(),
-            'totalSCPMK' => (clone $querySCPMK)->count(),
-            'totalCPL' => (clone $queryCPL)->count(),
-            'totalRef' => (clone $queryRef)->count(),
-            'totalDosen' => (clone $queryDosen)->count(),
-        ]);
+        switch ($this->switchTable) {
+            case 'rps':
+                $data['rps'] = $queryRPS->paginate($this->perPage);
+                break;
+            case 'cpmk':
+                $data['cpmk'] = $queryCPMK2->paginate($this->perPage);
+                break;
+            case 'scpmk':
+                $data['scpmk'] = $querySCPMK2->paginate($this->perPage);
+                break;
+            case 'cpl':
+                $data['cpl'] = $queryCPL2->paginate($this->perPage);
+                break;
+            case 'ref':
+                $data['ref'] = $queryRef2->paginate($this->perPage);
+                break;
+            case 'dosen':
+                $data['dosen'] = $queryDosen2->paginate($this->perPage);
+                break;
+        }
+
+        return view('livewire.staff.rps-management', array_merge($data, [
+            'totalRPS'   => $baseData->count(),
+            'totalCPMK'  => (clone $queryCPMK)->reorder()->count(),
+            'totalSCPMK' => (clone $querySCPMK)->reorder()->count(),
+            'totalCPL'   => (clone $queryCPL)->reorder()->count(),
+            'totalRef'   => (clone $queryRef)->reorder()->count()
+            // 'totalDosen' => (clone $queryDosen)->reorder()->count(),
+        ]));
     }
 }

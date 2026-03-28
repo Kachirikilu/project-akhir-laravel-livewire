@@ -10,7 +10,7 @@
             'xResults' => match ($this->switchTable) {
                 'prodi' => $prodis,
                 'jurusan' => $jurusans,
-                'fakultas' => $fakultass,
+                'fakultas' => $fakultas,
                 default => collect([]),
             },
             'xNameString' => match ($this->switchTable) {

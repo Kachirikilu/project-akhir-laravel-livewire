@@ -88,17 +88,27 @@
                 'withFull' => 0,
             ])
         </div> --}}
-        <div x-show="activeTab === 'jurusan'" class="order-1 sm:order-3 sm:col-span-1">
-            @include('livewire.global.search-and-filters.page-control', [
-                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
-                'withFull' => 0,
-            ])
-        </div>
-        <div x-show="activeTab === 'fakultas'" class="order-1 sm:order-3 sm:col-span-1">
-            @include('livewire.global.search-and-filters.page-control', [
-                'perPageOptions' => [3, 5, 8, 10],
-                'withFull' => 0,
-            ])
+        <div class="grid order-1 sm:order-3 sm:col-span-1 relative">
+            <div x-show="activeTab === 'jurusan'" x-transition:enter="transition ease-out duration-1000"
+                    x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                    class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
+                    'withFull' => 0,
+                ])
+            </div>
+            <div x-show="activeTab === 'fakultas'" x-transition:enter="transition ease-out duration-1000"
+                    x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                    class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10],
+                    'withFull' => 0,
+                ])
+            </div>
         </div>
     </div>
 

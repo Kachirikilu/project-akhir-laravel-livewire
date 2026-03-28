@@ -143,9 +143,8 @@
                             @case(3)
                                 <flux:badge icon="building-library" color="indigo" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
                             @break
-                            @case(4)
+                            @default
                                 <flux:badge icon="globe-alt" color="red" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
-                            @break
                         @endswitch 
                     </button>
 
@@ -196,9 +195,8 @@
                                 <flux:badge color="red" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
                             @break
 
-                            @case(8)
+                            @default
                                 <flux:badge color="purple" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
-                            @break
                         @endswitch
                     </button>
 

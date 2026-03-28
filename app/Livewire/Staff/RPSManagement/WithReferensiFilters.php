@@ -11,16 +11,26 @@ trait WithReferensiFilters
 
   public function inputRefSearch()
     {
-        $query = Referensi::query();
-        $searchTerm = '%' . trim($this->search) . '%';
+        $query = Referensi::query()->with(['rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+        $search = '%' . trim($this->search) . '%';
 
         if (!empty($this->search)) {
-            $query->where('judul', 'like', $searchTerm)
-                  ->orWhere('penulis', 'like', $searchTerm)
-                  ->orWhere('tahun', 'like', $searchTerm);
+            $query->where('judul', 'like', $search)
+                  ->orWhere('penulis', 'like', $search)
+                  ->orWhere('tahun', 'like', $search);
         }
 
         $this->sortFieldOrderRef($query);
+
+        if (! empty($this->selectedProdiId)) {
+            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        }
+        if (! empty($this->selectedJurusanId)) {
+            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+        }
+        if (! empty($this->selectedFakultasId)) {
+            $query->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+        }
 
         return $query;
     }
@@ -38,7 +48,7 @@ trait WithReferensiFilters
         } elseif ($this->sortField === 'jenis') {
             $query->orderBy('jenis_referensi', $this->sortDirection);
         } else {
-            $query->orderBy('referensis.id', 'desc');
+            $query->orderBy('referensis.id', $this->sortDirection);
         }
 
         return $query;

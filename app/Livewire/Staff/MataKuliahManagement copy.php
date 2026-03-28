@@ -10,11 +10,9 @@ use App\Livewire\Staff\MatkulManagement\WithMatkulFilters;
 use App\Livewire\Staff\MatkulManagement\WithMatkulModal;
 use App\Livewire\Staff\MatkulManagement\WithMatkulDelete;
 
-use App\Models\Akademik\MataKuliah;
-
-// use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Jurusan;
-// use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Prodi;
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -38,10 +36,6 @@ class MataKuliahManagement extends Component
     public $switchTable = '';
 
     protected $paginationTheme = 'tailwind';
-    
-    public $sortField = 'kode';
-
-    public $sortDirection = 'asc';
 
     public $showDeleted = false;
 
@@ -55,6 +49,7 @@ class MataKuliahManagement extends Component
         'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
+        'showDeleted'  => ['except' => false]
     ];
 
     public function updatedPerPage()
@@ -80,15 +75,14 @@ class MataKuliahManagement extends Component
 
     private function syncSortField($table, $sortField)
     {
-        $map = [
-            'tatap_muka'       => 'sks_tm',
-            'praktikum'        => 'sks_pr',
-            'praktek_lapangan' => 'sks_pl',
-            'simulasi'         => 'sks_sm',
-        ];
-
-        if (isset($map[$table]) && str_starts_with($sortField, 'sks_')) {
-            $this->sortField = $map[$table];
+        if ($table == 'tatap_muka' && ($sortField == 'sks_pr' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_tm';
+        } elseif ($table == 'praktikum' && ($sortField == 'sks_tm' || $sortField == 'sks_pl' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_pr';
+        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_sm')) {
+            $this->sortField = 'sks_pl';
+        } elseif ($table == 'praktek_lapangan' && ($sortField == 'sks_tm' || $sortField == 'sks_pr' || $sortField == 'sks_pl')) {
+            $this->sortField = 'sks_sm';
         }
     }
 
@@ -99,7 +93,6 @@ class MataKuliahManagement extends Component
 
         $this->resetPage();
     }
-    
 
     public function render()
     {
@@ -119,34 +112,25 @@ class MataKuliahManagement extends Component
             $query->where('tipe_sks', 4);
         }
 
-        $baseData = $this->inputMKSearch()
-            ->when($this->showDeleted, fn($q) => $q->onlyTrashed())
-            ->get(['mata_kuliahs.id', 'mata_kuliahs.tipe_sks', 'mata_kuliahs.is_wajib', 'mata_kuliahs.tingkatan_mk'])
-            ->unique('id');
+        $baseQuery = $this->inputMKSearch();
 
-        $totalSemuaMK         = $baseData->count();
-        $totalTatapMuka       = $baseData->where('tipe_sks', 1)->count();
-        $totalPraktikum       = $baseData->where('tipe_sks', 2)->count();
-        $totalPraktekLapangan = $baseData->where('tipe_sks', 3)->count();
-        $totalSimulasi        = $baseData->where('tipe_sks', 4)->count();
-
-        $query = $this->inputMKSearch();
-        if ($this->showDeleted) $query->onlyTrashed();
-
-        $mapTipe = ['tatap_muka' => 1, 'praktikum' => 2, 'praktek_lapangan' => 3, 'simulasi' => 4];
-        if (isset($mapTipe[$this->switchTable])) {
-            $query->where('tipe_sks', $mapTipe[$this->switchTable]);
+        if ($this->showDeleted) {
+            $query->onlyTrashed();
+            $baseQuery->onlyTrashed();
         }
+        
+        // Gunakan distinct('mata_kuliahs.id') agar ID yang sama tidak dihitung dua kali
+        $totalSemuaMK         = (clone $baseQuery)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalTatapMuka       = (clone $baseQuery)->where('tipe_sks', 1)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalPraktikum       = (clone $baseQuery)->where('tipe_sks', 2)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalPraktekLapangan = (clone $baseQuery)->where('tipe_sks', 3)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalSimulasi        = (clone $baseQuery)->where('tipe_sks', 4)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
 
-        $currentTabData = (isset($mapTipe[$this->switchTable])) 
-            ? $baseData->where('tipe_sks', $mapTipe[$this->switchTable]) 
-            : $baseData;
-
-        $totalAllOpsi = $currentTabData->count();
-        $totalWajib   = $currentTabData->where('is_wajib', true)->count();
-        $totalPilihan = $currentTabData->where('is_wajib', false)->count();
-        $totalUni     = $currentTabData->where('tingkatan_mk', 4)->count();
-
+        // Lakukan hal yang sama untuk stats detail
+        $totalAllOpsi = (clone $query)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalWajib   = (clone $query)->where('is_wajib', true)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalPilihan = (clone $query)->where('is_wajib', false)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalUni     = (clone $query)->where('tingkatan_mk', 4)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
 
         $this->buttonMKFilter($query);
 

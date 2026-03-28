@@ -19,10 +19,6 @@ trait WithUserFilters
 
     public $filter = '';
 
-    public $sortField = 'name';
-
-    public $sortDirection = 'asc';
-
     public $searchAngkatan = '';
 
     public function updatingSearch()
@@ -37,12 +33,12 @@ trait WithUserFilters
 
     public function inputUserSearch()
     {
-            $searchTerm = '%'.$this->search.'%';
+        $search = $this->search;
 
         $query = User::query()
             ->with(['admin', 'dosen', 'mahasiswa'])
-            ->searchUser($searchTerm);
-
+            ->searchUser($search);
+            
         if ($this->selectedProdiId) {
             $query->inLocationUser('prodi', $this->selectedProdiId);
         }
@@ -92,73 +88,59 @@ trait WithUserFilters
 
     public function sortFieldOrderUser($query)
     {
-
-        if (! empty($this->searchAngkatan) && $this->filter === 'mahasiswa') {
-            $query->whereHas('mahasiswa', function ($q) {
-                $q->where('tahun_angkatan', 'like', "%{$this->searchAngkatan}%");
-            });
+        if (!empty($this->searchAngkatan) && $this->filter === 'mahasiswa') {
+            $query->whereHas('mahasiswa', fn($q) => 
+                $q->where('tahun_angkatan', 'like', "%{$this->searchAngkatan}%")
+            );
         }
 
-        if ($this->sortField === 'role') {
-            $query->orderByRaw("
-                CASE 
-                    WHEN admins.id IS NOT NULL THEN 1
-                    WHEN dosens.id IS NOT NULL THEN 2
-                    WHEN mahasiswas.id IS NOT NULL THEN 3
-                    ELSE 4
-                END {$this->sortDirection}
-            ")
-                ->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*');
-        } elseif ($this->sortField === 'name') {
-            $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(admins.name, dosens.name, mahasiswas.name) {$this->sortDirection}");
-        } elseif ($this->sortField === 'identity1') {
-            $query->leftjoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(admins.nip, dosens.nip, mahasiswas.nim) {$this->sortDirection}");
-        } elseif ($this->sortField === 'identity2') {
-            $query->leftjoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(admins.nitk, dosens.nidn) {$this->sortDirection}");
-        } elseif ($this->sortField === 'identity3') {
-            $query->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(dosens.nidk) {$this->sortDirection}");
-        } elseif ($this->sortField === 'email') {
-            $query->orderBy('users.email', $this->sortDirection);
-        } elseif ($this->sortField === 'prodi') {
-            $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->leftJoin('prodis as admin_prodis', 'admins.prodi_id', '=', 'admin_prodis.id')
-                ->leftJoin('prodis as dosen_prodis', 'dosens.prodi_id', '=', 'dosen_prodis.id')
-                ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.prodi_id', '=', 'mahasiswa_prodis.id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(admin_prodis.nama_prodi, dosen_prodis.nama_prodi, mahasiswa_prodis.nama_prodi) {$this->sortDirection}");
-        } elseif ($this->sortField === 'tahun_angkatan') {
-            $query->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*')
-                ->orderBy('mahasiswas.tahun_angkatan', $this->sortDirection);
-        } elseif ($this->sortField === 'status') {
-            $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
-                ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
-                ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
-                ->select('users.*')
-                ->orderByRaw("COALESCE(admins.status, dosens.status, mahasiswas.status) {$this->sortDirection}");
-        } else {
-            $field = $this->sortField === 'id' ? 'users.id' : $this->sortField;
-            $query->orderBy($field, $this->sortDirection);
+        $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'tahun_angkatan'];
+
+        if (in_array($this->sortField, $profileFields)) {
+            return $this->applyUserCombinedSort($query);
         }
 
-        return $query;
+        $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
+        return $query->orderBy($field, $this->sortDirection);
+    }
+
+    private function applyUserCombinedSort($query)
+    {
+        $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
+            ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
+            ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
+            ->select('users.*');
+
+        $orderByRaw = match ($this->sortField) {
+            'role' => "CASE 
+                        WHEN admins.id IS NOT NULL THEN 1
+                        WHEN dosens.id IS NOT NULL THEN 2
+                        WHEN mahasiswas.id IS NOT NULL THEN 3
+                        ELSE 4
+                    END",
+            
+            'name'      => "COALESCE(admins.name, dosens.name, mahasiswas.name)",
+            'identity1' => "COALESCE(admins.nip, dosens.nip, mahasiswas.nim)",
+            'identity2' => "COALESCE(admins.nitk, dosens.nidn)",
+            'identity3' => "dosens.nidk",
+            'status'    => "COALESCE(admins.status, dosens.status, mahasiswas.status)",
+            
+            'prodi'     => $this->joinProdiAndGetSortSql($query),
+            
+            'tahun_angkatan' => "mahasiswas.tahun_angkatan",
+            
+            default => "users.id"
+        };
+
+        return $query->orderByRaw("$orderByRaw {$this->sortDirection}");
+    }
+
+    private function joinProdiAndGetSortSql($query)
+    {
+        $query->leftJoin('prodis as admin_prodis', 'admins.prodi_id', '=', 'admin_prodis.id')
+            ->leftJoin('prodis as dosen_prodis', 'dosens.prodi_id', '=', 'dosen_prodis.id')
+            ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.prodi_id', '=', 'mahasiswa_prodis.id');
+
+        return "COALESCE(admin_prodis.nama_prodi, dosen_prodis.nama_prodi, mahasiswa_prodis.nama_prodi)";
     }
 }

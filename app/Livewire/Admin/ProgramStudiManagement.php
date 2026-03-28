@@ -41,6 +41,10 @@ class ProgramStudiManagement extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public $sortField = 'kode';
+
+    public $sortDirection = 'asc';
+
     public $showDeleted = false;
 
     protected $listeners = ['refresh-table' => 'refreshProdisList',
@@ -52,8 +56,7 @@ class ProgramStudiManagement extends Component
         'filter' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
         'sortField' => ['except' => 'kode'],
-        'sortDirection' => ['except' => 'asc'],
-        'showDeleted'  => ['except' => false]
+        'sortDirection' => ['except' => 'asc']
     ];
 
     public function updatedPerPage()
@@ -113,33 +116,38 @@ class ProgramStudiManagement extends Component
         $queryJurusan = $this->inputJurusanSearch();
         $queryFakultas = $this->inputFakultasSearch();
 
-        $query = clone $queryProdi;
+        $queryPr = clone $queryProdi;
+        $queryJr = clone $queryJurusan;
+        $queryFk = clone $queryFakultas;
 
-        $this->buttonStrataFilter($query);
+        $this->buttonStrataFilter($queryPr);
 
         $prodis = collect();
         $jurusans = collect();
-        $fakultass = collect();
+        $fakultas = collect();
 
         if ($this->showDeleted) {
-            $query->onlyTrashed();
             $queryProdi->onlyTrashed();
             $queryJurusan->onlyTrashed();
             $queryFakultas->onlyTrashed();
+
+            $queryPr->onlyTrashed();
+            $queryJr->onlyTrashed();
+            $queryFk->onlyTrashed();
         }
 
         if ($this->switchTable === 'prodi') {
-            $prodis = $query->paginate($this->perPage);
+            $prodis = $queryPr->paginate($this->perPage);
         } elseif ($this->switchTable === 'jurusan') {
-            $jurusans = $queryJurusan->paginate($this->perPage);
+            $jurusans = $queryJr->paginate($this->perPage);
         } elseif ($this->switchTable === 'fakultas') {
-            $fakultass = $queryFakultas->paginate($this->perPage);
+            $fakultas = $queryFk->paginate($this->perPage);
         }
 
         return view('livewire.admin.prodi-management', [
             'prodis' => $prodis,
             'jurusans' => $jurusans,
-            'fakultass' => $fakultass,
+            'fakultas' => $fakultas,
             // 'totalProdis' => Prodi::count(),
             // 'totalSarjanas' => Prodi::where('nama_strata', 'Sarjana')->count(),
             // 'totalMagisters' => Prodi::where('nama_strata', 'Magister')->count(),

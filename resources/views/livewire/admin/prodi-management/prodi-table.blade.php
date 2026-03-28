@@ -26,17 +26,18 @@
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
-                'isCenter' => 1,
+                'isCenter' => 1
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
+                'isCenter' => 1
             ])
 
             @if ($switchTable === 'prodi')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'prodi',
-                    'headString' => 'Program Studi',
+                    'headString' => 'Program Studi'
                 ])
             @endif
 
@@ -50,7 +51,7 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'strata',
                     'isCenter' => 1,
-                    'isMain' => 1,
+                    'isMain' => 1
                 ])
             @endif
             <th class="{{ $headKolom }} . ' uppercase'">Aksi</th>
@@ -67,34 +68,33 @@
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
-                    <flux:button variant="ghost" size="sm" class="cursor-pointer">
-                        @switch($x->tingkatanProdi)
+                    <button class="cursor-pointer">
+                        @switch($x->tingkatan_prodi)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">
-                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                    {{ $x->kode ?? '-' }}
                                 </flux:badge>
                             @break
 
                             @case(2)
                                 <flux:badge icon="book-open" color="amber" size="sm">
-                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                    {{ $x->kode ?? '-' }}
                                 </flux:badge>
                             @break
 
                             @case(3)
                                 <flux:badge icon="building-library" color="indigo" size="sm">
-                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                    {{ $x->kode ?? '-' }}
                                 </flux:badge>
                             @break
 
                             @default
                                 <flux:badge icon="globe-alt" color="red" size="sm">
-                                    {{ $x->kode_text ?? ($x->kode ?? '-') }}
+                                    {{ $x->kode ?? '-' }}
                                 </flux:badge>
                         @endswitch
-                    </flux:button>
+                    </button>
 
-                    {{-- Pastikan di dalam include ini isinya adalah <flux:menu> ... </flux:menu> --}}
                     @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
                         'x' => $x,
                         'typeXString' => $switchTable,

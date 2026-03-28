@@ -1,5 +1,5 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Program Studi</h2>
+    <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Mata Kuliah</h2>
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" 

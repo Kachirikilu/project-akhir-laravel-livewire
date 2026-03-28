@@ -12,7 +12,7 @@ trait WithJurusanFilters
     public function inputJurusanSearch()
     {
         $query = Jurusan::query()->with(['fakultas_rel', 'prodis']);
-        $search = trim($this->search);
+        $search = $this->search;
 
         if (! empty($search)) {
             $query->searchJurusan($search)->get();
