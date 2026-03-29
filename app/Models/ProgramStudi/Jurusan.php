@@ -82,9 +82,9 @@ class Jurusan extends Model
 
         return $query->where(function ($q) use ($searchTerm) {
             // 1. Filter dasar Jurusan
-            $q->where('nama_jurusan', 'like', $searchTerm)
-                ->orWhere('kode_jr', 'like', $searchTerm)
-                ->orWhere('id', 'like', $searchTerm)
+            $q->where('jurusans.nama_jurusan', 'like', $searchTerm)
+                ->orWhere('jurusans.kode_jr', 'like', $searchTerm)
+                ->orWhere('jurusans.id', 'like', $searchTerm)
                 ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
 
             // 2. Filter berdasarkan Fakultas (Relasi)

@@ -17,7 +17,7 @@ trait WithUserFilters
 
     public $search = '';
 
-    public $filter = '';
+    public $filterUser = '';
 
     public $searchAngkatan = '';
 
@@ -56,16 +56,9 @@ trait WithUserFilters
         return $query;
     }
 
-    public function filterBy($role)
+    public function filterByUser($role)
     {
-        $this->filter = $role;
-        $this->resetPage();
-    }
-
-
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filter']);
+        $this->filterUser = $role;
         $this->resetPage();
     }
 
@@ -88,7 +81,7 @@ trait WithUserFilters
 
     public function sortFieldOrderUser($query)
     {
-        if (!empty($this->searchAngkatan) && $this->filter === 'mahasiswa') {
+        if (!empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
             $query->whereHas('mahasiswa', fn($q) => 
                 $q->where('tahun_angkatan', 'like', "%{$this->searchAngkatan}%")
             );

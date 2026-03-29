@@ -1,5 +1,4 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
-    x-effect="activeTab; open = false"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     {{-- BAGIAN FILTER ATAS --}}
@@ -8,7 +7,7 @@
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-        class="relative z-50 isolate border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
+        class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Strata',
@@ -26,13 +25,17 @@
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
         @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75],
-            'key' => 'page-control-prodi'
         ])
     </div>
 
     {{-- BAGIAN SEARCH UTAMA --}}
 
-    <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full z-20">
+
+
+
+
+
+    <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full relative">
         <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
@@ -47,7 +50,7 @@
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
-            class="relative z-50 isolate col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
+            class="col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
 
                         {{-- Tab Jurusan --}}
             <div x-show="activeTab === 'jurusan'" x-transition:enter="transition ease-out duration-1000"
@@ -63,7 +66,6 @@
                 <div class="col-start-2 row-start-1 sm:col-span-1">
                     @include('livewire.global.search-and-filters.page-control', [
                         'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
-                        'key' => 'page-control-jurusan',
                         'withFull' => 0,
                     ])
                 </div>
@@ -83,7 +85,6 @@
                 <div class="col-start-1 row-start-1 sm:col-span-1">
                 @include('livewire.global.search-and-filters.page-control', [
                     'perPageOptions' => [3, 5, 8, 10],
-                    'key' => 'page-control-fakultas',
                     'withFull' => 0,
                 ])
                 </div>
@@ -95,7 +96,7 @@
     </div>
 
     {{-- BAGIAN SECONDARY SEARCH (Jurusan & Fakultas) --}}
-    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full z-10">
+    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [

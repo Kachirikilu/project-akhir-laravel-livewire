@@ -1,6 +1,4 @@
-<div x-data="{ activeTab: @entangle('switchTable') }"
-    x-effect="activeTab; open = false"
-    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+<div x-data="{ activeTab: @entangle('switchTable') }" class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     {{-- BAGIAN FILTER ATAS --}}
     <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
@@ -8,7 +6,7 @@
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
         x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-        class="relative z-50 isolate border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
+        class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Strata',
@@ -26,47 +24,46 @@
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
         @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75],
-            'key' => 'page-control-prodi'
         ])
     </div>
 
     {{-- BAGIAN SEARCH UTAMA --}}
+    <div class="grid grid-cols-1 gap-2 items-center w-full"
+        :class="activeTab === 'prodi' ? 'sm:grid-cols-8' : 'sm:grid-cols-9'">
 
-    <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full z-20">
-        <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
-            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-4"
-            class="col-start-1 row-start-1 relative w-full">
+        {{-- <div class="order-2 sm:order-1 sm:col-span-8 relative">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari Program Studi, Jurusan, atau Fakultas...',
+                'placeholder' => match ($switchTable) {
+                    'prodi' => 'Cari Program Studi, Jurusan, atau Fakultas...',
+                    'jurusan' => 'Cari Jurusan, Fakultas, atau ID Jurusan...',
+                    'fakultas' => 'Cari Fakultas, atau ID Fakultas...',
+                },
             ])
-        </div>
+        </div> --}}
 
-        <div x-show="activeTab !== 'prodi'" x-transition:enter="transition ease-out duration-1000"
-            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-4"
-            class="relative z-50 isolate col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
+        {{-- Parent Wrapper --}}
+        <div class="grid order-2 sm:order-1 sm:col-span-8 relative">
+            {{-- Tab Prodi --}}
+            <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
+                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                {{-- class="order-2 sm:order-1 sm:col-span-8 relative"> --}}
+                class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Program Studi, Jurusan, atau Fakultas...',
+                ])
+            </div>
 
-                        {{-- Tab Jurusan --}}
+            {{-- Tab Jurusan --}}
             <div x-show="activeTab === 'jurusan'" x-transition:enter="transition ease-out duration-1000"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
-                <div class="col-start-1 row-start-1 sm:col-span-8">
-                    @include('livewire.global.search-and-filters.main-search', [
-                        'placeholder' => 'Cari Jurusan atau relasinya...',
-                    ])
-                </div>
-                <div class="col-start-2 row-start-1 sm:col-span-1">
-                    @include('livewire.global.search-and-filters.page-control', [
-                        'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
-                        'key' => 'page-control-jurusan',
-                        'withFull' => 0,
-                    ])
-                </div>
+                class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Jurusan atau relasinya...',
+                ])
             </div>
 
             {{-- Tab Fakultas --}}
@@ -74,28 +71,51 @@
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
-                <div class="col-start-1 row-start-1 sm:col-span-8">
+                class="col-start-1 row-start-1">
                 @include('livewire.global.search-and-filters.main-search', [
                     'placeholder' => 'Cari Fakultas atau relasinya...',
                 ])
-                </div>
-                <div class="col-start-1 row-start-1 sm:col-span-1">
-                @include('livewire.global.search-and-filters.page-control', [
-                    'perPageOptions' => [3, 5, 8, 10],
-                    'key' => 'page-control-fakultas',
-                    'withFull' => 0,
-                ])
-                </div>
             </div>
-        
         </div>
 
 
+        {{-- Page Control untuk Jurusan/Fakultas --}}
+        {{-- <div x-show="activeTab !== 'prodi'" class="order-1 sm:order-3 sm:col-span-1">
+            @include('livewire.global.search-and-filters.page-control', [
+                'perPageOptions' => match ($switchTable) {
+                    'jurusan' => [3, 5, 8, 10, 15, 25, 50],
+                    'fakultas' => [3, 5, 8, 10],
+                    default => [3, 5, 8, 10, 15, 25, 50, 75],
+                },
+                'withFull' => 0,
+            ])
+        </div> --}}
+        <div class="grid order-1 sm:order-3 sm:col-span-1 relative">
+            <div x-show="activeTab === 'jurusan'" x-transition:enter="transition ease-out duration-1000"
+                    x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                    class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
+                    'withFull' => 0,
+                ])
+            </div>
+            <div x-show="activeTab === 'fakultas'" x-transition:enter="transition ease-out duration-1000"
+                    x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                    class="col-start-1 row-start-1">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10],
+                    'withFull' => 0,
+                ])
+            </div>
+        </div>
     </div>
 
     {{-- BAGIAN SECONDARY SEARCH (Jurusan & Fakultas) --}}
-    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full z-10">
+    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [

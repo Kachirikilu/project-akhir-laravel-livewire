@@ -30,7 +30,7 @@
                 'isCenter' => 1,
             ])
 
-            @if ($filter == '')
+            @if ($filterUser == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'role',
                     'rowSpan' => 2,
@@ -50,12 +50,12 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="{{ $filter == 'mahasiswa' ? 1 : ($filter == 'admin' ? 2 : 3) }}" class="{{ $headSubKolom }}">
+            <th colspan="{{ $filterUser == 'mahasiswa' ? 1 : ($filterUser == 'admin' ? 2 : 3) }}" class="{{ $headSubKolom }}">
                 Identitas (ID)
             </th>
 
             {{-- Angkatan - Autocomplete Input --}}
-            @if ($filter == 'mahasiswa')
+            @if ($filterUser == 'mahasiswa')
                 <th rowspan="2" class="{{ $headKolom }} text-center relative">
                     <div class="flex flex-col gap-1 items-center">
 
@@ -110,25 +110,25 @@
         NITK/NIDN
         NIDK --}}
 
-        {{-- $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'), --}}
+        {{-- $filterUser == '' ? 'NIP/NIM' : ($filterUser == 'mahasiswa' ? 'NIM' : 'NIP'), --}}
 
         <tr>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'identity1',
-                'headString' => $filter == '' ? 'NIP/NIM' : ($filter == 'mahasiswa' ? 'NIM' : 'NIP'),
+                'headString' => $filterUser == '' ? 'NIP/NIM' : ($filterUser == 'mahasiswa' ? 'NIM' : 'NIP'),
                 // 'isSubHeader' => 1,
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
-            @if ($filter !== 'mahasiswa')
+            @if ($filterUser !== 'mahasiswa')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'identity2',
-                    'headString' => $filter == '' ? 'NITK/NIDN' : ($filter == 'dosen' ? 'NIDN' : 'NIDK'),
+                    'headString' => $filterUser == '' ? 'NITK/NIDN' : ($filterUser == 'dosen' ? 'NIDN' : 'NIDK'),
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => $filter == 'admin' ? 1 : 0,
+                    'isBorderR' => $filterUser == 'admin' ? 1 : 0,
                 ])
-                @if ($filter !== 'admin')
+                @if ($filterUser !== 'admin')
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'identity3',
                         'headString' => 'NIDK',
@@ -185,18 +185,18 @@
             <td class="{{ $mainKolom }}">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
-            @if ($filter != 'mahasiswa')
-                <td class="{{ $subKolom }} {{ $filter == 'admin' ? 'border-r' : '' }} text-center">
+            @if ($filterUser != 'mahasiswa')
+                <td class="{{ $subKolom }} {{ $filterUser == 'admin' ? 'border-r' : '' }} text-center">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
-            @if ($filter == 'dosen' || $filter == '')
+            @if ($filterUser == 'dosen' || $filterUser == '')
                 <td
-                    class="{{ $subKolom }} {{ $filter == '' || $filter == 'dosen' ? 'border-r' : '' }} text-center">
+                    class="{{ $subKolom }} {{ $filterUser == '' || $filterUser == 'dosen' ? 'border-r' : '' }} text-center">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
-            @if ($filter == 'mahasiswa')
+            @if ($filterUser == 'mahasiswa')
                 <td class="{{ $secondKolom }} text-center">{{ $detail->tahun_angkatan ?? '-' }}</td>
             @endif
 
@@ -282,7 +282,7 @@
 
         @empty
             <tr>
-                <td colspan="{{ match ($filter) {
+                <td colspan="{{ match ($filterUser) {
                     'admin' => 9,
                     'dosen' => 10,
                     'mahasiswa' => 9,

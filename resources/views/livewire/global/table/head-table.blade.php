@@ -1,5 +1,5 @@
 @if ($withTh ?? true)
-    <th rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
+    <th wire:key="head-table-{{ $sortFieldString }}" rowspan="{{ $rowSpan ?? 1 }}" colspan="{{ $colSpan ?? 1 }}"
         class="bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 py-3 relative 
         {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}

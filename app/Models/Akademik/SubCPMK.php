@@ -28,4 +28,10 @@ class SubCpmk extends Model
                     ->withPivot('sort_order')
                     ->withTimestamps();
     }
+
+    public function referensis(): BelongsToMany
+    {
+        return $this->belongsToMany(Referensi::class, 'scpmk_pivot_ref', 'scpmk_id', 'ref_id')
+                    ->withPivot('sort_order');
+    }
 }

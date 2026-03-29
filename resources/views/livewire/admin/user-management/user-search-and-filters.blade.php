@@ -4,6 +4,8 @@
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
             'typeXString' => 'Pengguna',
+            'filterByFunc' => 'filterByUser',
+            'filterString' => 'filterUser',
             'totalTab' => $totalUsers,
             'totalTab1' => $totalAdmins,
             'totalTab2' => $totalDosens,
@@ -15,7 +17,8 @@
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
         @include('livewire.global.search-and-filters.page-control', [
-            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100],
+            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+            'key' => 'page-control-user'
         ])
 
     </div>

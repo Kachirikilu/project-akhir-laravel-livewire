@@ -51,11 +51,17 @@ class MataKuliahManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
-        'filter' => ['except' => ''],
+        'filterMK' => ['except' => ''],
         'switchTable' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
     ];
+
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterMK']);
+        $this->resetPage();
+    }
 
     public function updatedPerPage()
     {
@@ -67,14 +73,14 @@ class MataKuliahManagement extends Component
         $this->resetPage();
     }
 
-    public function buttonMKFilter($query)
+    public function buttonMKFilter($queryMK)
     {
-        if ($this->filter === 'wajib') {
-            $query->where('is_wajib', true);
-        } elseif ($this->filter === 'pilihan') {
-            $query->where('is_wajib', false);
-        } elseif ($this->filter === 'universitas') {
-            $query->where('tingkatan_mk', 4);
+        if ($this->filterMK === 'wajib') {
+            $queryMK->where('is_wajib', true);
+        } elseif ($this->filterMK === 'pilihan') {
+            $queryMK->where('is_wajib', false);
+        } elseif ($this->filterMK === 'universitas') {
+            $queryMK->where('tingkatan_mk', 4);
         }
     }
 
@@ -107,16 +113,16 @@ class MataKuliahManagement extends Component
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        $query = $this->inputMKSearch();
+        $queryMK = $this->inputMKSearch();
 
         if ($this->switchTable === 'tatap_muka') {
-            $query->where('tipe_sks', 1);
+            $queryMK->where('tipe_sks', 1);
         } elseif ($this->switchTable === 'praktikum') {
-            $query->where('tipe_sks', 2);
+            $queryMK->where('tipe_sks', 2);
         } elseif ($this->switchTable === 'praktek_lapangan') {
-            $query->where('tipe_sks', 3);
+            $queryMK->where('tipe_sks', 3);
         } elseif ($this->switchTable === 'simulasi') {
-            $query->where('tipe_sks', 4);
+            $queryMK->where('tipe_sks', 4);
         }
 
         $baseData = $this->inputMKSearch()
@@ -130,12 +136,12 @@ class MataKuliahManagement extends Component
         $totalPraktekLapangan = $baseData->where('tipe_sks', 3)->count();
         $totalSimulasi        = $baseData->where('tipe_sks', 4)->count();
 
-        $query = $this->inputMKSearch();
-        if ($this->showDeleted) $query->onlyTrashed();
+        $queryMK = $this->inputMKSearch();
+        if ($this->showDeleted) $queryMK->onlyTrashed();
 
         $mapTipe = ['tatap_muka' => 1, 'praktikum' => 2, 'praktek_lapangan' => 3, 'simulasi' => 4];
         if (isset($mapTipe[$this->switchTable])) {
-            $query->where('tipe_sks', $mapTipe[$this->switchTable]);
+            $queryMK->where('tipe_sks', $mapTipe[$this->switchTable]);
         }
 
         $currentTabData = (isset($mapTipe[$this->switchTable])) 
@@ -147,11 +153,10 @@ class MataKuliahManagement extends Component
         $totalPilihan = $currentTabData->where('is_wajib', false)->count();
         $totalUni     = $currentTabData->where('tingkatan_mk', 4)->count();
 
-
-        $this->buttonMKFilter($query);
+        $this->buttonMKFilter($queryMK);
 
         return view('livewire.staff.matkul-management', [
-            'matkuls' => $query->paginate($this->perPage),
+            'matkuls' => $queryMK->paginate($this->perPage),
             'totalAllOpsi' => $totalAllOpsi,
             'totalWajib' => $totalWajib,
             'totalPilihan' => $totalPilihan,

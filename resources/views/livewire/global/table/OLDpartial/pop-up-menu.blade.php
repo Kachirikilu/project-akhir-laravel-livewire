@@ -1,4 +1,4 @@
-<flux:menu class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:menu wire:key="pop-up-menu-{{ $x->id }}" class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     @if (Auth::user()?->admin) @php
         $typeParam = isset($typeXString) ? ", '$typeXString'" : '';

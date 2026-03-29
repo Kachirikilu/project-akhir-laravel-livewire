@@ -9,15 +9,30 @@ trait WithReferensiFilters
 {
     use WithPagination;
 
-  public function inputRefSearch()
+    public $filterRef = '';
+
+    public function inputRefSearch()
     {
         $query = Referensi::query()->with(['rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
         $search = '%' . trim($this->search) . '%';
 
+
+            //         $table->string('kode_ref', 10);
+            // $table->string('judul');
+            // $table->string('penulis');
+            // $table->string('penerbit');
+            // $table->year('tahun');
+            // $table->string('link')->nullable();
+
+
         if (!empty($this->search)) {
-            $query->where('judul', 'like', $search)
-                  ->orWhere('penulis', 'like', $search)
-                  ->orWhere('tahun', 'like', $search);
+            $query->where('referensis.kode_ref', 'like', $search)
+                  ->orWhere('referensis.judul', 'like', $search)
+                  ->orWhere('referensis.penulis', 'like', $search)
+                  ->orWhere('referensis.penerbit', 'like', $search)
+                  ->orWhere('referensis.tahun', 'like', $search)
+                  ->orWhere('referensis.link', 'like', $search)
+                  ->orWhere('referensis.id', 'like', $search);
         }
 
         $this->sortFieldOrderRef($query);
@@ -35,7 +50,31 @@ trait WithReferensiFilters
         return $query;
     }
 
-   public function sortFieldOrderRef($query)
+    public function buttonRefFilter($queryRef, $currentYear, $threeYearsAgo, $fiveYearsAgo, $tenYearsAgo)
+    {
+        if ($this->filterRef === 'ref-year') {
+            $queryRef->where('tahun', $currentYear);
+        } elseif ($this->filterRef === 'ref-3-years') {
+            $queryRef->where('tahun', '>=', $threeYearsAgo)
+                    ->where('tahun', '<', $currentYear);
+        } elseif ($this->filterRef === 'ref-5-years') {
+            $queryRef->where('tahun', '>=', $fiveYearsAgo)
+                    ->where('tahun', '<', $threeYearsAgo);
+        } elseif ($this->filterRef === 'ref-10-years') {
+            $queryRef->where('tahun', '>=', $tenYearsAgo)
+                    ->where('tahun', '<', $fiveYearsAgo);
+        } elseif ($this->filterRef === 'ref-old') {
+            $queryRef->where('tahun', '<', $tenYearsAgo);
+        }
+    }
+
+    public function filterByRef($ref)
+    {
+        $this->filterRef = $ref;
+        $this->resetPage();
+    }
+
+    public function sortFieldOrderRef($query)
     {
         $query->select('referensis.*');
 

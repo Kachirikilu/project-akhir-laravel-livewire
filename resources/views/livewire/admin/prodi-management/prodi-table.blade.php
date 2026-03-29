@@ -164,7 +164,7 @@
         </tr>
         @empty
             <tr>
-                <td colspan="{{ match ($filter) {
+                <td colspan="{{ match ($filterPr) {
                     'prodi' => 7,
                     'jurusan' => 5,
                     'fakultas' => 4,

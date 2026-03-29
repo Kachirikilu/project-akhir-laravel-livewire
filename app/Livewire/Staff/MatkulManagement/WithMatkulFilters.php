@@ -12,7 +12,7 @@ trait WithMatkulFilters
 
     public $search = '';
 
-    public $filter = '';
+    public $filterMK = '';
 
     public function updatingSearch()
     {
@@ -43,9 +43,9 @@ trait WithMatkulFilters
         }
 
         // Filter Tab/Pills
-        // if (! empty($this->filter)) {
-        //     if (is_numeric($this->filter)) {
-        //         $query->where('semester', $this->filter);
+        // if (! empty($this->filterMK)) {
+        //     if (is_numeric($this->filterMK)) {
+        //         $query->where('semester', $this->filterMK);
         //     }
         // }
 
@@ -54,15 +54,9 @@ trait WithMatkulFilters
         return $query;
     }
 
-    public function filterBy($mk)
+    public function filterByMK($mk)
     {
-        $this->filter = $mk;
-        $this->resetPage();
-    }
-
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filter']);
+        $this->filterMK = $mk;
         $this->resetPage();
     }
 

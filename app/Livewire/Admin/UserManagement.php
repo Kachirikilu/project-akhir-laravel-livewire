@@ -74,6 +74,12 @@ class UserManagement extends Component
         // 'prodiNameSearch' => ['except' => ''],
     ];
 
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterUser']);
+        $this->resetPage();
+    }
+
     public function updatedPerPage()
     {
         $this->resetPage();
@@ -86,8 +92,8 @@ class UserManagement extends Component
 
     public function buttonRoleFilter($query)
     {
-        $query->when(in_array($this->filter, ['admin', 'dosen', 'mahasiswa']), function ($q) {
-            return $q->whereHas($this->filter);
+        $query->when(in_array($this->filterUser, ['admin', 'dosen', 'mahasiswa']), function ($q) {
+            return $q->whereHas($this->filterUser);
         });
     }
 
@@ -114,7 +120,7 @@ class UserManagement extends Component
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
 
-        $this->syncSortField($this->filter, $this->sortField);
+        $this->syncSortField($this->filterUser, $this->sortField);
 
         $queryUser = $this->inputUserSearch();
 

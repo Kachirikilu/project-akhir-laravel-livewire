@@ -17,7 +17,8 @@ trait WithDosenFilters
         if (!empty($this->search)) {
             $query->where('name', 'like', $search)
                   ->orWhere('nip', 'like', $search)
-                  ->orWhere('nidn', 'like', $search);
+                  ->orWhere('nidn', 'like', $search)
+                  ->orWhere('dosens.id', 'like', $search);
         }
 
         $this->sortFieldOrderDosen($query);

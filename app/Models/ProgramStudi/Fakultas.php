@@ -53,9 +53,9 @@ class Fakultas extends Model
         $searchTerm = '%' . trim($searchTerm) . '%';
 
         return $query->where(function ($q) use ($searchTerm) {
-            $q->where('nama_fakultas', 'like', $searchTerm)
-                ->orWhere('kode_fk', 'like', $searchTerm)
-                ->orWhere('id', 'like', $searchTerm)
+            $q->where('fakultas.nama_fakultas', 'like', $searchTerm)
+                ->orWhere('fakultas.kode_fk', 'like', $searchTerm)
+                ->orWhere('fakultas.id', 'like', $searchTerm)
                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
         });
     }

@@ -1,7 +1,8 @@
-<div x-data="{ activeFilter: @entangle('filterMK') }" class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
+<div x-data="{ activeTab: @entangle('switchTable') }"
+    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     {{-- BAGIAN FILTER ATAS --}}
-    <div x-transition:enter="transition ease-out duration-1000"
+    <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
         x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
         x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
@@ -9,89 +10,88 @@
         class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
-            'typeXString' => 'Opsi',
-            'filterByFunc' => 'filterByMK',
-            'filterString' => 'filterMK',
-            'totalTab' => $totalAllOpsi,
-            'totalTab1' => $totalWajib,
-            'totalTab2' => $totalPilihan,
-            'totalTab3' => $totalUni,
-            'tab1String' => 'wajib',
-            'tab2String' => 'pilihan',
-            'tab3String' => 'universitas',
+            'typeXString' => 'Strata',
+            'filterByFunc' => 'filterByStrata',
+            'filterString' => 'filterPr',
+            'totalTab' => $totalProdis,
+            'totalTab1' => $totalSarjanas,
+            'totalTab2' => $totalMagisters,
+            'totalTab3' => $totalDoktors,
+            'tab1String' => 'sarjana',
+            'tab2String' => 'magister',
+            'tab3String' => 'doktor',
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
         @include('livewire.global.search-and-filters.page-control', [
-            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150],
-            'key' => 'page-control-matkul'
+            'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75],
         ])
     </div>
 
     {{-- BAGIAN SEARCH UTAMA --}}
-    <div x-show="activeFilter !== 'universitas'" x-transition:enter="transition ease-out duration-1000"
-                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="grid grid-cols-1 sm:grid-cols-7 gap-3 items-center w-full">
 
-        <div class="sm:col-span-4 relative">
+    <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full z-20">
+        <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-4"
+            class="col-start-1 row-start-1 relative w-full">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari Mata Kuliah...',
+                'placeholder' => 'Cari Program Studi, Jurusan, atau Fakultas...',
             ])
         </div>
 
-        <div class="order-3 sm:order-2 sm:col-span-3 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputProdiFilter',
-                'xSearchResultsString' => 'prodiSearchResults',
-                'selectedXNameString' => 'prodi_name',
-                'iconString' => 'academic-cap',
-                'placeholderString' => 'Filter berdasarkan Program Studi...',
-                'xSearchQueryString' => 'prodiSearchQuery',
-                'selectedXId' => $selectedProdiId,
-                'selectedXName' => $prodi_name,
-                'resetXFilter' => 'resetProdiFilter()',
-                'xSearchQuery' => $prodiSearchQuery,
-                'xSearchResults' => $prodiSearchResults,
-                'selectXForFilterString' => 'selectProdiForFilter',
-                'typeXString' => 'prodi',
-                'unfoundString' => 'Tidak ada Program Studi ditemukan!',
-            ])
-        </div>
-    </div>
+        <div x-show="activeTab !== 'prodi'" x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-4"
+            class="col-start-1 row-start-1 grid grid-cols-1 grid-rows-1 relative w-full">
 
-    <div x-show="activeFilter == 'universitas'" x-transition:enter="transition ease-out duration-1000"
+                        {{-- Tab Jurusan --}}
+            <div x-show="activeTab === 'jurusan'" x-transition:enter="transition ease-out duration-1000"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="grid grid-cols-1 gap-2 items-center w-full sm:grid-cols-9'">
-
-        {{-- Parent Wrapper --}}
-        <div class="grid order-2 sm:order-1 sm:col-span-8 relative">
-            {{-- Tab Prodi --}}
-            <div x-transition:enter="transition ease-out duration-1000"
-                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="col-start-1 row-start-1">
-                @include('livewire.global.search-and-filters.main-search', [
-                    'placeholder' => 'Cari Mata Kuliah...',
-                ])
+                class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
+                <div class="col-start-1 row-start-1 sm:col-span-8">
+                    @include('livewire.global.search-and-filters.main-search', [
+                        'placeholder' => 'Cari Jurusan atau relasinya...',
+                    ])
+                </div>
+                <div class="col-start-2 row-start-1 sm:col-span-1">
+                    @include('livewire.global.search-and-filters.page-control', [
+                        'perPageOptions' => [3, 5, 8, 10, 15, 25, 50],
+                        'withFull' => 0,
+                    ])
+                </div>
             </div>
+
+            {{-- Tab Fakultas --}}
+            <div x-show="activeTab === 'fakultas'" x-transition:enter="transition ease-out duration-1000"
+                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+                class="col-start-1 row-start-1 grid grid-cols-1 sm:grid-cols-9 gap-2 items-center">
+                <div class="col-start-1 row-start-1 sm:col-span-8">
+                @include('livewire.global.search-and-filters.main-search', [
+                    'placeholder' => 'Cari Fakultas atau relasinya...',
+                ])
+                </div>
+                <div class="col-start-1 row-start-1 sm:col-span-1">
+                @include('livewire.global.search-and-filters.page-control', [
+                    'perPageOptions' => [3, 5, 8, 10],
+                    'withFull' => 0,
+                ])
+                </div>
+            </div>
+        
         </div>
 
 
     </div>
 
-    {{-- BAGIAN SECONDARY SEARCH --}}
-    <div x-show="activeFilter !== 'universitas'" x-transition:enter="transition ease-out duration-600"
-        x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
-        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-        x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-        class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
+    {{-- BAGIAN SECONDARY SEARCH (Jurusan & Fakultas) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full z-10">
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [

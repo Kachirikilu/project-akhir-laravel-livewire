@@ -2,7 +2,8 @@
     {{-- Loading indicator --}}
     <div wire:loading.flex
         wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
-                filterBy, showDeleted,
+                filterByUser, filterByStrata, filterByMK, filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef,
+                showDeleted,
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,

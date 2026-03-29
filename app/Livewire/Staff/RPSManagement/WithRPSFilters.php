@@ -12,7 +12,7 @@ trait WithRPSFilters
 
     public $search = '';
 
-    public $filter = '';
+    public $filterRPS = '';
 
     public function updatingSearch()
     {
@@ -42,15 +42,33 @@ trait WithRPSFilters
         return $query;
     }
 
-    public function filterBy($rps)
+
+    public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {
-        $this->filter = $rps;
+        if ($this->filterRPS === 'rps-akademik') {
+            $queryRPS->where('tahun_akademik', 'like', '%' . $currentYear . '%');
+        } elseif ($this->filterRPS === 'rps-ref-new') {
+            $queryRPS->whereYear('tanggal_revisi', $currentYear);
+        } elseif ($this->filterRPS === 'rps-aktif') {
+            $queryRPS->where('is_draf', false);
+        } elseif ($this->filterRPS === 'rps-draf') {
+            $queryRPS->where('is_draf', true);
+        } elseif ($this->filterRPS === 'rps-5-years') {
+            $queryRPS->whereRaw('LEFT(tahun_akademik, 4) >= ?', [$fiveYearsAgoYear]);
+        } elseif ($this->filterRPS === 'rps-old') {
+            $queryRPS->whereRaw('LEFT(tahun_akademik, 4) < ?', [$fiveYearsAgoYear]);
+        }
+    }
+
+    public function filterByRPS($rps)
+    {
+        $this->filterRPS = $rps;
         $this->resetPage();
     }
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filter']);
+        $this->reset(['search', 'filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
         $this->resetPage();
     }
 

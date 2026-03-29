@@ -1,4 +1,4 @@
-<div class="relative" x-data="{
+<div class="relative" wire:key="select-form-{{ $modelString }}" x-data="{
     open: false,
     {{-- Ambil opsi dan value dari Blade ke JS --}}
     options: @js($xOptions),
@@ -59,8 +59,14 @@ wire:key="select-form-{{ $modelString }}">
     </div>
 
     {{-- Dropdown Result --}}
-    <div x-show="open" x-cloak x-collapse.duration.300ms 
-        class="bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
+    <div x-show="open" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95" 
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar">
 
         @foreach ($xOptions as $i => $option)
             @php

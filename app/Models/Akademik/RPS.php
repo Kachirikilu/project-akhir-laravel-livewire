@@ -19,6 +19,10 @@ class Rps extends Model
     protected $guarded = ['id'];
     protected $appends = ['kode, matkul, tingkatan_mk, akademik, revisi'];
 
+    protected $casts = [
+        'tanggal_revisi' => 'date',
+    ];
+
 
     public function matkul_rel()
     {
@@ -72,14 +76,15 @@ class Rps extends Model
 
     public function referensis(): BelongsToMany
     {
-        return $this->belongsToMany(Referensi::class, 'rps_pivot_referensi', 'rps_id', 'ref_id')
-                    ->withPivot(['kategori', 'sort_order']);
+        return $this->belongsToMany(Referensi::class, 'rps_pivot_ref', 'rps_id', 'ref_id')
+                    ->withPivot('sort_order');
     }
 
     public function dosens(): BelongsToMany
     {
         return $this->belongsToMany(Dosen::class, 'rps_pivot_dosen', 'rps_id', 'dosen_id')
                     ->withPivot(['peran', 'is_ketua', 'sort_order'])
+                    ->orderBy('pivot_sort_order')
                     ->withTimestamps();
     }
 
@@ -143,6 +148,8 @@ class Rps extends Model
             } elseif (in_array($searchLower, $statusKeywords['aktif'])) {
                 $q->orWhere('is_draf', false);
             }
+
+            $q->orWhere('rps.id', 'like', $searchTerm);
         });
     }
 }

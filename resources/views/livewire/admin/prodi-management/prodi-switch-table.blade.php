@@ -4,7 +4,7 @@
     <div class="border-[var(--border-table-color)] flex flex-col-reverse border-b">
 
         {{-- Bagian Tab / Link (Kiri) --}}
-        <div class="flex space-x-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+        <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1">
             {{-- Program Studi --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',

@@ -42,7 +42,13 @@ return new class extends Migration
             $table->string('kode_scpmk', 10);
             $table->text('deskripsi');
             $table->text('materi');
+            $table->text('metodologi');
             $table->text('indikator');
+            $table->enum('metode', [
+                'Teori', 'Praktik', 'Tugas', 'UTS', 'UAS',
+                'Hasil Projek', 'Kerja Praktek', 'Skripsi',
+                'Aktivitas Partisipasif', 'Mandiri'
+            ])->default('Teori');
             $table->text('deskripsi_tugas')->nullable();
             $table->integer('waktu_tugas')->default(60);
             $table->integer('waktu_mandiri')->default(60);

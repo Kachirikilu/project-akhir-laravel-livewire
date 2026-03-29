@@ -3,7 +3,7 @@
         if($store.config?.isEdit === 0){
             $store.config.{{ $modelString }} = '';
         }
-    ">
+    " wire:key="input-form-{{ $modelString }}">
     <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
         @if ($isRequired ?? false)
             <span class="text-red-500">*</span>

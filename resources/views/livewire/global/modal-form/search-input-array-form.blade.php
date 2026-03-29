@@ -1,4 +1,4 @@
-<div class="relative" x-data="{
+<div class="relative" wire:key="search-array-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,
@@ -86,8 +86,16 @@
     </div>
 
     {{-- 2. DROPDOWN HASIL --}}
-    <div x-show="open && isParentReady" x-cloak x-collapse @click.stop
-        class="bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar relative">
+    <div x-show="open && isParentReady" x-cloak
+         {{-- x-collapse --}}
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            @click.stop
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-80 overflow-y-auto custom-scrollbar relative">
 
         {{-- KONTEN LIST (Akan transparan saat loading) --}}
         <div @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}" wire:loading.class="opacity-20 pointer-events-none" @endif">

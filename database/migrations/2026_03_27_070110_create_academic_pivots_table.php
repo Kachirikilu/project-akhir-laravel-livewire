@@ -52,6 +52,22 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
         });
 
+        // CPMK - Referensi
+        Schema::create('cpmk_pivot_ref', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cpmk_id')->constrained('cpmks')->onDelete('cascade');
+            $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->integer('sort_order')->default(0);
+        });
+
+        // Sub-CPMK - Referensi
+        Schema::create('scpmk_pivot_ref', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
+            $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
+            $table->integer('sort_order')->default(0);
+        });
+
         // Prodis - CPL (Ownership)
         Schema::create('prodi_pivot_cpl', function (Blueprint $table) {
             $table->id();
@@ -61,7 +77,7 @@ return new class extends Migration
         });
 
         // RPS - Referensi
-        Schema::create('rps_pivot_referensi', function (Blueprint $table) {
+        Schema::create('rps_pivot_ref', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
             $table->foreignId('ref_id')->constrained('referensis')->onDelete('cascade');
@@ -75,8 +91,10 @@ return new class extends Migration
         Schema::dropIfExists('rps_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_scpmk');
         Schema::dropIfExists('cpmk_pivot_cpl');
+        Schema::dropIfExists('cpmk_pivot_ref');
+        Schema::dropIfExists('scpmk_pivot_ref');
         Schema::dropIfExists('prodi_pivot_cpl');
-        Schema::dropIfExists('rps_pivot_referensi');
+        Schema::dropIfExists('rps_pivot_ref');
 
 
     }

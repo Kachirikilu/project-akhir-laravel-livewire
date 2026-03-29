@@ -206,7 +206,8 @@ class MataKuliah extends Model
         return $query->where(function ($q) use ($search, $searchTerm) {
             // 1. Cari Nama & Kode Manual
             $q->where('mata_kuliahs.nama_matkul', 'like', $searchTerm)
-                ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
+                ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm)
+                    ->orWhere('mata_kuliahs.id', 'like', $searchTerm);
 
             // 2. Cari Semester (dengan Regex)
             $cleanSearch = $search;

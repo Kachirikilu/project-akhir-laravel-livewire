@@ -11,7 +11,7 @@ trait WithProdiFilters
 
     public $search = '';
 
-    public $filter = '';
+    public $filterPr = '';
 
     public function updatingSearch()
     {
@@ -20,36 +20,30 @@ trait WithProdiFilters
 
     public function inputProdiSearch()
     {
-        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
+        $queryUser = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
         $search = $this->search;
 
         if (! empty($search)) {
-            $query->searchProdi($search)->get();
+            $queryUser->searchProdi($search)->get();
         }
 
         if (! empty($this->selectedJurusanId)) {
-            $query->where('jurusan_id', $this->selectedJurusanId);
+            $queryUser->where('jurusan_id', $this->selectedJurusanId);
         }
         if (! empty($this->selectedFakultasId)) {
-            $query->whereHas('jurusan_rel', function ($q) {
+            $queryUser->whereHas('jurusan_rel', function ($q) {
                 $q->where('fakultas_id', $this->selectedFakultasId);
             });
         }
 
-        $this->sortFieldOrderProdi($query);
+        $this->sortFieldOrderProdi($queryUser);
 
-        return $query;
+        return $queryUser;
     }
 
-    public function filterBy($strata)
+    public function filterByStrata($strata)
     {
-        $this->filter = $strata;
-        $this->resetPage();
-    }
-
-    public function resetInputFilter()
-    {
-        $this->reset(['search', 'filter']);
+        $this->filterPr = $strata;
         $this->resetPage();
     }
 
@@ -64,33 +58,33 @@ trait WithProdiFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderProdi($query)
+    public function sortFieldOrderProdi($queryUser)
     {
-        if ($this->filter === 'jurusan') {
-            $query->whereHas('jurusan_rel');
-        } elseif ($this->filter === 'fakultas') {
-            $query->whereHas('jurusan_rel.fakultas');
+        if ($this->filterPr === 'jurusan') {
+            $queryUser->whereHas('jurusan_rel');
+        } elseif ($this->filterPr === 'fakultas') {
+            $queryUser->whereHas('jurusan_rel.fakultas');
         }
 
         $primaryTable = $this->switchTable . 's';
-        $query->select("$primaryTable.*");
+        $queryUser->select("$primaryTable.*");
 
         return match ($this->sortField) {
-            'prodi'    => $this->applyProdiNameSort($query),
-            'jurusan'  => $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+            'prodi'    => $this->applyProdiNameSort($queryUser),
+            'jurusan'  => $queryUser->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
                                 ->orderBy('jurusans.nama_jurusan', $this->sortDirection),
-            'fakultas' => $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+            'fakultas' => $queryUser->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
                                 ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
                                 ->orderBy('fakultas.nama_fakultas', $this->sortDirection),
-            'strata'   => $query->orderBy('prodis.nama_strata', $this->sortDirection),
-            'kode'     => $this->applyProdiKodeSort($query),
-            default    => $query->orderBy("$primaryTable.id", $this->sortDirection),
+            'strata'   => $queryUser->orderBy('prodis.nama_strata', $this->sortDirection),
+            'kode'     => $this->applyProdiKodeSort($queryUser),
+            default    => $queryUser->orderBy("$primaryTable.id", $this->sortDirection),
         };
     }
 
-    private function applyProdiNameSort($query)
+    private function applyProdiNameSort($queryUser)
     {
-        return $query->orderBy('prodis.nama_prodi', $this->sortDirection)
+        return $queryUser->orderBy('prodis.nama_prodi', $this->sortDirection)
             ->orderByRaw("
                 CASE 
                     WHEN nama_strata = 'Sarjana' THEN 1 
@@ -101,10 +95,10 @@ trait WithProdiFilters
             );
     }
 
-    private function applyProdiKodeSort($query)
+    private function applyProdiKodeSort($queryUser)
     {
         if (in_array($this->switchTable, ['prodi', 'jurusan'])) {
-            $query->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+            $queryUser->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
                 ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id');
         }
 
@@ -115,6 +109,6 @@ trait WithProdiFilters
             default    => "prodis.id"
         };
 
-        return $query->orderByRaw("$orderByRaw {$this->sortDirection}");
+        return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
     }
 }

@@ -1,4 +1,5 @@
-<div class="flex items-center justify-end {{ $withFull ?? true ? 'pb-4 ml-4' : '' }}">
+<div wire:key="{{ $key ?? 'page-control-default' }}" 
+     class="flex items-center justify-end {{ $withFull ?? true ? 'pb-4 ml-4' : '' }}">
 
     <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15" @click.away="open = false">
         {{-- Tombol Utama --}}
@@ -16,12 +17,14 @@
         </button>
 
         {{-- Dropdown Menu --}}
-        <ul x-show="open" x-cloak x-collapse.duration.300ms
-            {{-- x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0" --}}
-            class="bg-[var(--main-pop-up-color)] ring-[var(--focus-color)] absolute z-20 mt-1 w-full rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none overflow-hidden"
+        <ul x-show="open" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="max-h-40 overflow-y-auto scrollbar-thin bg-[var(--main-pop-up-color)] ring-[var(--focus-color)] absolute z-100 mt-1 w-full rounded-md shadow-lg ring-1 ring-opacity-5 focus:outline-none overflow-hidden"
             role="menu" aria-orientation="vertical" tabindex="-1">
 
             @foreach ($perPageOptions as $option)

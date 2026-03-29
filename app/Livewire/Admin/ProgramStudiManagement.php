@@ -53,11 +53,17 @@ class ProgramStudiManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 8],
-        'filter' => ['except' => ''],
+        'filterPr' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc']
     ];
+
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterPr']);
+        $this->resetPage();
+    }
 
     public function updatedPerPage()
     {
@@ -76,10 +82,10 @@ class ProgramStudiManagement extends Component
                 $this->sortField = 'prodi';
             } elseif ($table === 'jurusan') {
                 $this->sortField = 'jurusan';
-                $this->filter = '';
+                $this->filterPr = '';
             } elseif ($table === 'fakultas') {
                 $this->sortField = 'fakultas';
-                $this->filter = '';
+                $this->filterPr = '';
             }
         }
     }
@@ -89,21 +95,21 @@ class ProgramStudiManagement extends Component
         $this->switchTable = $table;
         $this->syncSortField($table, $this->sortField);
 
-        if ($table == 'jurusan' && $this->perPage > 50) {
-            $this->perPage = 50;
-        }
         if ($table == 'fakultas' && $this->perPage > 10) {
             $this->perPage = 10;
+        }
+        if ($table == 'jurusan' && $this->perPage > 50) {
+            $this->perPage = 50;
         }
 
         $this->resetPage();
     }
 
 
-    public function buttonStrataFilter($query)
+    public function buttonStrataFilter($queryPr)
     {
-        if (in_array($this->filter, ['sarjana', 'magister', 'doktor'])) {
-            $query->where('nama_strata', ucfirst($this->filter));
+        if (in_array($this->filterPr, ['sarjana', 'magister', 'doktor'])) {
+            $queryPr->where('nama_strata', ucfirst($this->filterPr));
         }
     }
 

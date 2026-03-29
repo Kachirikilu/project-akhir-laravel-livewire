@@ -35,7 +35,7 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }" x-data="{
+<body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }" x-data="{
     expanded: $persist(false).as('sidebar_expanded'),
     expanded2: false,
     isDesktop: window.matchMedia('(min-width: 1024px)').matches,

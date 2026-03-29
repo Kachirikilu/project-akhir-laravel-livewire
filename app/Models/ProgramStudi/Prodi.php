@@ -133,8 +133,8 @@ class Prodi extends Model
 
         return $query->where(function ($q) use ($searchTerm) {
             // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
-            $q->where('nama_prodi', 'like', $searchTerm)
-                ->orWhere('kode_pr', 'like', $searchTerm)
+            $q->where('prodis.nama_prodi', 'like', $searchTerm)
+                ->orWhere('prodis.kode_pr', 'like', $searchTerm)
                 ->orWhere('prodis.id', 'like', $searchTerm);
 
             // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)

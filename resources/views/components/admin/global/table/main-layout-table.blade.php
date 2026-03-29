@@ -1,6 +1,6 @@
 <div class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] shadow-lg rounded-lg overflow-hidden" id="table-results-container">
 
-    <div class="overflow-x-auto">
+    <div class="scrollbar-medium overflow-x-auto">
         <table class="min-w-full divide-y">
             {{-- Head Table --}}
             <thead
@@ -13,7 +13,8 @@
             {{-- wire:loading.class="opacity-50"  --}}
                 wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
-                filterBy, showDeleted,
+                filterByUser, filterByStrata, filterByMK, filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef,
+                showDeleted,
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,

@@ -36,6 +36,12 @@ class Cpmk extends Model
                     ->withTimestamps();
     }
 
+    public function referensis(): BelongsToMany
+    {
+        return $this->belongsToMany(Referensi::class, 'cpmk_pivot_ref', 'cpmk_id', 'ref_id')
+                    ->withPivot('sort_order');
+    }
+
     public function cpls(): BelongsToMany
     {
         return $this->belongsToMany(Cpl::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
