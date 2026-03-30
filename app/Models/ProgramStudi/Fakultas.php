@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Fakultas extends Model
 {
@@ -47,16 +48,62 @@ class Fakultas extends Model
         return Attribute::get(fn() => $this->nama_fakultas);
     }
 
-
-    public function scopeSearchFakultas(Builder $query, $searchTerm)
+    protected function createdDay(): Attribute
     {
-        $searchTerm = '%' . trim($searchTerm) . '%';
+        return Attribute::get(function () {
+            if (!$this->created_at) {
+                return null;
+            }
 
-        return $query->where(function ($q) use ($searchTerm) {
+            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+        });
+    }
+    protected function updatedDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->updated_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+        });
+    }
+
+
+    public function scopeSearchFakultas(Builder $query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             $q->where('fakultas.nama_fakultas', 'like', $searchTerm)
                 ->orWhere('fakultas.kode_fk', 'like', $searchTerm)
-                ->orWhere('fakultas.id', 'like', $searchTerm)
                 ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                
+                if (is_numeric($search)) {
+                    $q->orWhere('fakultas.id', 'like', $search);
+                }
+
+                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(fakultas.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(fakultas.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("DATE_FORMAT(fakultas.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(fakultas.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(fakultas.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+                });
+                ;
         });
     }
 }

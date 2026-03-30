@@ -21,37 +21,36 @@ trait WithMatkulFilters
 
     public function inputMKSearch()
     {
-        $query = MataKuliah::query()
-        // ->select('mata_kuliahs.*')
+        $queryMK = MataKuliah::query()
         ->with(['prodis', 'prodis.jurusan_rel', 'prodis.jurusan_rel.fakultas_rel']);
-        // ->distinct();
+        
         $search = $this->search;
 
         if (! empty($search)) {
-            $query->searchMK($search);
+            $queryMK->searchMK($search);
         }
 
         // Filter Dropdown Silsilah (Tetap di luar closure search)
         if (! empty($this->selectedProdiId)) {
-            $query->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $query->whereHas('prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryMK->whereHas('prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $query->whereHas('prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryMK->whereHas('prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
 
         // Filter Tab/Pills
         // if (! empty($this->filterMK)) {
         //     if (is_numeric($this->filterMK)) {
-        //         $query->where('semester', $this->filterMK);
+        //         $queryMK->where('semester', $this->filterMK);
         //     }
         // }
 
-        $this->sortFieldOrderMK($query);
+        $this->sortFieldOrderMK($queryMK);
 
-        return $query;
+        return $queryMK;
     }
 
     public function filterByMK($mk)
@@ -72,28 +71,32 @@ trait WithMatkulFilters
     }
 
 
-   public function sortFieldOrderMK($query)
+   public function sortFieldOrderMK($queryMK)
     {
-        $query->select('mata_kuliahs.*');
+        $queryMK->select('mata_kuliahs.*');
 
-        return match (true) {
-            $this->sortField === 'matkul'  => $query->orderBy('nama_matkul', $this->sortDirection),
-            $this->sortField === 'semester'=> $query->orderBy('semester', $this->sortDirection),
-            $this->sortField === 'sks'     => $query->orderBy('sks_kuliah', $this->sortDirection),
-            $this->sortField === 'wajib'   => $query->orderBy('is_wajib', $this->sortDirection),
-            $this->sortField === 'digit_mk'=> $query->orderBy('digit_mk', $this->sortDirection),
+        return match ($this->sortField) {
+            'matkul'  => $queryMK->orderBy('nama_matkul', $this->sortDirection),
+            'semester'=> $queryMK->orderBy('semester', $this->sortDirection),
+            'sks'     => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
+            'wajib'   => $queryMK->orderBy('is_wajib', $this->sortDirection),
             
-            in_array($this->sortField, ['sks_tm', 'sks_pr', 'sks_pl', 'sks_sm']) 
-                => $this->applyMKSksTypeSort($query),
+            'sks_tm'   => $this->applyMKSksTypeSort($queryMK),
+            'sks_pr'   => $this->applyMKSksTypeSort($queryMK),
+            'sks_pl'   => $this->applyMKSksTypeSort($queryMK),
+            'sks_sm'   => $this->applyMKSksTypeSort($queryMK),
             
-                $this->sortField === 'kode' 
-                => $this->applyMKKodeSort($query),
+            'digit_mk'=> $queryMK->orderBy('digit_mk', $this->sortDirection),
+            'created_at' => $queryMK->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryMK->orderBy('updated_at', $this->sortDirection),
+            
+            'kode' => $this->applyMKKodeSort($queryMK),
 
-            default => $query->orderBy('mata_kuliahs.id', 'desc'),
+            default => $queryMK->orderBy('mata_kuliahs.id', 'desc'),
         };
     }
 
-    private function applyMKSksTypeSort($query)
+    private function applyMKSksTypeSort($queryMK)
     {
         $typeMap = [
             'sks_tm' => 1, 
@@ -104,14 +107,14 @@ trait WithMatkulFilters
         
         $targetType = $typeMap[$this->sortField];
 
-        return $query->orderByRaw("
+        return $queryMK->orderByRaw("
             CASE WHEN tipe_sks = $targetType THEN sks_kuliah ELSE 0 END $this->sortDirection
         ");
     }
 
-    private function applyMKKodeSort($query)
+    private function applyMKKodeSort($queryMK)
     {
-        return $query->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
+        return $queryMK->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
             ->leftJoin('prodis', 'prodi_pivot_mk.prodi_id', '=', 'prodis.id')
             ->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
             ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')

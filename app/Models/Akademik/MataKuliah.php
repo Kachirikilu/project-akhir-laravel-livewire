@@ -6,6 +6,7 @@ use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class MataKuliah extends Model
 {
@@ -197,17 +198,61 @@ class MataKuliah extends Model
         return Attribute::get(fn () => $this->is_wajib == 1 ? 'Wajib' : 'Pilihan');
     }
 
+    protected function createdDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->created_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+        });
+    }
+    protected function updatedDay(): Attribute
+    {
+    return Attribute::get(function () {
+            if (!$this->updated_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+        });
+    }
+
 
     public function scopeSearchMK($query, $search)
     {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
         $search = trim($search);
         $searchTerm = '%' . $search . '%';
+        $searchLower = '%'.strtolower($search).'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Cari Nama & Kode Manual
             $q->where('mata_kuliahs.nama_matkul', 'like', $searchTerm)
-                ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm)
-                    ->orWhere('mata_kuliahs.id', 'like', $searchTerm);
+                ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
+
+                if (is_numeric($search)) {
+                    $q->orWhere('mata_kuliahs.id', 'like', $search);
+                }
+
+                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(mata_kuliahs.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(mata_kuliahs.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("DATE_FORMAT(mata_kuliahs.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(mata_kuliahs.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+                });
 
             // 2. Cari Semester (dengan Regex)
             $cleanSearch = $search;

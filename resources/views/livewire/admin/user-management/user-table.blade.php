@@ -99,10 +99,12 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'prodi',
                 'headString' => 'Program Studi',
-                'rowSpan' => 2,
-                'isMain' => 1,
+                'rowSpan' => 2
             ])
-            <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Aksi</th>
+            <th rowspan="2" class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2])
 
         </tr>
 
@@ -182,7 +184,7 @@
 
                 </flux:dropdown>
             </td>
-            <td class="{{ $mainKolom }}">{{ $user->name ?? '-' }}</td>
+            <td class="{{ $mainKolom }} min-w-84">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
             @if ($filterUser != 'mahasiswa')
@@ -262,10 +264,10 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $mainKolom }}">
+            <td class="{{ $secondKolom }} min-w-48">
                 {{ $detail->prodi->prodi ?? '-' }}</td>
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -278,15 +280,18 @@
 
                 </flux:dropdown>
             </td>
+
+            <td class="{{ $secondKolom }} min-w-48">{{ $user->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $user->updated_day ?? '-' }}</td>
         </tr>
 
         @empty
             <tr>
                 <td colspan="{{ match ($filterUser) {
-                    'admin' => 9,
-                    'dosen' => 10,
-                    'mahasiswa' => 9,
-                    default => 10,
+                    'admin' => 11,
+                    'dosen' => 12,
+                    'mahasiswa' => 11,
+                    default => 12,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Pengguna ditemukan!

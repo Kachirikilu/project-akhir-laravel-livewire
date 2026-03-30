@@ -72,25 +72,54 @@ class RpsManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'matkul', 4 => 'tahun_akademik', 5 => 'status', 6 => 'tanggal_revisi'],
-            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi'],
-            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'indikator', 6 => 'bobot'],
-            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi'],
-            'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'matkul', 4 => 'akademik', 5 => 'is_draf', 6 => 'revisi', 7 => 'created_at', 8 => 'updated_at'],
+            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
+            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'bobot', 6 => 'indikator', 7 => 'created_at', 8 => 'updated_at'],
+            'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
+            'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at']
         ];
 
-        if (! isset($columns[$table])) {
+        if (!isset($columns[$table])) {
             return;
         }
 
-        $targetCols = $columns[$table];
+        $aliases = [
+            'deskripsi' => ['matkul', 'deskripsi', 'judul'],
+            'materi'    => ['materi', 'matkul', 'penulis'],
+            'akademik'  => ['akademik', 'bobot'],
+            'is_draf'   => ['is_draf', 'indikator'],
+            'created_at' => ['created_at'],
+            'updated_at' => ['updated_at']
+        ];
 
-        $currentPos = 1;
-        foreach ($columns as $cols) {
-            $pos = array_search($sortField, $cols);
-            if ($pos !== false) {
-                $currentPos = $pos;
+        $normalizedField = $sortField;
+        foreach ($aliases as $master => $related) {
+            if (in_array($sortField, $related)) {
+                $normalizedField = $master; 
                 break;
+            }
+        }
+
+        $targetCols = $columns[$table];
+        $currentPos = 1;
+
+        foreach ($columns as $tableName => $cols) {
+            foreach ($cols as $pos => $colName) {
+                $isMatch = ($colName === $normalizedField);
+                
+                if (!$isMatch) {
+                    foreach ($aliases as $master => $related) {
+                        if (in_array($colName, $related) && in_array($normalizedField, $related)) {
+                            $isMatch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ($isMatch) {
+                    $currentPos = $pos;
+                    break 2; 
+                }
             }
         }
 
@@ -120,20 +149,6 @@ class RpsManagement extends Component
         }
     }
 
-    public function switchingTabl2e($table)
-    {
-        $this->switchTable = $table;
-        $this->syncSortField($table, $this->sortField);
-
-        if ($table == 'jurusan' && $this->perPage > 50) {
-            $this->perPage = 50;
-        }
-        if ($table == 'fakultas' && $this->perPage > 10) {
-            $this->perPage = 10;
-        }
-
-        $this->resetPage();
-    }
 
     public function render()
     {

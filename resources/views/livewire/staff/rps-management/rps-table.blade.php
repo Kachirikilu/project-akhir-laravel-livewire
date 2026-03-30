@@ -48,13 +48,13 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'is_draf',
                     'headString' => 'Status',
+                    'isMain' => 1,
                     'isCenter' => 1
                 ])
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'revisi',
-                    'headString' => 'Tanggal Revisi',
-                    'isCenter' => 1
+                    'headString' => 'Tanggal Revisi'
                 ])
             @endif
 
@@ -63,8 +63,8 @@
             @endif
             @if ($switchTable === 'scpmk')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'materi'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'indikator'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'bobot','isMain' => 1, 'isCenter' => 1])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'indikator'])
             @endif
             @if ($switchTable === 'ref')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'judul'])
@@ -74,8 +74,10 @@
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'link'])
             @endif
 
+            <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
 
-            <th class="{{ $headKolom }} . ' uppercase'">Aksi</th>
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At'])
 
         </tr>
     </x-slot:header>
@@ -114,8 +116,8 @@
             </td>
 
             @if ($switchTable === 'rps')
-                <td class="{{ $secondKolom }}">{{ $x->matkul ?? '-' }}</td>
-                <td class="{{ $secondKolom }} text-center">{{ $x->akademik ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->matkul ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->akademik ?? '-' }}</td>
 
                 <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
@@ -138,29 +140,28 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }} text-center">{{ $x->revisi ?? '-' }}</td>
+                <td class="{{ $secondKolom }}">{{ $x->revisi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')
-                <td class="{{ $secondKolom }}">{{ $x->deskripsi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->deskripsi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'scpmk')
-                <td class="{{ $secondKolom }}">{{ $x->materi ?? '-' }}</td>
-                <td class="{{ $secondKolom }}">{{ $x->indikator ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
                 <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'ref')
-                <td class="{{ $secondKolom }}">{{ $x->judul ?? '-' }}</td>
-                <td class="{{ $secondKolom }}">{{ $x->penulis ?? '-' }}</td>
-                <td class="{{ $secondKolom }}">{{ $x->penerbit ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->judul ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->penulis ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->penerbit ?? '-' }}</td>
                 <td class="{{ $mainKolom }} text-center">{{ $x->tahun ?? '-' }}</td>
-                <td class="{{ $secondKolom }}">{{ $x->link ?? '-' }}</td>
-
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->link ?? '-' }}</td>
             @endif
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -174,16 +175,20 @@
 
                 </flux:dropdown>
             </td>
+
+
+            <td class="{{ $secondKolom }} min-w-48">{{ $x->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'rps' => 7,
-                    'cpmk' => 4,
-                    'scpmk' => 7,
-                    'cpl' => 4,
-                    'ref' => 8,
-                    default => 7,
+                    'rps' => 9,
+                    'cpmk' => 6,
+                    'scpmk' => 9,
+                    'cpl' => 6,
+                    'ref' => 10,
+                    default => 9,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada {{ $xNameString }} ditemukan!

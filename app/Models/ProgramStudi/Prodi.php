@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Prodi extends Model
 {
@@ -125,17 +126,45 @@ class Prodi extends Model
         return Attribute::get(fn () => $this->jurusan_rel?->fakultas_rel?->id);
     }
 
-
-
-    public function scopeSearchProdi(Builder $query, $searchTerm)
+    protected function createdDay(): Attribute
     {
-        $searchTerm = '%' . trim($searchTerm) . '%';
+        return Attribute::get(function () {
+            if (!$this->created_at) {
+                return null;
+            }
 
-        return $query->where(function ($q) use ($searchTerm) {
+            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+        });
+    }
+    protected function updatedDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->updated_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+        });
+    }
+
+    public function scopeSearchProdi(Builder $query, $search)
+    {
+        if (empty(trim($search))) {
+            return $query;
+        }
+
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
+
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Filter dasar Prodi (Nama, Kode Prodi, ID)
             $q->where('prodis.nama_prodi', 'like', $searchTerm)
-                ->orWhere('prodis.kode_pr', 'like', $searchTerm)
-                ->orWhere('prodis.id', 'like', $searchTerm);
+                ->orWhere('prodis.kode_pr', 'like', $searchTerm);
+            
+            if (is_numeric($search)) {
+                $q->orWhere('prodis.id', 'like', $search);
+            } 
 
             // 2. Filter Pintar Strata (S1, S2, S3 / Sarjana, Magister, Doktor)
             $q->orWhereRaw("
@@ -151,12 +180,27 @@ class Prodi extends Model
                 ) LIKE ?", [$searchTerm])
             ->orWhereRaw("CONCAT(nama_strata, ' ', nama_prodi) LIKE ?", [$searchTerm]);
 
+                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(prodis.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(prodis.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(prodis.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+                });
+
             // 3. Filter Relasi ke Jurusan (Termasuk kode_jr)
             $q->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
                 $j->where('nama_jurusan', 'like', $searchTerm)
                     ->orWhere('kode_jr', 'like', $searchTerm)
                     ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                    
+
                     // 4. Filter Relasi ke Fakultas (Termasuk kode_fk)
                     ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
                         $f->where('nama_fakultas', 'like', $searchTerm)

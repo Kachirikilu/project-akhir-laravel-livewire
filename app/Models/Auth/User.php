@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -187,6 +188,27 @@ class User extends Authenticatable
         });
     }
 
+    protected function createdDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->created_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+        });
+    }
+    protected function updatedDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->updated_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+        });
+    }
+
     public function admin(): HasOne
     {
         return $this->hasOne(Admin::class);
@@ -265,20 +287,36 @@ class User extends Authenticatable
 
     public function scopeSearchUser($query, $search)
     {
-        if (empty($search)) {
+        if (empty(trim($search))) {
             return $query;
         }
 
-        $searchTerm = '%'.trim($search).'%';
-        $searchLower = str($search)->lower();
+        $search = trim($search);
+        $searchLower = '%'.strtolower($search).'%';
+        $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($searchTerm, $searchLower, $search) {
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Search di Tabel Users Utama
             $q->where('email', 'like', $searchTerm);
 
             if (is_numeric($search)) {
-                $q->orWhere('id', $search);
+                $q->orWhere('users.id', $search);
             }
+
+                 $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
+                });
 
             // 2. Definisi Role dan Field Spesifiknya
             $roleConfigs = [
@@ -311,7 +349,7 @@ class User extends Authenticatable
                 });
 
                 // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
-                if ($searchLower->contains($role)) {
+                if (str_contains($searchLower, $role)) {
                     $q->orWhereHas($role);
                 }
             }

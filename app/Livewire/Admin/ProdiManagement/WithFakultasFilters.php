@@ -11,51 +11,38 @@ trait WithFakultasFilters
 
     public function inputFakultasSearch()
     {
-        $query = Fakultas::query()->with(['jurusans', 'jurusans.prodis']);
+        $queryFk = Fakultas::query()->with(['jurusans', 'jurusans.prodis']);
         $search = $this->search;
 
         if (! empty($search)) {
-            $query->searchFakultas($search)->get();
-            // $query->where(function ($q) use ($searchTerm) {
-            //     $q->where('nama_fakultas', 'like', $searchTerm);
-            //     if (is_numeric($this->search)) {
-            //         $q->orWhere('id', $this->search);
-            //     }
-            //     $q->orWhereHas('jurusans', function ($r) use ($searchTerm) {
-            //         $r->where('nama_jurusan', 'like', $searchTerm);
-            //     });
-            //     $q->orWhereHas('jurusans.prodis', function ($r) use ($searchTerm) {
-            //         $r->where('nama_prodi', 'like', $searchTerm);
-            //     });
-
-            // });
+            $queryFk->searchFakultas($search)->get();
         }
 
         if (! empty($this->selectedFakultasId)) {
-            $query->where('id', $this->selectedFakultasId);
+            $queryFk->where('id', $this->selectedFakultasId);
         }
 
         if (! empty($this->selectedJurusanId)) {
-            $query->whereHas('jurusans', function ($q) {
+            $queryFk->whereHas('jurusans', function ($q) {
                 $q->where('id', $this->selectedJurusanId);
             });
         }
 
-        $this->sortFieldOrderFakultas($query);
+        $this->sortFieldOrderFakultas($queryFk);
 
-        return $query;
+        return $queryFk;
     }
 
-    public function sortFieldOrderFakultas($query)
+    public function sortFieldOrderFakultas($queryFk)
     {
-        $query->select('fakultas.*');
+        $queryFk->select('fakultas.*');
 
-        if ($this->sortField === 'fakultas') {
-            $query->orderBy('nama_fakultas', $this->sortDirection);
-        } else {
-            $query->orderBy('id', $this->sortDirection);
-        }
-
-        return $query;
+        return match ($this->sortField) {
+            'kode'  => $queryFk->orderBy('kode_fk', $this->sortDirection),
+            'fakultas' => $queryFk->orderBy('nama_fakultas', $this->sortDirection),
+            'created_at' => $queryFk->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryFk->orderBy('updated_at', $this->sortDirection),
+            default    => $queryFk->orderBy('id', 'desc'),
+        };
     }
 }

@@ -13,28 +13,26 @@ trait WithCPLFilters
 
     public function inputCPLSearch()
     {
-        $query = CPL::query()->with(['cpmks.rps.matkul_rel', 'cpmks.rps.matkul_rel.prodis', 'cpmks.rps.matkul_rel.prodis.jurusan_rel', 'cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
-        $search = '%' . trim($this->search) . '%';
+        $queryCPL = CPL::query()->with(['cpmks.rps.matkul_rel', 'cpmks.rps.matkul_rel.prodis', 'cpmks.rps.matkul_rel.prodis.jurusan_rel', 'cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+        $search = $this->search;
 
-        if (!empty($this->search)) {
-            $query->where('kode_cpl', 'like', $search)
-                  ->orWhere('deskripsi', 'like', $search)
-                  ->orWhere('cpls.id', 'like', $search);
+        if (! empty($search)) {
+            $queryCPL->searchCPL($search);
         }
-
-        $this->sortFieldOrderCPL($query);
 
         if (! empty($this->selectedProdiId)) {
-            $query->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryCPL->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $query->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryCPL->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $query->whereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryCPL->whereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
 
-        return $query;
+        $this->sortFieldOrderCPL($queryCPL);
+
+        return $queryCPL;
     }
 
     public function buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
@@ -59,18 +57,20 @@ trait WithCPLFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderCPL($query)
+    public function sortFieldOrderCPL($queryCPL)
     {
-        $query->select('cpls.*');
+        $queryCPL->select('cpls.*');
 
-        if ($this->sortField === 'kode') {
-            $query->orderBy('kode_cpl', $this->sortDirection);
-        } elseif ($this->sortField === 'deskripsi') {
-            $query->orderBy('deskripsi', $this->sortDirection);
-        } else {
-            $query->orderBy('cpls.id', $this->sortDirection);
-        }
+        return match ($this->sortField) {
+            'kode'   => $queryCPL->orderBy('kode_cpl', $this->sortDirection),
+            
+            'deskripsi' => $queryCPL->orderBy('deskripsi', $this->sortDirection),
+            'created_at' => $queryCPL->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryCPL->orderBy('updated_at', $this->sortDirection),
+            
+            default => $queryCPL->orderBy('id', $this->sortDirection),
+        };
 
-        return $query;
+        return $queryCPL;
     }
 }

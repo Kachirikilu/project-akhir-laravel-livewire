@@ -127,7 +127,8 @@ class MataKuliahManagement extends Component
 
         $baseData = $this->inputMKSearch()
             ->when($this->showDeleted, fn($q) => $q->onlyTrashed())
-            ->get(['mata_kuliahs.id', 'mata_kuliahs.tipe_sks', 'mata_kuliahs.is_wajib', 'mata_kuliahs.tingkatan_mk'])
+            ->get(['mata_kuliahs.id', 'mata_kuliahs.tipe_sks', 'mata_kuliahs.is_wajib', 'mata_kuliahs.tingkatan_mk',
+                'mata_kuliahs.created_at', 'mata_kuliahs.updated_at'])
             ->unique('id');
 
         $totalSemuaMK         = $baseData->count();

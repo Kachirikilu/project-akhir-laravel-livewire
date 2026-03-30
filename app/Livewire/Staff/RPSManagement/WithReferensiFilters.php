@@ -13,41 +13,26 @@ trait WithReferensiFilters
 
     public function inputRefSearch()
     {
-        $query = Referensi::query()->with(['rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
-        $search = '%' . trim($this->search) . '%';
+        $queryRef = Referensi::query()->with(['rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+        $search = $this->search;
 
-
-            //         $table->string('kode_ref', 10);
-            // $table->string('judul');
-            // $table->string('penulis');
-            // $table->string('penerbit');
-            // $table->year('tahun');
-            // $table->string('link')->nullable();
-
-
-        if (!empty($this->search)) {
-            $query->where('referensis.kode_ref', 'like', $search)
-                  ->orWhere('referensis.judul', 'like', $search)
-                  ->orWhere('referensis.penulis', 'like', $search)
-                  ->orWhere('referensis.penerbit', 'like', $search)
-                  ->orWhere('referensis.tahun', 'like', $search)
-                  ->orWhere('referensis.link', 'like', $search)
-                  ->orWhere('referensis.id', 'like', $search);
+        if (! empty($search)) {
+            $queryRef->searchRef($search);
         }
-
-        $this->sortFieldOrderRef($query);
 
         if (! empty($this->selectedProdiId)) {
-            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryRef->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryRef->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $query->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryRef->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
 
-        return $query;
+        $this->sortFieldOrderRef($queryRef);
+
+        return $queryRef;
     }
 
     public function buttonRefFilter($queryRef, $currentYear, $threeYearsAgo, $fiveYearsAgo, $tenYearsAgo)
@@ -74,22 +59,25 @@ trait WithReferensiFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderRef($query)
+    public function sortFieldOrderRef($queryRef)
     {
-        $query->select('referensis.*');
+        $queryRef->select('referensis.*');
 
-        if ($this->sortField === 'judul') {
-            $query->orderBy('judul', $this->sortDirection);
-        } elseif ($this->sortField === 'penulis') {
-            $query->orderBy('penulis', $this->sortDirection);
-        } elseif ($this->sortField === 'tahun') {
-            $query->orderBy('tahun', $this->sortDirection);
-        } elseif ($this->sortField === 'jenis') {
-            $query->orderBy('jenis_referensi', $this->sortDirection);
-        } else {
-            $query->orderBy('referensis.id', $this->sortDirection);
-        }
+        return match ($this->sortField) {
+            'kode'   => $queryRef->orderBy('kode_ref', $this->sortDirection),
+            
+            'judul' => $queryRef->orderBy('judul', $this->sortDirection),
+            'penulis' => $queryRef->orderBy('penulis', $this->sortDirection),
+            'penerbit' => $queryRef->orderBy('penerbit', $this->sortDirection),
+            'tahun' => $queryRef->orderBy('tahun', $this->sortDirection),
+            'link' => $queryRef->orderBy('link', $this->sortDirection),
 
-        return $query;
+            'created_at' => $queryRef->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryRef->orderBy('updated_at', $this->sortDirection),
+            
+            default => $queryRef->orderBy('id', $this->sortDirection),
+        };
+
+        return $queryRef;
     }
 }

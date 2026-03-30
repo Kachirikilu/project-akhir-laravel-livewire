@@ -73,7 +73,11 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
-            <th rowspan="2" class="{{ $headKolom }}">Aksi</th>
+
+            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
+
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2])
         </tr>
 
         {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
@@ -211,7 +215,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }}">{{ $matkul->matkul ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-84">{{ $matkul->matkul ?? '-' }}</td>
             <td class="{{ $secondKolom }} text-center">{{ $matkul->semester ?? '-' }}</td>
 
             {{-- <td class="px-6 py-4 text-sm text-[var(--contrast-second-text)]">{{ $matkul->sks ?? '-' }}</td> --}}
@@ -259,8 +263,7 @@
                 </flux:dropdown>
             </td>
 
-
-            <td class="{{ $secondKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -276,10 +279,13 @@
 
                 </flux:dropdown>
             </td>
+
+            <td class="{{ $secondKolom }} min-w-48">{{ $matkul->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $matkul->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
-                <td colspan="{{ $switchTable == '' ? 12 : 9 }}"
+                <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada Mata Kuliah ditemukan!
                 </td>

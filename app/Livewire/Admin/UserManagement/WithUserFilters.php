@@ -33,27 +33,30 @@ trait WithUserFilters
 
     public function inputUserSearch()
     {
+        $queryUser = User::query()
+            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.prodi', 'mahasiswa.prodi.jurusan_rel', 'mahasiswa.prodi.jurusan_rel.fakultas_rel']);
+
         $search = $this->search;
 
-        $query = User::query()
-            ->with(['admin', 'dosen', 'mahasiswa'])
-            ->searchUser($search);
+        if (! empty($search)) {
+            $queryUser->searchUser($search);
+        }
             
         if ($this->selectedProdiId) {
-            $query->inLocationUser('prodi', $this->selectedProdiId);
+            $queryUser->inLocationUser('prodi', $this->selectedProdiId);
         }
         
         if ($this->selectedJurusanId) {
-            $query->inLocationUser('jurusan', $this->selectedJurusanId);
+            $queryUser->inLocationUser('jurusan', $this->selectedJurusanId);
         }
 
         if ($this->selectedFakultasId) {
-            $query->inLocationUser('fakultas', $this->selectedFakultasId);
+            $queryUser->inLocationUser('fakultas', $this->selectedFakultasId);
         }
 
-        $this->sortFieldOrderUser($query);
+        $this->sortFieldOrderUser($queryUser);
 
-        return $query;
+        return $queryUser;
     }
 
     public function filterByUser($role)
@@ -79,10 +82,10 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function sortFieldOrderUser($query)
+    public function sortFieldOrderUser($queryUser)
     {
         if (!empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
-            $query->whereHas('mahasiswa', fn($q) => 
+            $queryUser->whereHas('mahasiswa', fn($q) => 
                 $q->where('tahun_angkatan', 'like', "%{$this->searchAngkatan}%")
             );
         }
@@ -90,16 +93,16 @@ trait WithUserFilters
         $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'tahun_angkatan'];
 
         if (in_array($this->sortField, $profileFields)) {
-            return $this->applyUserCombinedSort($query);
+            return $this->applyUserCombinedSort($queryUser);
         }
 
         $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
-        return $query->orderBy($field, $this->sortDirection);
+        return $queryUser->orderBy($field, $this->sortDirection);
     }
 
-    private function applyUserCombinedSort($query)
+    private function applyUserCombinedSort($queryUser)
     {
-        $query->leftJoin('admins', 'users.id', '=', 'admins.user_id')
+        $queryUser->leftJoin('admins', 'users.id', '=', 'admins.user_id')
             ->leftJoin('dosens', 'users.id', '=', 'dosens.user_id')
             ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
             ->select('users.*');
@@ -118,19 +121,21 @@ trait WithUserFilters
             'identity3' => "dosens.nidk",
             'status'    => "COALESCE(admins.status, dosens.status, mahasiswas.status)",
             
-            'prodi'     => $this->joinProdiAndGetSortSql($query),
+            'prodi'     => $this->joinProdiAndGetSortSql($queryUser),
             
             'tahun_angkatan' => "mahasiswas.tahun_angkatan",
+            'created_at' => "users.created_at",
+            'updated_at' => "users.updated_at",
             
             default => "users.id"
         };
 
-        return $query->orderByRaw("$orderByRaw {$this->sortDirection}");
+        return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
     }
 
-    private function joinProdiAndGetSortSql($query)
+    private function joinProdiAndGetSortSql($queryUser)
     {
-        $query->leftJoin('prodis as admin_prodis', 'admins.prodi_id', '=', 'admin_prodis.id')
+        $queryUser->leftJoin('prodis as admin_prodis', 'admins.prodi_id', '=', 'admin_prodis.id')
             ->leftJoin('prodis as dosen_prodis', 'dosens.prodi_id', '=', 'dosen_prodis.id')
             ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.prodi_id', '=', 'mahasiswa_prodis.id');
 

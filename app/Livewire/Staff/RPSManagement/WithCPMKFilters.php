@@ -13,30 +13,25 @@ trait WithCPMKFilters
 
     public function inputCPMKSearch()
     {
-        $query = CPMK::query()
-        ->with(['rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel']);
-        $search = '%' . trim($this->search) . '%';
+        $queryCPMK = CPMK::query()->with(['rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel']);
+        $search = $this->search;
 
-        if (!empty($this->search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('cpmks.kode_cpmk', 'like', $search)
-                  ->orWhere('cpmks.deskripsi', 'like', $search)
-                  ->orWhere('cpmks.id', 'like', $search);
-            });
+        if (! empty($search)) {
+            $queryCPMK->searchCPMK($search);
         }
 
         if (! empty($this->selectedProdiId)) {
-            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryCPMK->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $query->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryCPMK->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $query->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryCPMK->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
 
-        $this->sortFieldOrderCPMK($query);
-        return $query;
+        $this->sortFieldOrderCPMK($queryCPMK);
+        return $queryCPMK;
     }
 
 
@@ -67,13 +62,16 @@ trait WithCPMKFilters
     {
         $queryCPMK->select('cpmks.*');
 
-        if ($this->sortField === 'kode') {
-            $queryCPMK->orderBy('kode_cpmk', $this->sortDirection);
-        } elseif ($this->sortField === 'deskripsi') {
-            $queryCPMK->orderBy('deskripsi', $this->sortDirection);
-        } else {
-            $queryCPMK->orderBy('cpmks.id', $this->sortDirection);
-        }
+
+        return match ($this->sortField) {
+            'kode'   => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
+            
+            'deskripsi' => $queryCPMK->orderBy('deskripsi', $this->sortDirection),
+            'created_at' => $queryCPMK->orderBy('created_at', $this->sortDirection),
+            'updated_at' => $queryCPMK->orderBy('updated_at', $this->sortDirection),
+            
+            default => $queryCPMK->orderBy('id', $this->sortDirection),
+        };
 
         return $queryCPMK;
     }

@@ -54,7 +54,10 @@
                     'isMain' => 1
                 ])
             @endif
-            <th class="{{ $headKolom }} . ' uppercase'">Aksi</th>
+            <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At'])
 
         </tr>
     </x-slot:header>
@@ -104,15 +107,15 @@
             </td>
 
             @if ($switchTable === 'prodi')
-                <td class="{{ $secondKolom }}">{{ $x->prodi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->prodi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-                <td class="{{ $secondKolom }}">
+                <td class="{{ $secondKolom }} min-w-48">
                     {{ $switchTable === 'jurusan' ? 'Jurusan ' : '' }}{{ $x->jurusan ?? '-' }}</td>
             @endif
 
-            <td class="{{ $secondKolom }}">
+            <td class="{{ $secondKolom }} min-w-48">
                 {{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
 
             @if ($switchTable === 'prodi')
@@ -147,7 +150,7 @@
                 </td>
             @endif
 
-            <td class="{{ $secondKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
                         inset="top bottom">
@@ -161,14 +164,17 @@
 
                 </flux:dropdown>
             </td>
+
+            <td class="{{ $secondKolom }} min-w-48">{{ $x->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
                 <td colspan="{{ match ($filterPr) {
-                    'prodi' => 7,
-                    'jurusan' => 5,
-                    'fakultas' => 4,
-                    default => 7,
+                    'prodi' => 9,
+                    'jurusan' => 7,
+                    'fakultas' => 6,
+                    default => 9,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada {{ $xNameString }} ditemukan!
