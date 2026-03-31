@@ -3,10 +3,10 @@
 namespace App\Models\Akademik;
 
 use App\Models\ProgramStudi\Prodi;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class MataKuliah extends Model
 {
@@ -201,24 +201,24 @@ class MataKuliah extends Model
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
 
             return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
         });
     }
+
     protected function updatedDay(): Attribute
     {
-    return Attribute::get(function () {
-            if (!$this->updated_at) {
+        return Attribute::get(function () {
+            if (! $this->updated_at) {
                 return null;
             }
 
             return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
         });
     }
-
 
     public function scopeSearchMK($query, $search)
     {
@@ -227,7 +227,7 @@ class MataKuliah extends Model
         }
 
         $search = trim($search);
-        $searchTerm = '%' . $search . '%';
+        $searchTerm = '%'.$search.'%';
         $searchLower = '%'.strtolower($search).'%';
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
@@ -235,24 +235,24 @@ class MataKuliah extends Model
             $q->where('mata_kuliahs.nama_matkul', 'like', $searchTerm)
                 ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
 
-                if (is_numeric($search)) {
-                    $q->orWhere('mata_kuliahs.id', 'like', $search);
-                }
+            if (is_numeric($search)) {
+                $q->orWhere('mata_kuliahs.id', 'like', $search);
+            }
 
-                $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(mata_kuliahs.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+            $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+                $dq->whereRaw("DATE_FORMAT(mata_kuliahs.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
                     ->orWhereRaw("DATE_FORMAT(mata_kuliahs.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
                     ->orWhereRaw("DATE_FORMAT(mata_kuliahs.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
                     ->orWhereRaw("DATE_FORMAT(mata_kuliahs.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-                });
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    ->orWhereRaw("LOWER(DATE_FORMAT(mata_kuliahs.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+            });
 
             // 2. Cari Semester (dengan Regex)
             $cleanSearch = $search;
@@ -300,30 +300,77 @@ class MataKuliah extends Model
                     $prefixPart = preg_replace('/[^A-Z]/', '', $cleanSearchUpper);
                     $digitPart = preg_replace('/[^0-9]/', '', $cleanSearchUpper);
 
+                    // $sq->where(function ($sub) use ($prefixPart, $digitPart) {
+                    //     if (!empty($prefixPart)) {
+                    //         $sub->where(function ($low) use ($prefixPart) {
+                    //             $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
+                    //                 ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
+                    //                     $pro->where('kode_pr', 'like', $prefixPart . '%')
+                    //                         ->orWhereHas('jurusan_rel', function ($jur) use ($prefixPart) {
+                    //                             $jur->where('kode_jr', 'like', $prefixPart . '%')
+                    //                                 ->orWhereHas('fakultas_rel', function ($fak) use ($prefixPart) {
+                    //                                     $fak->where('kode_fk', 'like', $prefixPart . '%');
+                    //                                 });
+                    //                         });
+                    //                 })
+                    //                 ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('tingkatan_mk', '4'));
+                    //         });
+                    //     }
+                    //     if (!empty($digitPart)) {
+                    //         if (strlen($digitPart) <= 2) {
+                    //             $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart . '%');
+                    //         } else {
+                    //             $dSem = substr($digitPart, 0, 2);
+                    //             $dMk = substr($digitPart, 2);
+                    //             $sub->where('mata_kuliahs.digit_semester', 'like', $dSem . '%')
+                    //                 ->where('mata_kuliahs.digit_mk', 'like', $dMk . '%');
+                    //         }
+                    //     }
+                    // });
+
                     $sq->where(function ($sub) use ($prefixPart, $digitPart) {
-                        if (!empty($prefixPart)) {
+                        if (! empty($prefixPart)) {
                             $sub->where(function ($low) use ($prefixPart) {
-                                $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
-                                    ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
-                                        $pro->where('kode_pr', 'like', $prefixPart . '%')
-                                            ->orWhereHas('jurusan_rel', function ($jur) use ($prefixPart) {
-                                                $jur->where('kode_jr', 'like', $prefixPart . '%')
-                                                    ->orWhereHas('fakultas_rel', function ($fak) use ($prefixPart) {
-                                                        $fak->where('kode_fk', 'like', $prefixPart . '%');
-                                                    });
+                                // 1. Cari langsung di kode Mata Kuliah
+                                $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
+
+                                // 2. Cari di Kode Prodi (Jika tingkatan_mk = 1)
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.tingkatan_mk', 1)
+                                            ->whereHas('prodis', function ($pro) use ($prefixPart) {
+                                                $pro->where('kode_pr', 'like', $prefixPart.'%');
                                             });
                                     })
-                                    ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('tingkatan_mk', '4'));
+
+                                // 3. Cari di Kode Jurusan (Jika tingkatan_mk = 2)
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.tingkatan_mk', 2)
+                                            ->whereHas('prodis.jurusan_rel', function ($jur) use ($prefixPart) {
+                                                $jur->where('kode_jr', 'like', $prefixPart.'%');
+                                            });
+                                    })
+
+                                // 4. Cari di Kode Fakultas (Jika tingkatan_mk = 3)
+                                    ->orWhere(function ($q) use ($prefixPart) {
+                                        $q->where('mata_kuliahs.tingkatan_mk', 3)
+                                            ->whereHas('prodis.jurusan_rel.fakultas_rel', function ($fak) use ($prefixPart) {
+                                                $fak->where('kode_fk', 'like', $prefixPart.'%');
+                                            });
+                                    })
+
+                                // 5. Khusus tingkat Universitas (Tingkatan 4)
+                                    ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('mata_kuliahs.tingkatan_mk', 4));
                             });
                         }
-                        if (!empty($digitPart)) {
+
+                        if (! empty($digitPart)) {
                             if (strlen($digitPart) <= 2) {
-                                $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart . '%');
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart.'%');
                             } else {
                                 $dSem = substr($digitPart, 0, 2);
                                 $dMk = substr($digitPart, 2);
-                                $sub->where('mata_kuliahs.digit_semester', 'like', $dSem . '%')
-                                    ->where('mata_kuliahs.digit_mk', 'like', $dMk . '%');
+                                $sub->where('mata_kuliahs.digit_semester', 'like', $dSem.'%')
+                                    ->where('mata_kuliahs.digit_mk', 'like', $dMk.'%');
                             }
                         }
                     });
@@ -331,18 +378,18 @@ class MataKuliah extends Model
             }
 
             // 7. Silsilah (Prodi/Jurusan/Fakultas)
-            $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
-                $pq->where('nama_prodi', 'like', $searchTerm)
-                    ->orWhere('kode_pr', 'like', $searchTerm)
-                    ->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
-                        $jq->where('nama_jurusan', 'like', $searchTerm)
-                            ->orWhere('kode_jr', 'like', $searchTerm)
-                            ->orWhereHas('fakultas_rel', function ($fq) use ($searchTerm) {
-                                $fq->where('nama_fakultas', 'like', $searchTerm)
-                                    ->orWhere('kode_fk', 'like', $searchTerm);
-                            });
-                    });
-            });
+            // $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
+            //     $pq->where('nama_prodi', 'like', $searchTerm)
+            //         ->orWhere('kode_pr', 'like', $searchTerm)
+            //         ->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
+            //             $jq->where('nama_jurusan', 'like', $searchTerm)
+            //                 ->orWhere('kode_jr', 'like', $searchTerm)
+            //                 ->orWhereHas('fakultas_rel', function ($fq) use ($searchTerm) {
+            //                     $fq->where('nama_fakultas', 'like', $searchTerm)
+            //                         ->orWhere('kode_fk', 'like', $searchTerm);
+            //                 });
+            //         });
+            // });
         });
     }
 }

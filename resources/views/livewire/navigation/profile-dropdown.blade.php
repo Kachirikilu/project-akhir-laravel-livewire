@@ -17,10 +17,12 @@
     @endif --}}
 
     <!-- Trigger -->
-    <div>
+
+    <div x-data="{ open: false }" class="relative">
 
         <button @click="open = !open" @click.outside="open = false"
             class="cursor-pointer w-full flex items-center gap-4 p-1 rounded-lg hover:bg-white/10 transition">
+
             <!-- Avatar -->
             @if (auth()->user()->profile_photo_path)
                 <img src="{{ auth()->user()->profile_photo_url }}" alt="avatar"
@@ -41,16 +43,19 @@
                 {{ auth()->user()->name }}
             </span>
 
-            <!-- Chevron -->
-            <svg class="w-8 h-8 text-white transition-transform pl-2" :class="{ 'rotate-180': open }" fill="none"
+            <svg class="mr-2 w-5 h-5 text-white transition-all duration-300" :class="open ? 'rotate-180' : ''" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
         </button>
 
+        <div x-show="open" x-cloak class="absolute bottom-full mb-2 w-full bg-slate-800 rounded-lg shadow-xl">
+        </div>
     </div>
 
-    <flux:menu class="w-[224px] !bg-[var(--main-table-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+
+    <flux:menu
+        class="w-[224px] !bg-[var(--main-table-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
         <flux:menu.radio.group>
             <div class="p-0 text-sm font-normal">
                 <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
@@ -59,10 +64,11 @@
                             <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}"
                                 class="h-full w-full object-cover">
                         @else
-                            <span class="flex h-full w-full items-center justify-center rounded-lg 
+                            <span
+                                class="flex h-full w-full items-center justify-center rounded-lg 
                                 bg-[var(--main-color)] text-[var(--main-text)]
                                 border border-neutral-300 dark:border-neutral-700">
-                                    {{ $userInitials }}
+                                {{ $userInitials }}
                             </span>
                         @endif
                     </span>

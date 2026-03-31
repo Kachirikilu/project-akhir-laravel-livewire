@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facedes\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (env('APP_URL')) {
+            URL::forceRootUrl(env('APP_URL'));
+        }
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
         // register custom route middleware aliases since kernel file isn't
         // used in this project structure. this mirrors the existing
         // "is_admin" alias that appears in routes/web.php.
