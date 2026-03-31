@@ -95,16 +95,16 @@ trait WithProdiSearchFilters
         $this->prodi_kode = null;
         $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
 
-        // 2. Inisialisasi Query Dasar
+        // 2. Inisialisasi Query Dasar (Gunakan select prodis.* untuk menghindari ID tertimpa join)
         $query = Prodi::query()
             ->select('prodis.*')
             ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
 
         // 3. PRIORITAS: Filter Berdasarkan Mode Mata Kuliah (Scope Constraints)
         if ($this->showMKModal) {
-            if (($this->mkType === 2) && filled($this->jurusan_id)) {
+            if (($this->mkType === 'mk-jurusan' || $this->mkType === 2) && filled($this->jurusan_id)) {
                 $query->where('prodis.jurusan_id', $this->jurusan_id);
-            } elseif (($this->mkType === 3) && filled($this->fakultas_id)) {
+            } elseif (($this->mkType === 'mk-fakultas' || $this->mkType === 3) && filled($this->fakultas_id)) {
                 $query->whereHas('jurusan_rel', function ($q) {
                     $q->where('fakultas_id', $this->fakultas_id);
                 });
@@ -163,19 +163,23 @@ trait WithProdiSearchFilters
     public function getProdibyUser()
     {
         $user = Auth::user();
-        $prodiId = $user?->prodi_id;
-        $jurusanId = $user->jurusan_id ?? null;
-        $fakultasId = $user->fakultas_id ?? null;
+        $profile = $user->admin ?? $user->dosen ?? $user->mahasiswa;
+        $prodiId = $profile?->prodi_id;
+        $jurusanId = $profile->jurusan_id ?? null;
+        $fakultasId = $profile->fakultas_id ?? null;
 
-        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
-
+        // Jika tidak ada user/prodi, kembalikan 12 prodi pertama secara simpel
         if (! $prodiId) {
-            $defaultProdis = $query
+            $defaultProdis = Prodi::query()
+                    ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
                     ->orderBy('nama_prodi', 'asc')
                     ->limit(12)
                     ->get();
+
             return $this->mapProdi($defaultProdis);
         }
+
+        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
 
         if (($this->mkType == 2) && filled($this->jurusan_id) && $this->showMKModal) {
             $query->where('jurusan_id', $this->jurusan_id);
@@ -199,12 +203,13 @@ trait WithProdiSearchFilters
             return 3;
         })->take(12);
 
-        if ($mainResults->count() < 12) {
+        if ($mainResults->count() < 12 && empty($this->mkType)) {
             $extra = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
                 ->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', '!=', $fakultasId))
                 ->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
+
             $mainResults = $mainResults->concat($extra);
         }
 

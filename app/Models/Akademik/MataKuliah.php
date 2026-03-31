@@ -316,7 +316,6 @@ class MataKuliah extends Model
                                     ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('tingkatan_mk', '4'));
                             });
                         }
-
                         if (!empty($digitPart)) {
                             if (strlen($digitPart) <= 2) {
                                 $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart . '%');

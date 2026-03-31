@@ -30,6 +30,9 @@ trait WithSubCPMKFilters
         if (! empty($this->selectedFakultasId)) {
             $querySCPMK->whereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
+        if (! empty($this->selectedMatkulId)) {
+            $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
+        }
 
         $this->sortFieldOrderSCPMK($querySCPMK);
         return $querySCPMK;

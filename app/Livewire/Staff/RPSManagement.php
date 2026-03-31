@@ -2,34 +2,41 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithMatkulSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Staff\RPSManagement\WithCPLFilters;
-use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
-use App\Livewire\Staff\RPSManagement\WithDosenFilters;
-use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
+
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
+use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
 use App\Livewire\Staff\RPSManagement\WithSubCPMKFilters;
-use App\Models\Akademik\Cpl;
-use App\Models\Akademik\Cpmk;
+use App\Livewire\Staff\RPSManagement\WithCPLFilters;
+use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Staff\RPSManagement\WithDosenFilters;
+
 use App\Models\Akademik\Rps;
+use App\Models\Akademik\Cpmk;
+use App\Models\Akademik\Cpl;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class RpsManagement extends Component
 {
-    use WithCPLFilters;
+    use WithRPSFilters;
     use WithCPMKFilters;
+    use WithSubCPMKFilters;
+    use WithCPLFilters;
+    use WithReferensiFilters;
     use WithDosenFilters;
+
     use WithFakultasSearchFilters;
     use WithJurusanSearchFilters;
-    use WithPagination;
     use WithProdiSearchFilters;
-    use WithReferensiFilters;
-    use WithRPSFilters;
-    use WithSubCPMKFilters;
+    use WithMatkulSearchFilters;
+
+    use WithPagination;
+
 
     public $switchTable = 'rps';
 
@@ -152,6 +159,8 @@ class RpsManagement extends Component
 
     public function render()
     {
+        $this->inputMatkulFilter();
+
         $this->inputProdiFilter();
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();

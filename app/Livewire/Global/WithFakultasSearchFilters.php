@@ -26,22 +26,25 @@ trait WithFakultasSearchFilters
 
     public $selectedFakultasId = null;
 
+    private function mapFakultas($collection)
+    {
+        return $collection->map(fn ($fk) => [
+            'id' => $fk->id,
+            'kode' => $fk->kode,
+            'fakultas' => $fk->fakultas
+        ])->toArray();
+    }
+
     public function inputFakultasFilter()
     {
-        $search = $this->fakultasSearchQuery;
+        $search = trim($this->fakultasSearchQuery);
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fakultas_name) {
-
-            $this->fakultasSearchResults = Fakultas::query()
-                ->searchFakultas($search)
-                ->limit(12)
-                ->get()
-                ->map(fn ($f) => [
-                    'id' => $f->id,
-                    'kode' => $f->kode,
-                    'fakultas' => $f->fakultas,
-                ])->toArray();
-
+            $this->fakultasSearchResults = $this->mapFakultas(
+                Fakultas::query()
+                    ->searchFakultas($search)
+                    ->limit(12)->get()
+            );
         } elseif (empty($search) || $this->fakultas_name) {
             $this->fakultasSearchResults = $this->getFakultasbyUser();
         } else {
@@ -74,20 +77,12 @@ trait WithFakultasSearchFilters
         $this->fakultas_kode = null;
         $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
 
-        if (strlen($value) > 0) {
+        $query = Fakultas::query()
+            ->select('fakultas.*');
 
-            $results = Fakultas::query()
-                ->searchFakultas($value)
-                ->limit(12)
-                ->get();
-
-            $this->fakultasResults = $results->map(function ($fakultas) {
-                return [
-                    'id' => $fakultas->id,
-                    'kode' => $fakultas->kode,
-                    'fakultas' => $fakultas->fakultas,
-                ];
-            })->toArray();
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchFakultas($value)->limit(12)->get();
+            $this->fakultasResults = $this->mapFakultas($results);
 
             $exactMatch = $results->first(function ($fakultas) use ($value) {
                 $input = str($value)->lower()->trim();
@@ -109,18 +104,12 @@ trait WithFakultasSearchFilters
             }
 
         } else {
-            if (Auth::user()->admin?->prodi_id) {
+            if (Auth::user()->fakultas_id) {
                 $this->fakultasResults = $this->getFakultasbyUser();
             } else {
-                $this->fakultasResults = Fakultas::query()
-                    ->orderBy('nama_fakultas')
-                    ->limit(12)
-                    ->get()
-                    ->map(fn ($f) => [
-                        'id' => $f->id,
-                        'kode' => $f->kode,
-                        'fakultas' => $f->fakultas,
-                    ])->toArray();
+                $this->fakultasResults = $this->mapFakultas(
+                    $query->orderBy('fakultas.nama_fakultas')->limit(12)->get()
+                );
             }
         }
     }
@@ -128,31 +117,25 @@ trait WithFakultasSearchFilters
     public function getFakultasbyUser()
     {
         $user = Auth::user();
-        $fakultasIdUser = $user->fakultas_id ?? null;
+        $fakultasId = $user->fakultas_id ?? null;
 
-        if (! $fakultasIdUser) {
-            return Fakultas::query()
+        $query = Fakultas::query();
+
+        if (! $fakultasId) {
+            $defaultFakultas = $query
                 ->orderBy('nama_fakultas', 'asc')
                 ->limit(12)
-                ->get()
-                ->map(fn ($f) => [
-                    'id' => $f->id,
-                    'kode' => $f->kode,
-                    'fakultas' => $f->fakultas,
-                ])->toArray();
+                ->get();
+            return $this->mapFakultas($defaultFakultas);
         }
 
-        $results = Fakultas::query()
+        $mainResults = $query
             ->orderBy('nama_fakultas', 'asc')
             ->get()
-            ->sortBy(fn ($f) => $f->id === $fakultasIdUser ? 0 : 1)
+            ->sortBy(fn ($f) => $f->id === $fakultasId ? 0 : 1)
             ->take(12);
 
-        return $results->map(fn ($f) => [
-            'id' => $f->id,
-            'kode' => $f->kode,
-            'fakultas' => $f->fakultas,
-        ])->toArray();
+        return $this->mapFakultas($mainResults);
     }
 
     public function fetchFakultas($query = '')

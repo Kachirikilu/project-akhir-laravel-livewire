@@ -29,6 +29,9 @@ trait WithCPMKFilters
         if (! empty($this->selectedFakultasId)) {
             $queryCPMK->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
+        if (! empty($this->selectedMatkulId)) {
+            $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
+        }
 
         $this->sortFieldOrderCPMK($queryCPMK);
         return $queryCPMK;

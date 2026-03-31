@@ -1,14 +1,20 @@
 <div>
     {{-- Loading indicator --}}
     <div wire:loading.flex
-        wire:target="prodiSearchQuery, jurusanSearchQuery, fakultasSearchQuery,
+        wire:target="
                 filterByUser, filterByStrata, filterByMK, filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef,
                 showDeleted,
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
                 saveMK, updateMK, destroyMK, restoreMK,
-                search, selectProdiForFilter, resetProdiFilter, selectFakultasForFilter, resetFakultasFilter, resetInputFilter, searchAngkatan, resetInputAngkatan, sortBy, perPage, gotoPage, previousPage, nextPage"
+                search,
+                selectProdiForFilter, resetProdiFilter,
+                selectJurusanForFilter, resetJurusanFilter,
+                selectFakultasForFilter, resetFakultasFilter,
+                selectMatkulForFilter, resetMatkulFilter,
+                resetInputFilter, searchAngkatan, resetInputAngkatan,
+                sortBy, perPage, gotoPage, previousPage, nextPage"
         class="justify-center items-center py-4">
         <div class="flex items-center space-x-3 text-[var(--focus-color)]">
             {{-- <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -36,6 +42,8 @@
                 {{ $typeXString->links('vendor.pagination.tailwind') }}
             </div>
         @endif
+
+        
     <div class="flex flex-col">
 
         <div class="m-3 flex items-center gap-3 p-2 bg-[var(--second-pop-up-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm"

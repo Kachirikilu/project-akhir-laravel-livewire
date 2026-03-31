@@ -29,6 +29,9 @@ trait WithCPLFilters
         if (! empty($this->selectedFakultasId)) {
             $queryCPL->whereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
+        if (! empty($this->selectedMatkulId)) {
+            $queryCPL->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
+        }
 
         $this->sortFieldOrderCPL($queryCPL);
 

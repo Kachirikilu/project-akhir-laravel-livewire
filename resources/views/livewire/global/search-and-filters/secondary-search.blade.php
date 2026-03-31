@@ -61,14 +61,22 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <div class="text-[var(--contrast-main-text)] font-medium">
-                            {{ $typeXString == 'prodi' ? $x['prodi'] : ($typeXString == 'jurusan' ? 'Jurusan ' . $x['jurusan'] : 'Fakultas ' . $x['fakultas']) }}
+                            @if ($typeXString == 'prodi')
+                                {{ $x['prodi'] }}
+                            @elseif ($typeXString == 'jurusan')
+                                Jurusan {{ $x['jurusan'] }}
+                            @elseif ($typeXString == 'fakultas')
+                                Fakultas {{ $x['fakultas'] }}
+                            @elseif ($typeXString == 'matkul')
+                                {{ $x['matkul'] }}
+                            @endif
                         </div>
 
                         <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
                             <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
                                     {{ $x['id'] }}</span></span>
 
-                            @if ($typeXString !== 'fakultas')
+                            @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
                                 <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
                                 <span>Fakultas {{ $x['fakultas'] }}</span>
                             @endif

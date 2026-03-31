@@ -41,6 +41,9 @@ trait WithRPSFilters
         if (! empty($this->selectedFakultasId)) {
             $queryRPS->whereHas('matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
         }
+        if (! empty($this->selectedMatkulId)) {
+            $queryRPS->where('rps.mk_id', $this->selectedMatkulId);
+        }
 
         return $queryRPS;
     }

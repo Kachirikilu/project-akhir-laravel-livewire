@@ -13,7 +13,12 @@ trait WithReferensiFilters
 
     public function inputRefSearch()
     {
-        $queryRef = Referensi::query()->with(['rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+        $queryRef = Referensi::query()->with([
+            'rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel',
+            'cpmks.rps.matkul_rel', 'cpmks.rps.matkul_rel.prodis', 'cpmks.rps.matkul_rel.prodis.jurusan_rel', 'cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel',
+            'scpmks.cpmks.rps.matkul_rel', 'scpmks.cpmks.rps.matkul_rel.prodis', 'scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', 'scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel'
+
+            ]);
         $search = $this->search;
 
         if (! empty($search)) {
@@ -21,13 +26,24 @@ trait WithReferensiFilters
         }
 
         if (! empty($this->selectedProdiId)) {
-            $queryRef->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);
+            })->orWhereHas('cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);})
+            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);}); });
         }
         if (! empty($this->selectedJurusanId)) {
-            $queryRef->whereHas('rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);
+            })->orWhereHas('cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);})
+            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);}); });
         }
         if (! empty($this->selectedFakultasId)) {
-            $queryRef->whereHas('rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);
+            })->orWhereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);})
+            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);}); });
+        }
+        if (! empty($this->selectedMatkulId)) {
+            $queryRef->where(function ($query) {$query->whereHas('rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);
+            })->orWhereHas('cpmks.rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);})
+            ->orWhereHas('scpmks.cpmks.rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);}); });
         }
 
         $this->sortFieldOrderRef($queryRef);

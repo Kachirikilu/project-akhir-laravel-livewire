@@ -299,4 +299,46 @@
             ])
         </div>
     </div>
+
+
+    <div class="grid grid-cols-1 sm:grid-cols-8 mt-2 gap-2 items-center w-full">
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputMatkulFilter',
+                'xSearchResultsString' => 'matkulSearchResults',
+                'selectedXNameString' => 'matkul_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
+                'xSearchQueryString' => 'matkulSearchQuery',
+                'selectedXId' => $selectedMatkulId,
+                'selectedXName' => $matkul_name,
+                'resetXFilter' => 'resetMatkulFilter()',
+                'xSearchQuery' => $matkulSearchQuery,
+                'xSearchResults' => $matkulSearchResults,
+                'selectXForFilterString' => 'selectMatkulForFilter',
+                'typeXString' => 'matkul',
+                'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
+            ])
+        </div>
+
+        {{-- <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputFakultasFilter',
+                'xSearchResultsString' => 'fakultasSearchResults',
+                'selectedXNameString' => 'fakultas_name',
+                'iconString' => 'building-library',
+                'placeholderString' => 'Filter berdasarkan Fakultas...',
+                'xSearchQueryString' => 'fakultasSearchQuery',
+                'selectedXId' => $selectedFakultasId,
+                'selectedXName' => $fakultas_name,
+                'resetXFilter' => 'resetFakultasFilter()',
+                'xSearchQuery' => $fakultasSearchQuery,
+                'xSearchResults' => $fakultasSearchResults,
+                'selectXForFilterString' => 'selectFakultasForFilter',
+                'typeXString' => 'fakultas',
+                'unfoundString' => 'Tidak ada Fakultas ditemukan!',
+            ])
+        </div> --}}
+    </div>
 </div>
