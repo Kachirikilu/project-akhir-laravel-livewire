@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data="reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data.window="$store.user.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
@@ -17,13 +17,13 @@
         {{-- 1. Header Modal (Tetap di Atas) --}}
         <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
-                <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna - Admin</flux:badge>
                 </template>
-                <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="lime" size="lg">Tambah Pengguna - Dosen</flux:badge>
                 </template>
-                <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="cyan" size="lg">Tambah Pengguna - Mahasiswa</flux:badge>
                 </template>
             </h3>
@@ -35,24 +35,24 @@
             <form
                 @if ($roleType == 'file') wire:submit.prevent="saveAllRows"
                 @else
-                    x-on:submit.prevent="$wire.{{ $isEditing ? 'updateUser' : 'saveUser' }}($store.config)" @endif
+                    x-on:submit.prevent="$wire.{{ $isEditing ? 'updateUser' : 'saveUser' }}($store.user)" @endif
                 enctype="multipart/form-data" id="userForm">
 
-                <template x-if="$store.config?.typeModal == 'file'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'file'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.excel-input')
                 </template>
 
-                <template x-if="$store.config?.typeModal !== 'file'" x-cloak>
+                <template x-if="$store.user?.typeModal !== 'file'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.user-input')
                 </template>
 
-                <template x-if="$store.config?.typeModal == 'admin'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.admin-input')
                 </template>
-                <template x-if="$store.config?.typeModal == 'dosen'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.dosen-input')
                 </template>
-                <template x-if="$store.config?.typeModal == 'mahasiswa'" x-cloak>
+                <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.mahasiswa-input')
                 </template>
 

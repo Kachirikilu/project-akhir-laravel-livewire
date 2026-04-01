@@ -8,9 +8,12 @@ use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Livewire\Global\HasToast;
 
 trait WithProdiModal
 {
+    use HasToast;
+    
     public $selected_id;
 
     public $showProdiModal = false;
@@ -33,6 +36,10 @@ trait WithProdiModal
 
     public function addProdi($prodi)
     {
+if (! $this->AuthCheck()) {
+        return; 
+    }
+
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
@@ -47,6 +54,10 @@ trait WithProdiModal
 
     public function editProdi($id, $type)
     {
+if (! $this->AuthCheck()) {
+        return; 
+    }
+
         $this->selected_id = $id;
         $this->prodiType = $type;
         $this->isEditing = true;
@@ -99,7 +110,7 @@ trait WithProdiModal
             $this->showProdiModal = true;
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -248,7 +259,7 @@ trait WithProdiModal
             ];
         }
 
-        return Validator::make($data, $prodis, $this->validationMessages())->validate();
+        return Validator::make($data, $prodis, $this->validationMessagesProdi())->validate();
     }
 
     private function uniqueRule(string $table, string $column, $id = null)
@@ -283,8 +294,22 @@ trait WithProdiModal
         return $validated;
     }
 
+    private function formatStrata(string $strata): string
+    {
+        return match ($strata) {
+            'Sarjana'  => 'S1',
+            'Magister' => 'S2',
+            'Doktor'   => 'S3',
+            default    => $strata,
+        };
+    }
+
     public function saveProdi($data)
     {
+if (! $this->AuthCheck()) {
+        return; 
+    }
+
         $data['jurusan_id'] = $this->jurusan_id;
         $data['fakultas_id'] = $this->fakultas_id;
 
@@ -294,10 +319,13 @@ trait WithProdiModal
 
         $validated = $this->inputModalProdi(false, $data);
         $validated = $this->prepareData($validated);
+        $message = '';
 
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $message) {
                 if ($this->prodiType === 'prodi') {
+                    $strata = $this->formatStrata($validated['nama_strata']);
+                    $message = "Program Studi " .  $strata . ' ' . $validated['nama_prodi'];
                     Prodi::create([
                         'nama_prodi' => $validated['nama_prodi'],
                         'nama_strata' => $validated['nama_strata'],
@@ -305,12 +333,14 @@ trait WithProdiModal
                         'kode_pr' => $validated['kode_pr'],
                     ]);
                 } elseif ($this->prodiType === 'jurusan') {
+                    $message = "Jurusan " . $validated['nama_jurusan'];
                     Jurusan::create([
                         'nama_jurusan' => $validated['nama_jurusan'],
                         'fakultas_id' => $validated['fakultas_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
+                    $message = "Fakultas " . $validated['nama_fakultas'];
                     Fakultas::create([
                         'nama_fakultas' => $validated['nama_fakultas'],
                         'kode_fk' => $validated['kode_fk'],
@@ -318,20 +348,23 @@ trait WithProdiModal
                 }
             });
 
-            $this->resetInput();
-            $this->dispatch('toast', message: '✅ Data berhasil ditambahkan!');
+            $this->resetInputProdi();            
             $this->dispatch('refresh-data');
             $this->showProdiModal = false;
+            $this->toast(message: $message);
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat menambahkan data!');
             $this->dispatch('refresh-data');
             $this->showProdiModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
     public function updateProdi($data)
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
         if ((empty($data['jurusan_id']) && $this->jurusan_id !== $this->jurusan_id_2) ||
             ($this->jurusan_id == $this->jurusan_id_2) || ($this->jurusan_id !== $this->jurusan_id_2)) {
             $data['jurusan_id'] = $this->jurusan_id;
@@ -347,10 +380,13 @@ trait WithProdiModal
 
         $validated = $this->inputModalProdi(true, $data);
         $validated = $this->prepareData($validated);
+        $message = '';
 
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, &$message) {
                 if ($this->prodiType === 'prodi') {
+                    $strata = $this->formatStrata($validated['nama_strata']);
+                    $message = "Program Studi " .  $strata . ' ' . $validated['nama_prodi'];
                     Prodi::findOrFail($this->selected_id)->update([
                         'nama_prodi' => $validated['nama_prodi'],
                         'nama_strata' => $validated['nama_strata'],
@@ -358,12 +394,14 @@ trait WithProdiModal
                         'kode_pr' => $validated['kode_pr'],
                     ]);
                 } elseif ($this->prodiType === 'jurusan') {
+                    $message = "Jurusan " . $validated['nama_jurusan'];
                     Jurusan::findOrFail($this->selected_id)->update([
                         'nama_jurusan' => $validated['nama_jurusan'],
                         'fakultas_id' => $validated['fakultas_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
+                    $message = "Fakultas " . $validated['nama_fakultas'];
                     Fakultas::findOrFail($this->selected_id)->update([
                         'nama_fakultas' => $validated['nama_fakultas'],
                         'kode_fk' => $validated['kode_fk'],
@@ -371,18 +409,19 @@ trait WithProdiModal
                 }
             });
 
-            $this->dispatch('toast', message: '✅ Data berhasil diperbarui!');
+            $this->resetInputProdi();            
             $this->dispatch('refresh-data');
             $this->showProdiModal = false;
+            $this->toast(message: $message, type: 'update');
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
             $this->dispatch('refresh-data');
             $this->showProdiDelete = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    public function validationMessages()
+    private function validationMessagesProdi()
     {
         return [
             /* --- Program Studi --- */
@@ -421,7 +460,7 @@ trait WithProdiModal
         ];
     }
 
-    public function resetInput()
+    private function resetInputProdi()
     {
         $fields = [
             // 'nama_prodi', 'nama_strata', 'nama_jurusan', 'nama_fakultas',

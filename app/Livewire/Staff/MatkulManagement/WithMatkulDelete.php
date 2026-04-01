@@ -4,9 +4,11 @@ namespace App\Livewire\Staff\MatkulManagement;
 
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
+use App\Livewire\Global\HasToast;
 
 trait WithMatkulDelete
 {
+    use HasToast;
     public $showMKDelete = false;
     public $mkIdToDelete;
     public $mkNamaToDelete;
@@ -18,10 +20,13 @@ trait WithMatkulDelete
      */
     public function deleteMK($id, $isTrashed = false)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $mk = $isTrashed ? MataKuliah::withTrashed()->find($id) : MataKuliah::find($id);
 
         if (!$mk) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Mata Kuliah tidak ditemukan!' })");
+            $this->toast(message: 'Mata Kuliah', type: 'unfound', variant: 'warning');
             return;
         }
 
@@ -38,7 +43,12 @@ trait WithMatkulDelete
      */
     public function destroyMK()
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
        if (!$this->mkIdToDelete) return;
+
+        $type = 'delete';
 
         try {
             DB::transaction(function () {
@@ -47,16 +57,18 @@ trait WithMatkulDelete
                 if ($this->isPermanentDelete) {
                     $mk->prodis()->detach();
                     $mk->forceDelete();
-                    $message = "Mata Kuliah {$this->mkNamaToDelete} DIHAPUS PERMANEN!";
                 } else {
                     $mk->delete();
-                    $message = "Mata Kuliah {$this->mkNamaToDelete} dipindahkan ke sampah.";
                 }
-
-                $this->js("Flux.toast('{$message}')");
             });
 
-            $this->cleanupDeleteState();
+            if ($this->isPermanentDelete) {
+                $type = 'permanent';
+            }
+
+            $this->toast(message: 'Mata Kuliah ' . $this->mkNamaToDelete, type: $type);
+
+            $this->cleanupDeleteStateMK();
             $this->dispatch('refresh-data'); 
             
             if (method_exists($this, 'resetPage')) {
@@ -64,9 +76,9 @@ trait WithMatkulDelete
             }
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses: ' . $e->getMessage() })");
             $this->dispatch('refresh-data');
             $this->showMKDelete = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -75,20 +87,23 @@ trait WithMatkulDelete
      */
     public function restoreMK($id)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         try {
             $mk = MataKuliah::withTrashed()->findOrFail($id);
             $mk->restore();
 
-            $this->js("Flux.toast('Mata Kuliah {$mk->matkul} berhasil dipulihkan!')");
             $this->dispatch('refresh-data');
+            $this->toast(message: 'Mata Kuliah '. $mk->matkul, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan Mata Kuliah!' })");
             $this->dispatch('refresh-data');
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    private function cleanupDeleteState()
+    private function cleanupDeleteStateMK()
     {
         $this->mkIdToDelete = null;
         $this->mkNamaToDelete = null;

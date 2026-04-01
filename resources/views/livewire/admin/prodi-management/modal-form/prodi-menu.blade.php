@@ -14,28 +14,30 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                    $store.config?.resetSelect();
+                    $store.prodi?.resetSelect();
 
                     const type = '{{ $typeXString }}';
 
-                    $store.config?.setType(type);
-                    $store.config?.setEdit(1);
+                    $store.prodi?.setType(type);
+                    $store.prodi?.setEdit(1);
 
                     const colors = {
                         prodi: 'text-emerald-700 dark:text-emerald-400',
                         jurusan: 'text-amber-700 dark:text-amber-400',
                         fakultas: 'text-indigo-700 dark:text-indigo-400'
                     };
-                    $store.config?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
+                    $store.prodi?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
-                        $store.config?.setValueProdi(
+                        $store.prodi?.setValueProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->strata ?? '' }}',
                             '{{ $x->jurusan_id ?? '' }}',
                             '{{ $x->jurusan ?? '' }}',
                             '{{ $x->fakultas_id ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',
-                            '{{ $x->kode ?? '' }}'
+                            '{{ $x->kode ?? '' }}',
+                            '{{ $x->kode_jr ?? '' }}',
+                            '{{ $x->kode_fk ?? '' }}'
                         );
                         $flux.modal('prodi-modal').show();
                 "
@@ -56,7 +58,7 @@
             <flux:menu.item
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
-                        $store.config?.setDeleteProdi(
+                        $store.prodi?.setDeleteProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->jurusan ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',
@@ -95,7 +97,7 @@
             {{-- Tombol Delete Permanent --}}
              <flux:menu.item
                 @click="
-                        $store.config?.setDeleteProdi(
+                        $store.prodi?.setDeleteProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->jurusan ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',

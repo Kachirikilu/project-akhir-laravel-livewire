@@ -65,6 +65,11 @@ class RpsManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+    
     public function resetInputFilter()
     {
         $this->reset(['search', 'filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);

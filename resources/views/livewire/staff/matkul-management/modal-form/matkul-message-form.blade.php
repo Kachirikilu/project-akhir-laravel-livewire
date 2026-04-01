@@ -37,7 +37,7 @@
                         'mk-fakultas': ['Program Studi', 'Fakultas'],
                         'mk-universitas': ['Program Studi']
                     };
-                    return mapping[$store.config?.typeModal] || [];
+                    return mapping[$store.mk?.typeModal] || [];
                 },
                 formatList(arr) {
                     if (arr.length === 0) return '';
@@ -73,7 +73,7 @@
         </div>
 
         {{-- Tips 4: Relasi Program Studi --}}
-        <template x-if="$store.config?.typeModal == 'mk'" x-cloak>
+        <template x-if="$store.mk?.typeModal == 'mk'" x-cloak>
             <div class="flex items-start gap-3">
                 <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                 <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">

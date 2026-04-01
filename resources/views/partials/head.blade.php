@@ -10,5 +10,7 @@
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-@vite(['resources/css/color-template.css', 'resources/css/app.css', 'resources/js/app.js'])
+@vite(['resources/css/mobile.css', 'resources/css/color-template.css', 'resources/css/app.css', 'resources/js/app.js',
+            'resources/js/User.js', 'resources/js/ProgramStudi.js', 'resources/js/MataKuliah.js',
+            'resources/js/RPS.js', 'resources/js/Kelas.js'])
 @fluxAppearance

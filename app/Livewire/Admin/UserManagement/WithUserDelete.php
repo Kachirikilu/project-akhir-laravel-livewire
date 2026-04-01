@@ -4,9 +4,11 @@ namespace App\Livewire\Admin\UserManagement;
 
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
+use App\Livewire\Global\HasToast;
 
 trait WithUserDelete
 {    
+    use HasToast;
     public $showUserDelete = false;
     public $userIdToDelete;
     public $userEmailToDelete;
@@ -14,15 +16,19 @@ trait WithUserDelete
 
     public function deleteUser($id, $isTrashed = false)
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
+
         $user = $isTrashed ? User::withTrashed()->find($id) : User::find($id);
 
         if (!$user) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Pengguna tidak ditemukan!' })");
+            $this->toast(type: 'unfound', variant: 'warning', isAKun: 1);
             return;
         }
 
         if (Auth::id() === $user->id) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Anda tidak dapat menghapus akun sendiri!' })");
+            $this->toast(text: 'Anda tidak dapat menghapus akun sendiri!', variant: 'warning');
             return;
         }
 
@@ -34,51 +40,60 @@ trait WithUserDelete
 
     public function destroyUser()
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
+
         if (!$this->userIdToDelete) return;
+
+        $type = 'delete';
 
         try {
             $user = User::withTrashed()->findOrFail($this->userIdToDelete);
 
             if ($this->isPermanentDelete) {
+                $type = 'permanent';
                 $user->forceDelete();
-                $message = "Pengguna {$this->userEmailToDelete} BERHASIL DIHAPUS PERMANEN!";
             } else {
                 $user->delete();
-                $message = "Pengguna {$this->userEmailToDelete} berhasil dipindahkan ke sampah!";
             }
 
-            $this->js("Flux.toast('{$message}')");
-            $this->cleanupDeleteState();
             $this->dispatch('refresh-data'); 
             $this->showUserDelete = false;
+            $this->toast(message: $this->userEmailToDelete, type: $type, isAkun: true);
+            $this->cleanupDeleteStateUser();
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
             }
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memproses permintaan!' })");
             $this->dispatch('refresh-data');
             $this->showUserDelete = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
     public function restoreUser($id)
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
+
         try {
             $user = User::withTrashed()->findOrFail($id);
             $user->restore();
 
-            $this->js("Flux.toast('Akses pengguna {$user->email} berhasil dipulihkan!')");
             $this->dispatch('refresh-data');
+            $this->toast(message: $user->email, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {
-            $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan pengguna!' })");
             $this->dispatch('refresh-data');
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    private function cleanupDeleteState()
+    private function cleanupDeleteStateUser()
     {
         $this->userIdToDelete = null;
         $this->userEmailToDelete = null;

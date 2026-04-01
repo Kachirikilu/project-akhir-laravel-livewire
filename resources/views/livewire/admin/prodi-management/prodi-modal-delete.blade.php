@@ -2,21 +2,21 @@
 
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400" x-show="$store.config?.isForceDelete">PERMANEN!</strong></flux:heading>
+            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400" x-show="$store.prodi?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="
-                            $store.config?.typeModal_delete == 'prodi' ? '***Program Studi ' + $store.config?.nama_prodi_delete + '***' : 
-                            ($store.config?.typeModal_delete == 'jurusan' ? '***Jurusan ' + $store.config?.nama_jurusan_delete + '***' : 
-                            ($store.config?.typeModal_delete == 'fakultas' ? '***Fakultas ' + $store.config?.nama_fakultas_delete + '***' : '***Data ini***'))
+                            $store.prodi?.typeModal_delete == 'prodi' ? '***Program Studi ' + $store.prodi?.nama_prodi_delete + '***' : 
+                            ($store.prodi?.typeModal_delete == 'jurusan' ? '***Jurusan ' + $store.prodi?.nama_jurusan_delete + '***' : 
+                            ($store.prodi?.typeModal_delete == 'fakultas' ? '***Fakultas ' + $store.prodi?.nama_fakultas_delete + '***' : '***Data ini***'))
                         ">
                 </strong> dengan <strong class="text-red-700 dark:text-red-400"
                     x-text="
-                            '***Kode ' + $store.config?.kode_pr_delete + '***'
+                            '***Kode ' + $store.prodi?.kode_delete + '***'
                         ">
                 </strong>?
-                <span x-show="$store.config?.isForceDelete">
+                <span x-show="$store.prodi?.isForceDelete">
                     Tindakan ini tidak dapat dibatalkan!
                 </span>
             </flux:subheading> 
@@ -35,12 +35,12 @@
 
             <flux:button wire:click="destroyProdi" wire:loading.attr="disabled" wire:target="deleteProdi, destroyProdi"
                 type="submit" variant="primary"
-                class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
+                class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
                 <span
                     x-text="
-                            $store.config?.typeModal_delete === 'prodi' ? 'Ya, Hapus Program Studi' : 
-                            ($store.config?.typeModal_delete === 'jurusan' ? 'Ya, Hapus Jurusan' : 
-                            ($store.config?.typeModal_delete === 'fakultas' ? 'Ya, Hapus Fakultas' : 'Ya, Hapus Data ini'))
+                            $store.prodi?.typeModal_delete === 'prodi' ? 'Ya, Hapus Program Studi' : 
+                            ($store.prodi?.typeModal_delete === 'jurusan' ? 'Ya, Hapus Jurusan' : 
+                            ($store.prodi?.typeModal_delete === 'fakultas' ? 'Ya, Hapus Fakultas' : 'Ya, Hapus Data ini'))
                         "
                     wire:loading.remove wire:target="destroyProdi">
                     Ya, Hapus Data

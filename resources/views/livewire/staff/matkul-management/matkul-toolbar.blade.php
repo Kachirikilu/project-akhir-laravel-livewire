@@ -15,10 +15,10 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType(1);
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $store.mk?.setType(1);
+                        $store.mk?.setEdit(0);
+                        $store.mk?.resetSelect();
+                        $store.mk?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK(1);
                     "
@@ -34,10 +34,10 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType(2);
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-amber-700 dark:text-amber-400');
+                        $store.mk?.setType(2);
+                        $store.mk?.setEdit(0);
+                        $store.mk?.resetSelect();
+                        $store.mk?.setColor('text-amber-700 dark:text-amber-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK(2);
                     "
@@ -53,10 +53,10 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType(3);
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-indigo-700 dark:text-indigo-400');
+                        $store.mk?.setType(3);
+                        $store.mk?.setEdit(0);
+                        $store.mk?.resetSelect();
+                        $store.mk?.setColor('text-indigo-700 dark:text-indigo-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK(3);
                     "
@@ -72,10 +72,10 @@
                 {{-- Universitas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType(4);
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-red-700 dark:text-red-400');
+                        $store.mk?.setType(4);
+                        $store.mk?.setEdit(0);
+                        $store.mk?.resetSelect();
+                        $store.mk?.setColor('text-red-700 dark:text-red-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK(4);
                     "

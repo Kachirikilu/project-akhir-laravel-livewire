@@ -30,7 +30,7 @@
         </div>
 
         <div class="space-y-3">
-            <template x-if="$store.config?.typeModal == 'file'" x-cloak>
+            <template x-if="$store.user?.typeModal == 'file'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
@@ -40,7 +40,7 @@
                 </div>
             </template>
             
-            <template x-if="$store.config?.isEdit == 1" x-cloak>
+            <template x-if="$store.user?.isEdit == 1" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
@@ -63,7 +63,7 @@
                             'mahasiswa': ['NIM'],
                             'file': ['NIP', 'NITK', 'NIDN', 'NIDK', 'NIM']
                         };
-                        return mapping[$store.config?.typeModal] || [];
+                        return mapping[$store.user?.typeModal] || [];
                     },
                 
                     formatList(arr) {
@@ -79,7 +79,7 @@
                 </p>
             </div>
 
-            <template x-if="$store.config?.typeModal == 'mahasiswa' || $store.config?.typeModal == 'file'" x-cloak>
+            <template x-if="$store.user?.typeModal == 'mahasiswa' || $store.user?.typeModal == 'file'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">

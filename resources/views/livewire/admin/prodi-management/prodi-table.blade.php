@@ -1,4 +1,4 @@
-<x-admin.global.table.main-layout-table>
+<x-global.main-layout-table>
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
@@ -112,11 +112,12 @@
 
             @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
                 <td class="{{ $secondKolom }} min-w-48">
-                    {{ $switchTable === 'jurusan' ? 'Jurusan ' : '' }}{{ $x->jurusan ?? '-' }}</td>
+                    {{ $switchTable === 'jurusan' ? 'Jurusan ' . $x->jurusan : $x->jurusan . ' (' . $x->kode_jr . ')' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} min-w-48">
-                {{ $switchTable === 'fakultas' ? 'Fakultas ' : '' }}{{ $x->fakultas ?? '-' }}</td>
+                    {{ $switchTable === 'fakultas' ? 'Fakultas ' . $x->fakultas : $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
+
 
             @if ($switchTable === 'prodi')
                 <td class="{{ $mainKolom }} text-center">

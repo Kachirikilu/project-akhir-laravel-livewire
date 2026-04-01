@@ -74,14 +74,14 @@ class UserManagement extends Component
         // 'prodiNameSearch' => ['except' => ''],
     ];
 
-    public function resetInputFilter()
+    public function updatedPerPage()
     {
-        $this->reset(['search', 'filterUser']);
         $this->resetPage();
     }
 
-    public function updatedPerPage()
+    public function resetInputFilter()
     {
+        $this->reset(['search', 'filterUser']);
         $this->resetPage();
     }
 

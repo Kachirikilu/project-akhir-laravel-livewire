@@ -59,14 +59,14 @@ class ProgramStudiManagement extends Component
         'sortDirection' => ['except' => 'asc']
     ];
 
-    public function resetInputFilter()
+    public function updatedPerPage()
     {
-        $this->reset(['search', 'filterPr']);
         $this->resetPage();
     }
 
-    public function updatedPerPage()
+    public function resetInputFilter()
     {
+        $this->reset(['search', 'filterPr']);
         $this->resetPage();
     }
 

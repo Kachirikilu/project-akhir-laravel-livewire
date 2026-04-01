@@ -11,6 +11,7 @@
         {{-- 👤 Nama Input --}}
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
+            'alpine' => 'user',
             'labelString' => 'Full Name',
             'modelString' => 'name',
             'iconString' => 'user-circle',
@@ -21,6 +22,7 @@
 
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
+            'alpine' => 'user',
             'labelString' => 'Nomor Induk Pegawai (NIP)',
             'modelString' => 'nip',
             'numberOnly' => 1,
@@ -32,6 +34,7 @@
         ])
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
+            'alpine' => 'user',
             'labelString' => 'Nomor Induk Dosen Nasional (NIDN)',
             'modelString' => 'nidn',
             'numberOnly' => 1,
@@ -43,6 +46,7 @@
         ])
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
+            'alpine' => 'user',
             'labelString' => 'Nomor Induk Dosen Khusus (NIDK)',
             'modelString' => 'nidk',
             'numberOnly' => 1,
@@ -55,9 +59,10 @@
 
         {{-- @include('livewire.admin.user-management.modal-form.partial.prodi-input-form') --}}
         @include('livewire.global.modal-form.search-input-form', [
+            'alpine' => 'user',
             'xResults' => $prodiResults,
             'selectX' => 'selectProdi',
-            'modelString' => 'nama_prodi',
+            'modelString' => 'nama_prodi_search',
             'resetXInput' => 'resetProdiInput()',
             'typeXString' => 'prodi',
             'nameXString' => 'Program Studi',
@@ -73,6 +78,7 @@
 
         {{-- 📧 Status Input --}}
         @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'user',
             'labelString' => 'Status',
             'modelString' => 'status',
             'xOptions' => [

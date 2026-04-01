@@ -45,6 +45,17 @@ class Jurusan extends Model
         });
     }
 
+    protected function kodeFk(): Attribute
+    {
+        return Attribute::get(function () {
+            $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
+            if (! empty($kodeFakultas)) {
+                return $kodeFakultas;
+            }
+            return 'UNI';
+        });
+    }
+
     // protected function kodeText(): Attribute
     // {
     //     return Attribute::get(function () {

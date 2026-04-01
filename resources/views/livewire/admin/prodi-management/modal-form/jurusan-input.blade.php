@@ -10,6 +10,7 @@
 
         {{-- 📧 Jurusan Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Nama Jurusan',
             'modelString' => 'nama_jurusan',
@@ -21,9 +22,10 @@
         ])
 
         @include('livewire.global.modal-form.search-input-form', [
+            'alpine' => 'prodi',
             'xResults' => $fakultasResults,
             'selectX' => 'selectFakultas',
-            'modelString' => 'nama_fakultas',
+            'modelString' => 'nama_fakultas_search',
             'resetXInput' => 'resetFakultasInput()',
             'typeXString' => 'fakultas',
             'nameXString' => 'Fakultas',
@@ -38,6 +40,7 @@
 
         {{-- 📧 Kode Jurusan Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             'labelString' => 'Kode Jurusan',
             'modelString' => 'kode_jr',
             'iconString' => 'hashtag',

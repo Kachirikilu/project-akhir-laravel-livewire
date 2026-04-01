@@ -6,12 +6,12 @@
     isManual: false
 }"
     x-effect="
-        if ($store.config?.isEdit === 0) {
+        if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
             search = '';
             selectedId = null;
             selectedKode = null;
         } else {
-            selectedId2 = $store.config?.{{ $idString }};
+            selectedId2 = $store.{{ $alpine ?? 'config' }}?.{{ $idString }};
 
             if (selectedId2 == '') {
                 search = '';
@@ -19,12 +19,12 @@
                 selectedKode = null;
             } else {
                 if('{{ $typeXString }}' == 'prodi') {
-                    search = $store.config?.{{ $modelString }};
+                    search = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
                 } else {
-                    search = '{{ $nameXString }} ' + $store.config?.{{ $modelString }};
+                    search = '{{ $nameXString }} ' + $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
                 }
-                selectedId = $store.config?.['{{ $idString }}'];
-                selectedKode = $store.config?.['{{ $kodeString }}'];
+                selectedId = $store.{{ $alpine ?? 'config' }}?.['{{ $idString }}'];
+                selectedKode = $store.{{ $alpine ?? 'config' }}?.['{{ $kodeString }}'];
             }
         }
 "
@@ -35,7 +35,7 @@
 
     <div class="relative mt-2">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon" />
+            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
         <input x-model="search" autocomplete="off" type="text"
@@ -96,9 +96,9 @@
     selectedKode = newKode;
     isManual = true;
 
-    $store.config['{{ $idString }}'] = selectedId;
-    $store.config['{{ $kodeString }}'] = selectedKode;
-    $store.config.{{ $modelString }} = '{{ $x[$typeXString] }}';
+    $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = selectedId;
+    $store.{{ $alpine ?? 'config' }}['{{ $kodeString }}'] = selectedKode;
+    $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $x[$typeXString] }}';
 
     open = false;
 

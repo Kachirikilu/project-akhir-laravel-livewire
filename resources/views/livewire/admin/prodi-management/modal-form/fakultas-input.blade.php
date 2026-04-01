@@ -10,6 +10,7 @@
 
         {{-- 📧 Fakultas Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             // 'colorIcon' => $colorIcon,
             'labelString' => 'Nama Fakultas',
             'modelString' => 'nama_fakultas',
@@ -22,6 +23,7 @@
 
         {{-- 📧 Kode Fakultas Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             'labelString' => 'Kode Fakultas',
             'modelString' => 'kode_fk',
             'iconString' => 'hashtag',

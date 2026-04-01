@@ -14,13 +14,13 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                $store.config?.resetSelect();
+                $store.mk?.resetSelect();
 
                 const type = '{{ $typeXString }}';
                 console.log('Nilai type saat ini:', type);
 
-                $store.config?.setType(type);
-                $store.config?.setEdit(1);
+                $store.mk?.setType(type);
+                $store.mk?.setEdit(1);
 
                 const colors = {
                     '1': 'text-emerald-700 dark:text-emerald-400',
@@ -28,9 +28,9 @@
                     '3': 'text-indigo-700 dark:text-indigo-400',
                     '4': 'text-red-700 dark:text-red-400'
                 };
-                $store.config?.setColor(colors[type] ?? 'text-gray-700');
+                $store.mk?.setColor(colors[type] ?? 'text-gray-700');
 
-                    $store.config?.setValueMK(
+                    $store.mk?.setValueMK(
                         '{{ $matkul->tingkatan_mk ?? '' }}',
                         '{{ $matkul->matkul ?? '' }}',
                         '{{ $matkul->kode_blok ?? '' }}',
@@ -64,7 +64,7 @@
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.config?.setDeleteProdi(
+                        $store.mk?.setDeleteMK(
                             '{{ $x->matkul ?? '' }}',
                             '{{ $x->kode ?? '' }}'
                         );
@@ -98,7 +98,7 @@
             {{-- Tombol Delete Permanent --}}
             <flux:menu.item
                 @click="
-                            $store.config?.setDeleteProdi(
+                            $store.mk?.setDeleteMK(
                             '{{ $x->matkul ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $isTrashed }}'

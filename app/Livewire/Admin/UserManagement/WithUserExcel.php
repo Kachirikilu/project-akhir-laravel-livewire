@@ -17,10 +17,14 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
+use App\Livewire\Global\HasToast;
+
+
 trait WithUserExcel
 {
 
     use WithFileUploads;
+    use HasToast;
 
     public $excel_file;
     public array $parsedRows = [];
@@ -28,6 +32,9 @@ trait WithUserExcel
 
     public function importExcel()
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
         if ($this->roleType !== 'file') {
             return;
         }
@@ -102,10 +109,7 @@ trait WithUserExcel
             ];
         }
 
-        $this->dispatch(
-            'toast',
-            message: '📄 File Excel berhasil dimuat. Silakan periksa data.'
-        );
+            $this->toast(text: 'File Excel berhasil dimuat. Silakan periksa data!');
     }
 
     public function updatedExcelFile()
@@ -121,7 +125,8 @@ trait WithUserExcel
         try {
             $this->importExcel();
         } catch (\Throwable $e) {
-            $this->dispatch('toast', message: '❌ ' . $e->getMessage());
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+
         }
     }
 
@@ -130,7 +135,7 @@ trait WithUserExcel
         if (isset($this->parsedRows[$index])) {
             unset($this->parsedRows[$index]);
             $this->parsedRows = array_values($this->parsedRows);
-            $this->dispatch('toast', message: '🗑️ Baris dihapus.');
+            $this->toast(text: 'Baris dihapus!');
         }
     }
 
@@ -143,7 +148,7 @@ trait WithUserExcel
         $this->validate($rules, $this->validationMessages());
 
         if (empty($this->parsedRows)) {
-            $this->dispatch('toast', message: '⚠️ Tidak ada data untuk disimpan.');
+            $this->toast(text: 'Tidak ada data untuk disimpan!', variant: 'warning');
             return;
         }
 
@@ -174,11 +179,13 @@ trait WithUserExcel
         }
 
         $this->resetInput();
+            $messageText = "Import selesai | Berhasil: $success | Gagal: " . count($this->rowErrors);
+            if (count($this->rowErrors) == 0) {
+                $this->toast(text: $messageText);
+            } else {
+                $this->toast(text: $messageText, variant: 'warning');
+            }
 
-        $this->dispatch(
-            'toast',
-            message: "✅ Import selesai | Berhasil: $success | Gagal: " . count($this->rowErrors)
-        );
     }
 
     private function validateExcelRow(array $data, int $rowNumber)

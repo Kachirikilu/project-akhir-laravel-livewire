@@ -15,10 +15,10 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('prodi');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $store.prodi?.setType('prodi');
+                        $store.prodi?.setEdit(0);
+                        $store.prodi?.resetSelect();
+                        $store.prodi?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
@@ -34,10 +34,9 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('jurusan');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-amber-700 dark:text-amber-400');
+                        $store.prodi?.setType('jurusan');
+                        $store.prodi?.setEdit(0);
+                        $store.prodi?.setColor('text-amber-700 dark:text-amber-400');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('jurusan');
                     "
@@ -53,10 +52,9 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('fakultas');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-[var(--focus-color)]');
+                        $store.prodi?.setType('fakultas');
+                        $store.prodi?.setEdit(0);
+                        $store.prodi?.setColor('text-[var(--focus-color)]');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "

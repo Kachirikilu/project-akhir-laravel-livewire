@@ -15,10 +15,10 @@
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mk-prodi');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-emerald-700 dark:text-emerald-400');
+                        $store.rps?.setType('mk-prodi');
+                        $store.rps?.setEdit(0);
+                        $store.rps?.resetSelect();
+                        $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-prodi');
                     "
@@ -34,10 +34,10 @@
                 {{-- Jurusan --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mk-jurusan');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-amber-700 dark:text-amber-400');
+                        $store.rps?.setType('mk-jurusan');
+                        $store.rps?.setEdit(0);
+                        $store.rps?.resetSelect();
+                        $store.rps?.setColor('text-amber-700 dark:text-amber-400');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-jurusan');
                     "
@@ -53,10 +53,10 @@
                 {{-- Fakultas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mk-fakultas');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-[var(--focus-color)]');
+                        $store.rps?.setType('mk-fakultas');
+                        $store.rps?.setEdit(0);
+                        $store.rps?.resetSelect();
+                        $store.rps?.setColor('text-[var(--focus-color)]');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-fakultas');
                     "
@@ -72,10 +72,10 @@
                 {{-- Universitas --}}
                 <flux:menu.item
                     @click="
-                        $store.config?.setType('mk-universitas');
-                        $store.config?.setEdit(0);
-                        $store.config?.resetSelect();
-                        $store.config?.setColor('text-[var(--focus-color)]');
+                        $store.rps?.setType('mk-universitas');
+                        $store.rps?.setEdit(0);
+                        $store.rps?.resetSelect();
+                        $store.rps?.setColor('text-[var(--focus-color)]');
                         $flux.modal('mk-modal').show();
                         $wire.addMK('mk-universitas');
                     "

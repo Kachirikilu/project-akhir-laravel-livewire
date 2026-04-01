@@ -13,9 +13,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Livewire\Global\HasToast;
 
 trait WithUserModal
 {
+    use HasToast;
+
     public $showUserModal = false;
 
     public $isEditing = false;
@@ -41,6 +44,9 @@ trait WithUserModal
 
     public function addUser($role)
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
@@ -51,13 +57,11 @@ trait WithUserModal
 
     public function editUser($id)
     {
-        if (! Auth::user()->admin) {
-            $this->dispatch('toast', message: '❌ Hanya admin yang dapat mengedit pengguna!');
-
-            return;
+        if (! $this->AuthCheck()) {
+            return; 
         }
 
-        $this->resetInput();
+        $this->resetInputUser();
         $this->resetValidation();
 
         $this->resetErrorBag();
@@ -214,7 +218,7 @@ trait WithUserModal
 
         $rules['prodi_id'] = 'required|exists:prodis,id';
 
-        $validator = Validator::make($data, $rules, $this->validationMessages());
+        $validator = Validator::make($data, $rules, $this->validationMessagesUser());
 
         $validator->after(function ($validator) use ($data) {
 
@@ -274,7 +278,9 @@ trait WithUserModal
 
     public function saveUser($data)
     {
-        
+        if (! $this->AuthCheck()) {
+            return; 
+        }
         // if (empty($data['prodi_id'])) {
         $data['prodi_id'] = $this->prodi_id;
         // }
@@ -338,20 +344,23 @@ trait WithUserModal
 
             });
 
-            $this->resetInput();
-            $this->dispatch('toast', message: '✅ Pengguna berhasil ditambahkan!');
+            $this->resetInputUser();
             $this->dispatch('refresh-data');
             $this->showUserModal = false;
+            $this->toast(message: ucfirst($this->roleType), isAkun: true);
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat menambahkan data!');
             $this->dispatch('refresh-data');
             $this->showUserModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
     public function updateUser($data)
     {
+        if (! $this->AuthCheck()) {
+            return; 
+        }
         if ((empty($data['prodi_id']) && $this->prodi_id !== $this->prodi_id_2) ||
             ($this->prodi_id == $this->prodi_id_2) || ($this->prodi_id !== $this->prodi_id_2)) {
             $data['prodi_id'] = $this->prodi_id;
@@ -417,22 +426,21 @@ trait WithUserModal
                 }
             });
 
-            $this->dispatch('toast', message: '✅ Data pengguna berhasil diperbarui!');
             $this->dispatch('refresh-data');
             $this->showUserModal = false;
+            $this->toast(message: ucfirst($this->roleType), type: 'update', isAkun: true);
 
-            if (Auth::id() === $user->id) {
+            if (Auth::id() === $this->user_id) {
                 $this->dispatch('profile-updated');
             }
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Terjadi kesalahan saat memperbarui data!');
             $this->dispatch('refresh-data');
             $this->showUserDelete = false;
-
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    public function validationMessages()
+    private function validationMessagesUser()
     {
         return [
             'email.required' => 'Alamat email wajib diisi!',
@@ -463,7 +471,7 @@ trait WithUserModal
         ];
     }
 
-    public function resetInput(
+    private function resetInputUser(
         // $keepProdi = false
         )
     {

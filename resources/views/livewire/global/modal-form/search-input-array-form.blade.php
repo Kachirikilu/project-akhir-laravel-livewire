@@ -65,7 +65,7 @@
             @endif
             <div @if ($wireLoadingParent ?? null) wire:loading.remove wire:target="{{ $wireLoadingParent }}" @endif>
                 <flux:icon icon="{{ $iconString }}" variant="mini"
-                    x-bind:class="isParentReady ? $store.config?.colorIcon : 'text-gray-400'" />
+                    x-bind:class="isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400'" />
             </div>
         </div>
 

@@ -1,4 +1,4 @@
-<flux:modal name="mk-modal" wire:model="showMKModal" x-data  @refresh-data="reset()"
+<flux:modal name="mk-modal" wire:model="showMKModal" x-data  @refresh-data.window="$store.mk.reset()" x-bind:flyout="$store.mk.isEdit == 1"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
@@ -19,27 +19,27 @@
         <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
 
-                <template x-if="$store.config?.typeModal == '1'" x-cloak>
+                <template x-if="$store.mk?.typeModal == '1'" x-cloak>
                     <flux:badge icon="academic-cap" color="emerald" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah - Program Studi' : 'Mata Kuliah - Program Studi'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Program Studi' : 'Mata Kuliah - Program Studi'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config?.typeModal == 2" x-cloak>
+                <template x-if="$store.mk?.typeModal == 2" x-cloak>
                     <flux:badge icon="book-open" color="amber" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah - Jurusan' : 'Mata Kuliah - Jurusan'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Jurusan' : 'Mata Kuliah - Jurusan'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config?.typeModal == 3" x-cloak>
+                <template x-if="$store.mk?.typeModal == 3" x-cloak>
                     <flux:badge icon="building-library" color="indigo" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah - Fakultas' : 'Mata Kuliah - Fakultas'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Fakultas' : 'Mata Kuliah - Fakultas'"></span>
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.config?.typeModal == 4" x-cloak>
+                <template x-if="$store.mk?.typeModal == 4" x-cloak>
                     <flux:badge icon="globe-alt" color="red" size="lg">
-                        <span x-text="$store.config?.isEdit ? 'Edit Mata Kuliah - Universitas' : 'Mata Kuliah - Universitas'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Universitas' : 'Mata Kuliah - Universitas'"></span>
                     </flux:badge>
                 </template>
 
@@ -49,7 +49,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $mkType --}}
-            <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.config)"
+            <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.mk)"
                 enctype="multipart/form-data" id="mkForm">
 
                 @include('livewire.staff.matkul-management.modal-form.matkul-input')

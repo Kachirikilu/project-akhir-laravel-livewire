@@ -62,9 +62,10 @@
         class="p-4 mt-4 bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-100 dark:border-neutral-700 space-y-4 transition-colors">
 
         @include('livewire.global.modal-form.search-input-form', [
+            'alpine' => 'user',
             'xResults' => $prodiResults,
             'selectX' => 'selectProdi',
-            'modelString' => 'nama_prodi',
+            'modelString' => 'nama_prodi_search',
             'resetXInput' => 'resetProdiInput()',
             'typeXString' => 'prodi',
             'nameXString' => 'Program Studi',

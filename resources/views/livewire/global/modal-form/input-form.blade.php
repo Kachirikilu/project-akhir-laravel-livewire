@@ -1,7 +1,7 @@
 <div x-data
     x-effect="
-        if($store.config?.isEdit === 0){
-            $store.config.{{ $modelString }} = '';
+        if($store.{{ $alpine ?? 'config' }}?.isEdit === 0){
+            $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
         }
     " wire:key="input-form-{{ $modelString }}">
     <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
@@ -12,14 +12,14 @@
 
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon" />
-            {{-- $store.config?.setEdit(0) --}}
+            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
+            {{-- $store.{{ $alpine ?? 'config' }}?.setEdit(0) --}}
         </div>
-        <input x-model="$store.config.{{ $modelString }}" 
+        <input x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}" 
             {{-- Tambahkan @focus untuk auto-select isi input --}}
             
             name="{{ $modelString }}"
-            x-bind:value="$store.config?.isEdit ? $el.value : ''" 
+            x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" 
             type="{{ $typeString ?? 'text' }}"
             id="{{ $modelString }}" 
             placeholder="{{ $placeholder }}"

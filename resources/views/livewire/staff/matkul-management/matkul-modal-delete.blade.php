@@ -4,18 +4,18 @@
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400"
-                    x-show="$store.config?.isForceDelete">PERMANEN!</strong></flux:heading>
+                    x-show="$store.mk?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.nama_matkul_delete ? '*** Mata Kuliah' + $store.config?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
+                    x-text="$store.mk?.nama_matkul_delete ? '*** Mata Kuliah' + $store.mk?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
                     ">
                 </strong> dengan
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.kode_mk_delete ? '*** Kode' + $store.config?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
+                    x-text="$store.mk?.kode_mk_delete ? '*** Kode ' + $store.mk?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
-                <span x-show="$store.config?.isForceDelete">
+                <span x-show="$store.mk?.isForceDelete">
                     Tindakan ini tidak dapat dibatalkan!
                 </span>
             </flux:subheading>
@@ -34,7 +34,7 @@
 
             <flux:button wire:click="destroyMK" wire:loading.attr="disabled" wire:target="deleteMK, destroyMK"
                 type="submit" variant="primary"
-                class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
+                class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
                 <span wire:loading.remove wire:target="destroyMK">Ya, Hapus Mata Kuliah
                 </span>
 

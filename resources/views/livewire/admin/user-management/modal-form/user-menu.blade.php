@@ -14,21 +14,21 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                $store.config?.resetSelect();
+                $store.user?.resetSelect();
 
                 const type = '{{ strtolower($x->role) }}';
 
-                $store.config?.setType(type);
-                $store.config?.setEdit(1);
+                $store.user?.setType(type);
+                $store.user?.setEdit(1);
 
                 const colors = {
                     admin: 'text-red-700 dark:text-red-400',
                     dosen: 'text-lime-700 dark:text-lime-400',
                     mahasiswa: 'text-cyan-700 dark:text-cyan-400',
                 };
-                $store.config?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
+                $store.user?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
 
-                    $store.config?.setValueUser(
+                    $store.user?.setValueUser(
                         '{{ $x->email ?? '' }}',
                         '',
                         '{{ $x->name ?? '' }}',
@@ -64,7 +64,7 @@
                     @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.config?.setDeleteUser(
+                        $store.user?.setDeleteUser(
                             '{{ $x->email ?? '' }}'
                         );
                         $flux.modal('user-delete').show();
@@ -98,7 +98,7 @@
             {{-- Tombol Delete Permanent --}}
             <flux:menu.item
                 @click="
-                        $store.config?.setDeleteUser(
+                        $store.user?.setDeleteUser(
                             '{{ $x->email ?? '' }}',
                             '{{ $isTrashed }}'
                         );

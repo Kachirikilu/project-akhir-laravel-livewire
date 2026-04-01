@@ -42,7 +42,7 @@
                             'jurusan': ['Jurusan', 'ID Fakultas'],
                             'fakultas': ['Fakultas']
                         };
-                        return mapping[$store.config?.typeModal] || [];
+                        return mapping[$store.prodi?.typeModal] || [];
                     },
                 
                     formatList(arr) {
@@ -58,7 +58,7 @@
                 </p>
             </div>
 
-            <template x-if="$store.config?.typeModal == 'mahasiswa' || $store.config?.typeModal == 'file'" x-cloak>
+            <template x-if="$store.prodi?.typeModal == 'mahasiswa' || $store.prodi?.typeModal == 'file'" x-cloak>
                 <div class="flex items-start gap-3">
                     <div class="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--focus-color)] shrink-0"></div>
                     <p class="text-sm text-[var(--contrast-second-text)] leading-relaxed">
@@ -73,9 +73,9 @@
                     Pastikan <strong class="text-[var(--focus-color)] font-semibold">Kode
                      <span 
                         x-text="
-                            $store.config?.typeModal === 'prodi' ? 'Program Studi' :
-                            $store.config?.typeModal === 'jurusan' ? 'Jurusan' :
-                            $store.config?.typeModal === 'fakultas' ? 'Fakultas' :
+                            $store.prodi?.typeModal === 'prodi' ? 'Program Studi' :
+                            $store.prodi?.typeModal === 'jurusan' ? 'Jurusan' :
+                            $store.prodi?.typeModal === 'fakultas' ? 'Fakultas' :
                             'Data'
                         "
                     ></span>

@@ -3,7 +3,6 @@
 
 <head>
     @include('partials.head')
-    {{-- @fluxStyles --}}
     <style>
         [x-cloak] {
             display: none !important;
@@ -28,7 +27,6 @@
         }
 
         .main-content {
-            /* padding-left: var(--sidebar-width); */
             transition: padding-left 0.3s ease;
             width: 100%;
         }
@@ -173,15 +171,11 @@
         :style="isDesktop ? `padding-left: var(--sidebar-width)` : ''">
         <div class="py-2 lg:py-6 px-0 2xl:px-6 transition-all duration-300"
             :class="expanded ? 'md:px-0 xl:px-2' : 'md:px-2 lg:px-4 xl:px-4'">
-            {{-- <flux:toast /> --}}
             {{ $slot }}
         </div>
     </main>
-
-    {{-- @persist('toast') --}}
-        {{-- <x-flux::toaster /> --}}
-        {{-- <flux:toast /> --}}
-    {{-- @endpersist --}}
+    {{-- <flux:toast /> --}}
+    <flux:toast position="top right" />
     @fluxScripts
 </body>
 

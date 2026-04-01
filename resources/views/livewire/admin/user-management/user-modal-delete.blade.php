@@ -2,13 +2,13 @@
 
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400" x-show="$store.config?.isForceDelete">PERMANEN!</strong></flux:heading>
+            <flux:heading size="lg">Konfirmasi Hapus <strong class="text-red-700 dark:text-red-400" x-show="$store.user?.isForceDelete">PERMANEN!</strong></flux:heading>
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.email_delete ? '***' + $store.config?.email_delete + '***' : '***Pengguna ini***'">
+                    x-text="$store.user?.email_delete ? '***' + $store.user?.email_delete + '***' : '***Pengguna ini***'">
                 </strong>?
-                    <span x-show="$store.config?.isForceDelete">
+                    <span x-show="$store.user?.isForceDelete">
                     Tindakan ini tidak dapat dibatalkan!
                 </span>
             </flux:subheading>
@@ -30,7 +30,7 @@
                 wire:loading.attr="disabled" 
                 wire:target="deleteUser, destroyUser"
                 type="submit" variant="primary"
-                class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200"
+                class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200"
             >
                 <span wire:loading.remove wire:target="destroyUser">
                     Ya, Hapus Pengguna

@@ -150,6 +150,7 @@ class User extends Authenticatable
         });
     }
 
+
     public function role(): Attribute
     {
         return Attribute::get(function () {

@@ -5,9 +5,12 @@ namespace App\Livewire\Staff\MatkulManagement;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Livewire\Global\HasToast;
 
 trait WithMatkulModal
 {
+    use HasToast;
+
     public $selected_id;
 
     public $isEditing = false;
@@ -16,7 +19,10 @@ trait WithMatkulModal
 
     public function addMK($tingkatan)
     {
-        $this->resetInput();
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
+        $this->resetInputMK();
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -35,11 +41,14 @@ trait WithMatkulModal
 
     public function editMK($id, $tingkatan)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $this->selected_id = $id;
         $this->mkType = $tingkatan;
         $this->isEditing = true;
 
-        $this->resetInput();
+        $this->resetInputMK();
         $this->prodiResults = [];
 
         $this->resetValidation();
@@ -86,7 +95,7 @@ trait WithMatkulModal
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -143,7 +152,7 @@ trait WithMatkulModal
             $rules['prodi_id_array'] = 'required|array|min:1';
         }
 
-        $validator = Validator::make($data, $rules, $this->validationMessages());
+        $validator = Validator::make($data, $rules, $this->validationMessagesMK());
 
         if ($validator->fails()) {
             foreach ($validator->errors()->toArray() as $key => $messages) {
@@ -185,6 +194,9 @@ trait WithMatkulModal
 
     public function saveMK($data)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -220,22 +232,23 @@ trait WithMatkulModal
                 }
             });
 
-            $this->resetInput();
-            $this->dispatch('toast', message: '✅ Mata Kuliah berhasil ditambahkan!');
+            $this->resetInputMK();
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-
-
+            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']));
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
     public function updateMK($data)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -281,20 +294,18 @@ trait WithMatkulModal
                 $mk->prodis()->sync($syncData);
             });
 
-            $this->dispatch('toast', message: '✅ Mata Kuliah berhasil diperbarui!');
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
+            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']), type: 'update');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    public function validationMessages()
+    private function validationMessagesMK()
     {
         return [
             'prodi_id.required' => 'Program Studi wajib diisi!',
@@ -334,7 +345,7 @@ trait WithMatkulModal
         ];
     }
 
-    public function resetInput()
+    private function resetInputMK()
     {
         $this->prodiNameSearch = '';
         $this->jurusanNameSearch = '';

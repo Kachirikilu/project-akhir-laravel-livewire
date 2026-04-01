@@ -2,7 +2,7 @@
     <label class="block text-sm font-medium">Kode Mata Kuliah</label>
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="academic-cap" variant="mini" x-bind:class="$store.config?.colorIcon" />
+            <flux:icon icon="academic-cap" variant="mini" x-bind:class="$store.mk?.colorIcon" />
         </div>
 
         <input type="text" readonly

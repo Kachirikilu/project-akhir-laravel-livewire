@@ -1,4 +1,4 @@
-<x-admin.global.table.main-layout-table>
+<x-global.main-layout-table>
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';

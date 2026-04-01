@@ -6,11 +6,11 @@
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.nama_matkul_delete ? '*** Mata Kuliah' + $store.config?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
+                    x-text="$store.rps?.nama_matkul_delete ? '*** Mata Kuliah' + $store.rps?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
                     ">
                 </strong> dengan 
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.config?.kode_mk_delete ? '*** Kode' + $store.config?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
+                    x-text="$store.rps?.kode_mk_delete ? '*** Kode ' + $store.rps?.kode_mk_delete + '***' : '***Kode XXXYYYY***'
                     ">
                 </strong>?
                 Tindakan ini tidak dapat dibatalkan.
@@ -30,7 +30,7 @@
 
             <flux:button wire:click="destroyMK" wire:loading.attr="disabled" wire:target="deleteMK, destroyMK"
                 type="submit" variant="primary"
-                class="text-[var(--contrast-main-text)] cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
+                class="text-white cursor-pointer w-full sm:w-auto bg-red-600 hover:bg-red-700 border-none transition-colors duration-200">
                 <span
                     wire:loading.remove wire:target="destroyMK">Ya, Hapus Mata Kuliah
                 </span>

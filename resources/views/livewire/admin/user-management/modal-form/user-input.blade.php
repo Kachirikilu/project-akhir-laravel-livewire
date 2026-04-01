@@ -11,6 +11,7 @@
         {{-- 📧 Email Input --}}
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
+            'alpine' => 'user',
             'labelString' => 'Email',
             'modelString' => 'email',
             'typeString' => 'email',
@@ -21,9 +22,10 @@
         ])
 
         {{-- 🔒 Password Input --}}
-        <template x-if="$store.config?.isEdit == 0" x-cloak>
+        <template x-if="$store.user?.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
+                'alpine' => 'user',
                 'labelString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',
@@ -33,9 +35,10 @@
                 'isRequired' => 1
             ])
         </template>
-        <template x-if="$store.config?.isEdit == 1" x-cloak>
+        <template x-if="$store.user?.isEdit == 1" x-cloak>
             @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
+                'alpine' => 'user',
                 'labelString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',

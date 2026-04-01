@@ -13,16 +13,16 @@
     
     value: '' {{-- Init kosong dulu --}}
 }"
-x-init="value = getLabel($store.config?.{{ $modelString }})"
+x-init="value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }})"
 x-effect="
     {{-- Reaktif: Jika nilai di store berubah, update tampilan teks --}}
-    const rawVal = $store.config?.{{ $modelString }};
-    {{-- if ($store.config?.isEdit === 0 && !rawVal) {
+    const rawVal = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
+    {{-- if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0 && !rawVal) {
         value = '';
     } else {
         value = getLabel(rawVal);
     } --}}
-    if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.config?.isEdit === 0) {
+    if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
         value = '';
     } else {
         value = getLabel(rawVal);
@@ -39,7 +39,7 @@ wire:key="select-form-{{ $modelString }}">
 
     <div class="relative mt-2">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.config?.colorIcon" />
+            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
         <input autocomplete="off" x-model="value" {{-- Gunakan x-model agar Alpine tahu isinya --}} type="text" readonly @click="open = true"
@@ -76,8 +76,8 @@ wire:key="select-form-{{ $modelString }}">
             <div wire:key="option-{{ $option }}"
                 @click="
                     value = '{{ $option }}'; 
-                    {{-- $store.config['{{ $modelString }}'] = value; --}}
-                    $store.config['{{ $modelString }}'] = {{ is_numeric($currentVal) ? $currentVal : "'$currentVal'" }};
+                    {{-- $store.{{ $alpine ?? 'config' }}['{{ $modelString }}'] = value; --}}
+                    $store.{{ $alpine ?? 'config' }}['{{ $modelString }}'] = {{ is_numeric($currentVal) ? $currentVal : "'$currentVal'" }};
                     open = false
                 "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200

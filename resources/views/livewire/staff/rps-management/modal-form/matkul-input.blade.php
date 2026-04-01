@@ -13,6 +13,7 @@
 
         {{-- 📧 Mata Kuliah Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'mk',
             'labelString' => 'Nama Mata Kuliah',
             'modelString' => 'nama_matkul',
             'iconString' => 'book-open',
@@ -45,19 +46,19 @@
 
 
 
-            <template x-if="$store.config?.typeModal == 'mk-prodi'" x-cloak>
+            <template x-if="$store.mk?.typeModal == 1" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-prodi-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-jurusan'" x-cloak>
+            <template x-if="$store.mk?.typeModal == 2" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-jurusan-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-fakultas'" x-cloak>
+            <template x-if="$store.mk?.typeModal == 3" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-fakultas-input')
             </template>
 
-            <template x-if="$store.config?.typeModal == 'mk-universitas'" x-cloak>
+            <template x-if="$store.mk?.typeModal == 4" x-cloak>
                 @include('livewire.staff.matkul-management.modal-form.mk-universitas-input')
             </template>
         </div>
@@ -66,6 +67,7 @@
         <div class="grid sm:grid-cols-6 gap-1">
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
+                    'alpine' => 'mk',
                     'labelString' => 'Semester',
                     'modelString' => 'semester',
                     'xOptions' => [
@@ -87,6 +89,7 @@
             </div>
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
+                    'alpine' => 'mk',
                     'labelString' => 'Kategori Blok',
                     'modelString' => 'kode_blok',
                     'xOptions' => ['Reguler', 'Kerja Praktik / Tugas Akhir'],
@@ -99,6 +102,7 @@
 
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
+                    'alpine' => 'mk',
                     'labelString' => 'Wajib / Pilihan',
                     'modelString' => 'is_wajib',
                     'xOptions' => ['Wajib', 'Pilihan'],
@@ -113,6 +117,7 @@
         <div class="grid sm:grid-cols-8 gap-4">
             <div class="sm:col-span-5">
                 @include('livewire.global.modal-form.select-form', [
+                    'alpine' => 'mk',
                     'labelString' => 'Tipe SKS',
                     'modelString' => 'tipe_sks',
                     'xOptions' => ['Tatap Muka', 'Praktikum', 'Praktek Lapangan', 'Simulasi'],
@@ -124,6 +129,7 @@
             </div>
             <div class="sm:col-span-3">
                 @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'mk',
                     'labelString' => 'SKS',
                     'modelString' => 'sks_kuliah',
                     'numberOnly' => 1,
@@ -137,21 +143,6 @@
             </div>
         </div>
 
-        {{-- <div x-data x-text="$store.config.typeModal"></div> --}}
-
-        <div x-data x-init="$watch('$store.config.nama_matkul', value => console.log('nama_matkul: ', value))"></div>
-
-        <div x-data x-init="$watch('$store.config.prodi_id', value => console.log('prodi_id: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.kode_pr', value => console.log('kode_pr: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.prodi_kode', value => console.log('prodi_kode: ', value))"></div>
-
-        <div x-data x-init="$watch('$store.config.digit_semester', value => console.log('digit_semester: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.digit_mk', value => console.log('digit_mk: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.semester', value => console.log('semester: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.kode_blok', value => console.log('kode_blok: ', value))"></div>
-
-        <div x-data x-init="$watch('$store.config.tipe_sks', value => console.log('tipe_sks: ', value))"></div>
-        <div x-data x-init="$watch('$store.config.sks_kuliah', value => console.log('sks_kuliah: ', value))"></div>
-
+        {{-- <div x-data x-init="$watch('$store.mk.nama_matkul', value => console.log('nama_matkul: ', value))"></div> --}}
     </div>
 </div>

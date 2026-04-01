@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mobile</title>
-    @vite(['resources/css/mobile.css', 'resources/css/color-template.css', 'resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/mobile.css', 'resources/css/color-template.css', 'resources/css/app.css', 'resources/js/app.js',
+                'resources/js/User.js', 'resources/js/ProgramStudi.js', 'resources/js/MataKuliah.js',
+                'resources/js/RPS.js', 'resources/js/Kelas.js'])
 
 </head>
 

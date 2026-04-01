@@ -57,14 +57,14 @@ class MataKuliahManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
-    public function resetInputFilter()
+    public function updatedPerPage()
     {
-        $this->reset(['search', 'filterMK']);
         $this->resetPage();
     }
 
-    public function updatedPerPage()
+    public function resetInputFilter()
     {
+        $this->reset(['search', 'filterMK']);
         $this->resetPage();
     }
 

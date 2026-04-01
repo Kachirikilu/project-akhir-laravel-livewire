@@ -10,6 +10,7 @@
 
         {{-- 📧 Program Studi Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             'labelString' => 'Nama Program Studi',
             'modelString' => 'nama_prodi',
             // 'typeString' => 'text',
@@ -21,9 +22,10 @@
         ])
 
         @include('livewire.global.modal-form.search-input-form', [
+            'alpine' => 'prodi',
             'xResults' => $jurusanResults,
             'selectX' => 'selectJurusan',
-            'modelString' => 'nama_jurusan',
+            'modelString' => 'nama_jurusan_search',
             'resetXInput' => 'resetJurusanInput()',
             'typeXString' => 'jurusan',
             'nameXString' => 'Jurusan',
@@ -38,6 +40,7 @@
 
         {{-- 📧 Kode Program Studi Input --}}
         @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'prodi',
             'labelString' => 'Kode Program Studi',
             'modelString' => 'kode_pr',
             'iconString' => 'hashtag',
@@ -49,6 +52,7 @@
 
         {{-- 📧 Nama Strata Input --}}
         @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'prodi',
             'labelString' => 'Nama Strata',
             'modelString' => 'nama_strata',
             'xOptions' => ['Sarjana', 'Magister', 'Doktor'],
