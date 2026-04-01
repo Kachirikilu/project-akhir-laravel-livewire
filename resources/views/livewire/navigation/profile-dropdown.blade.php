@@ -39,7 +39,7 @@
                 x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0"
                 x-transition:leave="transition-all duration-200 ease-in"
                 x-transition:leave-start="opacity-100 translate-x-0" x-transition:leave-end="opacity-0 translate-x-4"
-                class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
+                class="w-full text-white text-left text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
                 {{ auth()->user()->name }}
             </span>
 

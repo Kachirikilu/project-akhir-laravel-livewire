@@ -24,6 +24,10 @@
                 selectJurusanForFilter, resetJurusanFilter,
                 selectFakultasForFilter, resetFakultasFilter,
                 selectMatkulForFilter, resetMatkulFilter,
+                selectRPSForFilter, resetRPSFilter,
+                selectCPMKForFilter, resetCPMKFilter,
+                selectSCPMKForFilter, resetSCPMKFilter,
+                selectCPLForFilter, resetCPLFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
                 sortBy, perPage, gotoPage, previousPage, nextPage"
                 class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">

@@ -1,9 +1,14 @@
-<div x-data
+<div x-data="{ 
+    showPassword: false,
+    {{-- Inisialisasi tipe input awal --}}
+    inputType: '{{ $typeString ?? 'text' }}' 
+}"
     x-effect="
         if($store.{{ $alpine ?? 'config' }}?.isEdit === 0){
             $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
         }
     " wire:key="input-form-{{ $modelString }}">
+    
     <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
         @if ($isRequired ?? false)
             <span class="text-red-500">*</span>
@@ -11,21 +16,23 @@
     </label>
 
     <div class="relative mt-1">
+        {{-- Icon Samping Kiri --}}
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
-            {{-- $store.{{ $alpine ?? 'config' }}?.setEdit(0) --}}
         </div>
+
         <input x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}" 
-            {{-- Tambahkan @focus untuk auto-select isi input --}}
-            
             name="{{ $modelString }}"
             x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''" 
-            type="{{ $typeString ?? 'text' }}"
+            
+            {{-- Tipe input dinamis: jika password, bisa berubah jadi 'text' --}}
+            :type="inputType"
+            
             id="{{ $modelString }}" 
             placeholder="{{ $placeholder }}"
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
                 placeholder-[var(--contrast-third-text)]
-                w-full border rounded-lg pl-10 px-3 py-2 mt-1"
+                w-full border rounded-lg pl-10 pr-10 px-3 py-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
 
             @if ($isFocusSelect ?? null)
                 @focus="$el.select()"
@@ -33,24 +40,36 @@
 
             @if (!empty($isKode) && $isKode > 0) 
                 maxlength="{{ $isKode }}"
-                inputmode="text"
                 oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, {{ $isKode }})"
             @elseif (isset($numberOnly) && $numberOnly) 
                 inputmode="numeric" 
-                pattern="[0-9]*" 
-                maxlength="{{ $maxlength ?? 255 }}"
                 oninput="this.value = this.value.replace(/[^{{ ($noZero ?? null) ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxlength ?? 255 }})"
             @else
                 maxlength="{{ $maxlength ?? 255 }}" 
             @endif>
-        {{-- <div wire:loading wire:target="{{ $targetLoading }}"
-            class="absolute inset-y-0 right-0 flex items-center pt-4 pr-3">
-        <flux:icon name="arrow-path" class="animate-spin h-4 w-4 text-gray-400"/>
-    </div> --}}
+
+        {{-- Tombol Mata (Hanya muncul jika typeString adalah 'password') --}}
+        @if (($typeString ?? '') === 'password')
+            <button type="button" 
+                @click="showPassword = !showPassword; inputType = showPassword ? 'text' : 'password'"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 mt-1 group focus:outline-none">
+                
+                {{-- Icon Mata Terbuka --}}
+                <template x-if="!showPassword">
+                    <flux:icon icon="eye" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" class="group-hover:text-red-500 dark:group-hover:text-red-400 transition duration-200" />
+                </template>
+
+                {{-- Icon Mata Tertutup --}}
+                <template x-if="showPassword">
+                    <flux:icon icon="eye-slash" variant="mini" class=" text-[var(--contrast-main-text)] group-hover:text-red-500 dark:group-hover:text-red-400  transition duration-200" />
+                </template>
+            </button>
+        @endif
     </div>
+
     @if ($message ?? null)
         @error($modelString)
-            <span class="text-red-500 text-sm mt-1 block">{{ $message ?? null }}</span>
+            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
         @enderror
     @endif
 </div>

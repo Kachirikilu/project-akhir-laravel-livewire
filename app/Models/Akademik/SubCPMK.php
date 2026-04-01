@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
 
-class SubCpmk extends Model
+class SubCPMK extends Model
 {
     use SoftDeletes;
 
@@ -46,7 +46,7 @@ class SubCpmk extends Model
 
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(Cpmk::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id')
+        return $this->belongsToMany(CPMK::class, 'cpmk_pivot_scpmk', 'scpmk_id', 'cpmk_id')
                     ->withPivot('sort_order')
                     ->withTimestamps();
     }

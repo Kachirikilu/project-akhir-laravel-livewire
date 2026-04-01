@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
 
-class Cpl extends Model
+class CPL extends Model
 {
     use SoftDeletes;
 
@@ -48,13 +48,13 @@ class Cpl extends Model
 
     public function prodis(): BelongsToMany
     {
-        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'prodi_id', 'cpl_id')
+        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'prodi_id')
                     ->withPivot('sort_order');
     }
     
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(Cpmk::class, 'cpmk_pivot_cpl', 'cpl_id', 'cpmk_id')
+        return $this->belongsToMany(CPMK::class, 'cpmk_pivot_cpl', 'cpl_id', 'cpmk_id')
                     ->withPivot('sort_order');
     }
 

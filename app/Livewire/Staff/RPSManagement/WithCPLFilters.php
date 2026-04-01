@@ -32,6 +32,12 @@ trait WithCPLFilters
         if (! empty($this->selectedMatkulId)) {
             $queryCPL->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
         }
+        if (! empty($this->selectedRPSId)) {
+            $queryCPL->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+        }
+        if (! empty($this->selectedCPMKId)) {
+            $queryCPL->whereHas('cpmks', fn ($q) => $q->where('cpmks.id', $this->selectedCPMKId));
+        }
 
         $this->sortFieldOrderCPL($queryCPL);
 

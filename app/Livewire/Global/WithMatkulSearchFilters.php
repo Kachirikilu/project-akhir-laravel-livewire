@@ -137,8 +137,7 @@ trait WithMatkulSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = $query
-                ->whereNotIn('id', $mainResults->pluck('id'))
+            $extra = MataKuliah::whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
                 
@@ -164,7 +163,7 @@ trait WithMatkulSearchFilters
         $this->matkulNameSearch = $matkulName;
         $this->matkulResults = $this->getMatkulbyUser();
 
-        $data = Matakuliah::find($id);
+        $data = MataKuliah::find($id);
         if ($data) {
             $this->matkul_kode = $data->kode;
         }
@@ -175,10 +174,27 @@ trait WithMatkulSearchFilters
 
         $this->resetErrorBag(['matkul_id', 'matkulNameSearch']);
     }
+    public function selectMatkulArray($id)
+    {
+        $data = MataKuliah::find($id);
+        if ($data && ! in_array($id, $this->matkul_id_array)) {
+            $this->matkul_id_array[] = $id;
+            $this->matkul_name_array[] = $data->matkul;
+            $this->matkul_kode_array[] = $data->kode;
+        }
+    }
 
     public function resetMatkulInput()
     {
         $this->reset(['matkul_id', 'matkul_kode', 'matkulNameSearch']);
         $this->matkulResults = $this->getMatkulbyUser();
+    }
+
+    public function resetMatkulArray()
+    {
+        $this->matkul_id_array = [];
+        $this->matkul_name_array = [];
+        $this->matkul_kode_array = [];
+        $this->matkulNameSearch = '';
     }
 }

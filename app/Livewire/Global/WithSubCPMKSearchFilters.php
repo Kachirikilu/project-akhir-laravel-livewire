@@ -1,0 +1,202 @@
+<?php
+
+namespace App\Livewire\Global;
+
+use App\Models\Akademik\SubCPMK;
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
+
+trait WithSubCPMKSearchFilters
+{
+    use WithPagination;
+
+    public $scpmkSearchQuery = '';
+    public $scpmkSearchResults = [];
+    public $scpmk_name = '';
+    public $scpmk_id;
+    public $scpmk_kode;
+    public $scpmkNameSearch = '';
+    public $scpmkResults = [];
+    public $selectedSCPMKId = null;
+
+    // Properti Array untuk Multiple Selection jika dibutuhkan
+    public $scpmk_id_array = [];
+    public $scpmk_name_array = [];
+    public $scpmk_kode_array = [];
+
+    /**
+     * Helper untuk mapping hasil agar seragam
+     */
+    private function mapSCPMK($collection)
+    {
+        return $collection->map(fn ($s) => [
+            'id' => $s->id,
+            'kode' => $s->kode,
+            'deskripsi' => $s->deskripsi,
+            'materi' => $s->materi,
+            'metodologi' => $s->metodologi,
+            'indikator' => $s->indikator,
+            'metode' => $s->metode,
+            'waktu_tugas' => $s->waktu_tugas,
+            'waktu_mandiri' => $s->waktu_mandiri,
+            'bobot' => $s->bobot,
+        ])->toArray();
+    }
+
+    public function inputSCPMKFilter()
+    {
+        $search = trim($this->scpmkSearchQuery);
+
+        // Jika ada input search
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->scpmk_name) {
+            $this->scpmkSearchResults = $this->mapSCPMK(
+                SubCPMK::searchSCPMK($search)->limit(12)->get()
+            );
+        } elseif (empty($search) || $this->scpmk_name) {
+            $this->scpmkSearchResults = $this->getSCPMKbyUser();
+        } else {
+            $this->scpmkSearchResults = [];
+        }
+    }
+
+    public function resetSCPMKFilter()
+    {
+        $this->reset(['selectedSCPMKId', 'scpmk_name', 'scpmkSearchQuery', 'scpmk_kode']);
+        $this->resetPage();
+    }
+
+    public function selectSCPMKForFilter($id)
+    {
+        $data = SubCPMK::
+        // with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->
+        find($id);
+
+        if ($data) {
+            $this->selectedSCPMKId = $id;
+            $this->scpmk_kode = $data->kode;
+            $this->scpmk_name = $data->deskripsi;
+            $this->scpmkSearchQuery = $data->deskripsi;
+            $this->scpmkSearchResults = [];
+            $this->resetPage();
+        }
+    }
+
+    public function updatedSCPMKNameSearch($value)
+    {
+        $this->scpmk_id = null;
+        $this->scpmk_kode = null;
+        $this->resetErrorBag(['scpmk_id', 'scpmkNameSearch']);
+
+        $query = SubCPMK::query();
+
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchSCPMK($value)->limit(12)->get();
+            $this->scpmkResults = $this->mapSCPMK($results);
+
+            // Exact Match Logic
+            $exactMatch = $results->first(function ($sc) use ($value) {
+                return strtolower($sc->deskripsi) === strtolower($value) 
+                    || strtolower($sc->kode) === strtolower($value);
+            });
+
+            if ($exactMatch) {
+                $this->scpmk_id = $exactMatch->id;
+                $this->scpmk_kode = $exactMatch->kode;
+                $this->scpmkNameSearch = $exactMatch->deskripsi;
+                $this->scpmkResults = [];
+            }
+        } else {
+            if (Auth::user()->prodi_id) {
+                $this->scpmkResults = $this->getSCPMKbyUser();
+            } else {
+                $this->scpmkResults = $this->mapSCPMK(
+                    $query->orderBy('sub_cpmks.deskripsi')->limit(12)->get()
+                );
+            }
+        }
+    }
+
+    public function getSCPMKbyUser()
+    {
+        $user = Auth::user();
+        $prodiId = $user->prodi_id ?? null;
+
+        $query = SubCPMK::query();
+        
+        if (!$prodiId) {
+            $defaultSCPMK = $query
+                ->latest()
+                ->limit(12)
+                ->get();
+            return $this->mapSCPMK($defaultSCPMK);
+        }
+
+        $mainResults = $query
+            ->whereHas('cpmks.rps.matkul_rel.prodis', function($q) use ($prodiId) {
+                $q->where('prodis.id', $prodiId);
+            })
+            ->limit(12)
+            ->get();
+
+        if ($mainResults->count() < 12) {
+            $extra = SubCPMK::whereNotIn('id', $mainResults->pluck('id'))
+                ->limit(12 - $mainResults->count())
+                ->get();
+                
+            $mainResults = $mainResults->concat($extra);
+        }
+
+        return $this->mapSCPMK($mainResults);
+    }
+
+    public function fetchSCPMK($query = '')
+    {
+        if (empty($query) || $this->scpmk_id) {
+            $this->scpmkResults = $this->getSCPMKbyUser();
+        }
+
+        return;
+    }
+
+
+    public function selectSCPMK($id, $scpmkName)
+    {
+        $this->scpmk_id = $id;
+        $this->scpmkNameSearch = $scpmkName;
+        $this->scpmkResults = $this->getSCPMKbyUser();
+
+        $data = SubCPMK::find($id);
+        if ($data) {
+            $this->scpmk_kode = $data->kode;
+        }
+
+        if (method_exists($this, 'fetchSCPMK')) {
+            $this->fetchSCPMK('');
+        }
+
+        $this->resetErrorBag(['scpmk_id', 'scpmkNameSearch']);
+    }
+    public function selectSCPMKArray($id)
+    {
+        $data = SubCPMK::find($id);
+        if ($data && ! in_array($id, $this->scpmk_id_array)) {
+            $this->scpmk_id_array[] = $id;
+            $this->scpmk_name_array[] = $data->deskripsi;
+            $this->scpmk_kode_array[] = $data->kode;
+        }
+    }
+
+    public function resetSCPMKInput()
+    {
+        $this->reset(['scpmk_id', 'scpmk_kode', 'scpmkNameSearch']);
+        $this->scpmkResults = $this->getSCPMKbyUser();
+    }
+
+    public function resetSCPMKArray()
+    {
+        $this->scpmk_id_array = [];
+        $this->scpmk_name_array = [];
+        $this->scpmk_kode_array = [];
+        $this->scpmkNameSearch = '';
+    }
+}

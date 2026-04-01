@@ -33,6 +33,13 @@ trait WithSubCPMKFilters
         if (! empty($this->selectedMatkulId)) {
             $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
         }
+        if (! empty($this->selectedRPSId)) {
+            $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+        }
+        if (! empty($this->selectedCPMKId)) {
+            $querySCPMK->whereHas('cpmks', fn ($q) => $q->where('cpmks.id', $this->selectedCPMKId));
+        }
+        
 
         $this->sortFieldOrderSCPMK($querySCPMK);
         return $querySCPMK;

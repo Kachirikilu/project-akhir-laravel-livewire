@@ -6,7 +6,6 @@ use App\Models\Akademik\{RPS, CPL, CPMK, SubCPMK, MataKuliah, Referensi};
 use App\Models\Auth\Dosen;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class RPSeeder extends Seeder
 {
@@ -16,25 +15,18 @@ class RPSeeder extends Seeder
             
             // --- 1. MASTER CPL ---
             $cpls = [
-                CPL::create(['kode_cpl' => 'CPL01', 'deskripsi' => 'Menerapkan pemikiran logis, kritis, sistematis, dan inovatif...']),
-                CPL::create(['kode_cpl' => 'CPL02', 'deskripsi' => 'Menunjukkan kinerja mandiri, bermutu, dan terukur...']),
-                CPL::create(['kode_cpl' => 'CPL03', 'deskripsi' => 'Menguasai konsep teoritis bidang pengetahuan tertentu secara umum...']),
+                CPL::updateOrCreate(['kode_cpl' => 'CPL01'], ['deskripsi' => 'Menerapkan pemikiran logis, kritis, sistematis, dan inovatif...']),
+                CPL::updateOrCreate(['kode_cpl' => 'CPL02'], ['deskripsi' => 'Menunjukkan kinerja mandiri, bermutu, dan terukur...']),
+                CPL::updateOrCreate(['kode_cpl' => 'CPL03'], ['deskripsi' => 'Menguasai konsep teoritis bidang pengetahuan tertentu secara umum...']),
             ];
 
-            // Ambil lebih banyak MK untuk variasi data
-            $mkIds = MataKuliah::take(15)->pluck('id');
+            // AMBIL OBJEK MODEL (Bukan cuma ID)
+            $mks = MataKuliah::take(15)->get(); 
             $dosenId = Dosen::first()->id ?? 1;
 
-            // Variasi Tahun Akademik
             $tahunAkademik = ['2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026'];
 
-            foreach ($mkIds as $index => $mkId) {
-                // Manipulasi Waktu: 
-                // Index 0-2: Data 8 tahun lalu
-                // Index 3-5: Data 2 tahun lalu
-                // Index 6-8: Data 1 tahun lalu
-                // Index 9-11: Data 5 bulan lalu (Masuk filter < 6 bulan)
-                // Sisanya: Data hari ini
+            foreach ($mks as $index => $mk) {
                 $waktuPalsu = match(true) {
                     $index < 3 => now()->subYears(8),
                     $index < 6 => now()->subYears(2),
@@ -43,10 +35,13 @@ class RPSeeder extends Seeder
                     default => now(),
                 };
 
+                $deskripsiDummy = "Mata kuliah {$mk->nama_matkul} ({$mk->kode_mk}) ini bertujuan untuk memberikan pemahaman komprehensif mengenai prinsip dasar Teknik Elektro. Materi mencakup analisis teoritis dan implementasi praktis guna mendukung CPL Fakultas Teknik Universitas Sriwijaya.";
+
                 $rps = RPS::create([
-                    'mk_id' => $mkId,
+                    'mk_id' => $mk->id,
+                    'deskripsi' => $deskripsiDummy,
                     'tahun_akademik' => $tahunAkademik[$index % count($tahunAkademik)],
-                    'is_draf' => ($index % 4 == 0), // Variasi draf/bukan
+                    'is_draf' => ($index % 4 == 0),
                     'tanggal_revisi' => $waktuPalsu,
                     'created_at' => $waktuPalsu,
                     'updated_at' => $waktuPalsu,
@@ -54,11 +49,11 @@ class RPSeeder extends Seeder
 
                 $rps->dosens()->attach($dosenId, ['peran' => 'Koordinator', 'is_ketua' => true]);
 
-                // --- 2. REFERENSI DENGAN VARIASI TAHUN & LINK ---
+                // --- 2. REFERENSI ---
                 for ($r = 1; $r <= 2; $r++) {
                     $ref = Referensi::create([
-                        'kode_ref' => 'REF-' . $mkId . '-' . $index . $r,
-                        'judul' => "Buku Ajar MK-{$mkId} Versi {$r}.0",
+                        'kode_ref' => 'REF-' . $mk->id . '-' . $index . $r,
+                        'judul' => "Buku Ajar {$mk->nama_matkul} Versi {$r}.0",
                         'penulis' => 'Dosen Teknik UNSRI',
                         'tahun' => rand(2015, 2025),
                         'penerbit' => 'UNSRI Press',
@@ -68,65 +63,51 @@ class RPSeeder extends Seeder
                     $rps->referensis()->attach($ref->id);
                 }
 
-                // --- 3. ISI KONTEN (CPMK & Sub-CPMK) ---
+                // --- 3. ISI KONTEN ---
+                // Perhatikan: Saya passing $mk (objek), bukan $mk->id
                 if ($index % 2 == 0) {
-                    $this->seedCompleteContent($rps, $cpls, $mkId, $waktuPalsu);
+                    $this->seedCompleteContent($rps, $cpls, $mk, $waktuPalsu);
                 } else {
-                    $this->seedPartialContent($rps, $cpls[0], $mkId, $waktuPalsu);
+                    $this->seedPartialContent($rps, $cpls[0], $mk, $waktuPalsu);
                 }
             }
         });
     }
 
-    private function seedCompleteContent($rps, $cpls, $mkId, $waktu)
+    private function seedCompleteContent($rps, $cpls, $mk, $waktu)
     {
-        $metodeOptions = [
-            'Teori', 'Praktik', 'Tugas', 'UTS', 'UAS', 
-            'Hasil Projek', 'Kerja Praktek', 'Skripsi', 
-            'Aktivitas Partisipasif', 'Mandiri'
-        ];
+        $metodeOptions = ['Teori', 'Praktik', 'Tugas', 'UTS', 'UAS'];
 
         for ($i = 1; $i <= 3; $i++) {
             $cpmk = CPMK::create([
-                'kode_cpmk' => 'CPK' . sprintf('%03d%d', $mkId, $i),
-                'deskripsi' => "Mahasiswa mampu menguasai kompetensi MK-{$mkId} level-{$i}.",
+                'kode_cpmk' => 'CPK' . sprintf('%03d%d', $mk->id, $i),
+                'deskripsi' => "Mahasiswa mampu menguasai kompetensi MK-{$mk->id} level-{$i}.",
                 'created_at' => $waktu,
             ]);
 
             $rps->cpmks()->attach($cpmk->id);
             $cpmk->cpls()->attach([$cpls[0]->id, $cpls[1]->id]);
 
-            // Hubungkan CPMK ke Referensi (Pivot baru)
-            $cpmk->referensis()->attach($rps->referensis()->pluck('referensis.id'), ['sort_order' => $i]);
-
             for ($j = 1; $j <= 2; $j++) {
-                $subCpmk = SubCPMK::create([
-                    'kode_scpmk' => 'SUB' . sprintf('%03d%d%d', $mkId, $i, $j),
+                SubCPMK::create([
+                    'kode_scpmk' => 'SUB' . sprintf('%03d%d%d', $mk->id, $i, $j),
                     'deskripsi' => "Mampu mendemonstrasikan sub-kompetensi {$i}.{$j}",
                     'materi' => "Materi Pokok Bahasan {$i}.{$j}",
-                    'metodologi' => "Ceramah dan Diskusi Kelompok",
-                    'indikator' => "Ketepatan penjelasan konsep",
+                    'metodologi' => "Ceramah dan Diskusi",
+                    'indikator' => "Ketepatan konsep",
                     'metode' => $metodeOptions[array_rand($metodeOptions)],
-                    'deskripsi_tugas' => "Menyusun laporan analisa kasus MK-{$mkId}",
-                    'waktu_tugas' => 120,
-                    'waktu_mandiri' => 120,
-                    'bobot' => rand(5, 15) + 0.5,
+                    'bobot' => rand(5, 15),
                     'created_at' => $waktu,
-                ]);
-                
-                $cpmk->sub_cpmks()->attach($subCpmk->id);
-                
-                // Hubungkan Sub-CPMK ke Referensi (Pivot baru)
-                $subCpmk->referensis()->attach($rps->referensis()->first()->id, ['sort_order' => $j]);
+                ])->cpmks()->attach($cpmk->id);
             }
         }
     }
 
-    private function seedPartialContent($rps, $cpl1, $mkId, $waktu)
+    private function seedPartialContent($rps, $cpl1, $mk, $waktu)
     {
         $cpmk = CPMK::create([
-            'kode_cpmk' => 'CPK' . sprintf('%03d', $mkId) . 'P',
-            'deskripsi' => 'CPMK Dasar untuk Mata Kuliah ' . $mkId,
+            'kode_cpmk' => 'CPK' . sprintf('%03d', $mk->id) . 'P',
+            'deskripsi' => 'CPMK Dasar untuk ' . $mk->nama_matkul,
             'created_at' => $waktu,
         ]);
         
@@ -134,7 +115,7 @@ class RPSeeder extends Seeder
         $cpmk->cpls()->attach($cpl1->id);
 
         SubCPMK::create([
-            'kode_scpmk' => 'SUB' . sprintf('%03d', $mkId) . 'P1',
+            'kode_scpmk' => 'SUB' . sprintf('%03d', $mk->id) . 'P1',
             'deskripsi' => 'Pengenalan dan Dasar Teori',
             'materi' => 'Pendahuluan Materi',
             'metodologi' => 'Discovery Learning',

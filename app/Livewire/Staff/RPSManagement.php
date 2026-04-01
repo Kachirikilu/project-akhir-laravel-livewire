@@ -3,6 +3,12 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\WithMatkulSearchFilters;
+use App\Livewire\Global\WithRPSSearchFilters;
+use App\Livewire\Global\WithCPMKSearchFilters;
+use App\Livewire\Global\WithSubCPMKSearchFilters;
+use App\Livewire\Global\WithCPLSearchFilters;
+use App\Livewire\Global\WithReferensiSearchFilters;
+
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
@@ -34,6 +40,12 @@ class RpsManagement extends Component
     use WithJurusanSearchFilters;
     use WithProdiSearchFilters;
     use WithMatkulSearchFilters;
+    use WithRPSSearchFilters;
+    use WithCPMKSearchFilters;
+    use WithSubCPMKSearchFilters;
+    use WithCPLSearchFilters;
+    use WithReferensiSearchFilters;
+
 
     use WithPagination;
 
@@ -165,6 +177,12 @@ class RpsManagement extends Component
     public function render()
     {
         $this->inputMatkulFilter();
+        $this->inputRPSFilter();
+        $this->inputCPMKFilter();
+        $this->inputSCPMKFilter();
+        $this->inputCPLFilter();
+        $this->inputRefFilter();
+
 
         $this->inputProdiFilter();
         $this->inputJurusanFilter();

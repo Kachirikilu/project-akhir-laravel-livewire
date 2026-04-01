@@ -61,14 +61,12 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <div class="text-[var(--contrast-main-text)] font-medium">
-                            @if ($typeXString == 'prodi')
-                                {{ $x['prodi'] }}
-                            @elseif ($typeXString == 'jurusan')
+                            @if ($typeXString == 'jurusan')
                                 Jurusan {{ $x['jurusan'] }}
                             @elseif ($typeXString == 'fakultas')
                                 Fakultas {{ $x['fakultas'] }}
-                            @elseif ($typeXString == 'matkul')
-                                {{ $x['matkul'] }}
+                            @else
+                                {{ $x[$typeXString] }}
                             @endif
                         </div>
 

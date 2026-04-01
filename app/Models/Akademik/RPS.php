@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Rps extends Model
+class RPS extends Model
 {
     use SoftDeletes;
 
@@ -64,6 +64,16 @@ class Rps extends Model
         });
     }
 
+    protected function draf(): Attribute
+    {
+        return Attribute::get(fn () => $this->is_draf);
+    }
+
+    protected function drafText(): Attribute
+    {
+        return Attribute::get(fn () => $this->is_draf == 1 ? 'Draf' : 'Aktif');
+    }
+
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
@@ -88,7 +98,7 @@ class Rps extends Model
 
     public function cpmks(): BelongsToMany
     {
-        return $this->belongsToMany(Cpmk::class, 'rps_pivot_cpmk', 'rps_id', 'cpmk_id')
+        return $this->belongsToMany(CPMK::class, 'rps_pivot_cpmk', 'rps_id', 'cpmk_id')
             ->withPivot('sort_order')
             ->orderBy('pivot_sort_order')
             ->withTimestamps();

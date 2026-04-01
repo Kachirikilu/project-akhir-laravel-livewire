@@ -32,6 +32,10 @@ trait WithCPMKFilters
         if (! empty($this->selectedMatkulId)) {
             $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
         }
+        if (! empty($this->selectedRPSId)) {
+            $queryCPMK->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+        }
+
 
         $this->sortFieldOrderCPMK($queryCPMK);
         return $queryCPMK;

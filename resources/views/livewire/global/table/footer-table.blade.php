@@ -13,6 +13,10 @@
                 selectJurusanForFilter, resetJurusanFilter,
                 selectFakultasForFilter, resetFakultasFilter,
                 selectMatkulForFilter, resetMatkulFilter,
+                selectRPSForFilter, resetRPSFilter,
+                selectCPMKForFilter, resetCPMKFilter,
+                selectSCPMKForFilter, resetSCPMKFilter,
+                selectCPLForFilter, resetCPLFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
                 sortBy, perPage, gotoPage, previousPage, nextPage"
         class="justify-center items-center py-4">

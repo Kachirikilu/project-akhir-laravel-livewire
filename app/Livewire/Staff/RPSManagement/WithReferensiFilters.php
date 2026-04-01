@@ -25,25 +25,52 @@ trait WithReferensiFilters
             $queryRef->searchRef($search);
         }
 
+
         if (! empty($this->selectedProdiId)) {
-            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);
-            })->orWhereHas('cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);})
-            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('prodis.id', $this->selectedProdiId);}); });
+            $queryRef->where(function ($q) {
+                $q->whereRelation('rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId)
+                ->orWhereRelation('cpmks.rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId)
+                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId);
+            });
         }
         if (! empty($this->selectedJurusanId)) {
-            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);
-            })->orWhereHas('cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);})
-            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis', function ($q) { $q->where('jurusan_id', $this->selectedJurusanId);}); });
+            $queryRef->where(function ($q) {
+                $q->whereRelation('rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId)
+                ->orWhereRelation('cpmks.rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId)
+                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId);
+            });
         }
         if (! empty($this->selectedFakultasId)) {
-            $queryRef->where(function ($query) {$query->whereHas('rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);
-            })->orWhereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);})
-            ->orWhereHas('scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', function ($q) { $q->where('fakultas_id', $this->selectedFakultasId);}); });
+            $queryRef->where(function ($q) {
+                $q->whereRelation('rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId)
+                ->orWhereRelation('cpmks.rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId)
+                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId);
+            });
         }
         if (! empty($this->selectedMatkulId)) {
-            $queryRef->where(function ($query) {$query->whereHas('rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);
-            })->orWhereHas('cpmks.rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);})
-            ->orWhereHas('scpmks.cpmks.rps', function ($q) { $q->where('mk_id', $this->selectedMatkulId);}); });
+            $queryRef->where(function ($q) {
+                $q->whereRelation('rps', 'mk_id', $this->selectedMatkulId)
+                ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMatkulId)
+                ->orWhereRelation('scpmks.cpmks.rps', 'mk_id', $this->selectedMatkulId);
+            });
+        }
+        if (! empty($this->selectedRPSId)) {
+            $queryRef->where(function ($q) {
+                $q->whereRelation('rps', 'rps.id', $this->selectedRPSId)
+                ->orWhereRelation('cpmks.rps', 'rps.id', $this->selectedRPSId)
+                ->orWhereRelation('scpmks.cpmks.rps', 'rps.id', $this->selectedRPSId);
+            });
+        }
+
+        if (! empty($this->selectedCPMKId)) {
+            $queryRef->where(function ($q) {
+                $q->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId)
+                ->orWhereRelation('scpmks.cpmks', 'cpmks.id', $this->selectedCPMKId);
+            });
+        }
+
+        if (! empty($this->selectedSCPMKId)) {
+            $queryRef->whereHas('scpmks', fn ($q) => $q->where('sub_cpmks.id', $this->selectedSCPMKId));
         }
 
         $this->sortFieldOrderRef($queryRef);

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('rps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
+            $table->text('deskripsi');
             $table->string('tahun_akademik', 9);
             $table->boolean('is_draf')->default(true);
             $table->date('tanggal_revisi')->nullable();

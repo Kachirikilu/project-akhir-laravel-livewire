@@ -322,22 +322,98 @@
             ])
         </div>
 
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputRPSFilter',
+                'xSearchResultsString' => 'rpsSearchResults',
+                'selectedXNameString' => 'rps_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan RPS...',
+                'xSearchQueryString' => 'rpsSearchQuery',
+                'selectedXId' => $selectedRPSId,
+                'selectedXName' => $rps_name,
+                'resetXFilter' => 'resetRPSFilter()',
+                'xSearchQuery' => $rpsSearchQuery,
+                'xSearchResults' => $rpsSearchResults,
+                'selectXForFilterString' => 'selectRPSForFilter',
+                'typeXString' => 'matkul',
+                'unfoundString' => 'Tidak ada RPS ditemukan!',
+            ])
+        </div>
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputCPMKFilter',
+                'xSearchResultsString' => 'cpmkSearchResults',
+                'selectedXNameString' => 'cpmk_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan CPMK...',
+                'xSearchQueryString' => 'cpmkSearchQuery',
+                'selectedXId' => $selectedCPMKId,
+                'selectedXName' => $cpmk_name,
+                'resetXFilter' => 'resetCPMKFilter()',
+                'xSearchQuery' => $cpmkSearchQuery,
+                'xSearchResults' => $cpmkSearchResults,
+                'selectXForFilterString' => 'selectCPMKForFilter',
+                'typeXString' => 'deskripsi',
+                'unfoundString' => 'Tidak ada CPMK ditemukan!',
+            ])
+        </div>
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputSCPMKFilter',
+                'xSearchResultsString' => 'scpmkSearchResults',
+                'selectedXNameString' => 'scpmk_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
+                'xSearchQueryString' => 'scpmkSearchQuery',
+                'selectedXId' => $selectedSCPMKId,
+                'selectedXName' => $scpmk_name,
+                'resetXFilter' => 'resetSCPMKFilter()',
+                'xSearchQuery' => $scpmkSearchQuery,
+                'xSearchResults' => $scpmkSearchResults,
+                'selectXForFilterString' => 'selectSCPMKForFilter',
+                'typeXString' => 'deskripsi',
+                'unfoundString' => 'Tidak ada Sub-CPMK ditemukan!',
+            ])
+        </div>
+
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputCPLFilter',
+                'xSearchResultsString' => 'cplSearchResults',
+                'selectedXNameString' => 'cpl_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan CPL...',
+                'xSearchQueryString' => 'cplSearchQuery',
+                'selectedXId' => $selectedCPLId,
+                'selectedXName' => $cpl_name,
+                'resetXFilter' => 'resetCPLFilter()',
+                'xSearchQuery' => $cplSearchQuery,
+                'xSearchResults' => $cplSearchResults,
+                'selectXForFilterString' => 'selectCPLForFilter',
+                'typeXString' => 'deskripsi',
+                'unfoundString' => 'Tidak ada CPL ditemukan!',
+            ])
+        </div>
+
         {{-- <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputFakultasFilter',
-                'xSearchResultsString' => 'fakultasSearchResults',
-                'selectedXNameString' => 'fakultas_name',
-                'iconString' => 'building-library',
-                'placeholderString' => 'Filter berdasarkan Fakultas...',
-                'xSearchQueryString' => 'fakultasSearchQuery',
-                'selectedXId' => $selectedFakultasId,
-                'selectedXName' => $fakultas_name,
-                'resetXFilter' => 'resetFakultasFilter()',
-                'xSearchQuery' => $fakultasSearchQuery,
-                'xSearchResults' => $fakultasSearchResults,
-                'selectXForFilterString' => 'selectFakultasForFilter',
-                'typeXString' => 'fakultas',
-                'unfoundString' => 'Tidak ada Fakultas ditemukan!',
+                'inputXFilterString' => 'inputRefFilter',
+                'xSearchResultsString' => 'refSearchResults',
+                'selectedXNameString' => 'ref_name',
+                'iconString' => 'book-open',
+                'placeholderString' => 'Filter berdasarkan Referensi...',
+                'xSearchQueryString' => 'refSearchQuery',
+                'selectedXId' => $selectedRefId,
+                'selectedXName' => $ref_name,
+                'resetXFilter' => 'resetRefFilter()',
+                'xSearchQuery' => $refSearchQuery,
+                'xSearchResults' => $refSearchResults,
+                'selectXForFilterString' => 'selectRefForFilter',
+                'typeXString' => 'judul',
+                'unfoundString' => 'Tidak ada Referensi ditemukan!',
             ])
         </div> --}}
     </div>
