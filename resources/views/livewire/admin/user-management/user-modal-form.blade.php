@@ -18,13 +18,19 @@
         <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
                 <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="red" size="lg">Tambah Pengguna - Admin</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="red" size="lg">
+                        <span x-text="$store.user?.isEdit ? 'Edit Pengguna - Admin' : 'Tambah Pengguna - Admin'"></span>
+                    </flux:badge>
                 </template>
                 <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="lime" size="lg">Tambah Pengguna - Dosen</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="lime" size="lg">
+                        <span x-text="$store.user?.isEdit ? 'Edit Pengguna - Dosen' : 'Tambah Pengguna - Dosen'"></span>
+                    </flux:badge>
                 </template>
                 <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                    <flux:badge icon="cog-6-tooth" color="cyan" size="lg">Tambah Pengguna - Mahasiswa</flux:badge>
+                    <flux:badge icon="cog-6-tooth" color="cyan" size="lg">
+                        <span x-text="$store.user?.isEdit ? 'Edit Pengguna - Mahasiswa' : 'Tambah Pengguna - Mahasiswa'"></span>
+                    </flux:badge>
                 </template>
             </h3>
         </div>

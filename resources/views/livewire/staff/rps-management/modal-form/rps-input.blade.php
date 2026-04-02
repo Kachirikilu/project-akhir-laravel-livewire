@@ -9,23 +9,23 @@
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
         <h4
             class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">
-            Input Mata Kuliah</h4>
+            Input Rencana Pembelajaran Semester</h4>
 
         {{-- 📧 Mata Kuliah Input --}}
-        @include('livewire.global.modal-form.input-form', [
-            'alpine' => 'mk',
+        {{-- @include('livewire.global.modal-form.input-form', [
+            'alpine' => 'rps',
             'labelString' => 'Nama Mata Kuliah',
             'modelString' => 'nama_matkul',
             'iconString' => 'book-open',
             'placeholder' => 'Masukkan nama Mata Kuliah',
             'message' => $errors->first('nama_matkul'),
             'isRequired' => 1,
-        ])
+        ]) --}}
 
         <div class="relative">
 
 
-            <div wire:loading wire:target="addMK, editMK"
+            <div wire:loading wire:target="addRPS, editRPS"
                 class="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-lg">
 
                 <div class="h-full flex flex-col items-center justify-center">
@@ -46,28 +46,86 @@
 
 
 
-            <template x-if="$store.mk?.typeModal == 1" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-prodi-input')
-            </template>
+            <div class="space-y-4">
 
-            <template x-if="$store.mk?.typeModal == 2" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-jurusan-input')
-            </template>
+                @include('livewire.global.modal-form.search-input-form', [
+                    'alpine' => 'rps',
+                    'xResults' => $matkulResults,
+                    'selectX' => 'selectMatkul',
+                    'modelString' => 'nama_matkul_array',
+                    'resetXInput' => 'resetMatkulInput()',
+                    'typeXString' => 'matkul',
+                    'nameXString' => 'Mata Kuliah',
+                    'noName' => 1,
+                    'idString' => 'matkul_id',
+                    'kodeString' => 'matkul_kode',
+                    'searchString' => 'matkul_search',
+                    'nameSearchString' => 'matkulNameSearch',
+                    'fetchString' => 'fetchMatkul',
+                    'iconString' => 'academic-cap',
+                    'wireLoading' => 'fetchMatkul',
+                ])
 
-            <template x-if="$store.mk?.typeModal == 3" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-fakultas-input')
-            </template>
 
-            <template x-if="$store.mk?.typeModal == 4" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-universitas-input')
-            </template>
+                <div>
+                    <div class="grid sm:grid-cols-6 gap-1 items-end">
+
+                        <div class="sm:col-span-4">
+                            @include('livewire.staff.rps-management.modal-form.partial.kode-rps', [
+                                'kodeString' => 'matkul_kode',
+                            ])
+                        </div>
+
+                        {{-- <div class="sm:col-span-2">
+                            @include('livewire.staff.rps-management.modal-form.partial.digit-semester')
+                        </div> --}}
+
+                        <div class="sm:col-span-2">
+                            @include('livewire.staff.rps-management.modal-form.partial.digit-akademik')
+                        </div>
+                    </div>
+                    {{-- @error('digit_mk')
+                        <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('digit_mk') }}</span>
+                    @enderror --}}
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid sm:grid-cols-4 gap-1 items-end">
+
+                        <div class="sm:col-span-2">
+                            @include('livewire.global.modal-form.input-form', [
+                                'alpine' => 'rps',
+                                'labelString' => 'Tahun Akademik',
+                                'modelString' => 'tahun_akademik_1',
+                                'numberOnly' => 1,
+                                'maxlength' => 4,
+                                'iconString' => 'identification',
+                                'placeholder' => 'Contoh: 2025',
+                                'isRequired' => 1,
+                                'isFocusSelect' => 1,
+                            ])
+                        </div>
+                        <div class="sm:col-span-2">
+                            @include('livewire.staff.rps-management.modal-form.partial.tahun-akademik-2')
+                        </div>
+                    </div>
+                    @error('tahun_akademik')
+                        <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('tahun_akademik') }}</span>
+                    @enderror
+                </div>
+
+            </div>
+
+
+
+
         </div>
 
 
         <div class="grid sm:grid-cols-6 gap-1">
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
-                    'alpine' => 'mk',
+                    'alpine' => 'rps',
                     'labelString' => 'Semester',
                     'modelString' => 'semester',
                     'xOptions' => [
@@ -89,7 +147,7 @@
             </div>
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
-                    'alpine' => 'mk',
+                    'alpine' => 'rps',
                     'labelString' => 'Kategori Blok',
                     'modelString' => 'kode_blok',
                     'xOptions' => ['Reguler', 'Kerja Praktik / Tugas Akhir'],
@@ -102,7 +160,7 @@
 
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
-                    'alpine' => 'mk',
+                    'alpine' => 'rps',
                     'labelString' => 'Wajib / Pilihan',
                     'modelString' => 'is_wajib',
                     'xOptions' => ['Wajib', 'Pilihan'],
@@ -117,7 +175,7 @@
         <div class="grid sm:grid-cols-8 gap-4">
             <div class="sm:col-span-5">
                 @include('livewire.global.modal-form.select-form', [
-                    'alpine' => 'mk',
+                    'alpine' => 'rps',
                     'labelString' => 'Tipe SKS',
                     'modelString' => 'tipe_sks',
                     'xOptions' => ['Tatap Muka', 'Praktikum', 'Praktek Lapangan', 'Simulasi'],
@@ -129,7 +187,7 @@
             </div>
             <div class="sm:col-span-3">
                 @include('livewire.global.modal-form.input-form', [
-                    'alpine' => 'mk',
+                    'alpine' => 'rps',
                     'labelString' => 'SKS',
                     'modelString' => 'sks_kuliah',
                     'numberOnly' => 1,

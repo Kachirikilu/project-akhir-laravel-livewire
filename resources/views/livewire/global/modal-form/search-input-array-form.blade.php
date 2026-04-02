@@ -110,7 +110,7 @@
                                     {{ $x['id'] }}</span></span>
                             <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
                             <span>{{ $x['kode'] }}</span>
-                            @if ($typeXString !== 'fakultas')
+                            @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
                                 <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
                                 <span>Fakultas {{ $x['fakultas'] }}</span>
                             @endif

@@ -120,7 +120,7 @@
                             <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
                                     {{ $x['id'] }}</span></span>
 
-                            @if ($typeXString !== 'fakultas')
+                            @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
                                 <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
                                 <span>Fakultas {{ $x['fakultas'] }}</span>
                             @endif

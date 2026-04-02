@@ -9,11 +9,13 @@
         }
     " wire:key="input-form-{{ $modelString }}">
     
-    <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
-        @if ($isRequired ?? false)
-            <span class="text-red-500">*</span>
-        @endif
-    </label>
+    @if (isset($noLabel) == 0)
+        <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
+            @if ($isRequired ?? false)
+                <span class="text-red-500">*</span>
+            @endif
+        </label>
+    @endif
 
     <div class="relative mt-1">
         {{-- Icon Samping Kiri --}}

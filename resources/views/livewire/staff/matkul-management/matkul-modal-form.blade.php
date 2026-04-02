@@ -21,25 +21,25 @@
 
                 <template x-if="$store.mk?.typeModal == '1'" x-cloak>
                     <flux:badge icon="academic-cap" color="emerald" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Program Studi' : 'Mata Kuliah - Program Studi'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Program Studu' : 'Tambah Mata Kuliah - Program Studi'"></span>
                     </flux:badge>
                 </template>
 
                 <template x-if="$store.mk?.typeModal == 2" x-cloak>
                     <flux:badge icon="book-open" color="amber" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Jurusan' : 'Mata Kuliah - Jurusan'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Jurusan' : 'Tambah Mata Kuliah - Jurusan'"></span>
                     </flux:badge>
                 </template>
 
                 <template x-if="$store.mk?.typeModal == 3" x-cloak>
                     <flux:badge icon="building-library" color="indigo" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Fakultas' : 'Mata Kuliah - Fakultas'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Fakultas' : 'Tambah Mata Kuliah - Fakultas'"></span>
                     </flux:badge>
                 </template>
 
                 <template x-if="$store.mk?.typeModal == 4" x-cloak>
                     <flux:badge icon="globe-alt" color="red" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Universitas' : 'Mata Kuliah - Universitas'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Universitas' : 'Tambah Mata Kuliah - Universitas'"></span>
                     </flux:badge>
                 </template>
 

@@ -20,6 +20,8 @@ use App\Livewire\Staff\RPSManagement\WithCPLFilters;
 use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
+use App\Livewire\Staff\RPSManagement\WithRPSModal;
+
 use App\Models\Akademik\Rps;
 use App\Models\Akademik\Cpmk;
 use App\Models\Akademik\Cpl;
@@ -27,7 +29,7 @@ use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class RpsManagement extends Component
+class RPSManagement extends Component
 {
     use WithRPSFilters;
     use WithCPMKFilters;
@@ -39,6 +41,7 @@ class RpsManagement extends Component
     use WithFakultasSearchFilters;
     use WithJurusanSearchFilters;
     use WithProdiSearchFilters;
+    
     use WithMatkulSearchFilters;
     use WithRPSSearchFilters;
     use WithCPMKSearchFilters;
@@ -46,6 +49,7 @@ class RpsManagement extends Component
     use WithCPLSearchFilters;
     use WithReferensiSearchFilters;
 
+    use WithRPSModal;
 
     use WithPagination;
 

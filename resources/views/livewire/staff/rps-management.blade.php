@@ -1,5 +1,5 @@
 <div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
-    {{-- @include('livewire.staff.rps-management.rps-toolbar') --}}
+    @include('livewire.staff.rps-management.rps-toolbar')
     @include('livewire.staff.rps-management.rps-switch-table')
     @include('livewire.staff.rps-management.rps-search-and-filters')
 
@@ -26,6 +26,6 @@
         ])
     </div>
 
-    {{-- @include('livewire.staff.rps-management.rps-modal-form')
-    @include('livewire.staff.rps-management.rps-modal-delete') --}}
+    @include('livewire.staff.rps-management.rps-modal-form')
+    {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>

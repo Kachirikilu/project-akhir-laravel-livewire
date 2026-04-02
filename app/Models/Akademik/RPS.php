@@ -53,6 +53,13 @@ class RPS extends Model
         return Attribute::get(fn () => $this->tahun_akademik);
     }
 
+    protected function rps(): Attribute
+    {
+        return Attribute::get(fn () => 
+            ($this->matkul_rel?->matkul ?? 'Tanpa MK') . ' ' . $this->akademik
+        );
+    }
+
     protected function revisi(): Attribute
     {
         return Attribute::get(function () {

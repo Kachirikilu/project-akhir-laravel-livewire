@@ -6,8 +6,8 @@ document.addEventListener("alpine:init", () => {
         isForceDelete: 0,
         colorIcon: "",
 
-        nama_matkul_delete: "",
-        kode_mk_delete: "",
+        rps_delete: "",
+        kode_rps_delete: "",
         
         setType(val) {
             this.typeModal = val;
@@ -20,6 +20,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         nama_matkul: "",
+        digit_akademik: "",
         digit_semester: "",
         digit_mk: "",
         semester: "",
@@ -27,6 +28,12 @@ document.addEventListener("alpine:init", () => {
         tipe_sks: "",
         sks_kuliah: "",
         is_wajib: "",
+
+        matkul_kode: "",
+        tahun_akademik: "",
+        tahun_akademik_1: "",
+        tahun_akademik_2: "",
+
 
         nama_prodi_search_array: [],
         prodi_id_array: [],
@@ -68,8 +75,8 @@ document.addEventListener("alpine:init", () => {
             kodeMkDelete,
             forceDelete
         ) {
-            this.nama_matkul_delete = namaProdi;
-            this.kode_mk_delete = kodeMkDelete;
+            this.rps_delete = namaProdi;
+            this.kode_rps_delete = kodeMkDelete;
             this.isForceDelete = forceDelete;
         },
 
@@ -103,8 +110,8 @@ document.addEventListener("alpine:init", () => {
             this.prodi_id = "";
             this.prodi_kode = "";
 
-            this.nama_matkul_delete = "";
-            this.kode_mk_delete = "";
+            this.rps_delete = "";
+            this.kode_rps_delete = "";
 
             this.nama_prodi_array = [];
             this.prodi_id_array = [];

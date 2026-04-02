@@ -336,7 +336,7 @@
                 'xSearchQuery' => $rpsSearchQuery,
                 'xSearchResults' => $rpsSearchResults,
                 'selectXForFilterString' => 'selectRPSForFilter',
-                'typeXString' => 'matkul',
+                'typeXString' => 'rps',
                 'unfoundString' => 'Tidak ada RPS ditemukan!',
             ])
         </div>

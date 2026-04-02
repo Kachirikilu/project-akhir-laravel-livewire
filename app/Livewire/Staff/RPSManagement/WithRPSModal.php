@@ -1,52 +1,57 @@
 <?php
 
-namespace App\Livewire\Staff\MatkulManagement;
+namespace App\Livewire\Staff\RPSManagement;
 
-use App\Models\Akademik\MataKuliah;
+use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Livewire\Global\HasToast;
 
-trait WithMatkulModal
+trait WithRPSModal
 {
+    use HasToast;
+
     public $selected_id;
 
     public $isEditing = false;
 
-    public $showMKModal = false;
+    public $showRPSModal = false;
 
-    public function addMK($tingkatan)
+    public function addRPS()
     {
-        $this->resetInput();
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
+        $this->resetInputRPS();
 
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditing = false;
-        $this->mkType = $tingkatan;
-        $this->showMKModal = true;
+        $this->showRPSModal = true;
 
-        if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedProdiNameSearch($this->prodiNameSearch);
-        } elseif ($tingkatan == 2) {
-            $this->updatedJurusanNameSearch($this->jurusanNameSearch);
-        } elseif ($tingkatan == 3) {
-            $this->updatedFakultasNameSearch($this->fakultasNameSearch);
-        }
+        $this->updatedMatkulNameSearch($this->matkulNameSearch);
+        $this->updatedCPMKNameSearch($this->cpmkNameSearch);
+        $this->updatedCPLNameSearch($this->cplNameSearch);
+        $this->updatedRefNameSearch($this->refNameSearch);
     }
 
     public function editMK($id, $tingkatan)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $this->selected_id = $id;
         $this->mkType = $tingkatan;
         $this->isEditing = true;
 
-        $this->resetInput();
+        $this->resetInputRPS();
         $this->prodiResults = [];
 
         $this->resetValidation();
         $this->resetErrorBag();
 
         try {
-            $mk = MataKuliah::with(['prodis'])->findOrFail($id);
+            $mk = RPS::with(['prodis'])->findOrFail($id);
 
             $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
             $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
@@ -58,17 +63,17 @@ trait WithMatkulModal
 
             if ($firstProdi) {
                 $this->jurusan_id = $firstProdi->jurusan_id;
-                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan_rel->jurusan ?? '';
-                $this->jurusan_kode = $firstProdi->jurusan_rel->kode ?? 'UNI';
+                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan;
+                $this->jurusan_kode = $firstProdi->kode;
 
-                $this->fakultas_id = $firstProdi->jurusan_rel->fakultas_id ?? null;
-                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->jurusan_rel->fakultas_rel->fakultas ?? '';
-                $this->fakultas_kode = $firstProdi->jurusan_rel->fakultas_rel->kode ?? 'UNI';
+                $this->fakultas_id = $firstProdi->fakultas_id;
+                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->fakultas;
+                $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->prodi_id = $firstProdi->id;
                     $this->prodiNameSearch = $firstProdi->prodi;
-                    $this->prodi_kode = $firstProdi->kode ?? 'UNI';
+                    $this->prodi_kode = $firstProdi->kode;
                 }
             }
 
@@ -80,13 +85,13 @@ trait WithMatkulModal
                 $this->updatedFakultasNameSearch($this->fakultasNameSearch);
             }
 
-            $this->showMKModal = true;
+            $this->showRPSModal = true;
 
             $this->dispatch('fill-modal-mk', mk: $mk);
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Data tidak ditemukan!');
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -143,7 +148,7 @@ trait WithMatkulModal
             $rules['prodi_id_array'] = 'required|array|min:1';
         }
 
-        $validator = Validator::make($data, $rules, $this->validationMessages());
+        $validator = Validator::make($data, $rules, $this->validationMessagesMK());
 
         if ($validator->fails()) {
             foreach ($validator->errors()->toArray() as $key => $messages) {
@@ -185,6 +190,9 @@ trait WithMatkulModal
 
     public function saveMK($data)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -199,7 +207,7 @@ trait WithMatkulModal
 
             DB::transaction(function () use ($validated, $tingkatan, $kodePrefix, $data) {
 
-                $mk = MataKuliah::create([
+                $mk = RPS::create([
                     'tingkatan_mk' => $tingkatan,
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
@@ -220,18 +228,23 @@ trait WithMatkulModal
                 }
             });
 
-            $this->resetInput();
-            $this->showMKModal = false;
-            $this->dispatch('toast', message: '✅ Mata Kuliah berhasil ditambahkan!');
+            $this->resetInputRPS();
             $this->dispatch('refresh-data');
+            $this->showRPSModal = false;
+            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']));
 
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal: '.$e->getMessage());
+            $this->dispatch('refresh-data');
+            $this->showRPSModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
     public function updateMK($data)
     {
+        if (! $this->AuthCheck('staff')) {
+            return; 
+        }
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -245,7 +258,7 @@ trait WithMatkulModal
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $tingkatan, $data, $kodePrefix) {
-                $mk = MataKuliah::findOrFail($this->selected_id);
+                $mk = RPS::findOrFail($this->selected_id);
 
                 // 3. UPDATE DATA UTAMA
                 $mk->update([
@@ -277,18 +290,18 @@ trait WithMatkulModal
                 $mk->prodis()->sync($syncData);
             });
 
-            $this->showMKModal = false;
-            $this->dispatch('toast', message: '✅ Mata Kuliah berhasil diperbarui!');
             $this->dispatch('refresh-data');
+            $this->showRPSModal = false;
+            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']), type: 'update');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
         } catch (\Exception $e) {
-            $this->dispatch('toast', message: '❌ Gagal memperbarui: '.$e->getMessage());
+            $this->dispatch('refresh-data');
+            $this->showRPSModal = false;
+            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    public function validationMessages()
+    private function validationMessagesMK()
     {
         return [
             'prodi_id.required' => 'Program Studi wajib diisi!',
@@ -328,7 +341,7 @@ trait WithMatkulModal
         ];
     }
 
-    public function resetInput()
+    private function resetInputRPS()
     {
         $this->prodiNameSearch = '';
         $this->jurusanNameSearch = '';

@@ -33,8 +33,9 @@ trait WithRPSSearchFilters
             'id' => $mk->id,
             'mk_id' => $mk->mk_id,
             'kode' => $mk->kode,
+            'rps' => $mk->rps,
             'matkul' => $mk->matkul,
-            'tahun_akademik' => $mk->tahun_akademik,
+            'akademik' => $mk->akademik,
             'draf_text' => $mk->draf_text,
             'tanggal_revisi' => $mk->tanggal_revisi,
             'wajib_text' => $mk->wajib_text,
@@ -70,8 +71,8 @@ trait WithRPSSearchFilters
         if ($data) {
             $this->selectedRPSId = $id;
             $this->rps_kode = $data->kode;
-            $this->rps_name = $data->matkul;
-            $this->rpsSearchQuery = $data->matkul;
+            $this->rps_name = $data->rps;
+            $this->rpsSearchQuery = $data->rps;
             $this->rpsSearchResults = [];
             $this->resetPage();
         }
@@ -91,8 +92,9 @@ trait WithRPSSearchFilters
 
             // Exact Match Logic
             $exactMatch = $results->first(function ($r) use ($value) {
-                return strtolower($r->matkul) === strtolower($value) 
-                    || strtolower($r->kode) === strtolower($value);
+                return strtolower($r->rps) === strtolower($value) 
+                    || strtolower($r->kode) === strtolower($value) || 
+                    strtolower($r->matkul) === strtolower($value);
             });
 
             if ($exactMatch) {
@@ -177,7 +179,7 @@ trait WithRPSSearchFilters
         $data = RPS::find($id);
         if ($data && ! in_array($id, $this->rps_id_array)) {
             $this->rps_id_array[] = $id;
-            $this->rps_name_array[] = $data->matkul;
+            $this->rps_name_array[] = $data->rps;
             $this->rps_kode_array[] = $data->kode;
         }
     }
