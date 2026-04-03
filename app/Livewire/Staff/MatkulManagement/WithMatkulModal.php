@@ -5,6 +5,7 @@ namespace App\Livewire\Staff\MatkulManagement;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use App\Livewire\Global\HasToast;
 
 trait WithMatkulModal
@@ -237,10 +238,13 @@ trait WithMatkulModal
             $this->showMKModal = false;
             $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']));
 
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -298,10 +302,13 @@ trait WithMatkulModal
             $this->showMKModal = false;
             $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']), type: 'update');
 
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 

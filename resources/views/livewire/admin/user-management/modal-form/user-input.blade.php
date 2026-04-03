@@ -2,11 +2,14 @@
     {{-- ****************************************************** --}}
     {{-- 1. ACCOUNT INFORMATION (EMAIL & PASSWORD) --}}
     {{-- ****************************************************** --}}
-    <div class="p-4 mt-4 
+    <div
+        class="px-4 py-6 mt-4 
     {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
     bg-[var(--main-table-color)] border-[var(--border-table-color)]
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
-        <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">Account Information</h4>
+        <h4
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            Account Information</h4>
 
         {{-- 📧 Email Input --}}
         @include('livewire.global.modal-form.input-form', [
@@ -18,7 +21,7 @@
             'iconString' => 'envelope',
             'placeholder' => 'contoh@domain.com',
             'message' => $errors->first('email'),
-            'isRequired' => 1
+            'isRequired' => 1,
         ])
 
         {{-- 🔒 Password Input --}}
@@ -32,7 +35,7 @@
                 'iconString' => 'lock-closed',
                 'placeholder' => 'Masukkan Password',
                 'message' => $errors->first('password'),
-                'isRequired' => 1
+                'isRequired' => 1,
             ])
         </template>
         <template x-if="$store.user?.isEdit == 1" x-cloak>
@@ -45,8 +48,19 @@
                 'iconString' => 'lock-closed',
                 'placeholder' => 'Kosongkan jika tidak ingin diubah',
                 'message' => $errors->first('password'),
-                'isRequired' => 0
+                'isRequired' => 0,
             ])
         </template>
     </div>
+
+
+    <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
+        @include('livewire.admin.user-management.modal-form.input-partial.admin-input')
+    </template>
+    <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+        @include('livewire.admin.user-management.modal-form.input-partial.dosen-input')
+    </template>
+    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+        @include('livewire.admin.user-management.modal-form.input-partial.mahasiswa-input')
+    </template>
 </div>

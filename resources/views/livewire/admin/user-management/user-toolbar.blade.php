@@ -16,7 +16,7 @@
                     @click="
                         $store.user?.setType('admin');
                         $store.user?.setEdit(0);
-                        $store.user?.resetSelect();
+                        {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-red-700 dark:text-red-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
@@ -36,7 +36,7 @@
                     @click="
                         $store.user?.setType('dosen');
                         $store.user?.setEdit(0);
-                        $store.user?.resetSelect();
+                        {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-lime-700 dark:text-lime-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
@@ -55,7 +55,7 @@
                     @click="
                         $store.user?.setType('mahasiswa');
                         $store.user?.setEdit(0);
-                        $store.user?.resetSelect();
+                        {{-- $store.user?.resetSelect(); --}}
                         $store.user?.setColor('text-cyan-700 dark:text-cyan-400');
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');

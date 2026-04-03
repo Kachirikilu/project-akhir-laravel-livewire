@@ -86,17 +86,14 @@
     </div>
 
     {{-- 2. DROPDOWN HASIL --}}
-    <div x-show="open && isParentReady" x-cloak
-         {{-- x-collapse --}}
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            @click.stop
-        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-80 overflow-y-auto custom-scrollbar relative">
 
+        
+    {{-- 2. DROPDOWN HASIL --}}
+    <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+        @click.stop
+        class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-72 overflow-y-auto">
+        
         {{-- KONTEN LIST (Akan transparan saat loading) --}}
         <div @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}" wire:loading.class="opacity-20 pointer-events-none" @endif">
             @forelse ($xResults as $x)
@@ -105,16 +102,16 @@
                     <div class="flex flex-col">
                         <span
                             class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
-                                <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
-                                    {{ $x['id'] }}</span></span>
-                            <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                            <span>{{ $x['kode'] }}</span>
-                            @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
-                                <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                                <span>Fakultas {{ $x['fakultas'] }}</span>
-                            @endif
-                        </div>
+                            <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
+                                <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
+                                        {{ $x['id'] }}</span></span>
+                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                <span>{{ $x['kode'] }}</span>
+                                @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
+                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                    <span>Fakultas {{ $x['fakultas'] }}</span>
+                                @endif
+                            </div>
                     </div>
 
                     <button type="button"
@@ -166,25 +163,31 @@
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div
-        class="mt-3 p-3 border-2 border-dashed border-[var(--border-table-color)] rounded-xl min-h-[100px] bg-gray-50/30 dark:bg-neutral-900/20">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Daftar Pilihan:</span>
-            <span x-show="items.length > 0"
-                class="text-[10px] px-2 py-0.5 bg-[var(--focus-color)] text-white rounded-full"
-                x-text="items.length + ' Terpilih'"></span>
+        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
+
+        <div class="flex items-center justify-between mb-4">
+            <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
+            <div class="flex items-center gap-2">
+                <span x-show="items.length > 0"
+                    class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
+                    x-text="items.length + ' Terpilih'"></span>
+            </div>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-2 max-h-[350px] overflow-y-auto pr-1 scrollbar-medium">
             <template x-for="(id, index) in items" :key="id">
                 <div
                     class="flex items-center justify-between bg-[var(--second-table-color)] border border-[var(--border-table-color)] px-3 py-2 rounded-lg shadow-sm">
                     <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-[var(--focus-color)] w-5" x-text="index + 1"></span>
+                        <span class="text-xs font-bold text-[var(--hover-focus-color)] w-5" x-text="index + 1"></span>
                         <div class="flex flex-col">
                             <span class="text-sm font-medium text-[var(--contrast-main-text)]"
                                 x-text="itemNames[index]"></span>
-                            <span class="text-[10px] opacity-70" x-text="'ID: ' + id + ' | Kode: ' + itemKodes[index]">
-                            </span>
+                            <div class="text-xs mt-1">
+                                - <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id "></span>
+                                <span class="mx-2">|</span>
+                                <span x-text="itemKodes[index]"></span>
+                            </div>
                         </div>
                     </div>
 

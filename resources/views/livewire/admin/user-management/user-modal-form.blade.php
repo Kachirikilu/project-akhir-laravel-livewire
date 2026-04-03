@@ -36,7 +36,8 @@
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-flex-1 overflow-y-auto space-y-6">
+        {{-- <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-flex-1 overflow-y-auto space-y-6"> --}}
+        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
 
             <form
                 @if ($roleType == 'file') wire:submit.prevent="saveAllRows"
@@ -50,16 +51,6 @@
 
                 <template x-if="$store.user?.typeModal !== 'file'" x-cloak>
                     @include('livewire.admin.user-management.modal-form.user-input')
-                </template>
-
-                <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-                    @include('livewire.admin.user-management.modal-form.admin-input')
-                </template>
-                <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-                    @include('livewire.admin.user-management.modal-form.dosen-input')
-                </template>
-                <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                    @include('livewire.admin.user-management.modal-form.mahasiswa-input')
                 </template>
 
                 {{-- 3. Footer/Tombol --}}

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use App\Livewire\Global\HasToast;
 
@@ -288,9 +289,9 @@ trait WithUserModal
             $data['status'] = 'Aktif';
         }
 
-        $validated = $this->inputModalUser(false, $data);
-
         try {
+            $validated = $this->inputModalUser(false, $data);
+
             DB::transaction(function () use ($validated) {
 
                 $user = User::create([
@@ -349,10 +350,13 @@ trait WithUserModal
             $this->showUserModal = false;
             $this->toast(message: ucfirst($this->roleType), isAkun: true);
 
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showUserModal = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -368,9 +372,10 @@ trait WithUserModal
         if (empty($data['status'])) {
             $data['status'] = 'Aktif';
         }
-        $validated = $this->inputModalUser(true, $data);
 
         try {
+            $validated = $this->inputModalUser(true, $data);
+
             DB::transaction(function () use ($validated) {
 
                 $user = User::findOrFail($this->user_id);
@@ -433,14 +438,18 @@ trait WithUserModal
             if (Auth::id() === $this->user_id) {
                 $this->dispatch('profile-updated');
             }
+
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showUserDelete = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
-    private function validationMessagesUser()
+    public function validationMessagesUser()
     {
         return [
             'email.required' => 'Alamat email wajib diisi!',

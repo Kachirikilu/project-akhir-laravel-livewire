@@ -73,12 +73,12 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        resetSelect() {
-            this.kode_blok = "";
-            this.semester = "";
-            this.tipe_sks = ""; 
-            this.is_wajib = "";
-        },
+        // resetSelect() {
+        //     this.kode_blok = "";
+        //     this.semester = "";
+        //     this.tipe_sks = ""; 
+        //     this.is_wajib = "";
+        // },
         
         reset() {
             this.typeModal = "",

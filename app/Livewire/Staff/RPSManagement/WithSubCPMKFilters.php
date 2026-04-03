@@ -73,8 +73,15 @@ trait WithSubCPMKFilters
         return match ($this->sortField) {
             'kode'   => $querySCPMK->orderBy('kode_scpmk', $this->sortDirection),
             
+            'deskripsi' => $querySCPMK->orderBy('deskripsi', $this->sortDirection),
+            'metodologi' => $querySCPMK->orderBy('metodologi', $this->sortDirection),
             'indikator' => $querySCPMK->orderBy('indikator', $this->sortDirection),
+            'metode' => $querySCPMK->orderBy('metode', $this->sortDirection),
             'bobot' => $querySCPMK->orderBy('bobot', $this->sortDirection),
+            'tugas' => $querySCPMK->orderBy('deskripsi_tugas', $this->sortDirection),
+            'tugas' => $querySCPMK->orderBy('waktu_tugas', $this->sortDirection),
+            'mandiri' => $querySCPMK->orderBy('waktu_mandiri', $this->sortDirection),
+
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),
             

@@ -23,6 +23,19 @@ class SubCPMK extends Model
         });
     }
 
+    protected function tugas(): Attribute
+    {
+        return Attribute::get(fn () => $this->deskripsi_tugas);
+    }
+    protected function wTugas(): Attribute
+    {
+        return Attribute::get(fn () => $this->waktu_tugas);
+    }
+     protected function wMandiri(): Attribute
+    {
+        return Attribute::get(fn () => $this->waktu_mandiri);
+    }
+
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
@@ -76,9 +89,24 @@ class SubCPMK extends Model
                     ->orWhere('sub_cpmks.materi', 'like', $searchTerm)
                     ->orWhere('sub_cpmks.metodologi', 'like', $searchTerm)
                     ->orWhere('sub_cpmks.indikator', 'like', $searchTerm)
-                    ->orWhere('sub_cpmks.deskripsi', 'like', $searchTerm)
+                    ->orWhere('sub_cpmks.deskripsi_tugas', 'like', $searchTerm)
                     ->orWhere('sub_cpmks.waktu_tugas', 'like', $searchTerm)
                     ->orWhere('sub_cpmks.waktu_mandiri', 'like', $searchTerm);
+
+                    $termLower = strtolower(trim($searchTerm, '% ')); 
+
+                    $subQ->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
+                        if (str_contains('ujian tengah semester', $termLower) || str_contains('uts', $termLower)) {
+                            $enumQ->orWhere('sub_cpmks.metode', 'UTS');
+                        }
+                        if (str_contains('ujian akhir semester', $termLower) || str_contains('uas', $termLower)) {
+                            $enumQ->orWhere('sub_cpmks.metode', 'UAS');
+                        }
+                        if ($termLower === 'ujian') {
+                            $enumQ->orWhereIn('sub_cpmks.metode', ['UTS', 'UAS']);
+                        }
+                        $enumQ->orWhere('sub_cpmks.metode', 'like', $searchTerm);
+                    });
 
                 if (is_numeric($search)) {
                     $q->orWhere('sub_cpmks.id', 'like', $search);

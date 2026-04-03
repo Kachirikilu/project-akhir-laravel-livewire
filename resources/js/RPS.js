@@ -27,12 +27,23 @@ document.addEventListener("alpine:init", () => {
         kode_blok: "",
         tipe_sks: "",
         sks_kuliah: "",
-        is_wajib: "",
 
         matkul_kode: "",
         tahun_akademik: "",
         tahun_akademik_1: "",
         tahun_akademik_2: "",
+        is_draf: "",
+
+        count_scpmk: 0,
+        setCountSCPMK(val) {
+            this.count_scpmk = val;
+
+            if (val < 14 && (this.is_draf === 0 || this.is_draf === 1)) {
+                this.is_draf = 1;
+            } else if (val < 14 && this.is_draf === "") {
+                this.is_draf = "";
+            } 
+        },
 
 
         nama_prodi_search_array: [],

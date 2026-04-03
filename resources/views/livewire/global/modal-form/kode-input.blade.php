@@ -1,17 +1,17 @@
 <div x-data="{ kode: @entangle($kodeString ?? null).live }">
-    <label class="block text-sm font-medium">Kode Mata Kuliah</label>
+    <label class="block text-sm font-medium">{{ $labelString ?? null }}</label>
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="academic-cap" variant="mini" x-bind:class="$store.mk?.colorIcon" />
+            <flux:icon icon="{{ $iconString ?? null }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
         <input type="text" readonly
             @if($kodeString ?? null)
-                x-bind:value="kode || '---'"
+                x-bind:value="kode || '{{ $placeholder ?? null }}'"
             @else 
-                value="UNI"
+                value="{{ $secondValue ?? null }}"
             @endif
-            placeholder="---"
+            placeholder="{{ $placeholder ?? null }}"
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 px-3 py-2 text-center font-bold">
     </div>
 </div>

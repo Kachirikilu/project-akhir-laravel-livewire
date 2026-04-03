@@ -73,9 +73,9 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        resetSelect() {
-            this.status = "";
-        },
+        // resetSelect() {
+        //     this.status = "";
+        // },
         reset() {
             this.typeModal = "",
             this.typeModal_delete = "",

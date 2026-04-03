@@ -84,9 +84,9 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        resetSelect() {
-            this.nama_strata = "";
-        },
+        // resetSelect() {
+        //     this.nama_strata = "";
+        // },
         
         reset() {
             this.typeModal = "",

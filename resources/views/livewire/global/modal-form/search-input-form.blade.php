@@ -116,12 +116,12 @@
                             {{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}
                         </div>
 
-                        <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
+                        <div class="text-[var(--contrast-main-text)] font-medium text-xs flex items-center mt-0.5">
+                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
                                     {{ $x['id'] }}</span></span>
 
                             @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
-                                <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
+                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
                                 <span>Fakultas {{ $x['fakultas'] }}</span>
                             @endif
                         </div>

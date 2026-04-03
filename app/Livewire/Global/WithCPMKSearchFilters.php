@@ -27,14 +27,40 @@ trait WithCPMKSearchFilters
     /**
      * Helper untuk mapping hasil agar seragam
      */
+    // private function mapCPMK($collection)
+    // {
+    //     return $collection->map(fn ($c) => [
+    //         'id' => $c->id,
+    //         'kode' => $c->kode,
+    //         'deskripsi' => $c->deskripsi,
+    //     ])->toArray();
+    // }
+
     private function mapCPMK($collection)
-    {
-        return $collection->map(fn ($c) => [
-            'id' => $c->id,
-            'kode' => $c->kode,
-            'deskripsi' => $c->deskripsi,
-        ])->toArray();
-    }
+{
+    // Pastikan relasi sub_cpmks di-load (asumsi nama relasi di model CPMK adalah sub_cpmks)
+    return $collection->map(fn ($c) => [
+        'id' => $c->id,
+        'kode' => $c->kode,
+        'deskripsi' => $c->deskripsi,
+        // Ambil data Sub-CPMK
+        'sub_cpmk' => $c->sub_cpmks->map(fn ($sub) => [
+            'id' => $sub->id,
+            'kode' => $sub->kode,
+            'deskripsi' => $sub->deskripsi,
+            'materi' => $sub->materi,
+            'metodologi' => $sub->metodologi,
+            'indikator' => $sub->indikator,
+            'metode' => $sub->metode,
+            'bobot' => $sub->bobot ?? 0,
+            'tugas' => $sub->tugas,
+            'w_tugas' => $sub->w_tugas,
+            'w_mandiri' => $sub->w_mandiri,
+
+        ])->toArray(),
+        'total_bobot' => $c->sub_cpmks->sum('bobot') 
+    ])->toArray();
+}
 
     public function inputCPMKFilter()
     {
@@ -43,7 +69,8 @@ trait WithCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
             $this->cpmkSearchResults = $this->mapCPMK(
-                CPMK::searchCPMK($search)->limit(12)->get()
+                CPMK::query()->with(['sub_cpmks'])
+                ->searchCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpmk_name) {
             $this->cpmkSearchResults = $this->getCPMKbyUser();
@@ -61,7 +88,7 @@ trait WithCPMKSearchFilters
     public function selectCPMKForFilter($id)
     {
         $data = CPMK::
-        // with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->
+        with(['sub_cpmks'])->
         find($id);
 
         if ($data) {
@@ -80,7 +107,7 @@ trait WithCPMKSearchFilters
         $this->cpmk_kode = null;
         $this->resetErrorBag(['cpmk_id', 'cpmkNameSearch']);
 
-        $query = CPMK::query();
+        $query = CPMK::query()->with(['sub_cpmks']);
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchCPMK($value)->limit(12)->get();
@@ -114,7 +141,7 @@ trait WithCPMKSearchFilters
         $user = Auth::user();
         $prodiId = $user->prodi_id ?? null;
 
-        $query = CPMK::query();
+        $query = CPMK::query()->with(['sub_cpmks']);
         
         if (!$prodiId) {
             $defaultCPMK = $query
@@ -132,7 +159,7 @@ trait WithCPMKSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = CPMK::whereNotIn('id', $mainResults->pluck('id'))
+            $extra = CPMK::whereNotIn('id', $mainResults->pluck('id'))->with(['sub_cpmks'])
                 ->limit(12 - $mainResults->count())
                 ->get();
                 
@@ -158,7 +185,7 @@ trait WithCPMKSearchFilters
         $this->cpmkNameSearch = $cpmkName;
         $this->cpmkResults = $this->getCPMKbyUser();
 
-        $data = CPMK::find($id);
+        $data = CPMK::with(['sub_cpmks'])->find($id);
         if ($data) {
             $this->cpmk_kode = $data->kode;
         }

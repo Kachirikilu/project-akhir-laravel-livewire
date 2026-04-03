@@ -145,7 +145,7 @@ trait WithUserExcel
             'excel_file' => 'required|file|mimes:xlsx,xls|max:10240',
             'prodi_id' => 'required|exists:prodis,id',
         ];
-        $this->validate($rules, $this->validationMessages());
+        $this->validate($rules, $this->validationMessagesUser());
 
         if (empty($this->parsedRows)) {
             $this->toast(text: 'Tidak ada data untuk disimpan!', variant: 'warning');

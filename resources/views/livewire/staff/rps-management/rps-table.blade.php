@@ -62,9 +62,25 @@
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'deskripsi'])
             @endif
             @if ($switchTable === 'scpmk')
+{{-- 
+                            <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->metode ?? '-' }}</td>
+                <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->w_tugas ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->w_mandiri ?? '-' }}</td> --}}
+
+                
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'materi'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'bobot','isMain' => 1, 'isCenter' => 1])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'metodologi'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'indikator'])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'metode', 'isCenter' => 1])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'bobot','isMain' => 1, 'isCenter' => 1])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'tugas', 'headString' => 'Deskripsi Tugas'])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'w_tugas', 'headString' => 'Waktu Tugas', 'isCenter' => 1])
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'w_mandiri', 'headString' => 'Waktu Mandiri', 'isCenter' => 1])
+
             @endif
             @if ($switchTable === 'ref')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'judul'])
@@ -89,22 +105,39 @@
 
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
+
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($x->tingkatan_mk)
-                             @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
-                            @break
-                            @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
-                            @break
-                            @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
-                            @break
-                            @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
-                        @endswitch
+                        @if ($switchTable === 'rps')
+                            @switch($x->tingkatan_mk)
+                                @case(1)
+                                    <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @case(2)
+                                    <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @case(3)
+                                    <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @default
+                                    <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                            @endswitch
+                        @else
+                            @switch($switchTable)
+                                @case('cpmk')
+                                    <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @case('scpmk')
+                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @case('cpl')
+                                    <flux:badge icon="beaker" color="lime" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                @break
+                                @default
+                                    <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                            @endswitch
+                        @endif
                     </button>
 
                     @include('livewire.staff.rps-management.modal-form.rps-menu', [
@@ -114,6 +147,9 @@
                     ])
                 </flux:dropdown>
             </td>
+
+            
+            
 
             @if ($switchTable === 'rps')
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->matkul ?? '-' }}</td>
@@ -149,8 +185,67 @@
 
             @if ($switchTable === 'scpmk')
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
-                <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
+
+                <td class="{{ $secondKolom }} text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @switch($x->metode)
+                                @case('Teori')
+                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori</flux:badge>
+                                @break
+
+                                @case('Praktik')
+                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik</flux:badge>
+                                @break
+
+                                @case('Tugas')
+                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas</flux:badge>
+                                @break
+
+                                @case('UTS')
+                                @case('UAS')
+                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">{{ $x->metode }}</flux:badge>
+                                @break
+
+                                @case('Hasil Projek')
+                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Projek</flux:badge>
+                                @break
+
+                                @case('Kerja Praktek')
+                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek</flux:badge>
+                                @break
+
+                                @case('Skripsi')
+                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi</flux:badge>
+                                @break
+
+                                @case('Aktivitas Partisipasif')
+                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif</flux:badge>
+                                @break
+
+                                @case('Mandiri')
+                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri</flux:badge>
+                                @break
+
+                                @default
+                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">{{ $x->metode ?? '-' }}</flux:badge>
+                            @endswitch
+                        </button>
+
+                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+                </td>
+
+                <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
+                <td class="{{ $secondKolom }} text-center">{{ $x->w_tugas ?? '-' }}</td>
+                <td class="{{ $secondKolom }} text-center">{{ $x->w_mandiri ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'ref')
@@ -185,7 +280,7 @@
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 9,
                     'cpmk' => 6,
-                    'scpmk' => 9,
+                    'scpmk' => 14,
                     'cpl' => 6,
                     'ref' => 10,
                     default => 9,

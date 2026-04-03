@@ -317,11 +317,12 @@ if (! $this->AuthCheck()) {
             $data['nama_strata'] = 'Sarjana';
         }
 
-        $validated = $this->inputModalProdi(false, $data);
-        $validated = $this->prepareData($validated);
-        $message = '';
-
         try {
+
+            $validated = $this->inputModalProdi(false, $data);
+            $validated = $this->prepareData($validated);
+            $message = '';
+
             DB::transaction(function () use ($validated, $message) {
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['nama_strata']);
@@ -353,10 +354,13 @@ if (! $this->AuthCheck()) {
             $this->showProdiModal = false;
             $this->toast(message: $message);
 
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showProdiModal = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 
@@ -378,11 +382,11 @@ if (! $this->AuthCheck()) {
             $data['nama_strata'] = 'Sarjana';
         }
 
-        $validated = $this->inputModalProdi(true, $data);
-        $validated = $this->prepareData($validated);
-        $message = '';
-
         try {
+            $validated = $this->inputModalProdi(true, $data);
+            $validated = $this->prepareData($validated);
+            $message = '';
+
             DB::transaction(function () use ($validated, &$message) {
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['nama_strata']);
@@ -414,10 +418,13 @@ if (! $this->AuthCheck()) {
             $this->showProdiModal = false;
             $this->toast(message: $message, type: 'update');
 
+        } catch (ValidationException $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
+            throw $e;
         } catch (\Exception $e) {
+            $this->toast(text: $e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showProdiDelete = false;
-            $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }
 

@@ -1,15 +1,12 @@
 <div x-data="{}"
     x-effect="
                     if ($store.rps) {
-                        let ta1 = parseInt($store.rps.tahun_akademik_1);
-                        let ta2 = parseInt($store.rps.tahun_akademik_1) + 1;
+                        let ta2 = parseInt($store.rps.tahun_akademik_2);
 
-                        if (!ta1) {
+                        if (!ta2) {
                             $store.rps.digit_akademik = '';
-                            $store.rps.tahun_akademik = '';
                         } else {
                             $store.rps.digit_akademik = String(ta2).slice(-2);
-                            $store.rps.tahun_akademik = ta1 + '/' + ta2;
                         }
                     }
                 ">

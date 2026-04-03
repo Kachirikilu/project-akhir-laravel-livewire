@@ -1,8 +1,8 @@
 <div class="relative" wire:key="select-form-{{ $modelString }}" x-data="{
     open: false,
     {{-- Ambil opsi dan value dari Blade ke JS --}}
-    options: @js($xOptions),
-    values: @js($xValues ?? $xOptions),
+        options: [], {{-- Inisialisasi kosong --}}
+        values: [],
     
     {{-- Fungsi untuk mencari Label berdasarkan Value --}}
     getLabel(val) {
@@ -15,18 +15,17 @@
 }"
 x-init="value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }})"
 x-effect="
-    {{-- Reaktif: Jika nilai di store berubah, update tampilan teks --}}
-    const rawVal = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
-    {{-- if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0 && !rawVal) {
-        value = '';
-    } else {
-        value = getLabel(rawVal);
-    } --}}
-    if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
-        value = '';
-    } else {
-        value = getLabel(rawVal);
-    }
+
+    options = @js($xOptions);
+        values = @js($xValues ?? $xOptions);
+        
+        {{-- Re-sync label jika nilai di store berubah --}}
+        const rawVal = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
+        if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
+            value = '';
+        } else {
+            value = getLabel(rawVal);
+        }
 "
 wire:key="select-form-{{ $modelString }}">
 

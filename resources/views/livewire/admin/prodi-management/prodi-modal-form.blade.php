@@ -42,7 +42,7 @@
         </div>
 
         {{-- 2. Konten & Form --}}
-        <div class="flex-1 overflow-y-auto p-6">
+        <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
             <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateProdi' : 'saveProdi' }}($store.prodi)"
                 enctype="multipart/form-data" id="prodiForm">

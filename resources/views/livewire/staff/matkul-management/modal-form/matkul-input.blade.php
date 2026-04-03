@@ -3,12 +3,12 @@
     {{-- 1. INPUT PROGRAM STUDI --}}
     {{-- ****************************************************** --}}
     <div
-        class="p-4 mt-4 
+        class="px-4 py-6 mt-4 
     {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
     bg-[var(--main-table-color)] border-[var(--border-table-color)]
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
         <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2">
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Input Mata Kuliah</h4>
 
         {{-- 📧 Mata Kuliah Input --}}
@@ -16,7 +16,7 @@
             'alpine' => 'mk',
             'labelString' => 'Nama Mata Kuliah',
             'modelString' => 'nama_matkul',
-            'iconString' => 'book-open',
+            'iconString' => 'rectangle-stack',
             'placeholder' => 'Masukkan nama Mata Kuliah',
             'message' => $errors->first('nama_matkul'),
             'isRequired' => 1,
@@ -25,41 +25,22 @@
         <div class="relative">
 
 
-            <div wire:loading wire:target="addMK, editMK"
-                class="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-lg">
-
-                <div class="h-full flex flex-col items-center justify-center">
-                    <svg class="animate-spin h-10 w-10 text-[var(--focus-color)]" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-
-                    <p class="mt-3 text-sm font-semibold text-[var(--focus-color)] tracking-wide animate-pulse">
-                        Sedang Memproses...
-                    </p>
-                </div>
-            </div>
-
-
+            @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addMK, editMK'])
 
             <template x-if="$store.mk?.typeModal == 1" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-prodi-input')
+                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-prodi-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 2" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-jurusan-input')
+                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-jurusan-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 3" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-fakultas-input')
+                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-fakultas-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 4" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.mk-universitas-input')
+                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-universitas-input')
             </template>
         </div>
 

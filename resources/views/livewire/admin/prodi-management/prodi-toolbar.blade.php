@@ -17,7 +17,7 @@
                     @click="
                         $store.prodi?.setType('prodi');
                         $store.prodi?.setEdit(0);
-                        $store.prodi?.resetSelect();
+                        {{-- $store.prodi?.resetSelect(); --}}
                         $store.prodi?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');

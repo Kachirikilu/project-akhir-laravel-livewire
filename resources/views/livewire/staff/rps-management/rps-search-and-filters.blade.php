@@ -3,7 +3,7 @@
 
 
 
-    <div class="grid grid-cols-1 grid-rows-1 relative isolate z-50">
+    <div class="grid grid-cols-1 grid-rows-1 relative isolate z-40">
 
         {{-- BAGIAN FILTER ATAS --}}
         <div x-show="activeTab == 'rps'" x-transition:enter="transition ease-out duration-1000"
@@ -308,7 +308,7 @@
                 'inputXFilterString' => 'inputMatkulFilter',
                 'xSearchResultsString' => 'matkulSearchResults',
                 'selectedXNameString' => 'matkul_name',
-                'iconString' => 'book-open',
+                'iconString' => 'rectangle-stack',
                 'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
                 'xSearchQueryString' => 'matkulSearchQuery',
                 'selectedXId' => $selectedMatkulId,
@@ -327,7 +327,7 @@
                 'inputXFilterString' => 'inputRPSFilter',
                 'xSearchResultsString' => 'rpsSearchResults',
                 'selectedXNameString' => 'rps_name',
-                'iconString' => 'book-open',
+                'iconString' => 'clipboard-document-list',
                 'placeholderString' => 'Filter berdasarkan RPS...',
                 'xSearchQueryString' => 'rpsSearchQuery',
                 'selectedXId' => $selectedRPSId,
@@ -346,7 +346,7 @@
                 'inputXFilterString' => 'inputCPMKFilter',
                 'xSearchResultsString' => 'cpmkSearchResults',
                 'selectedXNameString' => 'cpmk_name',
-                'iconString' => 'book-open',
+                'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan CPMK...',
                 'xSearchQueryString' => 'cpmkSearchQuery',
                 'selectedXId' => $selectedCPMKId,
@@ -365,7 +365,7 @@
                 'inputXFilterString' => 'inputSCPMKFilter',
                 'xSearchResultsString' => 'scpmkSearchResults',
                 'selectedXNameString' => 'scpmk_name',
-                'iconString' => 'book-open',
+                'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
                 'xSearchQueryString' => 'scpmkSearchQuery',
                 'selectedXId' => $selectedSCPMKId,
@@ -384,7 +384,7 @@
                 'inputXFilterString' => 'inputCPLFilter',
                 'xSearchResultsString' => 'cplSearchResults',
                 'selectedXNameString' => 'cpl_name',
-                'iconString' => 'book-open',
+                'iconString' => 'document-text',
                 'placeholderString' => 'Filter berdasarkan CPL...',
                 'xSearchQueryString' => 'cplSearchQuery',
                 'selectedXId' => $selectedCPLId,

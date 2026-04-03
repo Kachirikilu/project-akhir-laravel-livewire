@@ -174,9 +174,6 @@
             {{ $slot }}
         </div>
     </main>
-    {{-- <flux:toast /> --}}
-    <flux:toast position="top right" />
-    @fluxScripts
 </body>
 
 </html>

@@ -3,7 +3,12 @@
         <div class="grid sm:grid-cols-6 gap-1 items-end">
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.matkul-management.modal-form.partial.kode-mk', ['kodeString' => 'fakultas_kode'])
+                @include('livewire.global.modal-form.kode-input', [
+                    'alpine' => 'mk',
+                    'labelString' => 'Kode Mata Kuliah',
+                    'placeholder' => '---',
+                    'iconString' => 'book-open'
+                ])
             </div>
 
             <div class="sm:col-span-2">
@@ -21,7 +26,6 @@
                     'placeholder' => 'Contoh: 07',
                     'isRequired' => 1,
                     'isFocusSelect' => 1,
-                    'wireLoadingParent' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
                 ])
             </div>
         </div>
@@ -32,19 +36,19 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $fakultasResults,
-        'selectX' => 'selectFakultas',
-        'modelString' => 'nama_fakultas_search',
-        'resetXInput' => 'resetFakultasInput()',
-        'typeXString' => 'fakultas',
-        'nameXString' => 'Fakultas',
-        'idString' => 'fakultas_id',
-        'kodeString' => 'fakultas_kode',
-        'searchString' => 'fakultas_search',
-        'nameSearchString' => 'fakultasNameSearch',
-        'fetchString' => 'fetchFakultas',
-        'iconString' => 'building-library',
-        'wireLoading' => 'fetchFakultas'
+        'xResults' => $jurusanResults,
+        'selectX' => 'selectJurusan',
+        'modelString' => 'nama_jurusan_search',
+        'resetXInput' => 'resetJurusanInput()',
+        'typeXString' => 'jurusan',
+        'nameXString' => 'Jurusan',
+        'idString' => 'jurusan_id',
+        'kodeString' => 'jurusan_kode',
+        'searchString' => 'jurusan_search',
+        'nameSearchString' => 'jurusanNameSearch',
+        'fetchString' => 'fetchJurusan',
+        'iconString' => 'book-open',
+        'wireLoading' => 'fetchJurusan',
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -64,9 +68,9 @@
         'iconString' => 'academic-cap',
     
         'selectedNameArray' => 'prodi_name_array',
-        'parentIdString' => 'fakultas_id',
-        'nameXParent' => 'Fakultas',
+        'parentIdString' => 'jurusan_id',
+        'nameXParent' => 'Jurusan',
         'wireLoading' => 'fetchProdi',
-        'wireLoadingParent' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
+        'wireLoadingParent' => 'selectJurusan, resetJurusanInput, selectJurusanForFilter, resetJurusanFilter',
     ])
 </div>
