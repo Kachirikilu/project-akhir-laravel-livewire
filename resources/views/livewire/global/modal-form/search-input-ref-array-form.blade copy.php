@@ -4,11 +4,13 @@
     items: @entangle($idString).live,
     itemNames: @entangle($selectedNameArray).live,
     itemKodes: @entangle($kodeString).live,
+    itemPenulis: @entangle($penulisString ?? null).live,
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];
         if (!Array.isArray(this.itemNames)) this.itemNames = [];
         if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
+        if (!Array.isArray(this.itemPenulis)) this.itemPenulis = [];
     },
 
     parentSelectedId: @entangle($parentIdString ?? null).live,
@@ -17,13 +19,14 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, name, kode) {
+    addItem(id, name, kode, penulis) {
         // Ubah id menjadi Number atau String secara konsisten
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
             this.itemNames.push(name);
             this.itemKodes.push(kode);
+            this.itemPenulis.push(penulis);
         }
     },
 
@@ -31,6 +34,7 @@
         this.items.splice(index, 1);
         this.itemNames.splice(index, 1);
         this.itemKodes.splice(index, 1);
+        this.itemPenulis.splice(index, 1);
     },
 
     move(index, direction) {
@@ -40,6 +44,7 @@
         swap(this.items, index, to);
         swap(this.itemNames, index, to);
         swap(this.itemKodes, index, to);
+        swap(this.itemPenulis, index, to);
     }
 }" wire:key="search-array-{{ $typeXString }}">
 
@@ -111,6 +116,12 @@
                                     <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
                                     <span>Fakultas {{ $x['fakultas'] }}</span>
                                 @endif
+                                @if ($selectX == 'selectRefArray')
+                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                    <span>{{ $x['penulis'] }} ({{ $x['tahun'] }})</span>
+                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                    <span>{{ $x['penerbit'] }}</span>
+                                @endif
                             </div>
                     </div>
                     <button type="button"
@@ -121,9 +132,10 @@
                                 items.splice(index, 1);
                                 itemNames.splice(index, 1);
                                 itemKodes.splice(index, 1);
+                                itemPenulis.splice(index, 1);
                             }
                         } else {
-                            addItem({{ $x['id'] }}, '{{ $x[$typeXString] }}', '{{ $x['kode'] }}');
+                            addItem({{ $x['id'] }}, '{{ $x[$typeXString] }}', '{{ $x['kode'] }}', '{{ $x['penulis'] ?? null }}');
                         }
                     "
                         :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' :
@@ -186,6 +198,8 @@
                                 - <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id "></span>
                                 <span class="mx-2">|</span>
                                 <span x-text="itemKodes[index]"></span>
+                                <span class="mx-2">|</span>
+                                <span x-text="itemPenulis[index]"></span>
                             </div>
                         </div>
                     </div>

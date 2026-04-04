@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                $store.mk?.resetSelect();
+                {{-- $store.mk?.resetSelect(); --}}
 
                 const type = '{{ $typeXString }}';
                 console.log('Nilai type saat ini:', type);

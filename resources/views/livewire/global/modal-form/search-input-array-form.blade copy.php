@@ -4,11 +4,16 @@
     items: @entangle($idString).live,
     itemNames: @entangle($selectedNameArray).live,
     itemKodes: @entangle($kodeString).live,
+    {{-- itemDetails: @entangle($selectedDetailArray ?? []).live, --}}
+
+    itemDetails: [],
+
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];
         if (!Array.isArray(this.itemNames)) this.itemNames = [];
         if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
+       if (!Array.isArray(this.itemDetails)) this.itemDetails = [];
     },
 
     parentSelectedId: @entangle($parentIdString ?? null).live,
@@ -17,29 +22,41 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, name, kode) {
-        // Ubah id menjadi Number atau String secara konsisten
-        let normalizedId = Number(id);
+
+    addItem(obj) {
+        let normalizedId = Number(obj.id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
-            this.itemNames.push(name);
-            this.itemKodes.push(kode);
+            
+            this.itemDetails.push({
+                id: normalizedId,
+                judul: obj.judul || obj['{{ $typeXString }}'],
+                kode: obj.kode,
+                penulis: obj.penulis || null,
+                penerbit: obj.penerbit || null,
+                tahun: obj.tahun || null,
+                link: obj.link || null
+            });
         }
     },
 
     removeItem(index) {
         this.items.splice(index, 1);
-        this.itemNames.splice(index, 1);
-        this.itemKodes.splice(index, 1);
+        this.itemDetails.splice(index, 1);
     },
 
     move(index, direction) {
         let to = index + direction;
         if (to < 0 || to >= this.items.length) return;
-        const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
+        
+        const swap = (arr, a, b) => {
+            let temp = arr[a];
+            arr[a] = arr[b];
+            arr[b] = temp;
+        };
+
         swap(this.items, index, to);
-        swap(this.itemNames, index, to);
-        swap(this.itemKodes, index, to);
+        swap(this.itemDetails, index, to);
     }
 }" wire:key="search-array-{{ $typeXString }}">
 
@@ -111,25 +128,28 @@
                                     <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
                                     <span>Fakultas {{ $x['fakultas'] }}</span>
                                 @endif
+                                @if ($selectX == 'selectRefArray')
+                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                    <span>{{ $x['penulis'] }} ({{ $x['tahun'] }})</span>
+                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                    <span>{{ $x['penerbit'] }}</span>
+                                @endif
                             </div>
                     </div>
-                    <button type="button"
+                   
+                      <button type="button"
                         @click="
-                        if (items.includes({{ $x['id'] }})) {
-                            let index = items.indexOf({{ $x['id'] }});
-                            if (index !== -1) {
-                                items.splice(index, 1);
-                                itemNames.splice(index, 1);
-                                itemKodes.splice(index, 1);
+                            let rawData = {{ json_encode($x) }};
+                            if (items.includes(rawData.id)) {
+                                let index = items.indexOf(rawData.id);
+                                if (index !== -1) { removeItem(index); }
+                            } else {
+                                addItem(rawData.id, rawData['{{ $typeXString }}'], rawData.kode, rawData);
                             }
-                        } else {
-                            addItem({{ $x['id'] }}, '{{ $x[$typeXString] }}', '{{ $x['kode'] }}');
-                        }
-                    "
-                        :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' :
-                            'bg-[var(--focus-color)] text-white'"
+                        "
+                        :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' : 'bg-[var(--focus-color)] text-white'"
                         class="p-1.5 rounded-md transition-all group">
-
+                        
                         <template x-if="items.includes({{ $x['id'] }})">
                             <div class="relative">
                                 <flux:icon icon="check" variant="mini" class="group-hover:hidden" />
@@ -186,6 +206,8 @@
                                 - <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id "></span>
                                 <span class="mx-2">|</span>
                                 <span x-text="itemKodes[index]"></span>
+                                {{-- <span class="mx-2">|</span>
+                                <span x-text="itemPenulis[index]"></span> --}}
                             </div>
                         </div>
                     </div>

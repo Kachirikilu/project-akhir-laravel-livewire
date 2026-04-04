@@ -29,3 +29,11 @@
     @include('livewire.staff.rps-management.rps-modal-form')
     {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>
+
+{{-- <script>
+// document.addEventListener('alpine:init', () => {
+//     Alpine.store('rps', {
+
+//     });
+// });
+</script> --}}

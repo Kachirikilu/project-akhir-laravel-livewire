@@ -142,7 +142,7 @@
                 ])
                 <p class="mt-2 text-sm text-emerald-600 italic flex items-center gap-1 font-medium">
                     <flux:icon icon="check-circle" variant="mini" class="w-3 h-3" />
-                    Syarat minimal pertemuan terpenuhi (<span x-text="$store.rps.count_scpmk"></span>/14)
+                    Syarat minimal pertemuan terpenuhi <span x-text="$store.rps.count_scpmk"></span>/14
                 </p>
             </div>
         </template>

@@ -198,6 +198,7 @@ trait WithMatkulModal
         if (! $this->AuthCheck('staff')) {
             return; 
         }
+        dd( $data['prodi_id_array'], $this->prodi_id_array);
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 

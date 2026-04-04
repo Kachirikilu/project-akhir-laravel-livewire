@@ -33,7 +33,7 @@ trait WithCPMKSearchFilters
 
     public $cpmk_kode_array = [];
 
-    // public $sub_items_array = [];
+    public $items = [];
 
     /**
      * Helper untuk mapping hasil agar seragam
@@ -47,33 +47,111 @@ trait WithCPMKSearchFilters
     //     ])->toArray();
     // }
 
-    // private function mapCPMK($collection)
-    // {
-    //     // Pastikan relasi sub_cpmks di-load (asumsi nama relasi di model CPMK adalah sub_cpmks)
-    //     return $collection->map(fn ($c) => [
-    //         'id' => $c->id,
-    //         'kode' => $c->kode,
-    //         'deskripsi' => $c->deskripsi,
-    //         // Ambil data Sub-CPMK
-    //         'sub_cpmk' => $c->sub_cpmks->map(fn ($sub) => [
-    //             'id' => $sub->id,
-    //             'kode' => $sub->kode,
-    //             'deskripsi' => $sub->deskripsi,
-    //             'materi' => $sub->materi,
-    //             'metodologi' => $sub->metodologi,
-    //             'indikator' => $sub->indikator,
-    //             'metode' => $sub->metode,
-    //             'bobot' => $sub->bobot ?? 0,
-    //             'tugas' => $sub->tugas,
-    //             'w_tugas' => $sub->w_tugas,
-    //             'w_mandiri' => $sub->w_mandiri,
-
-    //         ])->toArray(),
-    //         'total_bobot' => $c->sub_cpmks->sum('bobot')
-    //     ])->toArray();
-    // }
-
     private function mapCPMK($collection)
+    {
+        return $collection->map(function ($c) {
+            $cpmkRefIds = collect($c->referensis)->pluck('id')->all();
+
+            return [
+                'id' => $c->id,
+                'kode' => $c->kode,
+                'deskripsi' => $c->deskripsi,
+                'total_bobot' => $c->sub_cpmks->sum('bobot'),
+
+                // Level Sub-CPMK
+                'scpmk' => $c->sub_cpmks->map(function ($sub) use ($cpmkRefIds) {
+                    return [
+                        'id' => $sub->id,
+                        'kode' => $sub->kode,
+                        'deskripsi' => $sub->deskripsi,
+                        'materi' => $sub->materi,
+                        'metodologi' => $sub->metodologi,
+                        'indikator' => $sub->indikator,
+                        'metode' => $sub->metode,
+                        'bobot' => $sub->bobot ?? 0,
+                        'tugas' => $sub->tugas,
+                        'w_tugas' => $sub->w_tugas,
+                        'w_mandiri' => $sub->w_mandiri,
+                        'ref' => $sub->referensis
+                            ->filter(fn ($sub_ref) => ! in_array($sub_ref->id, $cpmkRefIds))
+                            ->values()
+                            ->map(fn ($sub_ref) => [
+                                'id' => $sub_ref->id,
+                                'judul' => $sub_ref->judul,
+                                'penulis' => $sub_ref->penulis,
+                            ])->all(),
+                    ];
+                })->all(),
+
+                // Level CPMK (Referensi Utama)
+                'ref' => $c->referensis->map(fn ($ref) => [
+                    'id' => $ref->id,
+                    'judul' => $ref->judul,
+                    'penulis' => $ref->penulis,
+                    'tahun' => $ref->tahun,
+                ])->all(),
+
+                // Level CPL
+                'cpl' => $c->cpls->map(fn ($cpl) => [
+                    'id' => $cpl->id,
+                    'kode' => $cpl->kode,
+                    'deskripsi' => $cpl->deskripsi,
+                ])->all(),
+            ];
+        })->all();
+        // dd($collection);
+    }
+
+    private function mapCPMK3($collection)
+    {
+        // Pastikan relasi sub_cpmks di-load (asumsi nama relasi di model CPMK adalah sub_cpmks)
+        return $collection->map(fn ($c) => [
+            'id' => $c->id,
+            'kode' => $c->kode,
+            'deskripsi' => $c->deskripsi,
+            // Ambil data Sub-CPMK
+            'scpmk' => $c->sub_cpmks->map(fn ($sub) => [
+                'id' => $sub->id,
+                'kode' => $sub->kode,
+                'deskripsi' => $sub->deskripsi,
+                'materi' => $sub->materi,
+                'metodologi' => $sub->metodologi,
+                'indikator' => $sub->indikator,
+                'metode' => $sub->metode,
+                'bobot' => $sub->bobot ?? 0,
+                'tugas' => $sub->tugas,
+                'w_tugas' => $sub->w_tugas,
+                'w_mandiri' => $sub->w_mandiri,
+                'ref' => $c->referensis->map(fn ($sub_ref) => [
+                    'id' => $sub_ref->id,
+                    'kode' => $sub_ref->kode,
+                    'judul' => $sub_ref->judul,
+                    'penulis' => $sub_ref->penulis,
+                    'penerbit' => $sub_ref->penerbit,
+                    'tahun' => $sub_ref->tahun,
+                    'link' => $sub_ref->link,
+                ]),
+                'cpl' => $c->cpls->map(fn ($sub_cpl) => [
+                    'id' => $sub_cpl->id,
+                    'kode' => $sub_cpl->kode,
+                    'deskripsi' => $sub_cpl->deskripsi,
+                ]),
+
+            ])->toArray(),
+            'ref' => $c->referensis->map(fn ($ref) => [
+                'id' => $ref->id,
+                'kode' => $ref->kode,
+                'judul' => $ref->judul,
+                'penulis' => $ref->penulis,
+                'penerbit' => $ref->penerbit,
+                'tahun' => $ref->tahun,
+                'link' => $ref->link,
+            ]),
+            'total_bobot' => $c->sub_cpmks->sum('bobot'),
+        ])->toArray();
+    }
+
+    private function mapCPM2K($collection)
     {
         return $collection->map(function ($c) {
             // Ambil ID referensi yang sudah ada di level CPMK
@@ -101,13 +179,8 @@ trait WithCPMKSearchFilters
                             ->filter(fn ($sub_ref) => ! in_array($sub_ref->id, $cpmkRefIds))
                             ->map(fn ($sub_ref) => [
                                 'id' => $sub_ref->id,
-                                'kode' => $sub_ref->kode,
                                 'judul' => $sub_ref->judul,
                                 'penulis' => $sub_ref->penulis,
-                                'penerbit' => $sub_ref->penerbit,
-                                'tahun' => $sub_ref->tahun,
-                                'link' => $sub_ref->link,
-
                             ]),
                     ];
                 })->toArray(),
@@ -115,12 +188,9 @@ trait WithCPMKSearchFilters
                 // Referensi Utama dari CPMK
                 'ref' => $c->referensis->map(fn ($ref) => [
                     'id' => $ref->id,
-                    'kode' => $ref->kode,
                     'judul' => $ref->judul,
                     'penulis' => $ref->penulis,
-                    'penerbit' => $ref->penerbit,
                     'tahun' => $ref->tahun,
-                    'link' => $ref->link,
                 ]),
 
                 // CPL diambil dari relasi cpls() yang ada di Model CPMK
@@ -130,7 +200,7 @@ trait WithCPMKSearchFilters
                     'deskripsi' => $cpl->deskripsi,
                 ]),
 
-                'total_bobot' => $c->sub_cpmks->sum('bobot'),
+                'total_bobot' => $c->sub_cpmks->sum('pivot.bobot'), // Gunakan pivot jika bobot ada di tabel pivot
             ];
         })->toArray();
 
@@ -143,7 +213,7 @@ trait WithCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
             $this->cpmkSearchResults = $this->mapCPMK(
-                CPMK::query()->with(['sub_cpmks'])
+                CPMK::query()->with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])
                     ->searchCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpmk_name) {
@@ -161,7 +231,7 @@ trait WithCPMKSearchFilters
 
     public function selectCPMKForFilter($id)
     {
-        $data = CPMK::with(['sub_cpmks'])->
+        $data = CPMK::with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])->
         find($id);
 
         if ($data) {
@@ -180,7 +250,7 @@ trait WithCPMKSearchFilters
         $this->cpmk_kode = null;
         $this->resetErrorBag(['cpmk_id', 'cpmkNameSearch']);
 
-        $query = CPMK::query()->with(['sub_cpmks']);
+        $query = CPMK::query()->with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls']);
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchCPMK($value)->limit(12)->get();
@@ -214,7 +284,7 @@ trait WithCPMKSearchFilters
         $user = Auth::user();
         $prodiId = $user->prodi_id ?? null;
 
-        $query = CPMK::query()->with(['sub_cpmks']);
+        $query = CPMK::query()->with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls']);
 
         if (! $prodiId) {
             $defaultCPMK = $query
@@ -233,7 +303,7 @@ trait WithCPMKSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = CPMK::whereNotIn('id', $mainResults->pluck('id'))->with(['sub_cpmks'])
+            $extra = CPMK::whereNotIn('id', $mainResults->pluck('id'))->with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])
                 ->limit(12 - $mainResults->count())
                 ->get();
 
@@ -257,7 +327,7 @@ trait WithCPMKSearchFilters
         $this->cpmkNameSearch = $cpmkName;
         $this->cpmkResults = $this->getCPMKbyUser();
 
-        $data = CPMK::with(['sub_cpmks'])->find($id);
+        $data = CPMK::with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])->find($id);
         if ($data) {
             $this->cpmk_kode = $data->kode;
         }
@@ -269,16 +339,52 @@ trait WithCPMKSearchFilters
         $this->resetErrorBag(['cpmk_id', 'cpmkNameSearch']);
     }
 
+    // public function selectCPMKArray($id)
+    // {
+    //     $data = CPMK::find($id);
+    //     if ($data && ! in_array($id, $this->cpmk_id_array)) {
+    //         $this->cpmk_id_array[] = $id;
+    //         $this->cpmk_name_array[] = $data->deskripsi;
+    //         $this->cpmk_kode_array[] = $data->kode;
+    //     }
+    // }
     public function selectCPMKArray($id)
     {
-        $data = CPMK::find($id);
+        $data = CPMK::with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])->find($id);
+
         if ($data && ! in_array($id, $this->cpmk_id_array)) {
             $this->cpmk_id_array[] = $id;
             $this->cpmk_name_array[] = $data->deskripsi;
             $this->cpmk_kode_array[] = $data->kode;
 
-            $mappedData = $this->mapCPMK(collect([$data]));
-            $this->sub_items_array[] = $mappedData[0];
+            $allSelected = CPMK::with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])
+                ->whereIn('id', $this->cpmk_id_array)
+                ->get();
+
+            $this->items = array_values($this->mapCPMK($allSelected));
+            $this->dispatch('cpmk-updated', $this->items);
+
+        }
+    }
+
+    public function removeCPMKArray($id)
+    {
+        // Cari index dan hapus dari array pendukung
+        $index = array_search($id, $this->cpmk_id_array);
+        if ($index !== false) {
+            unset($this->cpmk_id_array[$index]);
+            unset($this->cpmk_name_array[$index]);
+            unset($this->cpmk_kode_array[$index]);
+
+            // Re-index array
+            $this->cpmk_id_array = array_values($this->cpmk_id_array);
+
+            // Update $items agar Alpine Store ikut update
+            $allSelected = CPMK::with(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls'])
+                ->whereIn('id', array_merge($this->cpmk_id_array, [$id])) // Pastikan ID baru ikut masuk
+                ->get();
+
+            $this->items = array_values($this->mapCPMK($allSelected));
         }
     }
 
@@ -293,7 +399,6 @@ trait WithCPMKSearchFilters
         $this->cpmk_id_array = [];
         $this->cpmk_name_array = [];
         $this->cpmk_kode_array = [];
-        $this->sub_items_array = [];
         $this->cpmkNameSearch = '';
     }
 }

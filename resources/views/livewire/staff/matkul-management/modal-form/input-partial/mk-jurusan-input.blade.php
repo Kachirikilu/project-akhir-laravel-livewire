@@ -54,7 +54,7 @@
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prodiResults,
-        'selectX' => 'selectProdi',
+        'selectX' => 'selectProdiArray',
         'modelString' => 'nama_prodi_array',
         // 'resetXInput' => 'resetProdiInput()',
         'typeXString' => 'prodi',

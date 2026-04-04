@@ -1,4 +1,4 @@
-<div class="relative" wire:key="search-input-form-{{ $typeXString }}" x-data="{
+<div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     selectedId: @entangle($idString).live,
@@ -111,7 +111,7 @@
                 text-sm">
 
                 <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col mr-4">
                         <div class="text-[var(--contrast-main-text)] font-medium">
                             {{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}
                         </div>

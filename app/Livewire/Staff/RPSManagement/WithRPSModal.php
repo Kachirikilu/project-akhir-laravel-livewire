@@ -52,7 +52,7 @@ trait WithRPSModal
         $this->resetErrorBag();
 
         try {
-            $mk = RPS::with(['prodis'])->findOrFail($id);
+            $mk = RPS::with(['prodis', 'cpmks.sub_cpmks', 'cpmks.sub_cpmks.referensis', 'cpmks.referensis', 'cpmks.cpls'])->findOrFail($id);
 
             $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
             $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
@@ -87,6 +87,14 @@ trait WithRPSModal
             }
 
             $this->showRPSModal = true;
+
+            // Fill CPMK data for edit mode
+            $this->cpmk_id_array = $mk->cpmks->pluck('id')->toArray();
+            $this->cpmk_name_array = $mk->cpmks->pluck('deskripsi')->toArray();
+            $this->cpmk_kode_array = $mk->cpmks->pluck('kode')->toArray();
+
+            $allSelected = $mk->cpmks->load(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls']);
+            $this->items = $this->mapCPMK($allSelected);
 
             $this->dispatch('fill-modal-mk', mk: $mk);
             $this->dispatch('refresh-component');
@@ -227,6 +235,11 @@ trait WithRPSModal
                 if (! empty($targetIds)) {
                     $mk->prodis()->attach($targetIds);
                 }
+
+                // Attach selected CPMKs
+                if (!empty($this->cpmk_id_array)) {
+                    $mk->cpmks()->attach($this->cpmk_id_array);
+                }
             });
 
             $this->resetInputRPS();
@@ -292,6 +305,9 @@ trait WithRPSModal
                 }
 
                 $mk->prodis()->sync($syncData);
+
+                // Sync selected CPMKs
+                $mk->cpmks()->sync($this->cpmk_id_array ?: []);
             });
 
             $this->dispatch('refresh-data');
@@ -348,6 +364,23 @@ trait WithRPSModal
         ];
     }
 
+    // Alias methods for view compatibility
+    public function saveRPS($data)
+    {
+        return $this->saveMK($data);
+    }
+
+    public function updateRPS($data)
+    {
+        return $this->updateMK($data);
+    }
+
+    public function editRPS($id, $tingkatan)
+    {
+        return $this->editMK($id, $tingkatan);
+    }
+// }
+
     private function resetInputRPS()
     {
         $this->prodiNameSearch = '';
@@ -365,6 +398,9 @@ trait WithRPSModal
         $this->prodi_id_array = [];
         $this->prodi_name_array = [];
         $this->prodi_kode_array = [];
+        
+        // $this->resetCPMKArray();
+        // $this->items = [];
         
         $this->resetErrorBag();
     }

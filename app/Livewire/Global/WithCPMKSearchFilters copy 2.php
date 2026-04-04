@@ -33,8 +33,6 @@ trait WithCPMKSearchFilters
 
     public $cpmk_kode_array = [];
 
-    // public $sub_items_array = [];
-
     /**
      * Helper untuk mapping hasil agar seragam
      */
@@ -101,13 +99,8 @@ trait WithCPMKSearchFilters
                             ->filter(fn ($sub_ref) => ! in_array($sub_ref->id, $cpmkRefIds))
                             ->map(fn ($sub_ref) => [
                                 'id' => $sub_ref->id,
-                                'kode' => $sub_ref->kode,
                                 'judul' => $sub_ref->judul,
                                 'penulis' => $sub_ref->penulis,
-                                'penerbit' => $sub_ref->penerbit,
-                                'tahun' => $sub_ref->tahun,
-                                'link' => $sub_ref->link,
-
                             ]),
                     ];
                 })->toArray(),
@@ -115,12 +108,9 @@ trait WithCPMKSearchFilters
                 // Referensi Utama dari CPMK
                 'ref' => $c->referensis->map(fn ($ref) => [
                     'id' => $ref->id,
-                    'kode' => $ref->kode,
                     'judul' => $ref->judul,
                     'penulis' => $ref->penulis,
-                    'penerbit' => $ref->penerbit,
                     'tahun' => $ref->tahun,
-                    'link' => $ref->link,
                 ]),
 
                 // CPL diambil dari relasi cpls() yang ada di Model CPMK
@@ -130,7 +120,7 @@ trait WithCPMKSearchFilters
                     'deskripsi' => $cpl->deskripsi,
                 ]),
 
-                'total_bobot' => $c->sub_cpmks->sum('bobot'),
+                'total_bobot' => $c->sub_cpmks->sum('pivot.bobot'), // Gunakan pivot jika bobot ada di tabel pivot
             ];
         })->toArray();
 
@@ -276,9 +266,6 @@ trait WithCPMKSearchFilters
             $this->cpmk_id_array[] = $id;
             $this->cpmk_name_array[] = $data->deskripsi;
             $this->cpmk_kode_array[] = $data->kode;
-
-            $mappedData = $this->mapCPMK(collect([$data]));
-            $this->sub_items_array[] = $mappedData[0];
         }
     }
 
@@ -293,7 +280,6 @@ trait WithCPMKSearchFilters
         $this->cpmk_id_array = [];
         $this->cpmk_name_array = [];
         $this->cpmk_kode_array = [];
-        $this->sub_items_array = [];
         $this->cpmkNameSearch = '';
     }
 }

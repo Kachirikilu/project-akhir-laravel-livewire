@@ -23,6 +23,7 @@ trait WithReferensiSearchFilters
     public $ref_id_array = [];
     public $ref_name_array = [];
     public $ref_kode_array = [];
+    // public $ref_item_array = [];
 
     /**
      * Helper untuk mapping hasil agar seragam
@@ -180,6 +181,12 @@ trait WithReferensiSearchFilters
             $this->ref_id_array[] = $id;
             $this->ref_name_array[] = $data->judul;
             $this->ref_kode_array[] = $data->kode;
+            // $this->ref_item_array[] = [
+            //     'penulis' => $data->penulis,
+            //     'penerbit' => $data->penerbit,
+            //     'tahun' => $data->tahun,
+            //     'link' => $data->link
+            // ];
         }
     }
 
@@ -194,6 +201,7 @@ trait WithReferensiSearchFilters
         $this->ref_id_array = [];
         $this->ref_name_array = [];
         $this->ref_kode_array = [];
+        // $this->ref_item_array = [];
         $this->refNameSearch = '';
     }
 }

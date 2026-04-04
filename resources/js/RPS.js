@@ -19,14 +19,14 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
-        nama_matkul: "",
-        digit_akademik: "",
-        digit_semester: "",
-        digit_mk: "",
-        semester: "",
-        kode_blok: "",
-        tipe_sks: "",
-        sks_kuliah: "",
+        // nama_matkul: "",
+        // digit_akademik: "",
+        // digit_semester: "",
+        // digit_mk: "",
+        // semester: "",
+        // kode_blok: "",
+        // tipe_sks: "",
+        // sks_kuliah: "",
 
         matkul_kode: "",
         tahun_akademik: "",
@@ -46,9 +46,81 @@ document.addEventListener("alpine:init", () => {
         },
 
 
-        nama_prodi_search_array: [],
-        prodi_id_array: [],
-        prodi_kode_array: [],
+        ref_cpmk: [], 
+        ref_scpmk: [],
+        cpl_cpmk: [],
+
+        // Di dalam Alpine.store('rps')
+        update(allSubItems) {
+            // Jika allSubItems kosong, pastikan store juga bersih
+            if (!allSubItems || allSubItems.length === 0) {
+                this.ref_cpmk = [];
+                this.ref_scpmk = [];
+                this.cpl_cpmk = [];
+                this.count_scpmk = 0; // Reset jumlah sub-cpmk juga
+                return;
+            }
+
+            this.ref_cpmk = [];
+            this.ref_scpmk = [];
+            this.cpl_cpmk = [];
+
+            allSubItems.forEach(item => {
+                if (item.cpl) {
+                    const combinedCPL = [...this.cpl_cpmk, ...item.cpl];
+                    this.cpl_cpmk = Array.from(new Map(combinedCPL.map(i => [i.id, i])).values());
+                }
+                if (item.ref) {
+                    const combinedRef = [...this.ref_cpmk, ...item.ref];
+                    this.ref_cpmk = Array.from(new Map(combinedRef.map(i => [i.id, i])).values());
+                }
+                if (item.scpmk) {
+                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
+                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
+                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
+                }
+            });
+        },
+
+        ref_penulis: [],
+        ref_tahun: [],
+        ref_penerbit: [],
+
+
+        reset() {
+            // this.ref_cpmk = [];
+            // this.ref_scpmk = [];
+            // this.cpl_cpmk = [];
+            // this.count_scpmk = 0;
+            // this.typeModal = "";
+            // this.isEdit = 0;
+            // Tambahkan variabel lain yang perlu di-nol-kan
+        },
+        // Fungsi khusus untuk reset total saat tutup modal
+        clearAll() {
+            // this.ref_cpmk = [];
+            // this.ref_scpmk = [];
+            // this.cpl_cpmk = [];
+        },
+        
+        setTypeModal(type) {
+            this.typeModal = type;
+        },
+
+        setIsEdit(isEdit) {
+            this.isEdit = isEdit;
+        },
+
+        // reset() {
+        //     // this.items = [];
+        //     // this.scpmkCount = 0;
+        //     // this.typeModal = null;
+        //     // this.isEdit = false;
+        // },
+
+        // nama_prodi_search_array: [],
+        // prodi_id_array: [],
+        // prodi_kode_array: [],
 
         setValueMK(
             tingkatanMode,
@@ -98,7 +170,7 @@ document.addEventListener("alpine:init", () => {
             this.is_wajib = "";
         },
         
-        reset() {
+        reset3() {
             this.typeModal = "",
             this.typeModal_delete = "",
             this.isEdit = 0,
