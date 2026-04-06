@@ -12,9 +12,10 @@ trait WithSubCPMKSearchFilters
 
     public $scpmkSearchQuery = '';
     public $scpmkSearchResults = [];
-    public $scpmk_name = '';
+    public $modeSCPMK = '';
     public $scpmk_id;
-    public $scpmk_kode;
+    public $scpmk_name = '';
+    public $scpmk_items;
     public $scpmkNameSearch = '';
     public $scpmkResults = [];
     public $selectedSCPMKId = null;
@@ -22,11 +23,8 @@ trait WithSubCPMKSearchFilters
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $scpmk_id_array = [];
     public $scpmk_name_array = [];
-    public $scpmk_kode_array = [];
+    public $scpmk_items_array = [];
 
-    /**
-     * Helper untuk mapping hasil agar seragam
-     */
     private function mapSCPMK($collection)
     {
         return $collection->map(fn ($s) => [
@@ -43,6 +41,22 @@ trait WithSubCPMKSearchFilters
         ])->toArray();
     }
 
+    private function scpmkQuery()
+    {
+        return SubCPMK::query()->with('cpmks.rps', 'cpmks', 'referensis');
+    }
+
+    private function itemsSCPMK($sc)
+    {
+        if (! $sc) {
+            return null;
+        }
+        return [
+            'kode' => $sc->kode,
+            'name' => $sc->deskripsi,
+        ];
+    }
+
     public function inputSCPMKFilter()
     {
         $search = trim($this->scpmkSearchQuery);
@@ -50,7 +64,7 @@ trait WithSubCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->scpmk_name) {
             $this->scpmkSearchResults = $this->mapSCPMK(
-                SubCPMK::searchSCPMK($search)->limit(12)->get()
+                $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->scpmk_name) {
             $this->scpmkSearchResults = $this->getSCPMKbyUser();
@@ -61,21 +75,19 @@ trait WithSubCPMKSearchFilters
 
     public function resetSCPMKFilter()
     {
-        $this->reset(['selectedSCPMKId', 'scpmk_name', 'scpmkSearchQuery', 'scpmk_kode']);
+        $this->reset(['selectedSCPMKId', 'scpmkSearchQuery', 'scpmk_name', 'scpmk_items']);
         $this->resetPage();
     }
 
     public function selectSCPMKForFilter($id)
     {
-        $data = SubCPMK::
-        // with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->
-        find($id);
+        $data = $this->scpmkQuery()->find($id);
 
         if ($data) {
             $this->selectedSCPMKId = $id;
-            $this->scpmk_kode = $data->kode;
             $this->scpmk_name = $data->deskripsi;
             $this->scpmkSearchQuery = $data->deskripsi;
+            $this->scpmk_items = $this->itemsSCPMK($data);
             $this->scpmkSearchResults = [];
             $this->resetPage();
         }
@@ -84,26 +96,39 @@ trait WithSubCPMKSearchFilters
     public function updatedSCPMKNameSearch($value)
     {
         $this->scpmk_id = null;
-        $this->scpmk_kode = null;
+        $this->scpmk_items = null;
         $this->resetErrorBag(['scpmk_id', 'scpmkNameSearch']);
 
-        $query = SubCPMK::query();
+        $query = $this->scpmkQuery();
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchSCPMK($value)->limit(12)->get();
             $this->scpmkResults = $this->mapSCPMK($results);
 
-            // Exact Match Logic
-            $exactMatch = $results->first(function ($sc) use ($value) {
+            $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+            $exactMatch = $results->first(function ($sc) use ($value, $normalizedValue) {
+                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($sc->kode));
+                
                 return strtolower($sc->deskripsi) === strtolower($value) 
-                    || strtolower($sc->kode) === strtolower($value);
+                    || $normalizedMkKode === $normalizedValue;
             });
 
             if ($exactMatch) {
                 $this->scpmk_id = $exactMatch->id;
-                $this->scpmk_kode = $exactMatch->kode;
+                $this->scpmk_items = $this->itemsSCPMK($exactMatch);
                 $this->scpmkNameSearch = $exactMatch->deskripsi;
                 $this->scpmkResults = [];
+            }
+            if ($exactMatch) {
+                $this->scpmkNameSearch = $exactMatch->deskripsi;
+                if ($this->modeSCPMK == 'single') {
+                    $this->scpmk_id = $exactMatch->id;
+                    $this->scpmk_items = $this->itemsSCPMK($exactMatch);
+                    $this->scpmkResults = [];
+                } else {
+                    $this->scpmk_id_array[] = $exactMatch->id;
+                    $this->scpmk_items_array[] = $this->itemsSCPMK($exactMatch);
+                }
             }
         } else {
             if (Auth::user()->prodi_id) {
@@ -121,7 +146,7 @@ trait WithSubCPMKSearchFilters
         $user = Auth::user();
         $prodiId = $user->prodi_id ?? null;
 
-        $query = SubCPMK::query();
+        $query = $this->scpmkQuery();
         
         if (!$prodiId) {
             $defaultSCPMK = $query
@@ -149,8 +174,9 @@ trait WithSubCPMKSearchFilters
         return $this->mapSCPMK($mainResults);
     }
 
-    public function fetchSCPMK($query = '')
+    public function fetchSCPMK($query = '', $mode = 'single')
     {
+        $this->modeSCPMK = $mode;
         if (empty($query) || $this->scpmk_id) {
             $this->scpmkResults = $this->getSCPMKbyUser();
         }
@@ -165,9 +191,9 @@ trait WithSubCPMKSearchFilters
         $this->scpmkNameSearch = $scpmkName;
         $this->scpmkResults = $this->getSCPMKbyUser();
 
-        $data = SubCPMK::find($id);
+        $data = $this->scpmkQuery()->find($id);
         if ($data) {
-            $this->scpmk_kode = $data->kode;
+            $this->scpmk_items = $this->itemsSCPMK($data);
         }
 
         if (method_exists($this, 'fetchSCPMK')) {
@@ -178,17 +204,18 @@ trait WithSubCPMKSearchFilters
     }
     public function selectSCPMKArray($id)
     {
-        $data = SubCPMK::find($id);
+        $data = $this->scpmkQuery()->find($id);
         if ($data && ! in_array($id, $this->scpmk_id_array)) {
             $this->scpmk_id_array[] = $id;
             $this->scpmk_name_array[] = $data->deskripsi;
-            $this->scpmk_kode_array[] = $data->kode;
+            $this->scpmk_items_array[] = $this->itemsSCPMK($data);
+            $this->scpmk_search = '';
         }
     }
 
     public function resetSCPMKInput()
     {
-        $this->reset(['scpmk_id', 'scpmk_kode', 'scpmkNameSearch']);
+        $this->reset(['scpmk_id', 'scpmk_items', 'scpmkNameSearch']);
         $this->scpmkResults = $this->getSCPMKbyUser();
     }
 
@@ -196,7 +223,7 @@ trait WithSubCPMKSearchFilters
     {
         $this->scpmk_id_array = [];
         $this->scpmk_name_array = [];
-        $this->scpmk_kode_array = [];
+        $this->scpmk_items_array = [];
         $this->scpmkNameSearch = '';
     }
 }

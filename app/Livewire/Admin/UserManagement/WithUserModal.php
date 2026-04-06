@@ -77,6 +77,12 @@ trait WithUserModal
         if ($this->prodi_id) {
             $prodi = Prodi::find($this->prodi_id);
             $this->prodiNameSearch = $prodi ? $prodi->prodi : '';
+            $this->prodi_items = [
+                    'kode'  => $prodi->kode,
+                    'name'  => $prodi->prodi,
+                    'name2'  => $prodi->jurusanJr,
+                    'name3'  => $prodi->fakultasFk
+                ];
         } else {
             $this->prodiNameSearch = '';
         }
@@ -480,7 +486,7 @@ trait WithUserModal
         ];
     }
 
-    private function resetInputUser(
+    public function resetInputUser(
         // $keepProdi = false
         )
     {

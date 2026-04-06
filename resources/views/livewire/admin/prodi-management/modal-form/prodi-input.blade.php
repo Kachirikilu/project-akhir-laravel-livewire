@@ -27,16 +27,20 @@
         'xResults' => $jurusanResults,
         'selectX' => 'selectJurusan',
         'modelString' => 'nama_jurusan_search',
+
+        'idString' => 'jurusan_id',
+        'itemsAllString' => 'jurusan_items',
+
         'resetXInput' => 'resetJurusanInput()',
         'typeXString' => 'jurusan',
+        'typeX2String' => 'fakultas',
+
         'nameXString' => 'Jurusan',
-        'idString' => 'jurusan_id',
-        'kodeString' => 'jurusan_kode',
         'searchString' => 'jurusan_search',
         'nameSearchString' => 'jurusanNameSearch',
         'fetchString' => 'fetchJurusan',
         'iconString' => 'book-open',
-        'wireLoading' => 'fetchJurusan',
+        'wireLoading' => 'fetchJurusan'
     ])
 
     {{-- 📧 Kode Program Studi Input --}}

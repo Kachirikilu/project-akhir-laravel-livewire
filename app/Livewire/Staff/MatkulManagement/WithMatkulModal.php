@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Staff\MatkulManagement;
 
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Livewire\Global\HasToast;
 
 trait WithMatkulModal
 {
@@ -21,7 +21,7 @@ trait WithMatkulModal
     public function addMK($tingkatan)
     {
         if (! $this->AuthCheck('staff')) {
-            return; 
+            return;
         }
         $this->resetInputMK();
 
@@ -43,7 +43,7 @@ trait WithMatkulModal
     public function editMK($id, $tingkatan)
     {
         if (! $this->AuthCheck('staff')) {
-            return; 
+            return;
         }
         $this->selected_id = $id;
         $this->mkType = $tingkatan;
@@ -59,35 +59,53 @@ trait WithMatkulModal
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
 
             $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
-            $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
-            $this->prodi_kode_array = $mk->prodis->pluck('kode')->toArray();
+            foreach ($mk->prodis as $prodi) {
+                $this->prodi_items_array[] = [
+                    'kode' => $prodi->kode,
+                    'name' => $prodi->prodi,
+                    'name2' => $prodi->jurusanJr,
+                    'name3' => $prodi->fakultasFk,
+                ];
+            }
 
-            $this->dispatch('refresh-component');
+            // $this->dispatch('refresh-component');
 
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
                 $this->jurusan_id = $firstProdi->jurusan_id;
-                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan;
+                $this->jurusanNameSearch = $firstProdi->jurusanJr;
                 $this->jurusan_kode = $firstProdi->kode;
 
                 $this->fakultas_id = $firstProdi->fakultas_id;
-                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->fakultas;
+                $this->fakultasNameSearch = $firstProdi->fakultasFk;
                 $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->prodi_id = $firstProdi->id;
+                }
+                if ($tingkatan == 1) {
                     $this->prodiNameSearch = $firstProdi->prodi;
-                    $this->prodi_kode = $firstProdi->kode;
+                    $this->prodi_items = [
+                        'kode' => $firstProdi->kode,
+                        'name' => $firstProdi->prodi,
+                        'name2' => $firstProdi->jurusanJr,
+                        'name3' => $firstProdi->fakultasFk,
+                    ];
+                    $this->fetchProdi($this->prodiNameSearch);
                 }
             }
 
-            if ($tingkatan == 1 || $tingkatan == 4) {
+            
+
+            if ($tingkatan == 4) {
                 $this->updatedProdiNameSearch($this->prodiNameSearch);
             } elseif ($tingkatan == 2) {
                 $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+                $this->fetchJurusan();
             } elseif ($tingkatan == 3) {
                 $this->updatedFakultasNameSearch($this->fakultasNameSearch);
+                $this->fetchFakultas();
             }
 
             $this->showMKModal = true;
@@ -196,9 +214,8 @@ trait WithMatkulModal
     public function saveMK($data)
     {
         if (! $this->AuthCheck('staff')) {
-            return; 
+            return;
         }
-        dd( $data['prodi_id_array'], $this->prodi_id_array);
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
 
@@ -211,7 +228,7 @@ trait WithMatkulModal
             $tingkatan = $this->mkType;
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
-            DB::transaction(function () use ($validated, $tingkatan, $kodePrefix, $data) {
+            DB::transaction(function () use ($validated, $tingkatan, $data) {
 
                 $mk = MataKuliah::create([
                     'tingkatan_mk' => $tingkatan,
@@ -237,7 +254,7 @@ trait WithMatkulModal
             $this->resetInputMK();
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']));
+            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_matkul']));
 
         } catch (ValidationException $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
@@ -252,7 +269,7 @@ trait WithMatkulModal
     public function updateMK($data)
     {
         if (! $this->AuthCheck('staff')) {
-            return; 
+            return;
         }
         $data['prodi_id'] = $this->prodi_id;
         $data['prodi_id_array'] = $this->prodi_id_array;
@@ -266,7 +283,7 @@ trait WithMatkulModal
             $tingkatan = $this->mkType;
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
-            DB::transaction(function () use ($validated, $tingkatan, $data, $kodePrefix) {
+            DB::transaction(function () use ($validated, $tingkatan, $data) {
                 $mk = MataKuliah::findOrFail($this->selected_id);
 
                 // 3. UPDATE DATA UTAMA
@@ -301,7 +318,7 @@ trait WithMatkulModal
 
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah ' . $this->normalizeNama($validated['nama_matkul']), type: 'update');
+            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_matkul']), type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
@@ -368,9 +385,8 @@ trait WithMatkulModal
         $this->fakultas_name = null;
 
         $this->prodi_id_array = [];
-        $this->prodi_name_array = [];
-        $this->prodi_kode_array = [];
-        
+        $this->prodi_items_array = [];
+
         $this->resetErrorBag();
     }
 }

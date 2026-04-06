@@ -14,17 +14,17 @@ trait WithProdiSearchFilters
 
     public $prodiSearchResults = [];
 
-    public $prodi_name = '';
-
-    public $prodi_name_array = [];
+    public $modeProdi = '';
 
     public $prodi_id;
 
     public $prodi_id_array = [];
 
-    public $prodi_kode;
+    public $prodi_name;
 
-    public $prodi_kode_array = [];
+    public $prodi_items;
+
+    public $prodi_items_array = [];
 
     public $prodiNameSearch = '';
 
@@ -36,17 +36,34 @@ trait WithProdiSearchFilters
 
     public $showMKModal = false;
 
-
     private function mapProdi($collection)
     {
         return $collection->map(fn ($pr) => [
             'id' => $pr->id,
             'kode' => $pr->kode,
             'prodi' => $pr->prodi,
-            'jurusan' => $pr->jurusan,
-            'fakultas' => $pr->fakultas,
-            'strata' => $pr->strata
+            'jurusan' => $pr->jurusanJr,
+            'fakultas' => $pr->fakultasFk,
+            'strata' => $pr->strata,
         ])->toArray();
+    }
+
+    private function prQuery()
+    {
+        return Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
+    }
+
+    private function itemsPr($pr)
+    {
+        if (! $pr) {
+            return null;
+        }
+        return [
+            'kode' => $pr->kode,
+            'name' => $pr->prodi,
+            'name2' => $pr->jurusanJr,
+            'name3' => $pr->fakultasFk,
+        ];
     }
 
     public function inputProdiFilter()
@@ -55,8 +72,7 @@ trait WithProdiSearchFilters
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->prodi_name) {
             $this->prodiSearchResults = $this->mapProdi(
-                Prodi::query()
-                    ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
+                $this->prQuery()
                     ->searchProdi($search)
                     ->limit(12)->get()
             );
@@ -67,22 +83,21 @@ trait WithProdiSearchFilters
         }
     }
 
-
     public function resetProdiFilter()
     {
-        $this->reset(['selectedProdiId', 'prodi_name', 'prodiSearchQuery', 'prodi_kode']);
+        $this->reset(['selectedProdiId', 'prodiSearchQuery', 'prodi_name', 'prodi_items']);
         $this->resetPage();
     }
 
     public function selectProdiForFilter($id)
     {
-        $data = Prodi::with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->find($id);
+        $data = $this->prQuery()->find($id);
 
         if ($data) {
             $this->selectedProdiId = $id;
-            $this->prodi_kode = $data->kode;
             $this->prodi_name = $data->prodi;
             $this->prodiSearchQuery = $data->prodi;
+            $this->prodi_items = $this->itemsPr($data);
             $this->prodiSearchResults = [];
             $this->resetPage();
         }
@@ -90,73 +105,96 @@ trait WithProdiSearchFilters
 
     public function updatedProdiNameSearch($value)
     {
-        // 1. Reset State Awal
         $this->prodi_id = null;
-        $this->prodi_kode = null;
+        $this->prodi_items = null;
         $this->resetErrorBag(['prodi_id', 'prodiNameSearch']);
 
-        // 2. Inisialisasi Query Dasar
-        $query = Prodi::query()
-            ->select('prodis.*')
-            ->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
+        $input = str($value)->lower()->trim();
 
-        // 3. PRIORITAS: Filter Berdasarkan Mode Mata Kuliah (Scope Constraints)
-        if ($this->showMKModal) {
-            if (($this->mkType === 2) && filled($this->jurusan_id)) {
-                $query->where('prodis.jurusan_id', $this->jurusan_id);
-            } elseif (($this->mkType === 3) && filled($this->fakultas_id)) {
-                $query->whereHas('jurusan_rel', function ($q) {
-                    $q->where('fakultas_id', $this->fakultas_id);
-                });
-            }
+        // Jika input kosong, kembalikan ke daftar default yang sudah difilter
+        if (empty($input->toString())) {
+            $this->prodiResults = $this->getProdibyUser();
+
+            return;
         }
 
-        // 4. Logika Pencarian (Jika User Mengetik Sesuatu)
-        if (trim(strlen($value)) > 0) {
-            $results = $query->searchProdi($value)->limit(12)->get();
-            $this->prodiResults = $this->mapProdi($results);
+        $query = $this->prQuery()->select('prodis.*');
 
-            $exactMatch = $results->first(function ($prodi) use ($value) {
-                $input = str($value)->lower()->trim();
+        // --- TAMBAHKAN LOGIKA FILTER DI SINI ---
+        if (($this->mkType == 2) && filled($this->jurusan_id) && $this->showMKModal) {
+            $query->where('jurusan_id', $this->jurusan_id);
+        } elseif (($this->mkType == 3) && filled($this->fakultas_id) && $this->showMKModal) {
+            $query->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->fakultas_id));
+        }
+        // 1. Logika shortcut 'uni' untuk mkType 4
+        if ($this->modeProdi !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
+            $allProdis = $query->get();
+            foreach ($allProdis as $p) {
+                if (! in_array($p->id, $this->prodi_id_array)) {
+                    $this->prodi_id_array[] = $p->id;
+                    $this->prodi_items_array[] = $this->itemsPr($p);
+                }
+            }
+            $this->prodiNameSearch = '';
+            $this->prodiResults = $this->getProdibyUser();
 
-                $namaProdi = str($prodi->prodi)->lower()->trim();
-                $kodeProdi = str($prodi->kode)->lower()->trim();
-                $namaStrata = str($prodi->strata)->lower()->trim();
+            return;
+        }
 
-                $inisialStrata = match ($namaStrata->toString()) {
-                    'sarjana' => 's1',
-                    'magister' => 's2',
-                    'doktor' => 's3',
-                    default => ''
-                };
+        // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
+        $results = $query->searchProdi($value)->limit(12)->get();
+        $this->prodiResults = $this->mapProdi($results);
 
-                $possibilities = [
-                    $namaProdi->toString(),
-                    $kodeProdi->toString(),
-                    "$inisialStrata $namaProdi",
-                    "$namaStrata $namaProdi",
-                    "$inisialStrata$namaProdi",
-                ];
+        // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
+        $matches = $results->filter(function ($prodi) use ($input) {
+            $namaProdi = str($prodi->prodi)->lower()->trim();
+            $kodeProdi = str($prodi->kode)->lower()->trim();
 
-                return in_array($input->toString(), $possibilities);
-            });
+            $kodeJurusan = $kodeProdi;
+            $kodeFakultas = $kodeProdi;
 
-            if ($exactMatch) {
+            if ($this->mkType >= 2) {
+                $kodeJurusan = str($prodi->jurusan_rel?->kode ?? '')->lower()->trim();
+            }
+            if ($this->mkType >= 3) {
+                $kodeFakultas = str($prodi->jurusan_rel?->fakultas_rel?->kode ?? '')->lower()->trim();
+            }
+
+            $namaStrata = str($prodi->strata)->lower()->trim();
+            $inisialStrata = match ($namaStrata->toString()) {
+                'sarjana' => 's1', 'magister' => 's2', 'doktor' => 's3', default => ''
+            };
+
+            $possibilities = [
+                $namaProdi->toString(),
+                $kodeProdi->toString(),
+                $kodeJurusan->toString(),
+                $kodeFakultas->toString(),
+                "$inisialStrata $namaProdi",
+                "$namaStrata $namaProdi",
+                "$inisialStrata$namaProdi",
+            ];
+
+            return in_array($input->toString(), $possibilities);
+        });
+
+        // 4. Eksekusi Hasil Match
+        if ($matches->isNotEmpty()) {
+            if ($this->modeProdi == 'single') {
+                $exactMatch = $matches->first();
                 $this->prodi_id = $exactMatch->id;
-                $this->prodi_kode = $exactMatch->kode;
+                $this->prodi_items = $this->itemsPr($exactMatch);
                 $this->prodiNameSearch = $exactMatch->prodi;
-                $this->prodiResults = [];
-            }
-        }
-        // 5. Default State (Jika input kosong)
-        else {
-            if ($this->showMKModal && ($this->jurusan_id || $this->fakultas_id)) {
-                $this->prodiResults = $this->mapProdi(
-                    $query->orderBy('prodis.nama_prodi')->limit(12)->get()
-                );
             } else {
-                $this->prodiResults = $this->getProdibyUser();
+                foreach ($matches as $match) {
+                    if (! in_array($match->id, $this->prodi_id_array)) {
+                        $this->prodi_id_array[] = $match->id;
+                        $this->prodi_items_array[] = $this->itemsPr($match);
+                    }
+                }
+                $this->prodiNameSearch = '';
             }
+            $this->prodiResults = $this->getProdibyUser();
         }
     }
 
@@ -167,13 +205,14 @@ trait WithProdiSearchFilters
         $jurusanId = $user->jurusan_id ?? null;
         $fakultasId = $user->fakultas_id ?? null;
 
-        $query = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel']);
+        $query = $this->prQuery();
 
         if (! $prodiId) {
             $defaultProdis = $query
-                    ->orderBy('nama_prodi', 'asc')
-                    ->limit(12)
-                    ->get();
+                ->orderBy('nama_prodi', 'asc')
+                ->limit(12)
+                ->get();
+
             return $this->mapProdi($defaultProdis);
         }
 
@@ -200,7 +239,7 @@ trait WithProdiSearchFilters
         })->take(12);
 
         if ($mainResults->count() < 12) {
-            $extra = Prodi::query()->with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])
+            $extra = $this->prQuery()
                 ->whereHas('jurusan_rel', fn ($q) => $q->where('fakultas_id', '!=', $fakultasId))
                 ->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
@@ -211,8 +250,28 @@ trait WithProdiSearchFilters
         return $this->mapProdi($mainResults);
     }
 
-    public function fetchProdi($query = '')
+    // public function fetchProdi2($query = '', $mode = 'single')
+    // {
+    //     $this->modeProdi = $mode;
+
+    //     if (empty(trim($query))) {
+    //         $this->prodiResults = $this->getProdibyUser();
+
+    //         return;
+    //     }
+
+    //     $results = $this->prQuery()
+    //         ->searchProdi($query)
+    //         ->limit(12)
+    //         ->get();
+
+    //     $this->prodiResults = $this->mapProdi($results);
+    // }
+
+    public function fetchProdi($query = '', $mode = 'single')
     {
+
+        $this->modeProdi = $mode;
         if (empty($query) || $this->prodi_id) {
             $this->prodiResults = $this->getProdibyUser();
 
@@ -225,9 +284,9 @@ trait WithProdiSearchFilters
         $this->prodi_id = $id;
         $this->prodiNameSearch = $prodiName;
 
-        $data = Prodi::with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->find($id);
+        $data = $this->prQuery()->find($id);
         if ($data) {
-            $this->prodi_kode = $data->kode;
+            $this->prodi_items = $this->itemsPr($data);
         }
 
         $this->prodiResults = $this->getProdibyUser();
@@ -236,18 +295,19 @@ trait WithProdiSearchFilters
 
     public function selectProdiArray($id)
     {
-        $data = Prodi::find($id);
-        if ($data && ! in_array($id, $this->prodi_id_array)) {
+        $data = $this->prQuery()->find($id);
+
+        if ($data && ! in_array($id, (array) $this->prodi_id_array)) {
             $this->prodi_id_array[] = $id;
-            $this->prodi_name_array[] = $data->prodi;
-            $this->prodi_kode_array[] = $data->kode;
+            $this->prodi_items_array[] = $this->itemsPr($data);
+            $this->prodi_search = '';
         }
     }
 
     public function resetProdiInput()
     {
         $this->prodi_id = null;
-        $this->prodi_kode = null;
+        $this->prodi_items = null;
         $this->prodiNameSearch = '';
 
         $this->updatedProdiNameSearch('');
@@ -257,8 +317,7 @@ trait WithProdiSearchFilters
     public function resetProdiArray()
     {
         $this->prodi_id_array = [];
-        $this->prodi_name_array = [];
-        $this->prodi_kode_array = [];
+        $this->prodi_items_array = [];
         $this->prodiNameSearch = '';
     }
 }

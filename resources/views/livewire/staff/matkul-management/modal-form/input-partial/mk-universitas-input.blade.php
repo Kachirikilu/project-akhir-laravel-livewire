@@ -38,19 +38,20 @@
         'alpine' => 'mk',
         'xResults' => $prodiResults,
         'selectX' => 'selectProdiArray',
-        'modelString' => 'nama_prodi',
-        // 'resetXInput' => 'resetProdiInput()',
-        'typeXString' => 'prodi',
-        'nameXString' => 'Program Studi',
-        // 'noName' => 1,
+        'modelString' => 'nama_prodi_search',
+
         'idString' => 'prodi_id_array',
-        'kodeString' => 'prodi_kode_array',
+        'itemsAllString' => 'prodi_items_array',
+
+        'typeXString' => 'prodi',
+        'typeX2String' => 'jurusan',
+        'typeX3String' => 'fakultas',
+
+        'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
         'nameSearchString' => 'prodiNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
-    
-        'selectedNameArray' => 'prodi_name_array',
         'wireLoading' => 'fetchProdi'
     ])
 </div>

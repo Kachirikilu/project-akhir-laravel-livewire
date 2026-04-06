@@ -1,52 +1,50 @@
 <div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
-    selectedId: @entangle($idString).live,
-    selectedKode: @entangle($kodeString).live,
+    items: @entangle($idString).live,
+    itemsAll: @entangle($itemsAllString).live,
     isManual: false
 }"
-    x-effect="
-        if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
-            search = '';
-            selectedId = null;
-            selectedKode = null;
-        } else {
-            selectedId2 = $store.{{ $alpine ?? 'config' }}?.{{ $idString }};
+x-effect="
+    const config = $store.{{ $alpine ?? 'config' }};
+    
+    if (config?.isEdit === 0) {
+        search = '';
+        items = null;
+        itemsAll = null;
+    } else {
+        let currentId = config?.['{{ $idString }}'];
 
-            if (selectedId2 == '') {
-                search = '';
-                selectedId = null;
-                selectedKode = null;
-            } else {
-                if('{{ $typeXString }}' == 'prodi') {
-                    search = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
-                } else {
-                    search = '{{ $nameXString }} ' + $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
-                }
-                selectedId = $store.{{ $alpine ?? 'config' }}?.['{{ $idString }}'];
-                selectedKode = $store.{{ $alpine ?? 'config' }}?.['{{ $kodeString }}'];
-            }
+        if (!currentId) {
+            search = '';
+            items = null;
+            itemsAll = null;
+        } else {
+            search = config?.['{{ $modelString }}'];
+            items = currentId;
+            itemsAll = config?.['{{ $itemsAllString }}'];
         }
-"
-    wire:key="search-input-form-{{ $typeXString }}">
+    }
+">
     <label for="{{ $searchString }}" class="block text-sm font-medium">
         {{ $nameXString }} <span class="text-red-500">*</span>
     </label>
 
     <div class="relative mt-2">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
+            <flux:icon icon="{{ $iconString }}" variant="mini"
+                x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>
 
         <input x-model="search" autocomplete="off" type="text"
             @focus="
                 open = true; 
                 $event.target.select();
-                $wire.{{ $fetchString }}(); 
+                $wire.{{ $fetchString }}(null, 'single'); 
             "
             @input.debounce.300ms="
                 open = true;
-                $wire.{{ $fetchString }}(search); 
+                $wire.{{ $fetchString }}(search, 'single'); 
             "
             @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $searchString }}"
             placeholder="Cari nama {{ $nameXString }}..."
@@ -57,53 +55,66 @@
         {{-- Tombol Reset --}}
         @include('livewire.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
-            'xClick' => "search = ''; selectedId = null; selectedKode = null",
+            'xClick' => "search = ''; items = null; itemsAll = null",
             'xWire' => $resetXInput,
-            'xWire2' => $fetchString . '()',
+            'xWire2' => $fetchString . "(null, 'single')",
             'xAlpine' => $idString,
-            'xAlpine2' => $kodeString,
+            'xAlpine2' => $itemsAllString,
         ])
     </div>
 
     {{-- Info Terpilih --}}
-    <div x-show="selectedId && search" x-cloak>
+    <div x-show="items && search" x-cloak>
         <p class="text-[var(--focus-color)] text-xs mt-1 font-medium italic">
-            Terpilih: <span x-text="search" class="mx-1"></span> (Kode: <span x-text="selectedKode"></span>
+            Terpilih:
+            <span x-text="itemsAll?.name" class="ml-1"></span>
             <span class="mx-1">|</span>
-            ID: <span x-text="selectedId"></span>)
+            Kode: <span x-text="itemsAll?.kode"></span>
+
+            @if ($typeX2String ?? null)
+                <span class="mx-1">|</span>
+                <span x-text="itemsAll?.name2"></span>
+            @endif
+            @if ($typeX3String ?? null)
+                <span class="mx-1">|</span>
+                <span x-text="itemsAll?.name3"></span>
+            @endif
+            <span class="mx-1">|</span>
+            ID: <span x-text="items"></span>
         </p>
     </div>
 
     {{-- DROPDOWN HASIL --}}
-    <div x-show="open" x-cloak 
-    {{-- x-collapse.duration.300ms --}}
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-100"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
+    <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
         class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-80 overflow-y-auto custom-scrollbar">
 
         @forelse ($xResults as $x)
             <div wire:key="{{ $x[$typeXString] }}-{{ $x['id'] }}"
                 @click="
-    let newSearch = '{{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}';
-    let newKode = '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}';
+                    let newSearch = '{{ $x[$typeXString] }}';
+                    let newKode = '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}';
 
-    search = newSearch;
-    selectedId = {{ $x['id'] }};
-    selectedKode = newKode;
-    isManual = true;
+                    search = newSearch;
+                    items = {{ $x['id'] }};
+                    itemsAll = { 
+                        kode: '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}',
+                        name: '{{ $x[$typeXString] ?? '' }}',
+                        name2: '{{ isset($typeX2String) ? ($x[$typeX2String] ?? '') : '' }}',
+                        name3: '{{ isset($typeX3String) ? ($x[$typeX3String] ?? '') : '' }}'
+                    };
+                    isManual = true;
 
-    $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = selectedId;
-    $store.{{ $alpine ?? 'config' }}['{{ $kodeString }}'] = selectedKode;
-    $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $x[$typeXString] }}';
+                    $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;
+                    $store.{{ $alpine ?? 'config' }}['{{ $itemsAllString }}'] = itemsAll;
+                    $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $x[$typeXString] }}';
 
-    open = false;
+                    open = false;
 
-    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
-"
+                    $wire.{{ $selectX }}({{ $x['id'] }}, '{{ $x[$typeXString] }}')
+                "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
                 hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
@@ -113,16 +124,20 @@
                 <div class="flex justify-between items-center">
                     <div class="flex flex-col mr-4">
                         <div class="text-[var(--contrast-main-text)] font-medium">
-                            {{ (isset($noName) ? '' : $nameXString . ' ') . $x[$typeXString] }}
+                            {{ $x[$typeXString] }}
                         </div>
 
                         <div class="text-[var(--contrast-main-text)] font-medium text-xs flex items-center mt-0.5">
                             <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
                                     {{ $x['id'] }}</span></span>
 
-                            @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
+                            @if ($typeX2String ?? null)
                                 <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>Fakultas {{ $x['fakultas'] }}</span>
+                                <span>{{ $x[$typeX2String] }}</span>
+                            @endif
+                            @if ($typeX3String ?? null)
+                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                <span>{{ $x[$typeX3String] }}</span>
                             @endif
                         </div>
 

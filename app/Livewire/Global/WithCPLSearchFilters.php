@@ -12,9 +12,10 @@ trait WithCPLSearchFilters
 
     public $cplSearchQuery = '';
     public $cplSearchResults = [];
-    public $cpl_name = '';
+    public $modeCPL = '';
     public $cpl_id;
-    public $cpl_kode;
+    public $cpl_name = '';
+    public $cpl_items;
     public $cplNameSearch = '';
     public $cplResults = [];
     public $selectedCPLId = null;
@@ -22,7 +23,7 @@ trait WithCPLSearchFilters
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $cpl_id_array = [];
     public $cpl_name_array = [];
-    public $cpl_kode_array = [];
+    public $cpl_items_array = [];
 
     /**
      * Helper untuk mapping hasil agar seragam
@@ -36,6 +37,22 @@ trait WithCPLSearchFilters
         ])->toArray();
     }
 
+    private function cplQuery()
+    {
+        return CPL::query()->with('cpmks.rps', 'cpmks');
+    }
+
+    private function itemsCPL($cpl)
+    {
+        if (! $cpl) {
+            return null;
+        }
+        return [
+            'kode' => $cpl->kode,
+            'name' => $cpl->deskripsi,
+        ];
+    }
+
     public function inputCPLFilter()
     {
         $search = trim($this->cplSearchQuery);
@@ -43,7 +60,7 @@ trait WithCPLSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpl_name) {
             $this->cplSearchResults = $this->mapCPL(
-                CPL::searchCPL($search)->limit(12)->get()
+                $this->cplQuery()->searchCPL($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpl_name) {
             $this->cplSearchResults = $this->getCPLbyUser();
@@ -54,21 +71,19 @@ trait WithCPLSearchFilters
 
     public function resetCPLFilter()
     {
-        $this->reset(['selectedCPLId', 'cpl_name', 'cplSearchQuery', 'cpl_kode']);
+        $this->reset(['selectedCPLId', 'cplSearchQuery', 'cpl_name', 'cpl_items']);
         $this->resetPage();
     }
 
     public function selectCPLForFilter($id)
     {
-        $data = CPL::
-        // with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->
-        find($id);
+        $data = $this->cplQuery()->find($id);
 
         if ($data) {
             $this->selectedCPLId = $id;
-            $this->cpl_kode = $data->kode;
             $this->cpl_name = $data->deskripsi;
             $this->cplSearchQuery = $data->deskripsi;
+            $this->cpl_items = $this->itemsCPL($data);
             $this->cplSearchResults = [];
             $this->resetPage();
         }
@@ -77,26 +92,33 @@ trait WithCPLSearchFilters
     public function updatedCPLNameSearch($value)
     {
         $this->cpl_id = null;
-        $this->cpl_kode = null;
+        $this->cpl_items = null;
         $this->resetErrorBag(['cpl_id', 'cplNameSearch']);
 
-        $query = CPL::query();
+        $query = $this->cplQuery();
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchCPL($value)->limit(12)->get();
             $this->cplResults = $this->mapCPL($results);
 
-            // Exact Match Logic
-            $exactMatch = $results->first(function ($mk) use ($value) {
-                return strtolower($mk->deskripsi) === strtolower($value) 
-                    || strtolower($mk->kode) === strtolower($value);
+            $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+            $exactMatch = $results->first(function ($cpl) use ($value, $normalizedValue) {
+                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($cpl->kode));
+                
+                return strtolower($cpl->deskripsi) === strtolower($value) 
+                    || $normalizedMkKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $this->cpl_id = $exactMatch->id;
-                $this->cpl_kode = $exactMatch->kode;
                 $this->cplNameSearch = $exactMatch->deskripsi;
-                $this->cplResults = [];
+                if ($this->modeCPL == 'single') {
+                    $this->cpl_id = $exactMatch->id;
+                    $this->cpl_items = $this->itemsCPL($exactMatch);
+                    $this->cplResults = [];
+                } else {
+                    $this->cpl_id_array[] = $exactMatch->id;
+                    $this->cpl_items_array[] = $this->itemsCPL($exactMatch);
+                }
             }
         } else {
             if (Auth::user()->prodi_id) {
@@ -114,7 +136,7 @@ trait WithCPLSearchFilters
         $user = Auth::user();
         $prodiId = $user->prodi_id ?? null;
 
-        $query = CPL::query();
+        $query = $this->cplQuery();
         
         if (!$prodiId) {
             $defaultCPL = $query
@@ -132,7 +154,7 @@ trait WithCPLSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = CPL::whereNotIn('id', $mainResults->pluck('id'))
+            $extra = $this->cplQuery()->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
                 
@@ -142,8 +164,9 @@ trait WithCPLSearchFilters
         return $this->mapCPL($mainResults);
     }
 
-    public function fetchCPL($query = '')
+    public function fetchCPL($query = '', $mode = 'single')
     {
+        $this->modeCPL = $mode;
         if (empty($query) || $this->cpl_id) {
             $this->cplResults = $this->getCPLbyUser();
         }
@@ -158,9 +181,9 @@ trait WithCPLSearchFilters
         $this->cplNameSearch = $cplName;
         $this->cplResults = $this->getCPLbyUser();
 
-        $data = CPL::find($id);
+        $data = $this->cplQuery()->find($id);
         if ($data) {
-            $this->cpl_kode = $data->kode;
+            $this->cpl_items = $this->itemsCPL($data);
         }
 
         if (method_exists($this, 'fetchCPL')) {
@@ -171,17 +194,18 @@ trait WithCPLSearchFilters
     }
     public function selectCPLArray($id)
     {
-        $data = CPL::find($id);
+        $data = $this->cplQuery()->find($id);
         if ($data && ! in_array($id, $this->cpl_id_array)) {
             $this->cpl_id_array[] = $id;
             $this->cpl_name_array[] = $data->deskripsi;
-            $this->cpl_kode_array[] = $data->kode;
+            $this->cpl_items_array[] = $data->kode;
+            $this->cpl_search = '';
         }
     }
 
     public function resetCPLInput()
     {
-        $this->reset(['cpl_id', 'cpl_kode', 'cplNameSearch']);
+        $this->reset(['cpl_id', 'cpl_items', 'cplNameSearch']);
         $this->cplResults = $this->getCPLbyUser();
     }
 
@@ -189,7 +213,7 @@ trait WithCPLSearchFilters
     {
         $this->cpl_id_array = [];
         $this->cpl_name_array = [];
-        $this->cpl_kode_array = [];
+        $this->cpl_items_array = [];
         $this->cplNameSearch = '';
     }
 }

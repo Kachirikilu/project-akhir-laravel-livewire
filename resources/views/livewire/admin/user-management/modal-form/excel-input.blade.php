@@ -65,17 +65,22 @@
             'alpine' => 'user',
             'xResults' => $prodiResults,
             'selectX' => 'selectProdi',
-            'modelString' => 'nama_prodi_search',
+            'modelString' => 'nama_prodi',
+
+            'idString' => 'prodi_id',
+            'itemsAllString' => 'prodi_items',
+
             'resetXInput' => 'resetProdiInput()',
             'typeXString' => 'prodi',
+            'typeX2String' => 'jurusan',
+            'typeX3String' => 'fakultas',
+
             'nameXString' => 'Program Studi',
-            'noName' => 1,
-            'idString' => 'prodi_id',
-            'kodeString' => 'prodi_kode',
             'searchString' => 'prodi_search',
             'nameSearchString' => 'prodiNameSearch',
             'fetchString' => 'fetchProdi',
             'iconString' => 'academic-cap',
+            'wireLoading' => 'fetchProdi'
         ])
 
         <h4 class="text-lg font-medium text-[var(--contrast-second-text)] border-b dark:border-neutral-700 pb-2">

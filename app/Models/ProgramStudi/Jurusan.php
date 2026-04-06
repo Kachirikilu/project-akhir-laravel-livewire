@@ -48,7 +48,7 @@ class Jurusan extends Model
     protected function kodeFk(): Attribute
     {
         return Attribute::get(function () {
-            $kodeFakultas = $this->jurusan_rel?->fakultas_rel?->kode_fk;
+            $kodeFakultas = $this->fakultas_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -83,8 +83,16 @@ class Jurusan extends Model
         });
     }
 
+    protected function jurusanJr(): Attribute
+    {
+        return Attribute::get(fn () => 'Jurusan '.$this->nama_jurusan);
+    }
     protected function fakultas(): Attribute {
         return Attribute::get(fn() => $this->fakultas_rel?->nama_fakultas);
+    }
+    protected function fakultasFk(): Attribute
+    {
+        return Attribute::get(fn () => 'Fakultas '.$this->fakultas_rel?->nama_fakultas);
     }
 
     protected function createdDay(): Attribute

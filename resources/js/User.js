@@ -35,7 +35,7 @@ document.addEventListener("alpine:init", () => {
         // Prodi
         prodi_id: "",
         nama_prodi_search: "",
-        prodi_kode: "",
+        prodi_items: "",
 
         setValueUser(
             email,
@@ -50,6 +50,8 @@ document.addEventListener("alpine:init", () => {
             status,
             idProdi,
             namaProdi,
+            namaJurusan,
+            namaFakultas,
             kodePr
         ) {
             this.email = email;
@@ -66,7 +68,12 @@ document.addEventListener("alpine:init", () => {
 
             this.prodi_id = idProdi;
             this.nama_prodi_search = namaProdi;
-            this.prodi_kode = kodePr;
+            this.prodi_items = {
+                "kode": kodePr,
+                "name": namaProdi,
+                "name2": namaJurusan,
+                "name3": namaFakultas,
+            };
         },
         setDeleteUser(email, forceDelete) {
             this.email_delete = email;
@@ -99,7 +106,7 @@ document.addEventListener("alpine:init", () => {
             // Prodi
             this.prodi_id = "",
             this.nama_prodi_search = "",
-            this.prodi_kode = "",
+            this.prodi_items = "",
 
             // Delete
             this.email_delete = ""

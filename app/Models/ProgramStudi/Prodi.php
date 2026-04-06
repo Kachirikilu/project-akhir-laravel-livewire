@@ -142,10 +142,18 @@ class Prodi extends Model
     {
         return Attribute::get(fn () => $this->jurusan_rel?->nama_jurusan);
     }
+    protected function jurusanJr(): Attribute
+    {
+        return Attribute::get(fn () => 'Jurusan '.$this->jurusan_rel?->nama_jurusan);
+    }
 
     protected function fakultas(): Attribute
     {
         return Attribute::get(fn () => $this->jurusan_rel?->fakultas_rel?->nama_fakultas);
+    }
+    protected function fakultasFk(): Attribute
+    {
+        return Attribute::get(fn () => 'Fakultas '.$this->jurusan_rel?->fakultas_rel?->nama_fakultas);
     }
     protected function fakultasId(): Attribute
     {

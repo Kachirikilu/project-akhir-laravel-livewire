@@ -6,6 +6,7 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'labelString' => 'Kode Mata Kuliah',
+                    'kodeString' => 'jurusan_items',
                     'placeholder' => '---',
                     'iconString' => 'book-open'
                 ])
@@ -39,35 +40,41 @@
         'xResults' => $jurusanResults,
         'selectX' => 'selectJurusan',
         'modelString' => 'nama_jurusan_search',
+
+        'idString' => 'jurusan_id',
+        'itemsAllString' => 'jurusan_items',
+
         'resetXInput' => 'resetJurusanInput()',
         'typeXString' => 'jurusan',
+        'typeX2String' => 'fakultas',
+        
         'nameXString' => 'Jurusan',
-        'idString' => 'jurusan_id',
-        'kodeString' => 'jurusan_kode',
         'searchString' => 'jurusan_search',
         'nameSearchString' => 'jurusanNameSearch',
         'fetchString' => 'fetchJurusan',
-        'iconString' => 'book-open',
-        'wireLoading' => 'fetchJurusan',
+        'iconString' => 'academic-cap',
+        'wireLoading' => 'fetchJurusan'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prodiResults,
         'selectX' => 'selectProdiArray',
-        'modelString' => 'nama_prodi_array',
-        // 'resetXInput' => 'resetProdiInput()',
-        'typeXString' => 'prodi',
-        'nameXString' => 'Program Studi',
-        // 'noName' => 1,
+        'modelString' => 'nama_prodi_search',
+
         'idString' => 'prodi_id_array',
-        'kodeString' => 'prodi_kode_array',
+        'itemsAllString' => 'prodi_items_array',
+
+        'typeXString' => 'prodi',
+        'typeX2String' => 'jurusan',
+        'typeX3String' => 'fakultas',
+
+        'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
         'nameSearchString' => 'prodiNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
     
-        'selectedNameArray' => 'prodi_name_array',
         'parentIdString' => 'jurusan_id',
         'nameXParent' => 'Jurusan',
         'wireLoading' => 'fetchProdi',

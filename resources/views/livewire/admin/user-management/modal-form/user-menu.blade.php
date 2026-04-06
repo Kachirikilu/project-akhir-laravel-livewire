@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                $store.user?.resetSelect();
+                {{-- $store.user?.resetSelect(); --}}
 
                 const type = '{{ strtolower($x->role) }}';
 
@@ -41,6 +41,8 @@
                         '{{ $detail->status ?? '' }}',
                         '{{ $detail->prodi_id ?? '' }}',
                         '{{ $detail->prodi->prodi ?? '' }}',
+                        '{{ $detail->prodi->jurusanJr ?? '' }}',
+                        '{{ $detail->prodi->fakultasFk ?? '' }}',
                         '{{ $detail->prodi->kode ?? '' }}'
                     );
                     $flux.modal('user-modal').show();

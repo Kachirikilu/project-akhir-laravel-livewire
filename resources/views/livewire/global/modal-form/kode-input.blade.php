@@ -1,4 +1,4 @@
-<div x-data="{ kode: @entangle($kodeString ?? null).live }">
+<div x-data="{ itemsAll: @entangle($kodeString ?? null).live }">
     <label class="block text-sm font-medium">{{ $labelString ?? null }}</label>
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -7,7 +7,7 @@
 
         <input type="text" readonly
             @if($kodeString ?? null)
-                x-bind:value="kode || '{{ $placeholder ?? null }}'"
+                x-bind:value="itemsAll?.kode || '{{ $placeholder ?? null }}'"
             @else 
                 value="{{ $secondValue ?? null }}"
             @endif

@@ -36,9 +36,11 @@
                         '{{ $matkul->kode_blok ?? '' }}',
                         '{{ $matkul->digit_semester ?? '' }}',
                         '{{ $matkul->digit_mk ?? '' }}',
-                        '{{ $matkul->nama_prodi ?? '' }}',
-                        '{{ $matkul->id_prodi ?? '' }}',
-                        '{{ $matkul->kode_pr ?? '' }}',
+                        {{-- '{{ $matkul->id_prodi ?? '' }}', --}}
+                        {{-- '{{ $matkul->kode_pr ?? '' }}', --}}
+                        {{-- '{{ $matkul->nama_prodi ?? '' }}', --}}
+                        {{-- '{{ $matkul->nama_jurusan ?? '' }}',
+                        '{{ $matkul->nama_fakultas ?? '' }}', --}}
                         '{{ $matkul->semester ?? '' }}',
                         '{{ $matkul->sks ?? '' }}',
                         '{{ $matkul->tipe_sks ?? '' }}',

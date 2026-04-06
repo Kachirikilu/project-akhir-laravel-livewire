@@ -47,6 +47,10 @@ class Fakultas extends Model
     protected function fakultas(): Attribute {
         return Attribute::get(fn() => $this->nama_fakultas);
     }
+    protected function fakultasFk(): Attribute
+    {
+        return Attribute::get(fn () => 'Fakultas '.$this->nama_fakultas);
+    }
 
     protected function createdDay(): Attribute
     {

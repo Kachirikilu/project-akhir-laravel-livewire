@@ -178,7 +178,7 @@ trait WithUserExcel
             }
         }
 
-        $this->resetInput();
+        $this->resetInputUser();
             $messageText = "Import selesai | Berhasil: $success | Gagal: " . count($this->rowErrors);
             if (count($this->rowErrors) == 0) {
                 $this->toast(text: $messageText);
@@ -294,7 +294,7 @@ trait WithUserExcel
             ]);
         }
 
-        $this->resetInput(true);
+        $this->resetInputUser(true);
     }
 
 }

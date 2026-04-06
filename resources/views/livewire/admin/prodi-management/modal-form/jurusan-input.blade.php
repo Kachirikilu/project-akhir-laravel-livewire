@@ -27,16 +27,19 @@
         'xResults' => $fakultasResults,
         'selectX' => 'selectFakultas',
         'modelString' => 'nama_fakultas_search',
+
+        'idString' => 'fakultas_id',
+        'itemsAllString' => 'fakultas_items',
+
         'resetXInput' => 'resetFakultasInput()',
         'typeXString' => 'fakultas',
+
         'nameXString' => 'Fakultas',
-        'idString' => 'fakultas_id',
-        'kodeString' => 'fakultas_kode',
         'searchString' => 'fakultas_search',
         'nameSearchString' => 'fakultasNameSearch',
         'fetchString' => 'fetchFakultas',
         'iconString' => 'building-library',
-        'wireLoading' => 'fetchFakultas',
+        'wireLoading' => 'fetchFakultas'
     ])
 
     {{-- 📧 Kode Jurusan Input --}}

@@ -15,7 +15,7 @@ class Referensi extends Model
 
     protected $table = 'referensis';
     protected $guarded = ['id'];
-    protected $appends = ['kode'];
+    protected $appends = ['kode', 'penulis_tahun'];
 
     protected function kode(): Attribute
     {
@@ -23,7 +23,15 @@ class Referensi extends Model
             return preg_replace('/([A-Za-z])([0-9])/', '$1-$2', $this->kode_ref);
         });
     }
-
+    protected function penulisTahun(): Attribute
+    {
+        return Attribute::get(function () {
+            $penulis = $this->penulis ?? 'Anonim';
+            $tahun = $this->tahun ?? '-';
+            return "{$penulis} ({$tahun})";
+        });
+    }
+    
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {

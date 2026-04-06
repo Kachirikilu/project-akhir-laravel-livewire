@@ -52,7 +52,7 @@ class MataKuliah extends Model
 
             if ($prodi) {
                 if ($this->tingkatan_mk == 1) { // Tingkat Prodi
-                    $prefix = $prodi->kode_pr ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->kode_pr ?? $prodi->jurusan_rel?->kode_jr ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->tingkatan_mk == 2) { // Tingkat Jurusan
                     $prefix = $prodi->jurusan_rel?->kode_jr ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->tingkatan_mk == 3) { // Tingkat Fakultas
@@ -331,35 +331,40 @@ class MataKuliah extends Model
                     $sq->where(function ($sub) use ($prefixPart, $digitPart) {
                         if (! empty($prefixPart)) {
                             $sub->where(function ($low) use ($prefixPart) {
-                                // 1. Cari langsung di kode Mata Kuliah
+                                // 1. Cari langsung di Kode MK
                                 $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
 
-                                // 2. Cari di Kode Prodi (Jika tingkatan_mk = 1)
+                                // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke jurusan, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 1)
                                             ->whereHas('prodis', function ($pro) use ($prefixPart) {
-                                                $pro->where('kode_pr', 'like', $prefixPart.'%');
+                                                $pro->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
+                                                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
 
-                                // 3. Cari di Kode Jurusan (Jika tingkatan_mk = 2)
+                                // 3. Tingkatan MK = 2 (Jurusan): Cari di jurusan, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 2)
                                             ->whereHas('prodis.jurusan_rel', function ($jur) use ($prefixPart) {
-                                                $jur->where('kode_jr', 'like', $prefixPart.'%');
+                                                $jur->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
 
-                                // 4. Cari di Kode Fakultas (Jika tingkatan_mk = 3)
+                                // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 3)
                                             ->whereHas('prodis.jurusan_rel.fakultas_rel', function ($fak) use ($prefixPart) {
-                                                $fak->where('kode_fk', 'like', $prefixPart.'%');
+                                                $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
 
                                 // 5. Khusus tingkat Universitas (Tingkatan 4)
-                                    ->when($prefixPart === 'UNI', fn ($uni) => $uni->orWhere('mata_kuliahs.tingkatan_mk', 4));
+                                    ->when($prefixPart === 'UNI', function ($query) {
+                                        $query->orWhere('mata_kuliahs.tingkatan_mk', 4);
+                                    });
                             });
                         }
 

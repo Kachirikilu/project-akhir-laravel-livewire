@@ -2,35 +2,36 @@
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,
-    itemNames: @entangle($selectedNameArray).live,
-    itemKodes: @entangle($kodeString).live,
+    itemsAll: @entangle($itemsAllString).live,
+    parentSelectedId: @entangle($parentIdString ?? null).live,
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemNames)) this.itemNames = [];
-        if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
+        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
     },
 
-    parentSelectedId: @entangle($parentIdString ?? null).live,
 
     get isParentReady() {
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, name, kode) {
-        // Ubah id menjadi Number atau String secara konsisten
+    addItem(id, kode, name, name2, name3) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
-            this.itemNames.push(name);
-            this.itemKodes.push(kode);
+
+            this.itemsAll.push({
+                kode: kode,
+                name: name,
+                name2: name2,
+                name3: name3
+            });
         }
     },
 
     removeItem(index) {
         this.items.splice(index, 1);
-        this.itemNames.splice(index, 1);
-        this.itemKodes.splice(index, 1);
+        this.itemsAll.splice(index, 1);
     },
 
     move(index, direction) {
@@ -38,10 +39,9 @@
         if (to < 0 || to >= this.items.length) return;
         const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
         swap(this.items, index, to);
-        swap(this.itemNames, index, to);
-        swap(this.itemKodes, index, to);
+        swap(this.itemsAll, index, to);
     }
-}" wire:key="search-array-{{ $typeXString }}">
+}">
 
     <label class="block text-sm font-medium mb-2">
         {{ $nameXString }} <span class="text-red-500">*</span>
@@ -70,9 +70,18 @@
         </div>
 
         <input x-model="search" autocomplete="off" type="text"
-            @if ($wireLoadingParent ?? null) wire:loading.attr="disabled" wire:target="{{ $wireLoadingParent }}" @endif
-            :disabled="!isParentReady" @focus="open = true; $wire.{{ $fetchString }}(search);"
-            @input.debounce.300ms="open = true; $wire.{{ $fetchString }}(search);" @click.outside="open = false"
+            @if ($wireLoadingParent ?? null) wire:loading.attr="disabled"
+             wire:target="{{ $wireLoadingParent }}" @endif
+            :disabled="!isParentReady" @focus="open = true; if(search === '') $wire.{{ $fetchString }}('', 'array');"
+            @input.debounce.300ms="
+                open = true; 
+                if(search === '') { 
+                    $wire.{{ $fetchString }}('', 'array'); 
+                } else {
+                    $wire.{{ $fetchString }}(search, 'array');
+                }
+            "
+            @click.outside="open = false"
             :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' :
                 'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
             :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
@@ -87,31 +96,35 @@
 
     {{-- 2. DROPDOWN HASIL --}}
 
-        
+
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-        @click.stop
+        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" @click.stop
         class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[110] mt-1 rounded-lg shadow-2xl max-h-72 overflow-y-auto">
-        
+
         {{-- KONTEN LIST (Akan transparan saat loading) --}}
-        <div @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}" wire:loading.class="opacity-20 pointer-events-none" @endif">
+        <div
+            @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}, {{ $wireLoading }}" wire:loading.class="opacity-60 pointer-events-none" @endif">
             @forelse ($xResults as $x)
-                <div
+                <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
                     <div class="flex flex-col mr-4">
                         <span
                             class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
-                            <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
-                                <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                                        {{ $x['id'] }}</span></span>
+                        <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
+                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
+                                    {{ $x['id'] }}</span></span>
+                            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                            <span>{{ $x['kode'] }}</span>
+                            @if ($typeX2String ?? null)
                                 <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x['kode'] }}</span>
-                                @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
-                                    <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                    <span>Fakultas {{ $x['fakultas'] }}</span>
-                                @endif
-                            </div>
+                                <span>{{ $x[$typeX2String] }}</span>
+                            @endif
+                            @if ($typeX3String ?? null)
+                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                <span>{{ $x[$typeX3String] }}</span>
+                            @endif
+                        </div>
                     </div>
                     <button type="button"
                         @click="
@@ -119,13 +132,18 @@
                             let index = items.indexOf({{ $x['id'] }});
                             if (index !== -1) {
                                 items.splice(index, 1);
-                                itemNames.splice(index, 1);
-                                itemKodes.splice(index, 1);
+                                itemsAll.splice(index, 1);
                             }
                         } else {
-                            addItem({{ $x['id'] }}, '{{ $x[$typeXString] }}', '{{ $x['kode'] }}');
+                           addItem(
+                                {{ $x['id'] }}, 
+                                '{{ $x['kode'] }}', 
+                                '{{ $x[$typeXString] }}', 
+                                @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
+                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset
+                            );
                         }
-                    "
+                        "
                         :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' :
                             'bg-[var(--focus-color)] text-white'"
                         class="p-1.5 rounded-md transition-all group">
@@ -144,13 +162,14 @@
                 </div>
             @empty
                 <div class="p-4 text-center">
-                    <div wire:loading @if($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
+                    <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
                         <p class="text-sm text-[var(--focus-color)] font-medium animate-pulse">
                             Sedang mencari data {{ $nameXString ?? null }}...
                         </p>
                     </div>
 
-                    <div wire:loading.remove @if($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
+                    <div wire:loading.remove
+                        @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
                         <p class="text-sm text-gray-500 dark:text-gray-400 italic">
                             Data {{ $nameXString ?? null }} tidak ditemukan!
                         </p>
@@ -173,44 +192,68 @@
             </div>
         </div>
 
-        <div class="space-y-2 max-h-[350px] overflow-y-auto pr-1 scrollbar-medium">
+        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-medium">
             <template x-for="(id, index) in items" :key="id">
                 <div
-                    class="flex items-center justify-between bg-[var(--second-table-color)] border border-[var(--border-table-color)] px-3 py-2 rounded-lg shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-[var(--hover-focus-color)] w-5" x-text="index + 1"></span>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium text-[var(--contrast-main-text)]"
-                                x-text="itemNames[index]"></span>
-                            <div class="text-xs mt-1">
-                                - <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id "></span>
-                                <span class="mx-2">|</span>
-                                <span x-text="itemKodes[index]"></span>
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border border-[var(--border-table-color)] px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
+                    <div class="flex items-start gap-3 flex-1">
+
+                        <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
+                            x-text="index + 1"></span>
+
+                        <div class="flex flex-col gap-1 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
+                                    x-text="itemsAll[index]?.kode"></span>
+                                <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
+                            </div>
+
+                            <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
+                                x-text="itemsAll[index]?.name"></span>
+
+                            <div
+                                class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
+
+                                @if ($typeX2String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.name2"></span>
+                                @endif
+
+                                @if ($typeX3String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.name3"></span>
+                                @endif
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-1">
-                        <button @click="move(index, -1)" type="button"
-                            class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-20"
-                            :disabled="index === 0">
-                            <flux:icon icon="chevron-up" variant="mini" />
-                        </button>
-                        <button @click="move(index, 1)" type="button"
-                            class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-20"
-                            :disabled="index === items.length - 1">
-                            <flux:icon icon="chevron-down" variant="mini" />
-                        </button>
+                    {{-- ACTION BUTTONS --}}
+                    <div class="flex items-center gap-1 ml-2">
+                        <div class="flex flex-col gap-0.5">
+                            <button @click="move(index, -1)" type="button"
+                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                :disabled="index === 0">
+                                <flux:icon icon="chevron-up" variant="mini" class="size-4" />
+                            </button>
+                            <button @click="move(index, 1)" type="button"
+                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                :disabled="index === items.length - 1">
+                                <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                            </button>
+                        </div>
+
                         <button @click="removeItem(index)" type="button"
-                            class="p-1 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded ml-2">
-                            <flux:icon icon="trash" variant="mini" />
+                            class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
+                            <flux:icon icon="trash" variant="mini" class="size-5" />
                         </button>
                     </div>
                 </div>
             </template>
 
             {{-- Empty State --}}
-            <div x-show="items.length === 0" class="py-6 flex flex-col items-center justify-center opacity-40">
+            <div x-show="items.length === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
                 <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>

@@ -51,17 +51,21 @@
         'xResults' => $prodiResults,
         'selectX' => 'selectProdi',
         'modelString' => 'nama_prodi_search',
+
+        'idString' => 'prodi_id',
+        'itemsAllString' => 'prodi_items',
+
         'resetXInput' => 'resetProdiInput()',
         'typeXString' => 'prodi',
+        'typeX2String' => 'jurusan',
+        'typeX3String' => 'fakultas',
+
         'nameXString' => 'Program Studi',
-        'noName' => 1,
-        'idString' => 'prodi_id',
-        'kodeString' => 'prodi_kode',
         'searchString' => 'prodi_search',
         'nameSearchString' => 'prodiNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchProdi',
+        'wireLoading' => 'fetchProdi'
     ])
 
     {{-- 📧 Status Input --}}

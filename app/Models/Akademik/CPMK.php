@@ -51,7 +51,7 @@ class CPMK extends Model
                     ->withTimestamps();
     }
 
-    public function sub_cpmks(): BelongsToMany
+    public function scpmks(): BelongsToMany
     {
         return $this->belongsToMany(SubCPMK::class, 'cpmk_pivot_scpmk', 'cpmk_id', 'scpmk_id')
                     ->withPivot('sort_order')

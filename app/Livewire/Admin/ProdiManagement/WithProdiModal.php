@@ -7,6 +7,7 @@ use App\Models\ProgramStudi\Jurusan;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 use App\Livewire\Global\HasToast;
 
@@ -36,9 +37,9 @@ trait WithProdiModal
 
     public function addProdi($prodi)
     {
-if (! $this->AuthCheck()) {
-        return; 
-    }
+        if (! $this->AuthCheck()) {
+            return; 
+        }
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -54,9 +55,9 @@ if (! $this->AuthCheck()) {
 
     public function editProdi($id, $type)
     {
-if (! $this->AuthCheck()) {
-        return; 
-    }
+        if (! $this->AuthCheck()) {
+            return; 
+        }
 
         $this->selected_id = $id;
         $this->prodiType = $type;
@@ -78,7 +79,7 @@ if (! $this->AuthCheck()) {
 
                 if ($this->jurusan_id) {
                     $jurusan = Jurusan::find($this->jurusan_id);
-                    $this->jurusanNameSearch = $jurusan ? 'Jurusan '.$jurusan->jurusan : '';
+                    $this->jurusanNameSearch = $jurusan ? $jurusan->jurusanJr : '';
                 } else {
                     $this->jurusanNameSearch = '';
                 }
@@ -95,7 +96,7 @@ if (! $this->AuthCheck()) {
 
                 if ($this->fakultas_id) {
                     $fakultas = Fakultas::find($this->fakultas_id);
-                    $this->fakultasNameSearch = $fakultas ? 'Fakultas '.$fakultas->fakultas : '';
+                    $this->fakultasNameSearch = $fakultas ? $fakultas->fakultasFk : '';
                 } else {
                     $this->fakultasNameSearch = '';
                 }
@@ -306,9 +307,9 @@ if (! $this->AuthCheck()) {
 
     public function saveProdi($data)
     {
-if (! $this->AuthCheck()) {
-        return; 
-    }
+        if (! $this->AuthCheck()) {
+            return; 
+        }
 
         $data['jurusan_id'] = $this->jurusan_id;
         $data['fakultas_id'] = $this->fakultas_id;

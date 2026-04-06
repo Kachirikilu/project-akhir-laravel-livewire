@@ -131,11 +131,12 @@
 
         <div>
             @forelse ($xResults as $x)
-                <div
+                <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
                     <div class="flex flex-col mr-4">
 
-                        <span class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
+                        <span
+                            class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
                         <div class="text-[var(--contrast-main-text)] font-medium text-xs flex items-center mt-1">
                             <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
                                     {{ $x['id'] }}</span></span>
@@ -232,54 +233,79 @@
         <div class="space-y-2 max-h-[512px] overflow-y-auto pr-1 scrollbar-medium">
             <template x-for="(id, index) in items" :key="id">
                 <div
-                    class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all">
+                    class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
 
-                    {{-- Header Row --}}
-                    <div class="flex items-center justify-between px-4 py-3 bg-white/40 dark:bg-black/10">
-                        <div class="flex items-center gap-3 cursor-pointer flex-1"
-                            x-on:click="expanded.includes(index) ? expanded = expanded.filter(i => i !== index) : expanded.push(index)">
+                    {{-- Header Row (Mengikuti gaya desain baru) --}}
+                    <div
+                        class="flex items-start justify-between px-4 py-3 bg-white/40 dark:bg-black/10 transition-colors hover:bg-white/60 dark:hover:bg-black/20">
 
-                            <flux:icon icon="chevron-right" variant="mini" class="transition-transform duration-200"
-                                x-bind:class="expanded.includes(index) ? 'rotate-90 text-[var(--hover-focus-color)]' : 'text-gray-400'" />
+                        <div class="flex items-start gap-3 flex-1">
+                            {{-- NOMOR URUT --}}
+                            <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
+                                x-text="index + 1"></span>
 
-                            <div class="flex flex-col">
-                                <span class="text-sm font-bold" x-text="itemNames[index]"></span>
-                                <div class="text-xs mt-1">
-                                    - <span class="font-bold text-[var(--hover-focus-color)]"
-                                        x-text="'ID: ' + id "></span>
-                                    <span class="mx-2">|</span>
-                                    <span x-text="itemKodes[index]"></span>
-                                    <span class="mx-2">|</span>
-                                    <span>
-                                        Bobot: <span
-                                              x-text="(subItems[index]?.scpmk || []).reduce((t, s) => t + Number(s.bobot || 0), 0) + '%'">
+                            <div class="flex flex-col gap-1 flex-1 cursor-pointer"
+                                x-on:click="expanded.includes(index) ? expanded = expanded.filter(i => i !== index) : expanded.push(index)">
+
+                                {{-- KODE SEBAGAI BADGE DI ATAS --}}
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <flux:icon icon="chevron-right" variant="mini"
+                                            class="transition-transform duration-200"
+                                            x-bind:class="expanded.includes(index) ? 'rotate-90 text-[var(--hover-focus-color)]' :
+                                                'text-gray-400'" />
+                                        <span
+                                            class="text-xs font-bold px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white uppercase"
+                                            x-text="itemKodes[index]"></span>
+                                    </div>
+                                    <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
+                                </div>
+
+                                {{-- NAMA UTAMA --}}
+                                <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
+                                    x-text="itemNames[index]"></span>
+
+                                {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
+                                <div
+                                    class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+                                    <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span class="flex items-center gap-1">
+                                        Total Bobot:
+                                        <span class="font-black text-[var(--hover-focus-color)]"
+                                            x-text="(subItems[index]?.scpmk || []).reduce((t, s) => t + Number(s.bobot || 0), 0) + '%'">
+                                        </span>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-1.5 ml-4">
-                            <button x-on:click="move(index, -1)" type="button" :disabled="index === 0"
-                                class="p-1 hover:bg-black/5 rounded disabled:opacity-20">
-                                <flux:icon icon="chevron-up" variant="mini" />
-                            </button>
-                            <button x-on:click="move(index, 1)" type="button" :disabled="index === items.length - 1"
-                                class="p-1 hover:bg-black/5 rounded disabled:opacity-20">
-                                <flux:icon icon="chevron-down" variant="mini" />
-                            </button>
+                        {{-- ACTION BUTTONS --}}
+                        <div class="flex items-center gap-1 ml-4">
+                            <div class="flex flex-col gap-0.5">
+                                <button x-on:click="move(index, -1)" type="button" :disabled="index === 0"
+                                    class="p-0.5 hover:bg-black/5 dark:hover:bg-white/10 rounded disabled:opacity-10">
+                                    <flux:icon icon="chevron-up" variant="mini" class="size-4" />
+                                </button>
+                                <button x-on:click="move(index, 1)" type="button"
+                                    :disabled="index === items.length - 1"
+                                    class="p-0.5 hover:bg-black/5 dark:hover:bg-white/10 rounded disabled:opacity-10">
+                                    <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                                </button>
+                            </div>
                             <button x-on:click="removeItem(index)" type="button"
-                                class="p-1 hover:bg-red-50 text-red-500 rounded">
-                                <flux:icon icon="trash" variant="mini" />
+                                class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 rounded-md transition-colors ml-1">
+                                <flux:icon icon="trash" variant="mini" class="size-5" />
                             </button>
                         </div>
                     </div>
 
-                    {{-- Expanded Sub-CPMK Table dengan Scroll Horizontal --}}
+                    {{-- Expanded Sub-CPMK Table --}}
                     <div x-show="expanded.includes(index)" x-collapse>
-                        <div class="px-4 bg-white/20 dark:bg-black/5">
+                        <div class="px-4 pb-4 bg-white/20 dark:bg-black/5">
                             <div
                                 class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-thin">
-                                <table class="w-full text-[11px] text-left border-collapse min-w-[500px]">
+                                <table class="w-full text-xs text-left border-collapse min-w-[800px]">
                                     <thead>
                                         <tr
                                             class="text-gray-400 uppercase tracking-tighter border-b border-[var(--border-table-color)]">
@@ -293,69 +319,51 @@
                                             <th class="pb-3 px-4 min-w-32">Deskripsi Tugas</th>
                                             <th class="pb-3 px-4 text-center">Waktu Tugas</th>
                                             <th class="pb-3 px-4 text-center">Waktu Mandiri</th>
-
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-[var(--border-table-color)]">
                                         <template x-for="sub in subItems[index]?.scpmk" :key="sub.id">
-                                            <tr>
-                                                <td class="py-2.5 px-2 font-bold">
-                                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm"
-                                                        class="scale-90 transform origin-center py-0 px-1.5 text-[9px] uppercase font-bold">
+                                            <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                                                <td class="py-2.5 px-2">
+                                                    <flux:badge color="fuchsia" size="sm"
+                                                        class="py-0 px-1.5 text-xs font-bold uppercase">
                                                         <span x-text="sub.kode || '-'"></span>
                                                     </flux:badge>
                                                 </td>
-
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.materi || '-'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
+                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
+                                                </td>
+                                                <td class="py-2.5 px-2 leading-relaxed"
                                                     x-text="sub.metodologi || '-'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.indikator || '-'"></td>
-
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.deskripsi"></td>
-                                                <td class="py-2.5  px-2 text-center italic opacity-90">
-                                                    <div class="flex justify-center items-center">
-                                                        {{-- 1. Kelompok Ujian (UTS/UAS) --}}
+                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
+                                                </td>
+                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
+                                                </td>
+                                                <td class="py-2.5 px-2 text-center leading-relaxed">
+                                                    <div class="flex justify-center">
                                                         <template x-if="sub.metode === 'UTS' || sub.metode === 'UAS'">
-                                                            <flux:badge icon="clipboard-document-check" color="amber"
-                                                                size="sm"
-                                                                class="scale-90 transform origin-center py-0 px-1.5 text-[9px] uppercase font-bold">
-                                                                <span x-text="sub.metode"></span>
-                                                            </flux:badge>
+                                                            <flux:badge color="amber" size="sm"
+                                                                class="text-xs font-bold uppercase"
+                                                                x-text="sub.metode"></flux:badge>
                                                         </template>
-
-                                                        {{-- 2. Kelompok Teori / Materi --}}
                                                         <template x-if="sub.metode === 'Teori'">
-                                                            <flux:badge icon="book-open" color="emerald"
-                                                                size="sm"
-                                                                class="scale-90 transform origin-center py-0 px-1.5 text-[9px] font-bold">
-                                                                Teori
-                                                            </flux:badge>
+                                                            <flux:badge color="emerald" size="sm"
+                                                                class="text-xs font-bold">Teori</flux:badge>
                                                         </template>
-
-                                                        {{-- 3. Kelompok Praktik / Projek / Tugas --}}
                                                         <template
                                                             x-if="['Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge icon="beaker" color="cyan" size="sm"
-                                                                class="scale-90 transform origin-center py-0 px-1.5 text-[9px] font-bold">
-                                                                <span x-text="sub.metode"></span>
+                                                            <flux:badge color="cyan" size="sm"
+                                                                class="text-xs font-bold" x-text="sub.metode">
                                                             </flux:badge>
                                                         </template>
-
-                                                        {{-- Default / Lainnya --}}
                                                         <template
                                                             x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge icon="information-circle" color="zinc"
-                                                                size="sm"
-                                                                class="scale-90 transform origin-center py-0 px-1.5 text-[9px] font-bold">
-                                                                <span x-text="sub.metode || '-'"></span>
+                                                            <flux:badge color="zinc" size="sm"
+                                                                class="text-xs font-bold" x-text="sub.metode || '-'">
                                                             </flux:badge>
                                                         </template>
                                                     </div>
                                                 </td>
-                                                <td class="py-2.5 px-2 text-center font-black text-[var(--hover-focus-color)]"
+                                                <td class="py-2.5 px-2 text-center leading-relaxed font-black text-[var(--hover-focus-color)]"
                                                     x-text="sub.bobot + '%'"></td>
                                                 <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
                                                     x-text="sub.tugas || '-'"></td>
@@ -363,19 +371,9 @@
                                                     x-text="sub.w_tugas || '-'"></td>
                                                 <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
                                                     x-text="sub.w_mandiri || '-'"></td>
-
                                             </tr>
                                         </template>
                                     </tbody>
-                                    <tfoot>
-                                        <tr class="border-t-2 border-double border-[var(--border-table-color)]">
-                                            <td colspan="6" class="py-4 font-bold text-xs uppercase">Total Bobot
-                                                CPMK Ini:</td>
-                                            <td class="py-4 text-center font-black text-sm"
-                                                x-text="(subItems[index]?.scpmk || []).reduce((t, s) => t + Number(s.bobot || 0), 0) + '%'">
-                                            </td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -386,7 +384,7 @@
             {{-- totalSubCPMK --}}
 
             {{-- Empty State --}}
-            <div x-show="items.length === 0" class="py-12 flex flex-col items-center justify-center opacity-30">
+            <div x-show="items.length === 0" class="py-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="academic-cap" variant="outline" class="mb-2 w-8 h-8" />
                 <p class="text-xs font-medium italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>

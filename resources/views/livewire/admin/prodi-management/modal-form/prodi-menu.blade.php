@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                    $store.prodi?.resetSelect();
+                    {{-- $store.prodi?.resetSelect(); --}}
 
                     const type = '{{ $typeXString }}';
 
@@ -32,9 +32,9 @@
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->strata ?? '' }}',
                             '{{ $x->jurusan_id ?? '' }}',
-                            '{{ $x->jurusan ?? '' }}',
+                            '{{ $x->jurusanJr ?? '' }}',
                             '{{ $x->fakultas_id ?? '' }}',
-                            '{{ $x->fakultas ?? '' }}',
+                            '{{ $x->fakultasFk ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $x->kode_jr ?? '' }}',
                             '{{ $x->kode_fk ?? '' }}'

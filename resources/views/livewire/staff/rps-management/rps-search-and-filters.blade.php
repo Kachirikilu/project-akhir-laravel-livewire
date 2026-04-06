@@ -236,7 +236,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputProdiFilter',
                 'xSearchResultsString' => 'prodiSearchResults',
-                'selectedXNameString' => 'prodi_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Program Studi...',
                 'xSearchQueryString' => 'prodiSearchQuery',
@@ -265,7 +264,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputJurusanFilter',
                 'xSearchResultsString' => 'jurusanSearchResults',
-                'selectedXNameString' => 'jurusan_name',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Jurusan...',
                 'xSearchQueryString' => 'jurusanSearchQuery',
@@ -284,7 +282,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputFakultasFilter',
                 'xSearchResultsString' => 'fakultasSearchResults',
-                'selectedXNameString' => 'fakultas_name',
                 'iconString' => 'building-library',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fakultasSearchQuery',
@@ -307,7 +304,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputMatkulFilter',
                 'xSearchResultsString' => 'matkulSearchResults',
-                'selectedXNameString' => 'matkul_name',
                 'iconString' => 'rectangle-stack',
                 'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
                 'xSearchQueryString' => 'matkulSearchQuery',
@@ -326,7 +322,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputRPSFilter',
                 'xSearchResultsString' => 'rpsSearchResults',
-                'selectedXNameString' => 'rps_name',
                 'iconString' => 'clipboard-document-list',
                 'placeholderString' => 'Filter berdasarkan RPS...',
                 'xSearchQueryString' => 'rpsSearchQuery',
@@ -345,7 +340,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputCPMKFilter',
                 'xSearchResultsString' => 'cpmkSearchResults',
-                'selectedXNameString' => 'cpmk_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan CPMK...',
                 'xSearchQueryString' => 'cpmkSearchQuery',
@@ -364,7 +358,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputSCPMKFilter',
                 'xSearchResultsString' => 'scpmkSearchResults',
-                'selectedXNameString' => 'scpmk_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
                 'xSearchQueryString' => 'scpmkSearchQuery',
@@ -383,7 +376,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputCPLFilter',
                 'xSearchResultsString' => 'cplSearchResults',
-                'selectedXNameString' => 'cpl_name',
                 'iconString' => 'document-text',
                 'placeholderString' => 'Filter berdasarkan CPL...',
                 'xSearchQueryString' => 'cplSearchQuery',
@@ -402,7 +394,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputRefFilter',
                 'xSearchResultsString' => 'refSearchResults',
-                'selectedXNameString' => 'ref_name',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Referensi...',
                 'xSearchQueryString' => 'refSearchQuery',

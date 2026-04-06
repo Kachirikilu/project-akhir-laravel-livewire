@@ -14,7 +14,7 @@ class SubCPMK extends Model
 
     protected $table = 'sub_cpmks';
     protected $guarded = ['id'];
-    protected $appends = ['kode'];
+    protected $appends = ['kode', 'tugas', 'w_tugas', 'w_mandiri'];
 
     protected function kode(): Attribute
     {
@@ -95,7 +95,7 @@ class SubCPMK extends Model
 
                     $termLower = strtolower(trim($searchTerm, '% ')); 
 
-                    $subQ->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
+                    $q->orWhere(function ($enumQ) use ($searchTerm, $termLower) {
                         if (str_contains('ujian tengah semester', $termLower) || str_contains('uts', $termLower)) {
                             $enumQ->orWhere('sub_cpmks.metode', 'UTS');
                         }

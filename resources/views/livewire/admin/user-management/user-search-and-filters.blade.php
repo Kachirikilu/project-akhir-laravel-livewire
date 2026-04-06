@@ -35,7 +35,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputProdiFilter',
                 'xSearchResultsString' => 'prodiSearchResults',
-                'selectedXNameString' => 'prodi_name',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Program Studi...',
                 'xSearchQueryString' => 'prodiSearchQuery',
@@ -65,7 +64,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputJurusanFilter',
                 'xSearchResultsString' => 'jurusanSearchResults',
-                'selectedXNameString' => 'jurusan_name',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Jurusan...',
                 'xSearchQueryString' => 'jurusanSearchQuery',
@@ -84,7 +82,6 @@
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputFakultasFilter',
                 'xSearchResultsString' => 'fakultasSearchResults',
-                'selectedXNameString' => 'fakultas_name',
                 'iconString' => 'building-library',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fakultasSearchQuery',

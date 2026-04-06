@@ -21,7 +21,7 @@
 
                 <template x-if="$store.mk?.typeModal == '1'" x-cloak>
                     <flux:badge icon="academic-cap" color="emerald" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Program Studu' : 'Tambah Mata Kuliah - Program Studi'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Program Studi' : 'Tambah Mata Kuliah - Program Studi'"></span>
                     </flux:badge>
                 </template>
 

@@ -8,7 +8,7 @@
             Input Rencana Pembelajaran Semester</h4>
 
 
-        @include('livewire.global.modal-form.search-input-form', [
+        {{-- @include('livewire.global.modal-form.search-input-form', [
             'alpine' => 'rps',
             'xResults' => $matkulResults,
             'selectX' => 'selectMatkul',
@@ -24,6 +24,28 @@
             'fetchString' => 'fetchMatkul',
             'iconString' => 'rectangle-stack',
             'wireLoading' => 'fetchMatkul',
+        ]) --}}
+
+        @include('livewire.global.modal-form.search-input-form', [
+            'alpine' => 'rps',
+            'xResults' => $matkulResults,
+            'selectX' => 'selectMatkul',
+            'modelString' => 'nama_matkul_search',
+
+            'idString' => 'matkul_id',
+            'itemsAllString' => 'matkul_items',
+
+            'resetXInput' => 'resetMatkulInput()',
+            'typeXString' => 'matkul',
+            // 'typeX2String' => 'jurusan',
+            // 'typeX3String' => 'fakultas',
+
+            'nameXString' => 'Mata Kuliah',
+            'searchString' => 'matkul_search',
+            'nameSearchString' => 'matkulNameSearch',
+            'fetchString' => 'fetchMatkul',
+            'iconString' => 'rectangle-stack',
+            'wireLoading' => 'fetchMatkul'
         ])
 
         <div class="relative">
@@ -123,7 +145,7 @@
                 ])
                 <p class="mt-2 text-sm text-red-500 italic flex items-center gap-1 font-medium">
                     <flux:icon icon="information-circle" variant="mini" class="w-3 h-3" />
-                    Status "Aktif" terkunci. Sub-CPMK baru <span x-text="$store.rps.count_scpmk"></span>/14
+                    Status "Aktif" terkunci. Sub-CPMK baru <span x-text="$store.rps.count_scpmk + '/14'"></span>
                 </p>
             </div>
         </template>
@@ -142,7 +164,7 @@
                 ])
                 <p class="mt-2 text-sm text-emerald-600 italic flex items-center gap-1 font-medium">
                     <flux:icon icon="check-circle" variant="mini" class="w-3 h-3" />
-                    Syarat minimal pertemuan terpenuhi <span x-text="$store.rps.count_scpmk"></span>/14
+                    Syarat minimal pertemuan terpenuhi <span x-text="'(' + $store.rps.count_scpmk + '/14)'"></span>
                 </p>
             </div>
         </template>

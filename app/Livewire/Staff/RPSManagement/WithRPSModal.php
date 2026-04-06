@@ -52,7 +52,7 @@ trait WithRPSModal
         $this->resetErrorBag();
 
         try {
-            $mk = RPS::with(['prodis', 'cpmks.sub_cpmks', 'cpmks.sub_cpmks.referensis', 'cpmks.referensis', 'cpmks.cpls'])->findOrFail($id);
+            $mk = RPS::with(['prodis', 'cpmks.scpmks', 'cpmks.scpmks.referensis', 'cpmks.referensis', 'cpmks.cpls'])->findOrFail($id);
 
             $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
             $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
@@ -93,7 +93,7 @@ trait WithRPSModal
             $this->cpmk_name_array = $mk->cpmks->pluck('deskripsi')->toArray();
             $this->cpmk_kode_array = $mk->cpmks->pluck('kode')->toArray();
 
-            $allSelected = $mk->cpmks->load(['sub_cpmks', 'sub_cpmks.referensis', 'referensis', 'cpls']);
+            $allSelected = $mk->cpmks->load(['sub_cpmks', 'scpmks.referensis', 'referensis', 'cpls']);
             $this->items = $this->mapCPMK($allSelected);
 
             $this->dispatch('fill-modal-mk', mk: $mk);

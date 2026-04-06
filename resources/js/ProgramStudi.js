@@ -39,6 +39,10 @@ document.addEventListener("alpine:init", () => {
         nama_fakultas: "",
         kodeFk: "",
 
+        // Items
+        jurusanItems: "",
+        fakultasItems: "",
+
         setValueProdi(
             namaProdi,
             strata,
@@ -64,8 +68,16 @@ document.addEventListener("alpine:init", () => {
             this.nama_fakultas = namaFakultas;
             this.kode_fk = kodePr;
 
-            this.jurusan_kode = kodeJr;
-            this.fakultas_kode = kodeFk;
+            this.jurusan_items = {
+                "kode": kodeJr,
+                "name": namaJurusan,
+                "name2": namaFakultas,
+            };
+
+            this.fakultas_items = {
+                "kode": kodeFk,
+                "name": namaFakultas,
+            };
         },
 
         setDeleteProdi(
@@ -109,8 +121,8 @@ document.addEventListener("alpine:init", () => {
             this.nama_fakultas = "";
             this.kode_fk = "";
 
-            this.jurusan_kode = "";
-            this.fakultas_kode = "";
+            this.jurusan_items = "";
+            this.fakultas_items = "";
 
             this.nama_prodi_delete = "",
             this.nama_jurusan_delete = "",

@@ -187,7 +187,6 @@ class RPSManagement extends Component
         $this->inputCPLFilter();
         $this->inputRefFilter();
 
-
         $this->inputProdiFilter();
         $this->inputJurusanFilter();
         $this->inputFakultasFilter();
@@ -376,7 +375,6 @@ class RPSManagement extends Component
             'totalSCPMK' => $baseDataSCPMK->count(),
             'totalCPL' => $baseDataCPL->count(),
             'totalRef' => $baseDataRef->count(),
-            // 'totalDosen' => (clone $queryDosen)->reorder()->count(),
 
             'stats' => $stats,
         ]));

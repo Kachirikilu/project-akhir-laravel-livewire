@@ -1,7 +1,7 @@
 <div x-data="{
     open: false,
     localSearch: @entangle($xSearchQueryString),
-    selectedName: @entangle($selectedXNameString)
+    {{-- selectedName: @entangle($selectedXNameString) --}}
 }" wire-key="secondary-search-{{ $inputXFilterString }}" class="relative w-full sm:flex-1">
 
     <div class="relative">
@@ -50,7 +50,7 @@
         @forelse ($xSearchResults as $x)
             <div wire:key="x-{{ $x['id'] }}"
                 @click="
-                    localSearch = '{{ ($typeXString == 'jurusan' ? 'Jurusan ' : ($typeXString == 'fakultas' ? 'Fakultas ' : '')) . $x[$typeXString] }}';
+                    localSearch = '{{ $x[$typeXString] }}';
                     open = false;
                     $wire.{{ $selectXForFilterString }}({{ $x['id'] }});
                 "
@@ -61,13 +61,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <div class="text-[var(--contrast-main-text)] font-medium">
-                            @if ($typeXString == 'jurusan')
-                                Jurusan {{ $x['jurusan'] }}
-                            @elseif ($typeXString == 'fakultas')
-                                Fakultas {{ $x['fakultas'] }}
-                            @else
-                                {{ $x[$typeXString] }}
-                            @endif
+                            {{ $x[$typeXString] }}
                         </div>
 
                         <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
@@ -76,7 +70,7 @@
 
                             @if ($typeXString == 'prodi' || $typeXString == 'jurusan')
                                 <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
-                                <span>Fakultas {{ $x['fakultas'] }}</span>
+                                <span>{{ $x['fakultas'] }}</span>
                             @endif
                         </div>
                     </div>

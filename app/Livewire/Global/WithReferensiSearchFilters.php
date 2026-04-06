@@ -12,9 +12,10 @@ trait WithReferensiSearchFilters
 
     public $refSearchQuery = '';
     public $refSearchResults = [];
-    public $ref_name = '';
+    public $modeRef = '';
     public $ref_id;
-    public $ref_kode;
+    public $ref_name = '';
+    public $ref_items;
     public $refNameSearch = '';
     public $refResults = [];
     public $selectedRefId = null;
@@ -22,12 +23,9 @@ trait WithReferensiSearchFilters
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $ref_id_array = [];
     public $ref_name_array = [];
-    public $ref_kode_array = [];
+    public $ref_items_array = [];
     // public $ref_item_array = [];
 
-    /**
-     * Helper untuk mapping hasil agar seragam
-     */
     private function mapRef($collection)
     {
         return $collection->map(fn ($c) => [
@@ -35,10 +33,31 @@ trait WithReferensiSearchFilters
             'kode' => $c->kode,
             'judul' => $c->judul,
             'penulis' => $c->penulis,
+            'penulis_tahun' => $c->penulis_tahun,
             'penerbit' => $c->penerbit,
             'tahun' => $c->tahun,
             'link' => $c->link,
         ])->toArray();
+    }
+
+    private function refQuery()
+    {
+        return Referensi::query()->with('rps', 'cpmks.rps', 'scpmks.cpmks.rps',
+                                        'cpmks', 'scpmks.cpmks',
+                                        'scpmks');
+    }
+
+    private function itemsRef($r)
+    {
+        if (! $r) {
+            return null;
+        }
+        return [
+            'kode' => $r->kode,
+            'name' => $r->judul,
+            'name2' => $r->penulis_tahun,
+            'name3' => $r->penerbit,
+        ];
     }
 
     public function inputRefFilter()
@@ -48,7 +67,7 @@ trait WithReferensiSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->ref_name) {
             $this->refSearchResults = $this->mapRef(
-                Referensi::searchRef($search)->limit(12)->get()
+                $this->refQuery()->searchRef($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->ref_name) {
             $this->refSearchResults = $this->getRefbyUser();
@@ -59,21 +78,19 @@ trait WithReferensiSearchFilters
 
     public function resetRefFilter()
     {
-        $this->reset(['selectedRefId', 'ref_name', 'refSearchQuery', 'ref_kode']);
+        $this->reset(['selectedRefId', 'refSearchQuery', 'ref_name', 'ref_items']);
         $this->resetPage();
     }
 
     public function selectRefForFilter($id)
     {
-        $data = Referensi::
-        // with(['jurusan_rel', 'jurusan_rel.fakultas_rel'])->
-        find($id);
+        $data = $this->refQuery()->find($id);
 
         if ($data) {
             $this->selectedRefId = $id;
-            $this->ref_kode = $data->kode;
             $this->ref_name = $data->judul;
             $this->refSearchQuery = $data->judul;
+            $this->ref_items = $this->itemsRef($data);
             $this->refSearchResults = [];
             $this->resetPage();
         }
@@ -82,26 +99,33 @@ trait WithReferensiSearchFilters
     public function updatedRefNameSearch($value)
     {
         $this->ref_id = null;
-        $this->ref_kode = null;
+        $this->ref_items = null;
         $this->resetErrorBag(['ref_id', 'refNameSearch']);
 
-        $query = Referensi::query();
+        $query = $this->refQuery();
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchRef($value)->limit(12)->get();
             $this->refResults = $this->mapRef($results);
 
-            // Exact Match Logic
-            $exactMatch = $results->first(function ($r) use ($value) {
+            $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+            $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
+                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($r->kode));
+                
                 return strtolower($r->judul) === strtolower($value) 
-                    || strtolower($r->kode) === strtolower($value);
+                    || $normalizedMkKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $this->ref_id = $exactMatch->id;
-                $this->ref_kode = $exactMatch->kode;
                 $this->refNameSearch = $exactMatch->judul;
-                $this->refResults = [];
+                if ($this->modeRef == 'single') {
+                    $this->ref_id = $exactMatch->id;
+                    $this->ref_items = $this->itemsRef($exactMatch);
+                    $this->refResults = [];
+                } else {
+                    $this->ref_id_array[] = $exactMatch->id;
+                    $this->ref_items_array[] = $this->itemsRef($exactMatch);
+                }
             }
         } else {
             if (Auth::user()->prodi_id) {
@@ -119,7 +143,7 @@ trait WithReferensiSearchFilters
         $user = Auth::user();
         $prodiId = $user->prodi_id ?? null;
 
-        $query = Referensi::query();
+        $query = $this->refQuery();
         
         if (!$prodiId) {
             $defaultRef = $query
@@ -137,7 +161,7 @@ trait WithReferensiSearchFilters
         
 
         if ($mainResults->count() < 12) {
-            $extra = Referensi::whereNotIn('id', $mainResults->pluck('id'))
+            $extra = $this->refQuery()->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
                 
@@ -147,8 +171,9 @@ trait WithReferensiSearchFilters
         return $this->mapRef($mainResults);
     }
 
-    public function fetchRef($query = '')
+    public function fetchRef($query = '', $mode = 'single')
     {
+        $this->modeRef = $mode;
         if (empty($query) || $this->ref_id) {
             $this->refResults = $this->getRefbyUser();
         }
@@ -163,9 +188,9 @@ trait WithReferensiSearchFilters
         $this->refNameSearch = $refName;
         $this->refResults = $this->getRefbyUser();
 
-        $data = Referensi::find($id);
+        $data = $this->refQuery()->find($id);
         if ($data) {
-            $this->ref_kode = $data->kode;
+            $this->ref_items = $this->itemsRef($data);
         }
 
         if (method_exists($this, 'fetchRef')) {
@@ -176,11 +201,12 @@ trait WithReferensiSearchFilters
     }
     public function selectRefArray($id)
     {
-        $data = Referensi::find($id);
+        $data = $this->refQuery()->find($id);
         if ($data && ! in_array($id, $this->ref_id_array)) {
             $this->ref_id_array[] = $id;
             $this->ref_name_array[] = $data->judul;
-            $this->ref_kode_array[] = $data->kode;
+            $this->ref_items_array[] = $data->kode;
+            $this->ref_search = '';
             // $this->ref_item_array[] = [
             //     'penulis' => $data->penulis,
             //     'penerbit' => $data->penerbit,
@@ -192,7 +218,7 @@ trait WithReferensiSearchFilters
 
     public function resetRefInput()
     {
-        $this->reset(['ref_id', 'ref_kode', 'refNameSearch']);
+        $this->reset(['ref_id', 'ref_items', 'refNameSearch']);
         $this->refResults = $this->getRefbyUser();
     }
 
@@ -200,7 +226,7 @@ trait WithReferensiSearchFilters
     {
         $this->ref_id_array = [];
         $this->ref_name_array = [];
-        $this->ref_kode_array = [];
+        $this->ref_items_array = [];
         // $this->ref_item_array = [];
         $this->refNameSearch = '';
     }
