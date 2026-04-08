@@ -1,0 +1,239 @@
+<?php
+
+namespace App\Livewire\Global;
+
+use App\Models\Auth\Dosen;
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
+
+trait WithDosenSearchFilters
+{
+    use WithPagination;
+
+    public $dosenSearchQuery = '';
+    public $dosenSearchResults = [];
+    public $modeDosen = '';
+    public $dosen_id;
+    public $dosen_name = '';
+    public $dosen_items;
+    public $dosenNameSearch = '';
+    public $dosenResults = [];
+    public $selectedDosenId = null;
+
+    // Properti Array untuk Multiple Selection jika dibutuhkan
+    public $dosen_id_array = [];
+    public $dosen_name_array = [];
+    public $dosen_items_array = [];
+
+    // Properti Dosen Pengajar
+    public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
+    public $peran_dosen = [];
+
+    private function mapDosen($collection)
+    {
+        return $collection->map(fn ($d) => [
+            'id' => $d->id,
+            'kode' => $d->nip,
+            'nidn' => $d->nidn ?? $d->nidk ?? '---',
+            'nidk' => $d->nidk ?? '---',
+            'nidn_nidk' => $d->nidn_nidk,
+            'name' => $d->name,
+            'status' => $d->status,
+        ])->toArray();
+    }
+
+    private function dosenQuery()
+    {
+        return Dosen::query()->with('user');
+    }
+
+    private function itemsDosen($d)
+    {
+        if (! $d) {
+            return null;
+        }
+        return [
+            'kode' => $d->nip,
+            'name' => $d->name,
+            'name2' => $d->nidn_nidk,
+            'name3' => $d->status,
+            'peran' => $d->peran,
+            'is_ketua' => $d->pivot->is_ketua ?? false,
+        ];
+    }
+
+    public function inputDosenFilter()
+    {
+        $search = trim($this->dosenSearchQuery);
+
+        // Jika ada input search
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dosen_name) {
+            $this->dosenSearchResults = $this->mapDosen(
+                $this->dosenQuery()->searchDosen($search)->limit(12)->get()
+            );
+        } elseif (empty($search) || $this->dosen_name) {
+            $this->dosenSearchResults = $this->getDosenbyUser();
+        } else {
+            $this->dosenSearchResults = [];
+        }
+    }
+
+    public function resetDosenFilter()
+    {
+        $this->reset(['selectedDosenId', 'dosenSearchQuery', 'dosen_name', 'dosen_items']);
+        $this->resetPage();
+    }
+
+    public function selectDosenForFilter($id)
+    {
+        $data = $this->dosenQuery()->find($id);
+
+        if ($data) {
+            $this->selectedDosenId = $id;
+            $this->dosen_name = $data->name;
+            $this->dosenSearchQuery = $data->name;
+            $this->dosen_items = $this->itemsDosen($data);
+            $this->dosenSearchResults = [];
+            $this->resetPage();
+        }
+    }
+
+    public function updatedDosenNameSearch($value)
+    {
+        $this->dosen_id = null;
+        $this->dosen_items = null;
+        $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);
+
+        $query = $this->dosenQuery();
+
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchDosen($value)->limit(12)->get();
+            $this->dosenResults = $this->mapDosen($results);
+
+            $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+            $exactMatch = $results->first(function ($d) use ($value, $normalizedValue) {
+                $normalizedDosenNip = str_replace(['-', ' '], '', strtolower($d->nip));
+                $normalizedDosenNidn = str_replace(['-', ' '], '', strtolower($d->nidn));
+                $normalizedDosenNidk = str_replace(['-', ' '], '', strtolower($d->nidnk));
+                
+                return strtolower($d->name) === strtolower($value) 
+                    || strtolower($d->user->email) === strtolower($value) 
+                    || $normalizedDosenNip === $normalizedValue
+                    || $normalizedDosenNidn === $normalizedValue
+                    || $normalizedDosenNidk === $normalizedValue;
+            });
+
+            if ($exactMatch) {
+                $this->dosen_id = $exactMatch->id;
+                $this->dosen_items = $this->itemsDosen($exactMatch);
+                $this->dosenNameSearch = $exactMatch->name;
+                $this->dosenResults = [];
+            }
+            if ($exactMatch) {
+                $this->dosenNameSearch = $exactMatch->name;
+                if ($this->modeDosen == 'single') {
+                    $this->dosen_id = $exactMatch->id;
+                    $this->dosen_items = $this->itemsDosen($exactMatch);
+                    $this->dosenResults = [];
+                } else {
+                    $this->dosen_id_array[] = $exactMatch->id;
+                    $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
+                }
+            }
+        } else {
+            if (Auth::user()->prodi_id) {
+                $this->dosenResults = $this->getDosenbyUser();
+            } else {
+                $this->dosenResults = $this->mapDosen(
+                    $query->orderBy('dosens.name')->limit(12)->get()
+                );
+            }
+        }
+    }
+
+    public function getDosenbyUser()
+    {
+        $user = Auth::user();
+        $prodiId = $user->prodi_id ?? null;
+
+        $query = $this->dosenQuery();
+        
+        if (!$prodiId) {
+            $defaultDosen = $query
+                ->latest()
+                ->limit(12)
+                ->get();
+            return $this->mapDosen($defaultDosen);
+        }
+
+        $mainResults = $query
+            ->whereHas('prodi', function($q) use ($prodiId) {
+                $q->where('prodis.id', $prodiId);
+            })
+            ->limit(12)
+            ->get();
+
+        if ($mainResults->count() < 12) {
+            $extra = Dosen::whereNotIn('id', $mainResults->pluck('id'))
+                ->limit(12 - $mainResults->count())
+                ->get();
+                
+            $mainResults = $mainResults->concat($extra);
+        }
+
+        return $this->mapDosen($mainResults);
+    }
+
+    public function fetchDosen($query = '', $mode = 'single')
+    {
+        $this->modeDosen = $mode;
+        if (empty($query) || $this->dosen_id) {
+            $this->dosenResults = $this->getDosenbyUser();
+        }
+
+        return;
+    }
+
+
+    public function selectDosen($id, $dosenName)
+    {
+        $this->dosen_id = $id;
+        $this->dosenNameSearch = $dosenName;
+        $this->dosenResults = $this->getDosenbyUser();
+
+        $data = $this->dosenQuery()->find($id);
+        if ($data) {
+            $this->dosen_items = $this->itemsDosen($data);
+        }
+
+        if (method_exists($this, 'fetchDosen')) {
+            $this->fetchDosen('');
+        }
+
+        $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);
+    }
+    public function selectDosenArray($id)
+    {
+        $data = $this->dosenQuery()->find($id);
+        if ($data && ! in_array($id, $this->dosen_id_array)) {
+            $this->dosen_id_array[] = $id;
+            $this->dosen_name_array[] = $data->name;
+            $this->dosen_items_array[] = $this->itemsDosen($data);
+            $this->dosen_search = '';
+        }
+    }
+
+    public function resetDosenInput()
+    {
+        $this->reset(['dosen_id', 'dosen_items', 'dosenNameSearch']);
+        $this->dosenResults = $this->getDosenbyUser();
+    }
+
+    public function resetDosenArray()
+    {
+        $this->dosen_id_array = [];
+        $this->dosen_name_array = [];
+        $this->dosen_items_array = [];
+        $this->dosenNameSearch = '';
+    }
+}

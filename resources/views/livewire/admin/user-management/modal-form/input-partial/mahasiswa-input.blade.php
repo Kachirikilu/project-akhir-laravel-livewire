@@ -17,8 +17,7 @@
         'modelString' => 'name',
         'iconString' => 'user-circle',
         'placeholder' => 'Masukkan Nama Lengkap',
-        'message' => $errors->first('name'),
-        'isRequired' => 1,
+        'message' => $errors->first('name')
     ])
 
     @include('livewire.global.modal-form.input-form', [
@@ -30,8 +29,7 @@
         'maxlength' => 20,
         'iconString' => 'identification',
         'placeholder' => 'Masukkan NIM',
-        'message' => $errors->first('nim'),
-        'isRequired' => 1,
+        'message' => $errors->first('nim')
     ])
 
     @include('livewire.global.modal-form.input-form', [
@@ -43,8 +41,7 @@
         'maxlength' => 4,
         'iconString' => 'calendar-days',
         'placeholder' => 'Masukkan Tahun Angkatan',
-        'message' => $errors->first('tahun_angkatan'),
-        'isRequired' => 1,
+        'message' => $errors->first('tahun_angkatan')
     ])
 
 

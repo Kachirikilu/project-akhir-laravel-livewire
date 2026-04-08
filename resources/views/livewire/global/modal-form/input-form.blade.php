@@ -11,7 +11,7 @@
     
     @if (isset($noLabel) == 0)
         <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
-            @if ($isRequired ?? false)
+            @if ($isRequired ?? true)
                 <span class="text-red-500">*</span>
             @endif
         </label>

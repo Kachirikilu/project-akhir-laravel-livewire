@@ -18,8 +18,7 @@
         // 'colorIcon' => $colorIcon,
         'iconString' => 'academic-cap',
         'placeholder' => 'Masukkan nama Program Studi',
-        'message' => $errors->first('nama_prodi'),
-        'isRequired' => 1,
+        'message' => $errors->first('nama_prodi')
     ])
 
     @include('livewire.global.modal-form.search-input-form', [

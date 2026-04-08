@@ -27,7 +27,7 @@ class Referensi extends Model
     {
         return Attribute::get(function () {
             $penulis = $this->penulis ?? 'Anonim';
-            $tahun = $this->tahun ?? '-';
+            $tahun = $this->tahun ?? '----';
             return "{$penulis} ({$tahun})";
         });
     }

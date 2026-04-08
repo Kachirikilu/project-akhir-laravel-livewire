@@ -18,8 +18,7 @@
         // 'typeString' => 'text',
         'iconString' => 'book-open',
         'placeholder' => 'Masukkan nama Jurusan',
-        'message' => $errors->first('nama_jurusan'),
-        'isRequired' => 1,
+        'message' => $errors->first('nama_jurusan')
     ])
 
     @include('livewire.global.modal-form.search-input-form', [

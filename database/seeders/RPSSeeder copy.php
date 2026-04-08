@@ -46,15 +46,6 @@ class RPSSeeder extends Seeder
                     'updated_at' => $waktuPalsu,
                 ]);
 
-                $rpsCplIds = collect($cpls)->pluck('id')->random(rand(1, count($cpls)));
-
-                // attach dengan sort_order
-                foreach ($rpsCplIds as $order => $cplId) {
-                    $rps->cpls()->attach($cplId, [
-                        'sort_order' => $order
-                    ]);
-                }
-
                 $rps->dosens()->attach($dosenId, ['peran' => 'Koordinator', 'is_ketua' => true]);
 
                 // --- 2. REFERENSI (Buat objeknya dulu, simpan ID-nya) ---
@@ -90,54 +81,29 @@ class RPSSeeder extends Seeder
     private function seedCompleteContent($rps, $cpls, $mk, $waktu, $refIds)
     {
         $metodeOptions = [
-            'Teori', 'Praktik', 'Tugas', 'UTS', 'UAS',
-            'Hasil Projek', 'Kerja Praktek', 'Skripsi',
-            'Aktivitas Partisipasif', 'Mandiri'
-        ];
+                'Teori', 'Praktik', 'Tugas', 'UTS', 'UAS',
+                'Hasil Projek', 'Kerja Praktek', 'Skripsi',
+                'Aktivitas Partisipasif', 'Mandiri'
+            ];
 
+        // Membuat 3 CPMK untuk setiap Mata Kuliah
         for ($i = 1; $i <= 3; $i++) {
-
             $cpmk = CPMK::create([
                 'kode_cpmk' => 'CPMK-'.$mk->id.'-'.$i,
                 'deskripsi' => 'Mahasiswa mampu menguasai kompetensi tingkat '.($i == 1 ? 'Dasar' : ($i == 2 ? 'Menengah' : 'Lanjut'))." pada mata kuliah {$mk->nama_matkul}.",
                 'created_at' => $waktu,
             ]);
 
-            // 1. RPS ↔ CPMK
-            $rps->cpmks()->attach($cpmk->id, [
-                'sort_order' => $i - 1
-            ]);
+            // 1. HUBUNGKAN CPMK KE RPS
+            $rps->cpmks()->attach($cpmk->id);
 
-            // 2. CPMK ↔ CPL (fix: selalu array & ada sort_order)
-            $randomCpls = collect($cpls)
-                ->pluck('id')
-                ->random(rand(1, 2));
+            // 2. HUBUNGKAN CPMK KE CPL (Mapping CPL ke CPMK)
+            // Kita ambil 1-2 CPL secara acak untuk dipetakan ke CPMK ini
+            $randomCpls = collect($cpls)->pluck('id')->random(rand(1, 2));
+            $cpmk->cpls()->attach($randomCpls);
 
-            $randomCpls = collect($randomCpls)->values();
-
-            foreach ($randomCpls as $order => $cplId) {
-                $cpmk->cpls()->attach($cplId, [
-                    'sort_order' => $order
-                ]);
-            }
-
-            // 3. CPMK ↔ Referensi (FIX BUG UTAMA 🔥)
-            if (!empty($refIds)) {
-                $randomRefs = collect($refIds)
-                    ->random(rand(1, count($refIds)));
-
-                $randomRefs = collect($randomRefs)->values(); // 🔥 WAJIB
-
-                foreach ($randomRefs as $order => $refId) {
-                    $cpmk->referensis()->attach($refId, [
-                        'sort_order' => $order
-                    ]);
-                }
-            }
-
-            // 4. SUB-CPMK
+            // 3. BUAT SUB-CPMK YANG TERIKAT KE CPMK INI
             for ($j = 1; $j <= 2; $j++) {
-
                 $sub = SubCPMK::create([
                     'kode_scpmk' => 'Sub-'.$i.'.'.$j,
                     'deskripsi' => 'Mampu menjelaskan dan menerapkan konsep materi bagian '.$i.'.'.$j,
@@ -149,17 +115,12 @@ class RPSSeeder extends Seeder
                     'created_at' => $waktu,
                 ]);
 
-                // Sub ↔ CPMK
-                $sub->cpmks()->attach($cpmk->id, [
-                    'sort_order' => $j - 1
-                ]);
+                // Hubungkan Sub-CPMK ke CPMK (Relasi Many-to-Many)
+                $sub->cpmks()->attach($cpmk->id);
 
-                // Sub ↔ Referensi
-                if (!empty($refIds)) {
-                    $sub->referensis()->attach(
-                        $refIds[array_rand($refIds)],
-                        ['sort_order' => 0]
-                    );
+                // Hubungkan Sub-CPMK ke Referensi (Sesuai permintaan Anda sebelumnya)
+                if (! empty($refIds)) {
+                    $sub->referensis()->attach($refIds[array_rand($refIds)]);
                 }
             }
         }

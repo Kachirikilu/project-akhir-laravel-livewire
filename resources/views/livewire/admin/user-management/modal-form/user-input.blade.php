@@ -20,8 +20,7 @@
             'typeString' => 'email',
             'iconString' => 'envelope',
             'placeholder' => 'contoh@domain.com',
-            'message' => $errors->first('email'),
-            'isRequired' => 1,
+            'message' => $errors->first('email')
         ])
 
         {{-- 🔒 Password Input --}}
@@ -34,8 +33,7 @@
                 'typeString' => 'password',
                 'iconString' => 'lock-closed',
                 'placeholder' => 'Masukkan Password',
-                'message' => $errors->first('password'),
-                'isRequired' => 1,
+                'message' => $errors->first('password')
             ])
         </template>
         <template x-if="$store.user?.isEdit == 1" x-cloak>

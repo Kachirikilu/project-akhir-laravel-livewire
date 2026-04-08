@@ -2,23 +2,20 @@
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,
-    itemNames: @entangle($selectedNameArray).live,
-    itemKodes: @entangle($kodeString).live,
+    itemsAll: @entangle($itemsAllString).live,
+    subItems: @entangle($subItemsString).live,
 
-    subItems: [],
     expanded: [],
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemNames)) this.itemNames = [];
-        if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
+        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
     },
 
     init() {
         // 1. Pastikan inisialisasi array dasar
         if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemNames)) this.itemNames = [];
-        if (!Array.isArray(this.itemKodes)) this.itemKodes = [];
+        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
         if (!Array.isArray(this.subItems)) this.subItems = [];
 
         this.$nextTick(() => {
@@ -43,23 +40,38 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, name, kode, subData) {
+    {{-- addItem(id, name, kode, subData) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
-            this.itemNames.push(name);
-            this.itemKodes.push(kode);
+            this.itemsAll.push(name);
 
             this.subItems.push(subData);
             this.syncToRpsStore();
         }
         this.search = '';
+    }, --}}
+
+    addItem(id, kode, name, name2, name3, subData) {
+        let normalizedId = Number(id);
+        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
+            this.items.push(normalizedId);
+
+            this.itemsAll.push({
+                kode: kode,
+                name: name,
+                name2: name2,
+                name3: name3
+            });
+
+            this.subItems.push(subData);
+            this.syncToRpsStore();
+        }
     },
 
     removeItem(index) {
         this.items.splice(index, 1);
-        this.itemNames.splice(index, 1);
-        this.itemKodes.splice(index, 1);
+        this.itemsAll.splice(index, 1);
         this.subItems.splice(index, 1);
 
         if (this.expanded === index) this.expanded = null;
@@ -72,8 +84,7 @@
         const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
 
         swap(this.items, index, to);
-        swap(this.itemNames, index, to);
-        swap(this.itemKodes, index, to);
+        swap(this.itemsAll, index, to);
         swap(this.subItems, index, to);
 
         if (this.expanded === index) this.expanded = to;
@@ -100,7 +111,10 @@
 }">
 
     <label class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
-        {{ $nameXString }} <span class="text-red-500">*</span>
+        {{ $nameXString }} 
+        @if ($isRequired ?? true)
+            <span class="text-red-500">*</span>
+        @endif
     </label>
 
     {{-- 1. INPUT SEARCH --}}
@@ -153,15 +167,16 @@
                                 let index = items.indexOf({{ $x['id'] }});
                                 if (index !== -1) {
                                     items.splice(index, 1);
-                                    itemNames.splice(index, 1);
-                                    itemKodes.splice(index, 1);
+                                    itemsAll.splice(index, 1);
                                     subItems.splice(index, 1);
                                 }
                             } else {
                                 addItem(
                                     {{ $x['id'] }}, 
-                                    '{{ addslashes($x[$typeXString]) }}', 
                                     '{{ $x['kode'] }}', 
+                                    '{{ $x[$typeXString] }}', 
+                                    @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
+                                    @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
                                     { 
                                         scpmk: {{ json_encode($x['scpmk']) }}, 
                                         ref: {{ json_encode($x['ref']) }},
@@ -230,7 +245,7 @@
         </div>
 
         {{-- Daftar Item Berjejer ke Bawah (flex-col) --}}
-        <div class="space-y-2 max-h-[512px] overflow-y-auto pr-1 scrollbar-medium">
+        <div class="space-y-2 max-h-[625px] overflow-y-auto pr-1 scrollbar-medium">
             <template x-for="(id, index) in items" :key="id">
                 <div
                     class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
@@ -256,14 +271,14 @@
                                                 'text-gray-400'" />
                                         <span
                                             class="text-xs font-bold px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white uppercase"
-                                            x-text="itemKodes[index]"></span>
+                                            x-text="itemsAll[index]?.kode"></span>
                                     </div>
                                     <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                                 </div>
 
                                 {{-- NAMA UTAMA --}}
                                 <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
-                                    x-text="itemNames[index]"></span>
+                                    x-text="itemsAll[index]?.name"></span>
 
                                 {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
                                 <div
@@ -304,7 +319,7 @@
                     <div x-show="expanded.includes(index)" x-collapse>
                         <div class="px-4 pb-4 bg-white/20 dark:bg-black/5">
                             <div
-                                class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-thin">
+                                class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-medium">
                                 <table class="w-full text-xs text-left border-collapse min-w-[800px]">
                                     <thead>
                                         <tr

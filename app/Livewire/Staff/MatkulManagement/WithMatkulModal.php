@@ -380,10 +380,6 @@ trait WithMatkulModal
         $this->jurusan_id = null;
         $this->fakultas_id = null;
 
-        $this->prodi_name = null;
-        $this->jurusan_name = null;
-        $this->fakultas_name = null;
-
         $this->prodi_id_array = [];
         $this->prodi_items_array = [];
 

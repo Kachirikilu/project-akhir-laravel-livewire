@@ -18,8 +18,7 @@
             'modelString' => 'nama_matkul',
             'iconString' => 'rectangle-stack',
             'placeholder' => 'Masukkan nama Mata Kuliah',
-            'message' => $errors->first('nama_matkul'),
-            'isRequired' => 1,
+            'message' => $errors->first('nama_matkul')
         ])
 
         <div class="relative">
@@ -64,8 +63,7 @@
                     'xValues' => [1, 2, 3, 4, 5, 6, 7, 8],
                     'iconString' => 'bookmark-square',
                     'placeholder' => 'Pilih Semester...',
-                    'message' => $errors->first('semester'),
-                    'isRequired' => 1,
+                    'message' => $errors->first('semester')
                 ])
             </div>
             <div class="sm:col-span-2">

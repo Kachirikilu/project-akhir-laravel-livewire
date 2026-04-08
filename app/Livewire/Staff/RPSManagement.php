@@ -8,6 +8,7 @@ use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
+use App\Livewire\Global\WithDosenSearchFilters;
 
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithJurusanSearchFilters;
@@ -48,6 +49,7 @@ class RPSManagement extends Component
     use WithSubCPMKSearchFilters;
     use WithCPLSearchFilters;
     use WithReferensiSearchFilters;
+    use WithDosenSearchFilters;
 
     use WithRPSModal;
 
@@ -186,6 +188,7 @@ class RPSManagement extends Component
         $this->inputSCPMKFilter();
         $this->inputCPLFilter();
         $this->inputRefFilter();
+        $this->inputDosenFilter();
 
         $this->inputProdiFilter();
         $this->inputJurusanFilter();

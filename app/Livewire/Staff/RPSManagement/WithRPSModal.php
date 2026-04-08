@@ -34,9 +34,10 @@ trait WithRPSModal
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         $this->updatedCPLNameSearch($this->cplNameSearch);
         $this->updatedRefNameSearch($this->refNameSearch);
+        $this->updatedDosenNameSearch($this->refNameSearch);
     }
 
-    public function editMK($id, $tingkatan)
+    public function editRPS($id, $tingkatan)
     {
         if (! $this->AuthCheck('staff')) {
             return; 
@@ -157,7 +158,7 @@ trait WithRPSModal
             $rules['prodi_id_array'] = 'required|array|min:1';
         }
 
-        $validator = Validator::make($data, $rules, $this->validationMessagesMK());
+        $validator = Validator::make($data, $rules, $this->validationMessagesDosen());
 
         if ($validator->fails()) {
             foreach ($validator->errors()->toArray() as $key => $messages) {
@@ -197,7 +198,7 @@ trait WithRPSModal
         }
     }
 
-    public function saveMK($data)
+    public function saveRPS($data)
     {
         if (! $this->AuthCheck('staff')) {
             return; 
@@ -257,7 +258,7 @@ trait WithRPSModal
         }
     }
 
-    public function updateMK($data)
+    public function updateRPS($data)
     {
         if (! $this->AuthCheck('staff')) {
             return; 
@@ -324,7 +325,7 @@ trait WithRPSModal
         }
     }
 
-    private function validationMessagesMK()
+    private function validationMessagesDosen()
     {
         return [
             'prodi_id.required' => 'Program Studi wajib diisi!',
@@ -364,44 +365,33 @@ trait WithRPSModal
         ];
     }
 
-    // Alias methods for view compatibility
-    public function saveRPS($data)
-    {
-        return $this->saveMK($data);
-    }
-
-    public function updateRPS($data)
-    {
-        return $this->updateMK($data);
-    }
-
-    public function editRPS($id, $tingkatan)
-    {
-        return $this->editMK($id, $tingkatan);
-    }
-// }
 
     private function resetInputRPS()
     {
-        $this->prodiNameSearch = '';
-        $this->jurusanNameSearch = '';
-        $this->fakultasNameSearch = '';
+        $this->matkulNameSearch = '';
+        $this->cpmkNameSearch = '';
+        $this->cplNameSearch = '';
+        $this->refNameSearch = '';
+        $this->refNameSearch = '';
 
-        $this->prodi_id = null;
-        $this->jurusan_id = null;
-        $this->fakultas_id = null;
+        // ambil id untuk simpan ke rps_pivot_cpmk
+        $this->cpmk_id_array = [];
+        $this->cpmk_items_array = [];
+        $this->cpmk_sub_items_array = [];
 
-        $this->prodi_name = null;
-        $this->jurusan_name = null;
-        $this->fakultas_name = null;
+        // ambil id untuk simpan ke rps_pivot_cpl
+        $this->cpl_id_array = [];
+        $this->cpl_items_array = [];
 
-        $this->prodi_id_array = [];
-        $this->prodi_name_array = [];
-        $this->prodi_kode_array = [];
-        
-        // $this->resetCPMKArray();
-        // $this->items = [];
-        
+        // ambil id untuk simpan ke rps_pivot_ref
+        $this->ref_id_array = [];
+        $this->ref_items_array = [];
+
+        // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke rps_pivot_dosen
+        $this->dosen_id_array = [];
+        $this->dosen_items_array = [];
+
+
         $this->resetErrorBag();
     }
 }

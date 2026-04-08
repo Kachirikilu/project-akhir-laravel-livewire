@@ -19,16 +19,7 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
-        // nama_matkul: "",
-        // digit_akademik: "",
-        // digit_semester: "",
-        // digit_mk: "",
-        // semester: "",
-        // kode_blok: "",
-        // tipe_sks: "",
-        // sks_kuliah: "",
-
-        matkul_kode: "",
+        matkul_id: "",
         tahun_akademik: "",
         tahun_akademik_1: "",
         tahun_akademik_2: "",
@@ -52,12 +43,11 @@ document.addEventListener("alpine:init", () => {
 
         // Di dalam Alpine.store('rps')
         update(allSubItems) {
-            // Jika allSubItems kosong, pastikan store juga bersih
             if (!allSubItems || allSubItems.length === 0) {
                 this.ref_cpmk = [];
                 this.ref_scpmk = [];
                 this.cpl_cpmk = [];
-                this.count_scpmk = 0; // Reset jumlah sub-cpmk juga
+                this.count_scpmk = 0;
                 return;
             }
 
@@ -82,27 +72,7 @@ document.addEventListener("alpine:init", () => {
             });
         },
 
-        ref_penulis: [],
-        ref_tahun: [],
-        ref_penerbit: [],
 
-
-        reset() {
-            // this.ref_cpmk = [];
-            // this.ref_scpmk = [];
-            // this.cpl_cpmk = [];
-            // this.count_scpmk = 0;
-            // this.typeModal = "";
-            // this.isEdit = 0;
-            // Tambahkan variabel lain yang perlu di-nol-kan
-        },
-        // Fungsi khusus untuk reset total saat tutup modal
-        clearAll() {
-            // this.ref_cpmk = [];
-            // this.ref_scpmk = [];
-            // this.cpl_cpmk = [];
-        },
-        
         setTypeModal(type) {
             this.typeModal = type;
         },
@@ -170,7 +140,7 @@ document.addEventListener("alpine:init", () => {
             this.is_wajib = "";
         },
         
-        reset3() {
+        reset() {
             this.typeModal = "",
             this.typeModal_delete = "",
             this.isEdit = 0,

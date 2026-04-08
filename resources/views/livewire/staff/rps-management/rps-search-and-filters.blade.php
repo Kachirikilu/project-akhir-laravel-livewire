@@ -390,7 +390,7 @@
             ])
         </div>
 
-        {{-- <div class="sm:col-span-4 relative">
+        <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputRefFilter',
                 'xSearchResultsString' => 'refSearchResults',
@@ -406,6 +406,24 @@
                 'typeXString' => 'judul',
                 'unfoundString' => 'Tidak ada Referensi ditemukan!',
             ])
-        </div> --}}
+        </div>
+        
+        <div class="sm:col-span-4 relative">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputDosenFilter',
+                'xSearchResultsString' => 'dosenSearchResults',
+                'iconString' => 'user',
+                'placeholderString' => 'Filter berdasarkan Dosen...',
+                'xSearchQueryString' => 'dosenSearchQuery',
+                'selectedXId' => $selectedDosenId,
+                'selectedXName' => $dosen_name,
+                'resetXFilter' => 'resetDosenFilter()',
+                'xSearchQuery' => $dosenSearchQuery,
+                'xSearchResults' => $dosenSearchResults,
+                'selectXForFilterString' => 'selectDosenForFilter',
+                'typeXString' => 'name',
+                'unfoundString' => 'Tidak ada Dosen ditemukan!',
+            ])
+        </div>
     </div>
 </div>

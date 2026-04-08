@@ -51,6 +51,12 @@ class CPL extends Model
         return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'prodi_id')
                     ->withPivot('sort_order');
     }
+
+    public function rps(): BelongsToMany
+    {
+        return $this->belongsToMany(RPS::class, 'rps_pivot_cpl', 'cpl_id', 'rps_id')
+                    ->withPivot('sort_order');
+    }
     
     public function cpmks(): BelongsToMany
     {

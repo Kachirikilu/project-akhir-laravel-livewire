@@ -24,8 +24,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isRequired' => 1,
-                    'isFocusSelect' => 1,
+                    'isFocusSelect' => 1
                 ])
             </div>
         </div>

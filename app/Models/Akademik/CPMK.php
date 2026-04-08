@@ -66,9 +66,8 @@ class CPMK extends Model
 
     public function cpls(): BelongsToMany
     {
-        return $this->belongsToMany(Cpl::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
+        return $this->belongsToMany(CPL::class, 'cpmk_pivot_cpl', 'cpmk_id', 'cpl_id')
                     ->withPivot('sort_order');
-        ;
     }
 
     public function scopeSearchCPMK($query, $search)

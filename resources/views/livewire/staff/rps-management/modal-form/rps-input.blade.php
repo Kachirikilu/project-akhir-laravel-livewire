@@ -8,24 +8,6 @@
             Input Rencana Pembelajaran Semester</h4>
 
 
-        {{-- @include('livewire.global.modal-form.search-input-form', [
-            'alpine' => 'rps',
-            'xResults' => $matkulResults,
-            'selectX' => 'selectMatkul',
-            'modelString' => 'nama_matkul_array',
-            'resetXInput' => 'resetMatkulInput()',
-            'typeXString' => 'matkul',
-            'nameXString' => 'Mata Kuliah',
-            'noName' => 1,
-            'idString' => 'matkul_id',
-            'kodeString' => 'matkul_kode',
-            'searchString' => 'matkul_search',
-            'nameSearchString' => 'matkulNameSearch',
-            'fetchString' => 'fetchMatkul',
-            'iconString' => 'rectangle-stack',
-            'wireLoading' => 'fetchMatkul',
-        ]) --}}
-
         @include('livewire.global.modal-form.search-input-form', [
             'alpine' => 'rps',
             'xResults' => $matkulResults,
@@ -59,7 +41,7 @@
                         @include('livewire.global.modal-form.kode-input', [
                             'alpine' => 'rps',
                             'labelString' => 'Kode RPS',
-                            'kodeString' => 'matkul_kode',
+                            'kodeString' => 'matkul_items',
                             'placeholder' => '--------',
                             'iconString' => 'clipboard-document-list',
                         ])
@@ -99,8 +81,7 @@
                                 'maxlength' => 4,
                                 'iconString' => 'calendar-days',
                                 'placeholder' => 'Contoh: 2025',
-                                'isRequired' => 1,
-                                'isFocusSelect' => 1,
+                                'isFocusSelect' => 1
                             ])
                         </div>
                         <div class="sm:col-span-2">
@@ -113,9 +94,8 @@
                                 'maxlength' => 4,
                                 'iconString' => 'calendar-days',
                                 'placeholder' => 'Contoh: 2026',
-                                'isRequired' => 1,
                                 'isFocusSelect' => 1,
-                                'noLabel' => 1,
+                                'noLabel' => 1
                             ])
                         </div>
                         @error('tahun_akademik')
@@ -173,6 +153,13 @@
     </div>
 
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-cpmk-input')
+    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-cpl-input')
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-referensi-input')
+    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-dosen-input')
+
+    <div x-data x-init="$watch('$store.rps.matkul_id', value => console.log('matkul_id: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.tahun_akademik', value => console.log('tahun_akademik: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.is_draf', value => console.log('is_draf: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.count_scpmk', value => console.log('count_scpmk: ', value))"></div>
 
 </div>

@@ -17,8 +17,7 @@
         'modelString' => 'name',
         'iconString' => 'user-circle',
         'placeholder' => 'Masukkan Nama Lengkap',
-        'message' => $errors->first('name'),
-        'isRequired' => 1,
+        'message' => $errors->first('name')
     ])
 
     @include('livewire.global.modal-form.input-form', [
@@ -30,8 +29,7 @@
         'maxlength' => 20,
         'iconString' => 'identification',
         'placeholder' => 'Masukkan NIP',
-        'message' => $errors->first('nip'),
-        'isRequired' => 1,
+        'message' => $errors->first('nip')
     ])
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,

@@ -18,8 +18,7 @@
         // 'typeString' => 'text',
         'iconString' => 'building-library',
         'placeholder' => 'Masukkan nama Fakultas',
-        'message' => $errors->first('nama_fakultas'),
-        'isRequired' => 1,
+        'message' => $errors->first('nama_fakultas')
     ])
 
     {{-- 📧 Kode Fakultas Input --}}
@@ -31,7 +30,6 @@
         'placeholder' => 'Masukkan 3 huruf Kode Fakultas',
         'message' => $errors->first('kode_fk'),
         'isKode' => 3,
-        'isRequired' => 1,
         'isFocusSelect' => 1,
     ])
 </div>

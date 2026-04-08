@@ -111,6 +111,13 @@ class RPS extends Model
             ->withTimestamps();
     }
 
+    public function cpls(): BelongsToMany
+    {
+        return $this->belongsToMany(CPL::class, 'rps_pivot_cpl', 'rps_id', 'cpl_id')
+                    ->withPivot('sort_order');
+    }
+
+
     public function referensis(): BelongsToMany
     {
         return $this->belongsToMany(Referensi::class, 'rps_pivot_ref', 'rps_id', 'ref_id')
