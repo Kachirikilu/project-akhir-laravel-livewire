@@ -47,6 +47,7 @@ trait WithJurusanSearchFilters
             return null;
         }
         return [
+            'id' => $jr->id,
             'kode' => $jr->kode,
             'name' => $jr->jurusanJr,
             'name2' => $jr->fakultasFk,

@@ -78,6 +78,7 @@ trait WithUserModal
             $prodi = Prodi::find($this->prodi_id);
             $this->prodiNameSearch = $prodi ? $prodi->prodi : '';
             $this->prodi_items = [
+                    'id'  => $prodi->id,
                     'kode'  => $prodi->kode,
                     'name'  => $prodi->prodi,
                     'name2'  => $prodi->jurusanJr,

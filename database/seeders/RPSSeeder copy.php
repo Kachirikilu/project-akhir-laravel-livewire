@@ -62,7 +62,7 @@ class RPSSeeder extends Seeder
                     ]);
 
                     // Opsi A: Jika tetap ingin tampil di daftar pustaka RPS (Sangat Disarankan)
-                    $rps->referensis()->attach($ref->id);
+                    $rps->refs()->attach($ref->id);
 
                     $refIds[] = $ref->id;
                 }
@@ -120,7 +120,7 @@ class RPSSeeder extends Seeder
 
                 // Hubungkan Sub-CPMK ke Referensi (Sesuai permintaan Anda sebelumnya)
                 if (! empty($refIds)) {
-                    $sub->referensis()->attach($refIds[array_rand($refIds)]);
+                    $sub->refs()->attach($refIds[array_rand($refIds)]);
                 }
             }
         }
@@ -154,7 +154,7 @@ class RPSSeeder extends Seeder
         $sub->cpmks()->attach($cpmk->id);
 
         if (! empty($refIds)) {
-            $sub->referensis()->attach($refIds[0]);
+            $sub->refs()->attach($refIds[0]);
         }
     }
 }

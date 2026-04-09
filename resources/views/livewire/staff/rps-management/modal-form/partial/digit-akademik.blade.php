@@ -1,15 +1,21 @@
 <div x-data="{}"
     x-effect="
-                    if ($store.rps) {
-                        let ta2 = parseInt($store.rps.tahun_akademik_2);
+        if ($store.rps) {
+            let ta1 = parseInt($store.rps.tahun_akademik_1);
 
-                        if (!ta2) {
-                            $store.rps.digit_akademik = '';
-                        } else {
-                            $store.rps.digit_akademik = String(ta2).slice(-2);
-                        }
-                    }
-                ">
+            if (!ta1) {
+                $store.rps.digit_akademik = '';
+            } else {
+                if (ta1 >= 3000) {
+                    $store.rps.digit_akademik = String(ta1);
+                } else if (ta1 >= 2100) {
+                    $store.rps.digit_akademik = String(ta1).slice(-3);
+                } else {
+                    $store.rps.digit_akademik = String(ta1).slice(-2);
+                }
+            }
+        }
+    ">
     <div class="relative mt-1">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="variable" variant="mini" x-bind:class="$store.rps?.colorIcon" />

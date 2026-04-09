@@ -43,7 +43,7 @@ trait WithSubCPMKSearchFilters
 
     private function scpmkQuery()
     {
-        return SubCPMK::query()->with('cpmks.rps', 'cpmks', 'referensis');
+        return SubCPMK::query()->with('cpmks.rps', 'cpmks', 'refs');
     }
 
     private function itemsSCPMK($sc)
@@ -52,6 +52,7 @@ trait WithSubCPMKSearchFilters
             return null;
         }
         return [
+            'id' => $sc->id,
             'kode' => $sc->kode,
             'name' => $sc->deskripsi,
         ];

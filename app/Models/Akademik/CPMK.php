@@ -58,7 +58,7 @@ class CPMK extends Model
                     ->withTimestamps();
     }
 
-    public function referensis(): BelongsToMany
+    public function refs(): BelongsToMany
     {
         return $this->belongsToMany(Referensi::class, 'cpmk_pivot_ref', 'cpmk_id', 'ref_id')
                     ->withPivot('sort_order');

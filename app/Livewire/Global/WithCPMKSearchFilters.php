@@ -38,7 +38,7 @@ trait WithCPMKSearchFilters
     private function mapCPMK($collection)
     {
         return $collection->map(function ($c) {
-            $cpmkRefIds = $c->referensis->pluck('id')->toArray();
+            $cpmkRefIds = $c->refs->pluck('id')->toArray();
 
             return [
                 'id' => $c->id,
@@ -58,7 +58,7 @@ trait WithCPMKSearchFilters
                         'tugas' => $sub->tugas,
                         'w_tugas' => $sub->w_tugas,
                         'w_mandiri' => $sub->w_mandiri,
-                        'ref' => $sub->referensis
+                        'ref' => $sub->refs
                             ->filter(fn ($sub_ref) => ! in_array($sub_ref->id, $cpmkRefIds))
                             ->map(fn ($sub_ref) => [
                                 'id' => $sub_ref->id,
@@ -74,7 +74,7 @@ trait WithCPMKSearchFilters
                 })->toArray(),
 
                 // Referensi Utama dari CPMK
-                'ref' => $c->referensis->map(fn ($ref) => [
+                'ref' => $c->refs->map(fn ($ref) => [
                     'id' => $ref->id,
                     'kode' => $ref->kode,
                     'judul' => $ref->judul,
@@ -108,9 +108,10 @@ trait WithCPMKSearchFilters
             return null;
         }
         return [
+            'id' => $c->id,
             'kode' => $c->kode,
             'name' => $c->deskripsi,
-            'name2' => $c->total_bobot,
+            'name2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
         ];
     }
 

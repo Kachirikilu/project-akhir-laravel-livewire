@@ -171,10 +171,14 @@
             'typeX3String' => 'penerbit',
         
             'nameXString' => 'Referensi',
+            'nameX2String' => 'Tambah Referensi Baru',
             'searchString' => 'ref_search',
             'nameSearchString' => 'refNameSearch',
             'fetchString' => 'fetchRef',
             'iconString' => 'document-text',
+
+            'parentIdString' => 'cpmk_id_array',
+            'nameXParent' => 'CPMK',
             'wireLoading' => 'fetchRef',
         
             'isRequired' => 0,

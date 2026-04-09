@@ -46,6 +46,7 @@ trait WithFakultasSearchFilters
             return null;
         }
         return [
+            'id' => $fk->id,
             'kode' => $fk->kode,
             'name' => $fk->fakultasFk,
         ];

@@ -53,12 +53,13 @@ trait WithDosenSearchFilters
             return null;
         }
         return [
+            'id' => $d->id,
             'kode' => $d->nip,
             'name' => $d->name,
             'name2' => $d->nidn_nidk,
             'name3' => $d->status,
-            'peran' => $d->peran,
-            'is_ketua' => $d->pivot->is_ketua ?? false,
+            'peran' => $d->pivot->peran ?? 'Pengajar',
+            'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
         ];
     }
 

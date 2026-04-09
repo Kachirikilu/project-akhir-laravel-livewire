@@ -51,6 +51,7 @@ trait WithRPSSearchFilters
             return null;
         }
         return [
+            'id' => $r->id,
             'kode' => $r->kode,
             'name' => $r->rps,
         ];

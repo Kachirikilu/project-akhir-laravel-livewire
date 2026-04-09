@@ -53,6 +53,7 @@ trait WithReferensiSearchFilters
             return null;
         }
         return [
+            'id' => $r->id,
             'kode' => $r->kode,
             'name' => $r->judul,
             'name2' => $r->penulis_tahun,

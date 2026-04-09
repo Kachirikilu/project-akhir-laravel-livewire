@@ -13,7 +13,7 @@
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
 
 
-        @include('livewire.global.modal-form.search-input-associative-array-form', [
+        @include('livewire.global.modal-form.search-input-cpmk-form', [
             'alpine' => 'rps',
             'xResults' => $cpmkResults,
             'selectX' => 'selectCPMKArray',

@@ -228,12 +228,12 @@
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 120 && grandTotalBobot > 80">
+                <template x-if="grandTotalBobot <= 140 && grandTotalBobot > 80">
                     <flux:badge color="green" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot > 120">
+                <template x-if="grandTotalBobot > 140">
                     <flux:badge color="blue" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
@@ -414,8 +414,8 @@
                             grandTotalBobot <= 40 ? 'Bobot sangat kurang dari target:' : 
                             (grandTotalBobot <= 80 ? 'Bobot masih kurang dari target standar:' : 
                             (grandTotalBobot <= 100 ? 'Bobot ideal dan sudah memenuhi syarat:' : 
-                            (grandTotalBobot <= 120 ? 'Bobot sudah mencukupi (Maksimal):' : 
-                            'Bobot melebihi batas 120%, mohon tinjau kembali:')))
+                            (grandTotalBobot <= 140 ? 'Bobot sudah mencukupi (Maksimal):' : 
+                            'Bobot melebihi batas 140%, mohon tinjau kembali:')))
                     "></span>
                 <template x-if="grandTotalBobot <= 40">
                     <flux:badge color="red" size="sm" variant="pill">
@@ -427,12 +427,12 @@
                         <span x-text="totalSubCPMK"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 120 && grandTotalBobot > 80">
+                <template x-if="grandTotalBobot <= 140 && grandTotalBobot > 80">
                     <flux:badge color="green" size="sm" variant="pill">
                         <span x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot > 120">
+                <template x-if="grandTotalBobot > 140">
                     <flux:badge color="blue" size="sm" variant="pill">
                         <span x-text="grandTotalBobot"></span>%
                     </flux:badge>
@@ -462,9 +462,8 @@
         </template>
     </div>
 
-    @error($modelString)
-        <span class="text-red-500 text-xs mt-2 font-medium flex items-center gap-1">
-            <flux:icon icon="exclamation-circle" variant="mini" /> {{ $message }}
-        </span>
+
+    @error($idString)
+        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
     @enderror
 </div>

@@ -59,6 +59,7 @@ trait WithProdiSearchFilters
             return null;
         }
         return [
+            'id' => $pr->id,
             'kode' => $pr->kode,
             'name' => $pr->prodi,
             'name2' => $pr->jurusanJr,

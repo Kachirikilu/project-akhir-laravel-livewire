@@ -94,11 +94,15 @@
             'typeXString' => 'deskripsi',
         
             'nameXString' => 'Capaian Pembelajaran Lulusan',
+            'nameX2String' => 'Tambah CPL Baru',
             'searchString' => 'cpl_search',
             'nameSearchString' => 'cplNameSearch',
-            'fetchString' => 'fetchRef',
+            'fetchString' => 'fetchCPL',
             'iconString' => 'document-text',
-            'wireLoading' => 'fetchRef',
+
+            'parentIdString' => 'cpmk_id_array',
+            'nameXParent' => 'CPMK',
+            'wireLoading' => 'fetchCPL',
 
             'isRequired' => 0
         ])

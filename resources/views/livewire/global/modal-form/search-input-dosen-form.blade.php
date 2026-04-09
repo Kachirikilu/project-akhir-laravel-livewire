@@ -338,7 +338,8 @@
                 <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>
     </div>
-    @error($modelString)
+
+    @error($idString)
         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
     @enderror
 </div>

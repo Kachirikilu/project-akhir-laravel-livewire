@@ -42,14 +42,15 @@ trait WithCPLSearchFilters
         return CPL::query()->with('cpmks.rps', 'cpmks');
     }
 
-    private function itemsCPL($cpl)
+    private function itemsCPL($c)
     {
-        if (! $cpl) {
+        if (! $c) {
             return null;
         }
         return [
-            'kode' => $cpl->kode,
-            'name' => $cpl->deskripsi,
+            'id' => $c->id,
+            'kode' => $c->kode,
+            'name' => $c->deskripsi,
         ];
     }
 

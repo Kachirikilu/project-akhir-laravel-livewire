@@ -75,6 +75,7 @@
                     'xValues' => [1, 0],
                     'iconString' => 'tag',
                     'placeholder' => 'Pilih kategori...',
+                    'isRequired' => 0,
                     'message' => $errors->first('kode_blok'),
                 ])
             </div>
@@ -88,6 +89,7 @@
                     'xValues' => [1, 0],
                     'iconString' => 'tag',
                     'placeholder' => 'Wajib / Pilihan',
+                    'isRequired' => 0,
                     'message' => $errors->first('is_wajib'),
                 ])
             </div>
@@ -103,6 +105,7 @@
                     'xValues' => [1, 2, 3, 4],
                     'iconString' => 'bookmark-square',
                     'placeholder' => 'Pilih tipe SKS...',
+                    'isRequired' => 0,
                     'message' => $errors->first('tipe_sks'),
                 ])
             </div>
@@ -116,6 +119,7 @@
                     'noZero' => 1,
                     'iconString' => 'identification',
                     'placeholder' => 'SKS',
+                    'isRequired' => 0,
                     'message' => $errors->first('sks_kuliah'),
                     'isFocusSelect' => 1,
                 ])

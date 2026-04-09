@@ -19,7 +19,15 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        deskripsi: "",
+        
+        kode: "",
+        digit_akademik: "",
+
         matkul_id: "",
+        nama_matkul_search: "",
+        matkul_items: "",
+
         tahun_akademik: "",
         tahun_akademik_1: "",
         tahun_akademik_2: "",
@@ -56,6 +64,11 @@ document.addEventListener("alpine:init", () => {
             this.cpl_cpmk = [];
 
             allSubItems.forEach(item => {
+                if (item.scpmk) {
+                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
+                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
+                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
+                }
                 if (item.cpl) {
                     const combinedCPL = [...this.cpl_cpmk, ...item.cpl];
                     this.cpl_cpmk = Array.from(new Map(combinedCPL.map(i => [i.id, i])).values());
@@ -63,11 +76,6 @@ document.addEventListener("alpine:init", () => {
                 if (item.ref) {
                     const combinedRef = [...this.ref_cpmk, ...item.ref];
                     this.ref_cpmk = Array.from(new Map(combinedRef.map(i => [i.id, i])).values());
-                }
-                if (item.scpmk) {
-                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
-                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
-                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
                 }
             });
         },
@@ -81,49 +89,42 @@ document.addEventListener("alpine:init", () => {
             this.isEdit = isEdit;
         },
 
-        // reset() {
-        //     // this.items = [];
-        //     // this.scpmkCount = 0;
-        //     // this.typeModal = null;
-        //     // this.isEdit = false;
-        // },
-
-        // nama_prodi_search_array: [],
-        // prodi_id_array: [],
-        // prodi_kode_array: [],
-
-        setValueMK(
-            tingkatanMode,
-            namaMatkul,
+        setValueRPS(
+            kode,
             kodeBlok,
-            digitSemester,
-            digitMk,
-            namaProdi,
-            idProdi,
-            kodePr,
-            semester,
-            sksKuliah,
-            tipeSks,
-            isWajib
+            deskripsi,
+            idMatkul,
+            kodeMK,
+            namaMatkul,
+            tahunAkademik,
+            drafText
         ) {
-            this.typeModal = tingkatanMode;
-            this.nama_matkul = namaMatkul;
+            this.kode = kode;
+            this.digit_akademik = kodeBlok;
+            this.deskripsi = deskripsi;
 
-            this.kode_blok = kodeBlok;
-            this.digit_semester = digitSemester;
-            this.digit_mk = digitMk;
+            this.matkul_id = idMatkul;
+            this.nama_matkul_search = namaMatkul;
+            this.matkul_items = {
+                "kode": kodeMK,
+                "name": namaMatkul
+            };
 
-            this.semester = semester;
-            this.sks_kuliah = sksKuliah;
-            this.tipe_sks = tipeSks; 
-            this.is_wajib = isWajib;
+            this.tahun_akademik = tahunAkademik;
 
-            this.nama_prodi_search = namaProdi;
-            this.prodi_id = idProdi;
-            this.prodi_kode = kodePr;
+            if (tahunAkademik && tahunAkademik.includes('/')) {
+                let parts = tahunAkademik.split('/');
+                this.tahun_akademik_1 = parts[0];
+                this.tahun_akademik_2 = parts[1];
+            } else {
+                this.tahun_akademik_1 = "";
+                this.tahun_akademik_2 = "";
+            }
+
+            this.is_draf = drafText;
         },
 
-        setDeleteMK(
+        setDeleteRPS(
             namaProdi,
             kodeMkDelete,
             forceDelete
@@ -133,12 +134,12 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        resetSelect() {
-            this.kode_blok = "";
-            this.semester = "";
-            this.tipe_sks = ""; 
-            this.is_wajib = "";
-        },
+        // resetSelect() {
+        //     this.kode_blok = "";
+        //     this.semester = "";
+        //     this.tipe_sks = ""; 
+        //     this.is_wajib = "";
+        // },
         
         reset() {
             this.typeModal = "",
@@ -148,27 +149,20 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = "",
 
             this.typeModal = "";
-            this.nama_matkul = "";
+            this.deskripsi = "";
 
-            this.kode_blok = "";
-            this.digit_semester = "";
-            this.digit_mk = "";
+            this.kode = "";
 
-            this.semester = "";
-            this.sks_kuliah = "";
-            this.tipe_sks = ""; 
-            this.is_wajib = "";
+            this.matkul_id = "";
+            this.nama_matkul_search = "";
+            this.matkul_items = "";
 
-            this.nama_prodi_search = "";
-            this.prodi_id = "";
-            this.prodi_kode = "";
+            this.digit_akademik = "";
+            this.tahun_akademik = "";
+            this.tahun_akademik_1 = "";
+            this.tahun_akademik_2 = "";
 
-            this.rps_delete = "";
-            this.kode_rps_delete = "";
-
-            this.nama_prodi_array = [];
-            this.prodi_id_array = [];
-            this.prodi_kode_array = [];
+            this.is_draf = "";
         }
     });
 });

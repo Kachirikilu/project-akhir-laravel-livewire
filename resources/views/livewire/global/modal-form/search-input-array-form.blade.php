@@ -43,7 +43,7 @@
 }">
 
     <label class="block text-sm font-medium mb-2">
-        {{ $nameXString }} 
+        {{ $nameX2String ?? $nameXString }} 
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif
@@ -261,7 +261,7 @@
             </div>
         </div>
     </div>
-    @error($modelString)
+    @error($idString)
         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
     @enderror
 </div>

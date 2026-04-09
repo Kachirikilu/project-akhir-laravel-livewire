@@ -49,6 +49,7 @@ trait WithMatkulSearchFilters
             return null;
         }
         return [
+            'id' => $mk->id,
             'kode' => $mk->kode,
             'name' => $mk->matkul,
         ];
@@ -179,17 +180,17 @@ trait WithMatkulSearchFilters
     {
         $this->matkul_id = $id;
         $this->matkulNameSearch = $matkulName;
-        $this->matkulResults = $this->getMatkulbyUser();
 
         $data = $this->mkQuery()->find($id);
         if ($data) {
             $this->matkul_items = $this->itemsMK($data);
         }
 
-        if (method_exists($this, 'fetchMatkul')) {
-            $this->fetchMatkul('');
-        }
+        // if (method_exists($this, 'fetchMatkul')) {
+        //     $this->fetchMatkul('');
+        // }
 
+        $this->matkulResults = $this->getMatkulbyUser();
         $this->resetErrorBag(['matkul_id', 'matkulNameSearch']);
     }
     public function selectMatkulArray($id)

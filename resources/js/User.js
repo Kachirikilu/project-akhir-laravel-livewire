@@ -66,13 +66,13 @@ document.addEventListener("alpine:init", () => {
             this.tahun_angkatan = tahunAngkatan;
             this.status = status;
 
-            this.prodi_id = idProdi;
             this.nama_prodi_search = namaProdi;
             this.prodi_items = {
+                "id": idProdi,
                 "kode": kodePr,
                 "name": namaProdi,
                 "name2": namaJurusan,
-                "name3": namaFakultas,
+                "name3": namaFakultas
             };
         },
         setDeleteUser(email, forceDelete) {

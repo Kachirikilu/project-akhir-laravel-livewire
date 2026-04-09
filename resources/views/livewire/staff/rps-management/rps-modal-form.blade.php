@@ -1,4 +1,4 @@
-<flux:modal name="rps-modal" wire:model="showRPSModal" x-data @rps-saved.window="$store.rps.reset()"
+<flux:modal name="rps-modal" wire:model="showRPSModal" x-data @refresh-data.window="$store.rps.reset()"
     {{-- class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]"> --}}
    class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 

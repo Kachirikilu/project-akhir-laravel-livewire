@@ -45,15 +45,18 @@ trait WithMatkulModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
+        
+        $this->resetInputMK();
+        $this->resetValidation();
+        $this->resetErrorBag();
+        
         $this->selected_id = $id;
         $this->mkType = $tingkatan;
         $this->isEditing = true;
 
-        $this->resetInputMK();
         $this->prodiResults = [];
 
-        $this->resetValidation();
-        $this->resetErrorBag();
 
         try {
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
@@ -189,14 +192,6 @@ trait WithMatkulModal
     {
         return ucwords(strtolower(trim($value)));
     }
-
-    // private function generateTingkatanMap($tingkatan) {
-    //     $tingkatanMap = [
-    //         'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
-    //         1 => 1, 2 => 2, 3 => 3, 4 => 4,
-    //     ];
-    //     return $tingkatanMap[$this->mkType] ?? 1;
-    // }
 
     private function generateKodePrefix($data, $tingkatan)
     {

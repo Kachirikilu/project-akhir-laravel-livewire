@@ -17,7 +17,7 @@ class RPS extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode, matkul, tingkatan_mk, akademik, revisi'];
+    protected $appends = ['kode', 'matkul', 'tingkatan_mk', 'akademik', 'revisi'];
 
     protected $casts = [
         'tanggal_revisi' => 'date',
@@ -28,15 +28,38 @@ class RPS extends Model
         return $this->belongsTo(MataKuliah::class, 'mk_id')->withTrashed();
     }
 
+
+    protected function kodeMk(): Attribute
+    {
+        return Attribute::get(fn () => $this->matkul_rel?->kode);
+    }
+
+    protected function kodeBlok(): Attribute
+    {
+        return Attribute::get(function () {
+            $tahunFull = (int) substr($this->tahun_akademik, 0, 4);
+            $suffixTahun = match (true) {
+                $tahunFull >= 3000 => $tahunFull,
+                $tahunFull >= 2100 => substr((string) $tahunFull, -3),
+                default => substr((string) $tahunFull, -2),
+            };
+
+            return $suffixTahun;
+        });
+    }
+
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
-            $kodeMatkul = $this->matkul_rel?->kode;
-            $suffixTahun = substr($this->tahun_akademik, -2);
-
-            return $kodeMatkul ? "{$kodeMatkul}-{$suffixTahun}" : null;
+            $kodeMatkul = $this->kode_mk;
+            if (!$kodeMatkul || !$this->tahun_akademik) {
+                return null;
+            }
+            $suffixTahun = $this->kode_blok;
+            return "{$kodeMatkul}-{$suffixTahun}";
         });
     }
+
 
     protected function matkul(): Attribute
     {
@@ -107,28 +130,30 @@ class RPS extends Model
     {
         return $this->belongsToMany(CPMK::class, 'rps_pivot_cpmk', 'rps_id', 'cpmk_id')
             ->withPivot('sort_order')
-            ->orderBy('pivot_sort_order')
+            ->orderBy('sort_order')
             ->withTimestamps();
     }
 
     public function cpls(): BelongsToMany
     {
         return $this->belongsToMany(CPL::class, 'rps_pivot_cpl', 'rps_id', 'cpl_id')
-                    ->withPivot('sort_order');
+                    ->withPivot('sort_order')
+                    ->orderBy('sort_order');
     }
 
 
-    public function referensis(): BelongsToMany
+    public function refs(): BelongsToMany
     {
         return $this->belongsToMany(Referensi::class, 'rps_pivot_ref', 'rps_id', 'ref_id')
-            ->withPivot('sort_order');
+            ->withPivot('sort_order')
+            ->orderBy('sort_order');
     }
 
     public function dosens(): BelongsToMany
     {
         return $this->belongsToMany(Dosen::class, 'rps_pivot_dosen', 'rps_id', 'dosen_id')
             ->withPivot(['peran', 'is_ketua', 'sort_order'])
-            ->orderBy('pivot_sort_order')
+            ->orderBy('sort_order')
             ->withTimestamps();
     }
 
