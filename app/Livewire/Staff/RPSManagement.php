@@ -197,7 +197,7 @@ class RPSManagement extends Component
         $queryRPS = $this->inputRPSSearch();
         $baseDataRPS = $this->inputRPSSearch()
             ->when($this->showDeleted, fn ($q) => $q->onlyTrashed())
-            ->get(['rps.id', 'rps.mk_id', 'rps.tahun_akademik', 'rps.is_draf', 'rps.tanggal_revisi'])
+            ->get(['rps.id', 'rps.mk_id', 'rps.akademik', 'rps.is_draf', 'rps.tanggal_revisi'])
             ->unique('id');
 
         $queryCPMK = $this->inputCPMKSearch();
@@ -288,7 +288,7 @@ class RPSManagement extends Component
 
         // switch ($this->switchTable) {
         //     case 'rps':
-        $stats['rps-akademik'] = $baseDataRPS->filter(fn ($item) => str_contains($item->tahun_akademik, (string) $currentYear)
+        $stats['rps-akademik'] = $baseDataRPS->filter(fn ($item) => str_contains($item->akademik, (string) $currentYear)
         )->count();
 
         $stats['rps-ref-new'] = $baseDataRPS->filter(fn($item) => 
@@ -300,14 +300,14 @@ class RPSManagement extends Component
         $stats['rps-draf'] = $baseDataRPS->where('is_draf', true)->count();
 
         $stats['rps-5-years'] = $baseDataRPS->filter(function ($item) use ($fiveYearsAgo) {
-            $startYear = (int) substr($item->tahun_akademik, 0, 4);
+            $startYear = (int) substr($item->akademik, 0, 4);
 
             // Sesuaikan: >= untuk 5 tahun terakhir, < untuk arsip lama
             return $startYear >= $fiveYearsAgo->year;
         })->count();
 
         $stats['rps-old'] = $baseDataRPS->filter(function ($item) use ($fiveYearsAgo) {
-            $startYear = (int) substr($item->tahun_akademik, 0, 4);
+            $startYear = (int) substr($item->akademik, 0, 4);
 
             return $startYear < $fiveYearsAgo->year;
         })->count();

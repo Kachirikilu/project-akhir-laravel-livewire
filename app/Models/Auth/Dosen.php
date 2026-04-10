@@ -40,7 +40,7 @@ class Dosen extends Model
 
     public function pr_rel(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
+        return $this->belongsTo(Prodi::class, 'pr_id');
     }
 
     protected function nidnNidk(): Attribute

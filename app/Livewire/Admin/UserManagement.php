@@ -69,7 +69,7 @@ class UserManagement extends Component
         // 'name' => ['except' => ''],
         // 'nip' => ['except' => ''],
         // 'nim' => ['except' => ''],
-        // 'tahun_angkatan' => ['except' => ''],
+        // 'angkatan' => ['except' => ''],
         // 'pr_id' => ['except' => ''],
         // 'prodiNameSearch' => ['except' => ''],
     ];
@@ -101,7 +101,7 @@ class UserManagement extends Component
     {
         if ($filter != '' && $sortField == 'role') {
             $this->sortField = 'name';
-        } elseif ($filter != 'mahasiswa' && $sortField == 'tahun_angkatan') {
+        } elseif ($filter != 'mahasiswa' && $sortField == 'angkatan') {
             $this->sortField = 'status';
         } elseif ($filter == 'mahasiswa' && $sortField == 'identity2') {
             $this->sortField = 'identity1';

@@ -29,7 +29,7 @@ document.addEventListener("alpine:init", () => {
         nidn: "",
         nidk: "",
         nim: "",
-        tahun_angkatan: "",
+        angkatan: "",
         status: "",
 
         // Prodi
@@ -46,13 +46,13 @@ document.addEventListener("alpine:init", () => {
             nidn,
             nidk,
             nim,
-            tahunAngkatan,
+            angkatan,
             status,
             idProdi,
-            namaProdi,
-            namaJurusan,
-            namaFakultas,
-            kodePr
+            kodePr,
+            prodi,
+            jurusan,
+            fakultas
         ) {
             this.email = email;
             this.password = password;
@@ -63,16 +63,17 @@ document.addEventListener("alpine:init", () => {
             this.nidn = nidn;
             this.nidk = nidk;
             this.nim = nim;
-            this.tahun_angkatan = tahunAngkatan;
+            this.angkatan = angkatan;
             this.status = status;
 
-            this.nama_pr_search = namaProdi;
+            this.pr_id = idProdi,
+            this.nama_pr_search = prodi;
             this.prodi_items = {
                 "id": idProdi,
                 "kode": kodePr,
-                "name": namaProdi,
-                "name2": namaJurusan,
-                "name3": namaFakultas
+                "name": prodi,
+                "name2": jurusan,
+                "name3": fakultas
             };
         },
         setDeleteUser(email, forceDelete) {
@@ -100,7 +101,7 @@ document.addEventListener("alpine:init", () => {
             this.nidn = "",
             this.nidk = "",
             this.nim = "",
-            this.tahun_angkatan = "",
+            this.angkatan = "",
             this.status = "",
 
             // Prodi

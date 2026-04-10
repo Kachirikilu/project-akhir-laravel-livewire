@@ -37,7 +37,7 @@
                         '{{ $detail->nidn ?? '' }}',
                         '{{ $detail->nidk ?? '' }}',
                         '{{ $detail->nim ?? '' }}',
-                        '{{ $detail->tahun_angkatan ?? '' }}',
+                        '{{ $detail->angkatan ?? '' }}',
                         '{{ $detail->status ?? '' }}',
                         '{{ $detail->pr_id ?? '' }}',
                         '{{ $detail->pr_rel->prodi ?? '' }}',

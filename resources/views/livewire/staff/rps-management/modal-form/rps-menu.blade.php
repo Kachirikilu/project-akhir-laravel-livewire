@@ -27,7 +27,7 @@
                         '{{ $x->mk_id ?? '' }}',
                         '{{ $x->kode_mk ?? '' }}',
                         '{{ $x->mk ?? '' }}',
-                        '{{ $x->tahun_akademik ?? '' }}',
+                        '{{ $x->akademik ?? '' }}',
                         '{{ $x->draf_text ?? '' }}'
                     );
 

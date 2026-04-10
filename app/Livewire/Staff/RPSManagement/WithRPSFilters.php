@@ -52,7 +52,7 @@ trait WithRPSFilters
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {
         if ($this->filterRPS === 'rps-akademik') {
-            $queryRPS->where('tahun_akademik', 'like', '%' . $currentYear . '%');
+            $queryRPS->where('akademik', 'like', '%' . $currentYear . '%');
         } elseif ($this->filterRPS === 'rps-ref-new') {
             $queryRPS->whereYear('tanggal_revisi', $currentYear);
         } elseif ($this->filterRPS === 'rps-aktif') {
@@ -60,9 +60,9 @@ trait WithRPSFilters
         } elseif ($this->filterRPS === 'rps-draf') {
             $queryRPS->where('is_draf', true);
         } elseif ($this->filterRPS === 'rps-5-years') {
-            $queryRPS->whereRaw('LEFT(tahun_akademik, 4) >= ?', [$fiveYearsAgoYear]);
+            $queryRPS->whereRaw('LEFT(akademik, 4) >= ?', [$fiveYearsAgoYear]);
         } elseif ($this->filterRPS === 'rps-old') {
-            $queryRPS->whereRaw('LEFT(tahun_akademik, 4) < ?', [$fiveYearsAgoYear]);
+            $queryRPS->whereRaw('LEFT(akademik, 4) < ?', [$fiveYearsAgoYear]);
         }
     }
 
@@ -98,7 +98,7 @@ trait WithRPSFilters
                 
     //             'kode' => $this->applyRPSKodeSort($queryRPS),
                 
-    //             'tahun_akademik' => $queryRPS->orderBy('tahun_akademik', $this->sortDirection),
+    //             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
     //             'tanggal_revisi' => $queryRPS->orderBy('tanggal_revisi', $this->sortDirection),
     //             'is_draf'        => $queryRPS->orderBy('is_draf', $this->sortDirection),
     //             default          => $queryRPS->orderBy('rps.id', 'desc'),
@@ -146,7 +146,7 @@ trait WithRPSFilters
             
             'kode'   => $this->applyRPSKodeSort($queryRPS),
             
-            'akademik' => $queryRPS->orderBy('tahun_akademik', $this->sortDirection),
+            'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
             'revisi' => $queryRPS->orderBy('tanggal_revisi', $this->sortDirection),
             'is_draf' => $queryRPS->orderBy('is_draf', $this->sortDirection),
             'created_at' => $queryRPS->orderBy('created_at', $this->sortDirection),
@@ -177,7 +177,7 @@ trait WithRPSFilters
                     MAX(mata_kuliahs.digit_semester),
                     MAX(mata_kuliahs.digit_mk),
                     -- Menambahkan 2 digit terakhir tahun akademik (misal: 26) di akhir string sort
-                    RIGHT(rps.tahun_akademik, 2)
+                    RIGHT(rps.akademik, 2)
                 )
             "), $this->sortDirection);
     }

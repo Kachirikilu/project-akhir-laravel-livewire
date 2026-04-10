@@ -60,28 +60,28 @@
 
                 <div class="space-y-4">
                     <div>
-                        <div class="grid sm:grid-cols-4 gap-1 items-end" x-data="{}" x-init="$watch('$store.rps.tahun_akademik_1', value => {
+                        <div class="grid sm:grid-cols-4 gap-1 items-end" x-data="{}" x-init="$watch('$store.rps.akademik_1', value => {
                             let year = parseInt(value);
                             if (year && year >= 0) {
-                                $store.rps.tahun_akademik_2 = year + 1;
+                                $store.rps.akademik_2 = year + 1;
                             }
                         });
-                        $watch('$store.rps.tahun_akademik_2', value => {
+                        $watch('$store.rps.akademik_2', value => {
                             let year = parseInt(value);
                             if (year && year >= 0) {
-                                $store.rps.tahun_akademik_1 = year - 1;
+                                $store.rps.akademik_1 = year - 1;
                             }
                         });"
                             x-effect="
 
-                            if ($store.rps.tahun_akademik_1 && $store.rps.tahun_akademik_2) {
-                                {{-- if ($store.rps.tahun_akademik_1.length < 4 || $store.rps.tahun_akademik_2.length < 4) {
-                                    $store.rps.tahun_akademik = '';
+                            if ($store.rps.akademik_1 && $store.rps.akademik_2) {
+                                {{-- if ($store.rps.akademik_1.length < 4 || $store.rps.akademik_2.length < 4) {
+                                    $store.rps.akademik = '';
                                 } else { --}}
-                                    $store.rps.tahun_akademik = $store.rps.tahun_akademik_1 + '/' + $store.rps.tahun_akademik_2;
+                                    $store.rps.akademik = $store.rps.akademik_1 + '/' + $store.rps.akademik_2;
                                 {{-- } --}}
                             } else {
-                                $store.rps.tahun_akademik = '';
+                                $store.rps.akademik = '';
                             }
                         ">
 
@@ -89,7 +89,7 @@
                                 @include('livewire.global.modal-form.input-form', [
                                     'alpine' => 'rps',
                                     'labelString' => 'Tahun Akademik',
-                                    'modelString' => 'tahun_akademik_1',
+                                    'modelString' => 'akademik_1',
                                     'numberOnly' => 1,
                                     'maxlength' => 4,
                                     'iconString' => 'calendar-days',
@@ -102,7 +102,7 @@
                                 @include('livewire.global.modal-form.input-form', [
                                     'alpine' => 'rps',
                                     'labelString' => 'Tahun Akademik',
-                                    'modelString' => 'tahun_akademik_2',
+                                    'modelString' => 'akademik_2',
                                     'numberOnly' => 1,
                                     'maxlength' => 4,
                                     'iconString' => 'calendar-days',
@@ -113,8 +113,8 @@
                             </div>
                         </div>
 
-                        @error('tahun_akademik')
-                            <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('tahun_akademik') }}</span>
+                        @error('akademik')
+                            <span class="text-red-500 text-sm mt-1 block">{{ $errors->first('akademik') }}</span>
                         @enderror
                     </div>
 

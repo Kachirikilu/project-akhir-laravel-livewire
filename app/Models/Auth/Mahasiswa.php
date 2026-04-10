@@ -18,16 +18,16 @@ class Mahasiswa extends Model
         'user_id',
         'pr_id',
         'name',
-        'tahun_angkatan',
-        'tanggal_yudisium',
-        'tanggal_wisuda',
+        'angkatan',
+        'yudisium',
+        'wisuda',
         'status',
     ];
 
     protected $casts = [
-        'tanggal_yudisium' => 'date',
-        'tanggal_wisuda' => 'date',
-        'tahun_angkatan' => 'integer',
+        'yudisium' => 'date',
+        'wisuda' => 'date',
+        'angkatan' => 'integer',
     ];
 
     public function user(): BelongsTo

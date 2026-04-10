@@ -38,10 +38,10 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
         'name',
+        'role',
         'identity1',
         'identity2',
         'identity3',
-        'role',
         'status',
     ];
 
@@ -101,15 +101,40 @@ class User extends Authenticatable
     }
 
 
+    /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
+    public function admin(): HasOne
+    {
+        return $this->hasOne(Admin::class);
+    }
+    public function dosen(): HasOne
+    {
+        return $this->hasOne(Dosen::class);
+    }
+    public function mahasiswa(): HasOne
+    {
+        return $this->hasOne(Mahasiswa::class);
+    }
+    /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
+
+    /// ... /// ... /// ...
+
+    /// Attribute Utama User /// Attribute Utama User /// Attribute Utama User 
     protected function name(): Attribute
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
-
             return $profile?->name ?? $this->email;
         });
     }
-
+    public function role(): Attribute
+    {
+        return Attribute::get(fn () => match (true) {
+            $this->admin()->exists()     => 'Admin',
+            $this->dosen()->exists()     => 'Dosen',
+            $this->mahasiswa()->exists() => 'Mahasiswa',
+            default                      => 'User',
+        });
+    }
     protected function identity1(): Attribute
     {
         return Attribute::get(function () {
@@ -126,7 +151,6 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
-
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
@@ -141,7 +165,6 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
-
     protected function identity3(): Attribute
     {
         return Attribute::get(function () {
@@ -150,83 +173,21 @@ class User extends Authenticatable
             return $value ?: null;
         });
     }
-
-
-    public function role(): Attribute
-    {
-        return Attribute::get(function () {
-
-            if ($this->admin) {
-                return 'Admin';
-            }
-            if ($this->dosen) {
-                return 'Dosen';
-            }
-            if ($this->mahasiswa) {
-                return 'Mahasiswa';
-            }
-
-            return 'User';
-
-        });
-    }
-
     protected function status(): Attribute
     {
-        return Attribute::get(function () {
-
-            if ($this->admin) {
-                return $this->admin->status;
-            }
-            if ($this->dosen) {
-                return $this->dosen->status;
-            }
-            if ($this->mahasiswa) {
-                return $this->mahasiswa->status;
-            }
-
-            return 'Tidak Ada';
-
-        });
+        return Attribute::get(fn () => 
+            $this->admin?->status ?? 
+            $this->dosen?->status ?? 
+            $this->mahasiswa?->status ?? 
+            'Tidak Ada'
+        );
     }
+    /// Attribute Utama User /// Attribute Utama User /// Attribute Utama User 
 
-    protected function createdDay(): Attribute
-    {
-        return Attribute::get(function () {
-            if (!$this->created_at) {
-                return null;
-            }
+    /// ... /// ... /// ...
 
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
-        });
-    }
-    protected function updatedDay(): Attribute
-    {
-        return Attribute::get(function () {
-            if (!$this->updated_at) {
-                return null;
-            }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
-        });
-    }
-
-    public function admin(): HasOne
-    {
-        return $this->hasOne(Admin::class);
-    }
-
-    public function dosen(): HasOne
-    {
-        return $this->hasOne(Dosen::class);
-    }
-
-    public function mahasiswa(): HasOne
-    {
-        return $this->hasOne(Mahasiswa::class);
-    }
-
-    protected function prodiId(): Attribute
+    /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas 
+    protected function prId(): Attribute
     {
         return Attribute::get(function () {
             return $this->admin?->pr_id 
@@ -268,33 +229,26 @@ class User extends Authenticatable
             return $prodi?->jr_rel?->fk_id;
         });
     }
+    /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas 
 
-    /**
-     * Dapatkan URL foto profil pengguna.
-     * * Accessor akan membuat properti profile_photo_url
-     */
+    /// ... /// ... /// ...
+
+    /// Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
     protected function profilePhotoUrl(): Attribute
     {
         return Attribute::get(function (): string {
             if ($this->profile_photo_path) {
                 return Storage::disk('public')->url($this->profile_photo_path);
             }
-
             return $this->defaultProfilePhotoUrl();
         });
     }
-
-    /**
-     * Dapatkan URL default foto profil (misalnya, Gravatar atau placeholder).
-     * * Anda dapat menyesuaikan fungsi ini sesuai kebutuhan
-     */
     protected function defaultProfilePhotoUrl(): string
     {
         $name = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
 
         return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=0080FF';
     }
-
     protected static function booted()
     {
         static::deleting(function ($user) {
@@ -304,7 +258,32 @@ class User extends Authenticatable
         });
     }
 
+    protected function createdDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->created_at) {
+                return null;
+            }
 
+            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+        });
+    }
+    protected function updatedDay(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->updated_at) {
+                return null;
+            }
+
+            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+        });
+    }
+    /// Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
+
+    /// ... /// ... /// ...
+
+
+    /// Search User /// Search User /// Search User
     public function scopeSearchUser($query, $search)
     {
         if (empty(trim($search))) {
@@ -342,7 +321,7 @@ class User extends Authenticatable
             $roleConfigs = [
                 'admin' => ['name', 'nip', 'nitk', 'status'],
                 'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
-                'mahasiswa' => ['name', 'nim', 'tahun_angkatan', 'status'],
+                'mahasiswa' => ['name', 'nim', 'angkatan', 'status'],
             ];
 
             foreach ($roleConfigs as $role => $fields) {
@@ -375,4 +354,5 @@ class User extends Authenticatable
             }
         });
     }
+    /// Search User /// Search User /// Search User
 }

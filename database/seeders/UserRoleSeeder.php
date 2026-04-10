@@ -66,7 +66,7 @@ class UserRoleSeeder extends Seeder
                 'pr_id' => $prodiUtama->id, // Tambahkan pr_id
                 'nim' => '06111281722000',
                 'name' => 'Wildan Athif Muttaqien (Mhs)',
-                'tahun_angkatan' => 2021,
+                'angkatan' => 2021,
                 'status' => 'Aktif',
             ]);
 
@@ -106,7 +106,7 @@ class UserRoleSeeder extends Seeder
                     'pr_id' => $randomProdiId,
                     'name' => "Mhs Test {$i}", 
                     'nim' => "0611{$i}", 
-                    'tahun_angkatan' => 2021, 
+                    'angkatan' => 2021, 
                     'status' => 'Aktif'
                 ]);
             }

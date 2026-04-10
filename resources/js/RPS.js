@@ -28,9 +28,9 @@ document.addEventListener("alpine:init", () => {
         nama_mk_search: "",
         mk_items: "",
 
-        tahun_akademik: "",
-        tahun_akademik_1: "",
-        tahun_akademik_2: "",
+        akademik: "",
+        akademik_1: "",
+        akademik_2: "",
         is_draf: "",
 
         count_scpmk: 0,
@@ -110,15 +110,15 @@ document.addEventListener("alpine:init", () => {
                 "name": namaMK
             };
 
-            this.tahun_akademik = tahunAkademik;
+            this.akademik = tahunAkademik;
 
             if (tahunAkademik && tahunAkademik.includes('/')) {
                 let parts = tahunAkademik.split('/');
-                this.tahun_akademik_1 = parts[0];
-                this.tahun_akademik_2 = parts[1];
+                this.akademik_1 = parts[0];
+                this.akademik_2 = parts[1];
             } else {
-                this.tahun_akademik_1 = "";
-                this.tahun_akademik_2 = "";
+                this.akademik_1 = "";
+                this.akademik_2 = "";
             }
 
             this.is_draf = drafText;
@@ -158,9 +158,9 @@ document.addEventListener("alpine:init", () => {
             this.mk_items = "";
 
             this.digit_akademik = "";
-            this.tahun_akademik = "";
-            this.tahun_akademik_1 = "";
-            this.tahun_akademik_2 = "";
+            this.akademik = "";
+            this.akademik_1 = "";
+            this.akademik_2 = "";
 
             this.is_draf = "";
         }

@@ -168,7 +168,7 @@ trait WithDosenSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('prodi', function($q) use ($prodiId) {
+            ->whereHas('pr_rel', function($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)

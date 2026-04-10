@@ -180,7 +180,7 @@
                                 {{-- Tahun Masuk: Input dikecilkan --}}
                                 <td class="{{ $kolomExcel }}">
                                     <input type="number"
-                                        wire:model.lazy="parsedRows.{{ $i }}.tahun_angkatan"
+                                        wire:model.lazy="parsedRows.{{ $i }}.angkatan"
                                         class="w-full border rounded px-1 py-1 text-xs text-center appearance-none"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="4"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"

@@ -18,7 +18,7 @@ document.addEventListener("alpine:init", () => {
         nidn: "",
         nidk: "",
         nim: "",
-        tahun_angkatan: "",
+        angkatan: "",
         status: "",
         pr_id: "",
 
@@ -182,7 +182,7 @@ document.addEventListener("alpine:init", () => {
             this.nidn = "";
             this.nidk = "";
             this.nim = "";
-            this.tahun_angkatan = "";
+            this.angkatan = "";
             this.status = "";
             this.pr_id = "";
 

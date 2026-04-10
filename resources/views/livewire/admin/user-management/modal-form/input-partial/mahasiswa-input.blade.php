@@ -36,12 +36,12 @@
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
         'labelString' => 'Tahun Angkatan',
-        'modelString' => 'tahun_angkatan',
+        'modelString' => 'angkatan',
         'numberOnly' => 1,
         'maxlength' => 4,
         'iconString' => 'calendar-days',
         'placeholder' => 'Masukkan Tahun Angkatan',
-        'message' => $errors->first('tahun_angkatan')
+        'message' => $errors->first('angkatan')
     ])
 
 

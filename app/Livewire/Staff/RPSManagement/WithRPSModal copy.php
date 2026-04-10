@@ -147,10 +147,10 @@ private function inputModalRPS($isEditing, $data)
     $rules = [
         'deskripsi' => 'required|string|max:1000',
         'mk_id' => 'required|exists:mata_kuliahs,id',
-        'tahun_akademik' => [
+        'akademik' => [
             'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
             function ($attribute, $value, $fail) use ($data, $isEditing) {
-                $query = DB::table('rps')->where('mk_id', $data['mk_id'])->where('tahun_akademik', $value);
+                $query = DB::table('rps')->where('mk_id', $data['mk_id'])->where('akademik', $value);
                 if ($isEditing) {
                     $query->where('id', '!=', $this->selected_id);
                 }
@@ -159,8 +159,8 @@ private function inputModalRPS($isEditing, $data)
                 }
             },
         ],
-        'tahun_akademik_1' => 'required|integer|min:1970',
-        'tahun_akademik_2' => 'required|integer|min:1971',
+        'akademik_1' => 'required|integer|min:1970',
+        'akademik_2' => 'required|integer|min:1971',
         'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data) {
             $totalSubCPMK = 0;
             $totalBobot = 0;
@@ -195,12 +195,12 @@ private function inputModalRPS($isEditing, $data)
     if ($validator->fails()) {
         // Custom handling untuk error tahun akademik gabungan
         $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
-        $isThnEmpty = empty($data['tahun_akademik']) && empty($data['tahun_akademik_1']) && empty($data['tahun_akademik_2']);
+        $isThnEmpty = empty($data['akademik']) && empty($data['akademik_1']) && empty($data['akademik_2']);
         
         foreach ($validator->errors()->toArray() as $key => $messages) {
-            if (in_array($key, ['tahun_akademik', 'tahun_akademik_1', 'tahun_akademik_2'])) {
-                if (! $this->getErrorBag()->has('tahun_akademik')) {
-                    $this->addError('tahun_akademik', $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama);
+            if (in_array($key, ['akademik', 'akademik_1', 'akademik_2'])) {
+                if (! $this->getErrorBag()->has('akademik')) {
+                    $this->addError('akademik', $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama);
                 }
             } else {
                 foreach ($messages as $message) {
@@ -269,9 +269,9 @@ DB::transaction(function () use ($validated) {
     $rps = RPS::create([
         'deskripsi'      => $validated['deskripsi'],
         'mk_id'          => $validated['mk_id'],
-        'tahun_akademik' => $validated['tahun_akademik'],
-        'tahun_awal'     => $validated['tahun_akademik_1'],
-        'tahun_akhir'    => $validated['tahun_akademik_2'],
+        'akademik' => $validated['akademik'],
+        'tahun_awal'     => $validated['akademik_1'],
+        'tahun_akhir'    => $validated['akademik_2'],
         'is_draf'        => $validated['is_draf'],
         'isi_rps_json'   => json_encode($validated['cpmk_sub_items_array']),
     ]);
@@ -311,7 +311,7 @@ DB::transaction(function () use ($validated) {
 
         // 4. Feedback & Reset
         $namaMK = $this->mk_items['nama'] ?? $this->mk_name;
-        $this->toast(message: "RPS $namaMK ({$validated['tahun_akademik']}) berhasil disimpan.");
+        $this->toast(message: "RPS $namaMK ({$validated['akademik']}) berhasil disimpan.");
 
         $this->resetInputRPS();
         $this->dispatch('refresh-data');
@@ -405,12 +405,12 @@ DB::transaction(function () use ($validated) {
             'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
 
             // Tahun Akademik
-            'tahun_akademik.required' => 'Tahun Akademik wajib diisi!',
-            'tahun_akademik.regex' => 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!',
-            'tahun_akademik_1.required' => 'Tahun awal (input kiri) wajib diisi!',
-            'tahun_akademik_1.min' => 'Tahun awal minimal adalah 1970!',
-            'tahun_akademik_2.required' => 'Tahun akhir (input kanan) wajib diisi!',
-            'tahun_akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
+            'akademik.required' => 'Tahun Akademik wajib diisi!',
+            'akademik.regex' => 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!',
+            'akademik_1.required' => 'Tahun awal (input kiri) wajib diisi!',
+            'akademik_1.min' => 'Tahun awal minimal adalah 1970!',
+            'akademik_2.required' => 'Tahun akhir (input kanan) wajib diisi!',
+            'akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi RPS wajib diisi!',

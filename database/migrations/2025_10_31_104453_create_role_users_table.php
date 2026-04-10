@@ -82,9 +82,9 @@ return new class extends Migration
             $table->foreignId('pr_id')->nullable();
 
             $table->string('name');
-            $table->year('tahun_angkatan');
-            $table->date('tanggal_yudisium')->nullable();
-            $table->date('tanggal_wisuda')->nullable();
+            $table->year('angkatan');
+            $table->date('yudisium')->nullable();
+            $table->date('wisuda')->nullable();
             $table->enum('status', [
                 'Aktif',                  // Hijau (Aktif Kuliah)
                 'Lulus',                  // Biru (Output Positif)

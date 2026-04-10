@@ -37,7 +37,7 @@ class RPS extends Model
     protected function kodeBlok(): Attribute
     {
         return Attribute::get(function () {
-            $tahunFull = (int) substr($this->tahun_akademik, 0, 4);
+            $tahunFull = (int) substr($this->akademik, 0, 4);
             $suffixTahun = match (true) {
                 $tahunFull >= 3000 => $tahunFull,
                 $tahunFull >= 2100 => substr((string) $tahunFull, -3),
@@ -52,7 +52,7 @@ class RPS extends Model
     {
         return Attribute::get(function () {
             $kodeMK = $this->kode_mk;
-            if (!$kodeMK || !$this->tahun_akademik) {
+            if (!$kodeMK || !$this->akademik) {
                 return null;
             }
             $suffixTahun = $this->kode_blok;
@@ -69,11 +69,6 @@ class RPS extends Model
     protected function tingkatanMk(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->tingkatan_mk);
-    }
-
-    protected function akademik(): Attribute
-    {
-        return Attribute::get(fn () => $this->tahun_akademik);
     }
 
     protected function rps(): Attribute
@@ -198,7 +193,7 @@ class RPS extends Model
 
                 // B. Filter Tahun Akademik (Sekarang 1 digit langsung LIKE)
                 if ($yearPart !== null) {
-                    $group->where('tahun_akademik', 'like', '%'.$yearPart.'%');
+                    $group->where('akademik', 'like', '%'.$yearPart.'%');
                 }
 
                 // C. Filter Tanggal (Revisi, Created, Updated)
@@ -218,7 +213,7 @@ class RPS extends Model
                 });
 
                 // D. Fallback Umum
-                $group->orWhere('tahun_akademik', 'like', $searchTerm);
+                $group->orWhere('akademik', 'like', $searchTerm);
             });
 
             // E. Logika Status

@@ -86,11 +86,11 @@ trait WithUserFilters
     {
         if (!empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
             $queryUser->whereHas('mahasiswa', fn($q) => 
-                $q->where('tahun_angkatan', 'like', "%{$this->searchAngkatan}%")
+                $q->where('angkatan', 'like', "%{$this->searchAngkatan}%")
             );
         }
 
-        $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'tahun_angkatan'];
+        $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'angkatan'];
 
         if (in_array($this->sortField, $profileFields)) {
             return $this->applyUserCombinedSort($queryUser);
@@ -123,7 +123,7 @@ trait WithUserFilters
             
             'prodi'     => $this->joinProdiAndGetSortSql($queryUser),
             
-            'tahun_angkatan' => "mahasiswas.tahun_angkatan",
+            'angkatan' => "mahasiswas.angkatan",
             'created_at' => "users.created_at",
             'updated_at' => "users.updated_at",
             

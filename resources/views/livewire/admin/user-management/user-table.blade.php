@@ -60,7 +60,7 @@
                     <div class="flex flex-col gap-1 items-center">
 
                         @include('livewire.global.table.head-table', [
-                            'sortFieldString' => 'tahun_angkatan',
+                            'sortFieldString' => 'angkatan',
                             'headString' => 'Angkatan',
                             'withTh' => 0,
                         ])
@@ -199,7 +199,7 @@
                 </td>
             @endif
             @if ($filterUser == 'mahasiswa')
-                <td class="{{ $secondKolom }} text-center">{{ $detail->tahun_angkatan ?? '-' }}</td>
+                <td class="{{ $secondKolom }} text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} text-center">

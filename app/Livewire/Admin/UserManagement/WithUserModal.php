@@ -39,7 +39,7 @@ trait WithUserModal
         'nidn' => 'nullable|string|max:20',
         'nidk' => 'nullable|string|max:20',
         'nim' => 'required|string|max:20',
-        'tahun_angkatan' => 'required|integer',
+        'angkatan' => 'required|integer',
         'pr_id' => 'required|exists:prodis,id',
     ];
 
@@ -205,7 +205,7 @@ trait WithUserModal
                 Rule::unique('dosens', 'nidk'),
             ];
 
-            $rules['tahun_angkatan'] =
+            $rules['angkatan'] =
                 'required|integer|min:1960|max:'.date('Y');
 
             $rules['status'] = [
@@ -344,7 +344,7 @@ trait WithUserModal
                         'user_id' => $user->id,
                         'name' => $nameInput,
                         'nim' => $identity1Input,
-                        'tahun_angkatan' => $validated['tahun_angkatan'],
+                        'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
@@ -431,7 +431,7 @@ trait WithUserModal
                     $user->mahasiswa->update([
                         'name' => $nameInput,
                         'nim' => $identity1Input,
-                        'tahun_angkatan' => $validated['tahun_angkatan'],
+                        'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
@@ -473,10 +473,10 @@ trait WithUserModal
             'nidk.unique' => 'NIDK ini sudah terdaftar!',
             'nim.required' => 'NIM wajib diisi untuk Mahasiswa!',
             'nim.unique' => 'NIM ini sudah terdaftar!',
-            'tahun_angkatan.required' => 'Tahun angkatan wajib diisi!',
-            'tahun_angkatan.integer' => 'Tahun angkatan harus berupa angka!',
-            'tahun_angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
-            'tahun_angkatan.max' => 'Tahun angkatan tidak boleh melebihi tahun sekarang!',
+            'angkatan.required' => 'Tahun angkatan wajib diisi!',
+            'angkatan.integer' => 'Tahun angkatan harus berupa angka!',
+            'angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
+            'angkatan.max' => 'Tahun angkatan tidak boleh melebihi tahun sekarang!',
             'pr_id.required' => 'Program studi wajib dipilih!',
             'pr_id.exists' => 'Program studi yang dipilih tidak valid!',
             'excel_file.required' => 'File Excel wajib diunggah!',
@@ -494,7 +494,7 @@ trait WithUserModal
         $fields = [
             'user_id',
             // 'email', 'password', 'name', 'nip', 'nitk',
-            // 'nidn', 'nidk', 'nim', 'tahun_angkatan',
+            // 'nidn', 'nidk', 'nim', 'angkatan',
             'roleType',
         ];
 

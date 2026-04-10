@@ -39,7 +39,7 @@ class RPSSeeder extends Seeder
                 $rps = RPS::create([
                     'mk_id' => $mk->id,
                     'deskripsi' => "Mata kuliah {$mk->nama_mk} ({$mk->kode_mk}) ini mencakup analisis teoritis dan implementasi praktis Teknik Elektro.",
-                    'tahun_akademik' => $tahunAkademik[$index % count($tahunAkademik)],
+                    'akademik' => $tahunAkademik[$index % count($tahunAkademik)],
                     'is_draf' => ($index % 4 == 0),
                     'tanggal_revisi' => $waktuPalsu,
                     'created_at' => $waktuPalsu,

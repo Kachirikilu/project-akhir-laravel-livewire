@@ -103,7 +103,7 @@ trait WithUserExcel
                 'nidn'             => $data['nidn'] ?? '',
                 'nidk'             => $data['nidk'] ?? '',
                 'nim'              => $data['nim'] ?? '',
-                'tahun_angkatan'   => $data['tahun angkatan'] ?? '',
+                'angkatan'   => $data['tahun angkatan'] ?? '',
                 // 'program_id'    => $this->pr_id ?? '',
                 'role'             => strtolower($data['role'] ?? ''),
             ];
@@ -209,7 +209,7 @@ trait WithUserExcel
 
         if ($data['role'] === 'mahasiswa') {
             $rules['nim'] = ['required', 'unique:mahasiswas,nim', 'unique:admins,nip', 'unique:dosens,nip'];
-            $rules['tahun_angkatan'] = ['required', 'integer', 'min:1900', 'max:' . date('Y')];
+            $rules['angkatan'] = ['required', 'integer', 'min:1900', 'max:' . date('Y')];
         }
 
         $validator = Validator::make($data, $rules, [], [
@@ -219,7 +219,7 @@ trait WithUserExcel
             'nidn' => 'NIDN',
             'nidk' => 'NIDK',
             'nim' => 'NIM',
-            'tahun_angkatan' => 'Tahun Angkatan',
+            'angkatan' => 'Tahun Angkatan',
         ]);
 
         if ($validator->fails()) {
@@ -243,7 +243,7 @@ trait WithUserExcel
         $this->nidk = $data['nidk'] ?? null;
         $this->nim  = $data['nim'] ?? null;
 
-        $this->tahun_angkatan = $data['tahun_angkatan'] ?? null;
+        $this->angkatan = $data['angkatan'] ?? null;
         $this->roleType = strtolower(trim($data['role'] ?? ''));
 
         // $prodiName = $data['program_studi'] ?? null;
@@ -288,7 +288,7 @@ trait WithUserExcel
             Mahasiswa::create([
                 'user_id' => $user->id,
                 'nim' => $this->nim,
-                'tahun_angkatan' => $this->tahun_angkatan,
+                'angkatan' => $this->angkatan,
                 'name' => $this->name,
                 'pr_id' => $this->pr_id,
             ]);

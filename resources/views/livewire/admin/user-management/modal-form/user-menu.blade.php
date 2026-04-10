@@ -37,13 +37,13 @@
                         '{{ $detail->nidn ?? '' }}',
                         '{{ $detail->nidk ?? '' }}',
                         '{{ $detail->nim ?? '' }}',
-                        '{{ $detail->tahun_angkatan ?? '' }}',
-                        '{{ $detail->status ?? '' }}',
-                        '{{ $detail->pr_id ?? '' }}',
-                        '{{ $detail->pr_rel->prodi ?? '' }}',
-                        '{{ $detail->pr_rel->jurusanJr ?? '' }}',
-                        '{{ $detail->pr_rel->fakultasFk ?? '' }}',
-                        '{{ $detail->pr_rel->kode ?? '' }}'
+                        '{{ $detail->angkatan ?? '' }}',
+                        '{{ $x->status ?? '' }}',
+                        '{{ $x->pr_id ?? '' }}',
+                        '{{ $x->kode_pr ?? '' }}',
+                        '{{ $x->prodi ?? '' }}',
+                        '{{ $detail->pr_rel->jurusan_jr ?? '' }}',
+                        '{{ $detail->pr_rel->fakultas_fk ?? '' }}',
                     );
                     $flux.modal('user-modal').show();
             "

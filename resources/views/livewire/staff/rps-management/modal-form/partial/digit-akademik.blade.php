@@ -1,7 +1,7 @@
 <div x-data="{}"
     x-effect="
         if ($store.rps) {
-            let ta1 = parseInt($store.rps.tahun_akademik_1);
+            let ta1 = parseInt($store.rps.akademik_1);
 
             if (!ta1) {
                 $store.rps.digit_akademik = '';
