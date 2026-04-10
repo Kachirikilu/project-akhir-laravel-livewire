@@ -76,7 +76,7 @@ class MataKuliahManagement extends Component
         } elseif ($this->filterMK === 'pilihan') {
             $queryMK->where('is_wajib', false);
         } elseif ($this->filterMK === 'universitas') {
-            $queryMK->where('tingkatan_mk', 4);
+            $queryMK->where('level_mk', 4);
         }
     }
 
@@ -120,7 +120,7 @@ class MataKuliahManagement extends Component
                     'mata_kuliahs.id',
                     'mata_kuliahs.tipe_sks',
                     'mata_kuliahs.is_wajib',
-                    'mata_kuliahs.tingkatan_mk',
+                    'mata_kuliahs.level_mk',
                 ])
                 ->unique('id');
 
@@ -149,7 +149,7 @@ class MataKuliahManagement extends Component
             $totalAllOpsi = $currentTabData->count();
             $totalWajib = $currentTabData->where('is_wajib', true)->count();
             $totalPilihan = $currentTabData->where('is_wajib', false)->count();
-            $totalUni = $currentTabData->where('tingkatan_mk', 4)->count();
+            $totalUni = $currentTabData->where('level_mk', 4)->count();
 
             // 5. Query Final untuk Tabel (Pagination)
             $queryMK = $baseQuery->clone();

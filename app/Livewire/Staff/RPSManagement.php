@@ -197,7 +197,7 @@ class RPSManagement extends Component
         $queryRPS = $this->inputRPSSearch();
         $baseDataRPS = $this->inputRPSSearch()
             ->when($this->showDeleted, fn ($q) => $q->onlyTrashed())
-            ->get(['rps.id', 'rps.mk_id', 'rps.akademik', 'rps.is_draf', 'rps.tanggal_revisi'])
+            ->get(['rps.id', 'rps.mk_id', 'rps.akademik', 'rps.is_draf', 'rps.revisi'])
             ->unique('id');
 
         $queryCPMK = $this->inputCPMKSearch();
@@ -292,7 +292,7 @@ class RPSManagement extends Component
         )->count();
 
         $stats['rps-ref-new'] = $baseDataRPS->filter(fn($item) => 
-                $item->tanggal_revisi && Carbon::parse($item->tanggal_revisi)->year == $currentYear
+                $item->revisi && Carbon::parse($item->revisi)->year == $currentYear
             )->count();
 
 

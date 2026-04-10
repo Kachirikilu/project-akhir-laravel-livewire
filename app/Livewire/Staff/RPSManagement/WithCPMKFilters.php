@@ -20,14 +20,14 @@ trait WithCPMKFilters
             $queryCPMK->searchCPMK($search);
         }
 
-        if (! empty($this->selectedProdiId)) {
-            $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $queryCPMK->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $queryCPMK->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
         if (! empty($this->selectedMKId)) {
             $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));

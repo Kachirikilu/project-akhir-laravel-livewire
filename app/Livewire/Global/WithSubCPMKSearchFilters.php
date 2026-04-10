@@ -46,15 +46,15 @@ trait WithSubCPMKSearchFilters
         return SubCPMK::query()->with('cpmks.rps', 'cpmks', 'refs');
     }
 
-    private function itemsSCPMK($sc)
+    private function itemsSCPMK($s)
     {
-        if (! $sc) {
+        if (! $s) {
             return null;
         }
         return [
-            'id' => $sc->id,
-            'kode' => $sc->kode,
-            'name' => $sc->deskripsi,
+            'id' => $s->id,
+            'kode' => $s->kode,
+            'slot1' => $s->deskripsi,
         ];
     }
 

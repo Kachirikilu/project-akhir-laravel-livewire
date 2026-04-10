@@ -26,7 +26,7 @@ class MataKuliahSeeder extends Seeder
 
             foreach ($mkUni as $item) {
                 $mk = MataKuliah::create([
-                    'tingkatan_mk' => 4,
+                    'level_mk' => 4,
                     'nama_mk' => $item['nama'],
                     'kode_mk' => null, // Sesuai request
                     'digit_semester' => '10',
@@ -50,7 +50,7 @@ class MataKuliahSeeder extends Seeder
             
             foreach ($mkTeknik as $item) {
                 $mk = MataKuliah::create([
-                    'tingkatan_mk' => 3,
+                    'level_mk' => 3,
                     'nama_mk' => $item['nama'],
                     'digit_semester' => '11',
                     'digit_mk' => $item['digit'],
@@ -71,7 +71,7 @@ class MataKuliahSeeder extends Seeder
 
             foreach ($mkFasilkom as $item) {
                 $mk = MataKuliah::create([
-                    'tingkatan_mk' => 3,
+                    'level_mk' => 3,
                     'nama_mk' => $item['nama'],
                     'digit_semester' => '11',
                     'digit_mk' => $item['digit'],
@@ -88,7 +88,7 @@ class MataKuliahSeeder extends Seeder
             $jurusanElektro = Jurusan::where('kode_jr', 'TKE')->first();
             if ($jurusanElektro) {
                 $mk = MataKuliah::create([
-                    'tingkatan_mk' => 2,
+                    'level_mk' => 2,
                     'nama_mk' => 'Rangkaian Listrik',
                     'digit_semester' => '21',
                     'digit_mk' => '05',
@@ -104,7 +104,7 @@ class MataKuliahSeeder extends Seeder
             if ($prodiS1Elektro) {
                 // Contoh Tipe 3 (Praktek Lapangan) & Tipe 4 (Simulasi)
                 MataKuliah::create([
-                    'tingkatan_mk' => 1,
+                    'level_mk' => 1,
                     'nama_mk' => 'Kerja Praktek',
                     'digit_semester' => '60',
                     'digit_mk' => '99',
@@ -113,7 +113,7 @@ class MataKuliahSeeder extends Seeder
                 ])->prodis()->attach($prodiS1Elektro->id);
 
                 MataKuliah::create([
-                    'tingkatan_mk' => 1,
+                    'level_mk' => 1,
                     'nama_mk' => 'Pemodelan Sistem',
                     'digit_semester' => '50',
                     'digit_mk' => '08',

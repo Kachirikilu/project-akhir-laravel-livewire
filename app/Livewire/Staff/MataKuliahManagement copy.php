@@ -69,7 +69,7 @@ class MataKuliahManagement extends Component
         } elseif ($this->filter === 'pilihan') {
             $query->where('is_wajib', false);
         } elseif ($this->filter === 'universitas') {
-            $query->where('tingkatan_mk', 4);
+            $query->where('level_mk', 4);
         }
     }
 
@@ -130,7 +130,7 @@ class MataKuliahManagement extends Component
         $totalAllOpsi = (clone $query)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
         $totalWajib   = (clone $query)->where('is_wajib', true)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
         $totalPilihan = (clone $query)->where('is_wajib', false)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
-        $totalUni     = (clone $query)->where('tingkatan_mk', 4)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
+        $totalUni     = (clone $query)->where('level_mk', 4)->distinct('mata_kuliahs.id')->count('mata_kuliahs.id');
 
         $this->buttonMKFilter($query);
 

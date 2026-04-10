@@ -48,7 +48,7 @@ trait WithRPSModal
         $this->isEditing = true;
 
         $this->resetInputRPS();
-        $this->prodiResults = [];
+        $this->prResults = [];
 
         $this->resetValidation();
         $this->resetErrorBag();
@@ -57,7 +57,7 @@ trait WithRPSModal
             $mk = RPS::with(['prodis', 'cpmks.scpmks', 'cpmks.scpmks.refs', 'cpmks.refs', 'cpmks.cpls'])->findOrFail($id);
 
             $this->pr_id_array = $mk->prodis->pluck('id')->toArray();
-            $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
+            $this->pr_name_array = $mk->prodis->pluck('prodi')->toArray();
             $this->prodi_kode_array = $mk->prodis->pluck('kode')->toArray();
 
             $this->dispatch('refresh-component');
@@ -66,26 +66,26 @@ trait WithRPSModal
 
             if ($firstProdi) {
                 $this->jr_id = $firstProdi->jr_id;
-                $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan;
+                $this->jrNameSearch = 'Jurusan '.$firstProdi->jurusan;
                 $this->jurusan_kode = $firstProdi->kode;
 
                 $this->fk_id = $firstProdi->fk_id;
-                $this->fakultasNameSearch = 'Fakultas '.$firstProdi->fakultas;
+                $this->fkNameSearch = 'Fakultas '.$firstProdi->fakultas;
                 $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->pr_id = $firstProdi->id;
-                    $this->prodiNameSearch = $firstProdi->prodi;
+                    $this->prNameSearch = $firstProdi->prodi;
                     $this->prodi_kode = $firstProdi->kode;
                 }
             }
 
             if ($tingkatan == 1 || $tingkatan == 4) {
-                $this->updatedProdiNameSearch($this->prodiNameSearch);
+                $this->updatedProdiNameSearch($this->prNameSearch);
             } elseif ($tingkatan == 2) {
-                $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+                $this->updatedJurusanNameSearch($this->jrNameSearch);
             } elseif ($tingkatan == 3) {
-                $this->updatedFakultasNameSearch($this->fakultasNameSearch);
+                $this->updatedFakultasNameSearch($this->fkNameSearch);
             }
 
             $this->showRPSModal = true;

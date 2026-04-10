@@ -23,19 +23,19 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
-        'xResults' => $fakultasResults,
+        'xResults' => $fkResults,
         'selectX' => 'selectFakultas',
         'modelString' => 'nama_fk_search',
 
         'idString' => 'fk_id',
-        'itemsAllString' => 'fakultas_items',
+        'itemsAllString' => 'fk_items',
 
         'resetXInput' => 'resetFakultasInput()',
         'typeXString' => 'fakultas',
 
         'nameXString' => 'Fakultas',
         'searchString' => 'fakultas_search',
-        'nameSearchString' => 'fakultasNameSearch',
+        'nameSearchString' => 'fkNameSearch',
         'fetchString' => 'fetchFakultas',
         'iconString' => 'building-library',
         'wireLoading' => 'fetchFakultas'

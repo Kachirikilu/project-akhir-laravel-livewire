@@ -33,9 +33,8 @@ document.addEventListener("alpine:init", () => {
         status: "",
 
         // Prodi
-        pr_id: "",
         nama_pr_search: "",
-        prodi_items: "",
+        pr_items: "",
 
         setValueUser(
             email,
@@ -66,14 +65,14 @@ document.addEventListener("alpine:init", () => {
             this.angkatan = angkatan;
             this.status = status;
 
-            this.pr_id = idProdi,
+            this.pr_id = idProdi;
             this.nama_pr_search = prodi;
-            this.prodi_items = {
+            this.pr_items = {
                 "id": idProdi,
                 "kode": kodePr,
-                "name": prodi,
-                "name2": jurusan,
-                "name3": fakultas
+                "slot1": prodi,
+                "slot2": jurusan,
+                "slot3": fakultas
             };
         },
         setDeleteUser(email, forceDelete) {
@@ -81,9 +80,9 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        // resetSelect() {
-        //     this.status = "";
-        // },
+        resetSelect() {
+            this.status = "";
+        },
         reset() {
             this.typeModal = "",
             this.typeModal_delete = "",
@@ -105,9 +104,8 @@ document.addEventListener("alpine:init", () => {
             this.status = "",
 
             // Prodi
-            this.pr_id = "",
             this.nama_pr_search = "",
-            this.prodi_items = "",
+            this.pr_items = "",
 
             // Delete
             this.email_delete = ""

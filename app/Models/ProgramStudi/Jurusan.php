@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Jurusan extends Model
 {
@@ -16,6 +15,10 @@ class Jurusan extends Model
 
     protected $fillable = ['fk_id', 'kode_jr', 'nama_jr'];
     protected $appends = ['kode', 'jurusan', 'fakultas'];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
 
     public function fk_rel()
     {
@@ -98,21 +101,19 @@ class Jurusan extends Model
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->updated_at) {
+            if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
 

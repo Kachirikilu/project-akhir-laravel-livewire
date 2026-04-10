@@ -34,7 +34,7 @@ trait WithMKSearchFilters
             'sks' => $mk->sks,
             'tipe_sks_text' => $mk->tipe_sks_text,
             'wajib_text' => $mk->wajib_text,
-            'tingkatan_mk' => $mk->tingkatan_mk 
+            'level_mk' => $mk->level_mk 
         ])->toArray();
     }
 
@@ -43,15 +43,15 @@ trait WithMKSearchFilters
         return MataKuliah::query()->with('prodis');
     }
 
-    private function itemsMK($mk)
+    private function itemsMK($m)
     {
-        if (! $mk) {
+        if (! $m) {
             return null;
         }
         return [
-            'id' => $mk->id,
-            'kode' => $mk->kode,
-            'name' => $mk->mk,
+            'id' => $m->id,
+            'kode' => $m->kode,
+            'slot1' => $m->mk,
         ];
     }
 

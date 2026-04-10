@@ -1,118 +1,36 @@
 <div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
-    items: @entangle($idString),
-    itemsAll: @entangle($itemsAllString),
+    items: @entangle($idString).live,
+    itemsAll: @entangle($itemsAllString).live,
     parentSelectedId: @entangle($parentIdString ?? null).live,
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];
         if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-
-        this.$watch('itemsAll', (val) => {
-            let found = false;
-            val.forEach(i => {
-                if (i.is_ketua) {
-                    if (!found) {
-                        found = true;
-                    } else {
-                        i.is_ketua = false;
-                    }
-                }
-            });
-        });
     },
-
 
     get isParentReady() {
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, slot1, slot2, slot3) {
+    addItem(id, kode, name, slot2, slot3) {
         let normalizedId = Number(id);
-
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-
-            let isFirst = this.items.length === 0;
-
-            // Tambah ke items dulu
             this.items.push(normalizedId);
 
-            // Tambah ke itemsAll
             this.itemsAll.push({
-                id: normalizedId,
                 kode: kode,
-                slot1: slot1,
+                name: name,
                 slot2: slot2,
-                slot3: slot3,
-                peran: isFirst ? 'Koordinator' : 'Pengajar',
-                is_ketua: isFirst
+                slot3: slot3
             });
-
-            if (isFirst) {
-                this.$nextTick(() => {
-                    this.setKetuaById(normalizedId);
-                });
-            }
         }
-    },
-
-    setKetuaById(id) {
-        let normalizedId = Number(id);
-
-        if (this.items.length !== this.itemsAll.length) return;
-
-        let currentItemsAll = JSON.parse(JSON.stringify(this.itemsAll));
-        let currentItems = [...this.items];
-
-        // Reset semua
-        currentItemsAll.forEach(i => {
-            i.is_ketua = false;
-            if (i.peran === 'Koordinator') {
-                i.peran = 'Pengajar';
-            }
-        });
-
-        let idx = currentItemsAll.findIndex(i => Number(i.id) === normalizedId);
-        if (idx === -1) return;
-
-        currentItemsAll[idx].is_ketua = true;
-        currentItemsAll[idx].peran = 'Koordinator';
-
-        let selectedItemAll = currentItemsAll.splice(idx, 1)[0];
-        let selectedId = currentItems.splice(idx, 1)[0];
-
-        currentItemsAll.unshift(selectedItemAll);
-        currentItems.unshift(selectedId);
-
-        this.itemsAll = currentItemsAll;
-        this.items = currentItems;
     },
 
     removeItem(index) {
-        let isKetua = this.itemsAll[index]?.is_ketua === true;
-
         this.items.splice(index, 1);
         this.itemsAll.splice(index, 1);
-
-        if (isKetua && this.itemsAll.length > 0) {
-
-            let newIndex = index;
-
-            if (newIndex >= this.itemsAll.length) {
-                newIndex = this.itemsAll.length - 1;
-            }
-
-            let newKetuaId = this.itemsAll[newIndex].id;
-
-            this.$nextTick(() => {
-                this.setKetuaById(newKetuaId);
-            });
-        }
-    },
-
-    get hasKetua() {
-        return this.itemsAll.some(i => i.is_ketua);
     },
 
     move(index, direction) {
@@ -124,11 +42,8 @@
     }
 }">
 
-
-
-
     <label class="block text-sm font-medium mb-2">
-        {{ $nameXString }} 
+        {{ $nameX2String ?? $nameXString }} 
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif
@@ -180,6 +95,8 @@
             'xClick' => "search = ''",
         ])
     </div>
+
+    {{-- 2. DROPDOWN HASIL --}}
 
 
     {{-- 2. DROPDOWN HASIL --}}
@@ -265,8 +182,10 @@
     </div>
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
-    <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30">
-          <div class="flex items-center justify-between mb-4">
+    <div
+        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
+
+        <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
                 <span x-show="items.length > 0"
@@ -275,50 +194,54 @@
             </div>
         </div>
 
-        <div class="space-y-3">
-            <template x-for="(id, index) in items" :key="id + '-' + (itemsAll[index]?.is_ketua ? 'ketua' : 'anggota')">
-                <div :class="itemsAll[index]?.is_ketua ? 'border-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' : 'border-[var(--border-table-color)]'"
-                    class="relative flex flex-col md:flex-row md:items-center justify-between bg-[var(--second-table-color)] border px-4 py-3 rounded-lg shadow-sm gap-4 transition-all">
-                    
+        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-medium">
+            <template x-for="(id, index) in items" :key="id">
+                <div
+                    class="group relative flex items-start justify-between bg-[var(--second-table-color)] border border-[var(--border-table-color)] px-3 py-3 rounded-lg shadow-sm transition-all hover:border-[var(--focus-color)]">
                     <div class="flex items-start gap-3 flex-1">
-                        <button type="button" @click="setKetuaById(id)"
-                            :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
-                            class="mt-1 transition-colors" title="Jadikan Ketua">
-                            <flux:icon icon="star" variant="solid" class="size-5" />
-                        </button>
 
-                        <div class="flex flex-col flex-1">
-                               <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
+                        <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
+                            x-text="index + 1"></span>
+
+                        <div class="flex flex-col gap-1 flex-1">
+                            <div class="flex items-center gap-2">
                                 <span
                                     class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
-                                    >Ketua</span>
+                                    x-text="itemsAll[index]?.kode"></span>
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
-                            <span class="text-sm font-bold text-[var(--contrast-main-text)]" x-text="itemsAll[index]?.slot1"></span>
-                            <span class="text-xs text-gray-500" x-text="itemsAll[index]?.kode + ' | ' + itemsAll[index]?.slot2"></span>
+
+                            <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
+                                x-text="itemsAll[index]?.name"></span>
+
+                            <div
+                                class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
+
+                                @if ($typeX2String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.slot2"></span>
+                                @endif
+
+                                @if ($typeX3String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.slot3"></span>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
-                    {{-- PEMILIH PERAN --}}
-                    <div class="flex items-center gap-2">
-                        <select x-model="itemsAll[index].peran" 
-                            class="text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
-                            <option value="Koordinator">Koordinator</option>
-                            <option value="Pengajar">Pengajar</option>
-                            <option value="Asisten">Asisten</option>
-                        </select>
-
-                         {{-- ACTION BUTTONS --}}
+                    {{-- ACTION BUTTONS --}}
                     <div class="flex items-center gap-1 ml-2">
                         <div class="flex flex-col gap-0.5">
                             <button @click="move(index, -1)" type="button"
                                 class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="(hasKetua ? index === 1 : index === 0) || index === 0"> 
+                                :disabled="index === 0">
                                 <flux:icon icon="chevron-up" variant="mini" class="size-4" />
                             </button>
                             <button @click="move(index, 1)" type="button"
                                 class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="index === items.length - 1 || index == 0">
+                                :disabled="index === items.length - 1">
                                 <flux:icon icon="chevron-down" variant="mini" class="size-4" />
                             </button>
                         </div>
@@ -328,17 +251,16 @@
                             <flux:icon icon="trash" variant="mini" class="size-5" />
                         </button>
                     </div>
-                    </div>
                 </div>
             </template>
-        </div>
-                    {{-- Empty State --}}
+
+            {{-- Empty State --}}
             <div x-show="items.length === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
                 <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>
+        </div>
     </div>
-
     @error($idString)
         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
     @enderror

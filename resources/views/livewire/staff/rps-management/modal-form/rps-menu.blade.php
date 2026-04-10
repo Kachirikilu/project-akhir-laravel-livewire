@@ -28,7 +28,7 @@
                         '{{ $x->kode_mk ?? '' }}',
                         '{{ $x->mk ?? '' }}',
                         '{{ $x->akademik ?? '' }}',
-                        '{{ $x->draf_text ?? '' }}'
+                        '{{ $x->draf ?? '' }}'
                     );
 
                     $flux.modal('rps-modal').show();

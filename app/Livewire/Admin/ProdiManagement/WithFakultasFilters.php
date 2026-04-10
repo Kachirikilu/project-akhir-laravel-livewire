@@ -18,13 +18,13 @@ trait WithFakultasFilters
             $queryFk->searchFakultas($search)->get();
         }
 
-        if (! empty($this->selectedFakultasId)) {
-            $queryFk->where('id', $this->selectedFakultasId);
+        if (! empty($this->selectedFkId)) {
+            $queryFk->where('id', $this->selectedFkId);
         }
 
-        if (! empty($this->selectedJurusanId)) {
+        if (! empty($this->selectedJrId)) {
             $queryFk->whereHas('jurusans', function ($q) {
-                $q->where('id', $this->selectedJurusanId);
+                $q->where('id', $this->selectedJrId);
             });
         }
 

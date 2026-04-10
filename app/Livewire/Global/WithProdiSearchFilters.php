@@ -10,27 +10,27 @@ trait WithProdiSearchFilters
 {
     use WithPagination;
 
-    public $prodiSearchQuery = '';
+    public $prSearchQuery = '';
 
-    public $prodiSearchResults = [];
+    public $prSearchResults = [];
 
-    public $modeProdi = '';
+    public $modePr = '';
 
     public $pr_id;
 
     public $pr_id_array = [];
 
-    public $prodi_name;
+    public $pr_name;
 
-    public $prodi_items;
+    public $pr_items;
 
-    public $prodi_items_array = [];
+    public $pr_items_array = [];
 
-    public $prodiNameSearch = '';
+    public $prNameSearch = '';
 
-    public $prodiResults = [];
+    public $prResults = [];
 
-    public $selectedProdiId = null;
+    public $selectedPrId = null;
 
     public $mkType = '';
 
@@ -38,13 +38,13 @@ trait WithProdiSearchFilters
 
     private function mapProdi($collection)
     {
-        return $collection->map(fn ($pr) => [
-            'id' => $pr->id,
-            'kode' => $pr->kode,
-            'prodi' => $pr->prodi,
-            'jurusan' => $pr->jurusanJr,
-            'fakultas' => $pr->fakultasFk,
-            'strata' => $pr->strata,
+        return $collection->map(fn ($p) => [
+            'id' => $p->id,
+            'kode' => $p->kode,
+            'prodi' => $p->prodi,
+            'jurusan' => $p->jurusanJr,
+            'fakultas' => $p->fakultasFk,
+            'strata' => $p->strata,
         ])->toArray();
     }
 
@@ -53,40 +53,40 @@ trait WithProdiSearchFilters
         return Prodi::query()->with(['jr_rel', 'jr_rel.fk_rel']);
     }
 
-    private function itemsPr($pr)
+    private function itemsPr($p)
     {
-        if (! $pr) {
+        if (! $p) {
             return null;
         }
         return [
-            'id' => $pr->id,
-            'kode' => $pr->kode,
-            'name' => $pr->prodi,
-            'name2' => $pr->jurusanJr,
-            'name3' => $pr->fakultasFk,
+            'id' => $p->id,
+            'kode' => $p->kode,
+            'slot1' => $p->prodi,
+            'slot2' => $p->jurusanJr,
+            'slot3' => $p->fakultasFk,
         ];
     }
 
     public function inputProdiFilter()
     {
-        $search = trim($this->prodiSearchQuery);
+        $search = trim($this->prSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->prodi_name) {
-            $this->prodiSearchResults = $this->mapProdi(
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->pr_name) {
+            $this->prSearchResults = $this->mapProdi(
                 $this->prQuery()
                     ->searchProdi($search)
                     ->limit(12)->get()
             );
-        } elseif (empty($search) || $this->prodi_name) {
-            $this->prodiSearchResults = $this->getProdibyUser();
+        } elseif (empty($search) || $this->pr_name) {
+            $this->prSearchResults = $this->getProdibyUser();
         } else {
-            $this->prodiSearchResults = [];
+            $this->prSearchResults = [];
         }
     }
 
     public function resetProdiFilter()
     {
-        $this->reset(['selectedProdiId', 'prodiSearchQuery', 'prodi_name', 'prodi_items']);
+        $this->reset(['selectedPrId', 'prSearchQuery', 'pr_name', 'pr_items']);
         $this->resetPage();
     }
 
@@ -95,11 +95,11 @@ trait WithProdiSearchFilters
         $data = $this->prQuery()->find($id);
 
         if ($data) {
-            $this->selectedProdiId = $id;
-            $this->prodi_name = $data->prodi;
-            $this->prodiSearchQuery = $data->prodi;
-            $this->prodi_items = $this->itemsPr($data);
-            $this->prodiSearchResults = [];
+            $this->selectedPrId = $id;
+            $this->pr_name = $data->prodi;
+            $this->prSearchQuery = $data->prodi;
+            $this->pr_items = $this->itemsPr($data);
+            $this->prSearchResults = [];
             $this->resetPage();
         }
     }
@@ -107,14 +107,14 @@ trait WithProdiSearchFilters
     public function updatedProdiNameSearch($value)
     {
         $this->pr_id = null;
-        $this->prodi_items = null;
-        $this->resetErrorBag(['pr_id', 'prodiNameSearch']);
+        $this->pr_items = null;
+        $this->resetErrorBag(['pr_id', 'prNameSearch']);
 
         $input = str($value)->lower()->trim();
 
         // Jika input kosong, kembalikan ke daftar default yang sudah difilter
         if (empty($input->toString())) {
-            $this->prodiResults = $this->getProdibyUser();
+            $this->prResults = $this->getProdibyUser();
 
             return;
         }
@@ -128,23 +128,23 @@ trait WithProdiSearchFilters
             $query->whereHas('jr_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         }
         // 1. Logika shortcut 'uni' untuk mkType 4
-        if ($this->modeProdi !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
+        if ($this->modePr !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
             $allProdis = $query->get();
             foreach ($allProdis as $p) {
                 if (! in_array($p->id, $this->pr_id_array)) {
                     $this->pr_id_array[] = $p->id;
-                    $this->prodi_items_array[] = $this->itemsPr($p);
+                    $this->pr_items_array[] = $this->itemsPr($p);
                 }
             }
-            $this->prodiNameSearch = '';
-            $this->prodiResults = $this->getProdibyUser();
+            $this->prNameSearch = '';
+            $this->prResults = $this->getProdibyUser();
 
             return;
         }
 
         // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
         $results = $query->searchProdi($value)->limit(12)->get();
-        $this->prodiResults = $this->mapProdi($results);
+        $this->prResults = $this->mapProdi($results);
 
         // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
         $matches = $results->filter(function ($prodi) use ($input) {
@@ -181,21 +181,21 @@ trait WithProdiSearchFilters
 
         // 4. Eksekusi Hasil Match
         if ($matches->isNotEmpty()) {
-            if ($this->modeProdi == 'single') {
+            if ($this->modePr == 'single') {
                 $exactMatch = $matches->first();
                 $this->pr_id = $exactMatch->id;
-                $this->prodi_items = $this->itemsPr($exactMatch);
-                $this->prodiNameSearch = $exactMatch->prodi;
+                $this->pr_items = $this->itemsPr($exactMatch);
+                $this->prNameSearch = $exactMatch->prodi;
             } else {
                 foreach ($matches as $match) {
                     if (! in_array($match->id, $this->pr_id_array)) {
                         $this->pr_id_array[] = $match->id;
-                        $this->prodi_items_array[] = $this->itemsPr($match);
+                        $this->pr_items_array[] = $this->itemsPr($match);
                     }
                 }
-                $this->prodiNameSearch = '';
+                $this->prNameSearch = '';
             }
-            $this->prodiResults = $this->getProdibyUser();
+            $this->prResults = $this->getProdibyUser();
         }
     }
 
@@ -210,7 +210,7 @@ trait WithProdiSearchFilters
 
         if (! $prodiId) {
             $defaultProdis = $query
-                ->orderBy('nama_pr', 'asc')
+                ->orderBy('nama_prodi', 'asc')
                 ->limit(12)
                 ->get();
 
@@ -253,10 +253,10 @@ trait WithProdiSearchFilters
 
     // public function fetchProdi2($query = '', $mode = 'single')
     // {
-    //     $this->modeProdi = $mode;
+    //     $this->modePr = $mode;
 
     //     if (empty(trim($query))) {
-    //         $this->prodiResults = $this->getProdibyUser();
+    //         $this->prResults = $this->getProdibyUser();
 
     //         return;
     //     }
@@ -266,15 +266,15 @@ trait WithProdiSearchFilters
     //         ->limit(12)
     //         ->get();
 
-    //     $this->prodiResults = $this->mapProdi($results);
+    //     $this->prResults = $this->mapProdi($results);
     // }
 
     public function fetchProdi($query = '', $mode = 'single')
     {
 
-        $this->modeProdi = $mode;
+        $this->modePr = $mode;
         if (empty($query) || $this->pr_id) {
-            $this->prodiResults = $this->getProdibyUser();
+            $this->prResults = $this->getProdibyUser();
 
             return;
         }
@@ -283,15 +283,15 @@ trait WithProdiSearchFilters
     public function selectProdi($id, $prodiName)
     {
         $this->pr_id = $id;
-        $this->prodiNameSearch = $prodiName;
+        $this->prNameSearch = $prodiName;
 
         $data = $this->prQuery()->find($id);
         if ($data) {
-            $this->prodi_items = $this->itemsPr($data);
+            $this->pr_items = $this->itemsPr($data);
         }
 
-        $this->prodiResults = $this->getProdibyUser();
-        $this->resetErrorBag(['pr_id', 'prodiNameSearch']);
+        $this->prResults = $this->getProdibyUser();
+        $this->resetErrorBag(['pr_id', 'prNameSearch']);
     }
 
     public function selectProdiArray($id)
@@ -300,7 +300,7 @@ trait WithProdiSearchFilters
 
         if ($data && ! in_array($id, (array) $this->pr_id_array)) {
             $this->pr_id_array[] = $id;
-            $this->prodi_items_array[] = $this->itemsPr($data);
+            $this->pr_items_array[] = $this->itemsPr($data);
             $this->prodi_search = '';
         }
     }
@@ -308,17 +308,17 @@ trait WithProdiSearchFilters
     public function resetProdiInput()
     {
         $this->pr_id = null;
-        $this->prodi_items = null;
-        $this->prodiNameSearch = '';
+        $this->pr_items = null;
+        $this->prNameSearch = '';
 
         $this->updatedProdiNameSearch('');
-        $this->resetErrorBag(['pr_id', 'prodiNameSearch']);
+        $this->resetErrorBag(['pr_id', 'prNameSearch']);
     }
 
     public function resetProdiArray()
     {
         $this->pr_id_array = [];
-        $this->prodi_items_array = [];
-        $this->prodiNameSearch = '';
+        $this->pr_items_array = [];
+        $this->prNameSearch = '';
     }
 }

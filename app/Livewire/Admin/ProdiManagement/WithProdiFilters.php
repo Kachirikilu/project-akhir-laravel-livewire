@@ -27,12 +27,12 @@ trait WithProdiFilters
             $queryPr->searchProdi($search)->get();
         }
 
-        if (! empty($this->selectedJurusanId)) {
-            $queryPr->where('jr_id', $this->selectedJurusanId);
+        if (! empty($this->selectedJrId)) {
+            $queryPr->where('jr_id', $this->selectedJrId);
         }
-        if (! empty($this->selectedFakultasId)) {
+        if (! empty($this->selectedFkId)) {
             $queryPr->whereHas('jr_rel', function ($q) {
-                $q->where('fk_id', $this->selectedFakultasId);
+                $q->where('fk_id', $this->selectedFkId);
             });
         }
 

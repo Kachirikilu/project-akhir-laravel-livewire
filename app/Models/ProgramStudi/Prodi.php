@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Prodi extends Model
 {
@@ -20,8 +19,11 @@ class Prodi extends Model
         'nama_pr',
         'strata',
     ];
-
     protected $appends = ['kode', 'prodi', 'jurusan', 'fakultas'];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
 
     public function jr_rel()
     {
@@ -158,21 +160,19 @@ class Prodi extends Model
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->updated_at) {
+            if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
 

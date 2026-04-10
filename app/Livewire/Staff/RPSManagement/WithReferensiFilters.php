@@ -26,25 +26,25 @@ trait WithReferensiFilters
         }
 
 
-        if (! empty($this->selectedProdiId)) {
+        if (! empty($this->selectedPrId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId)
-                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId)
-                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId);
+                $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
             });
         }
-        if (! empty($this->selectedJurusanId)) {
+        if (! empty($this->selectedJrId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId)
-                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId)
-                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId);
+                $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId);
             });
         }
-        if (! empty($this->selectedFakultasId)) {
+        if (! empty($this->selectedFkId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId)
-                ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId)
-                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId);
+                $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId);
             });
         }
         if (! empty($this->selectedMKId)) {

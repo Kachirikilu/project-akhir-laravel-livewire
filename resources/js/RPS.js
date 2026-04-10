@@ -107,7 +107,7 @@ document.addEventListener("alpine:init", () => {
             this.nama_mk_search = namaMK;
             this.mk_items = {
                 "kode": kodeMK,
-                "name": namaMK
+                "slot1": namaMK
             };
 
             this.akademik = tahunAkademik;

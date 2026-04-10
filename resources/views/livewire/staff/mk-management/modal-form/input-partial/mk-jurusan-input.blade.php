@@ -6,7 +6,7 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'labelString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'jurusan_items',
+                    'kodeString' => 'jr_items',
                     'placeholder' => '---',
                     'iconString' => 'book-open'
                 ])
@@ -36,12 +36,12 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $jurusanResults,
+        'xResults' => $jrResults,
         'selectX' => 'selectJurusan',
         'modelString' => 'nama_jr_search',
 
         'idString' => 'jr_id',
-        'itemsAllString' => 'jurusan_items',
+        'itemsAllString' => 'jr_items',
 
         'resetXInput' => 'resetJurusanInput()',
         'typeXString' => 'jurusan',
@@ -49,7 +49,7 @@
         
         'nameXString' => 'Jurusan',
         'searchString' => 'jurusan_search',
-        'nameSearchString' => 'jurusanNameSearch',
+        'nameSearchString' => 'jrNameSearch',
         'fetchString' => 'fetchJurusan',
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchJurusan'
@@ -57,12 +57,12 @@
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
-        'xResults' => $prodiResults,
+        'xResults' => $prResults,
         'selectX' => 'selectProdiArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
-        'itemsAllString' => 'prodi_items_array',
+        'itemsAllString' => 'pr_items_array',
 
         'typeXString' => 'prodi',
         'typeX2String' => 'jurusan',
@@ -70,7 +70,7 @@
 
         'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
-        'nameSearchString' => 'prodiNameSearch',
+        'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
     

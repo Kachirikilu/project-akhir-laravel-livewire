@@ -110,7 +110,7 @@
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($switchTable === 'rps')
-                            @switch($x->tingkatan_mk)
+                            @switch($x->level_mk)
                                 @case(1)
                                     <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
                                 @break
@@ -158,7 +158,7 @@
                 <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if($x->is_draf == 0)
+                            @if($x->draf == 0)
                                 <flux:badge color="green" size="sm">
                                     Aktif
                                 </flux:badge>
@@ -176,7 +176,7 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }}">{{ $x->revisi ?? '-' }}</td>
+                <td class="{{ $secondKolom }}">{{ $x->revisi_day ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')

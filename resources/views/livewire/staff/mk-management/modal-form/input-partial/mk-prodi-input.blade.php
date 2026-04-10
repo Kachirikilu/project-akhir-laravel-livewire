@@ -6,7 +6,7 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'labelString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'prodi_items',
+                    'kodeString' => 'pr_items',
                     'placeholder' => '---',
                     'iconString' => 'academic-cap'
                 ])
@@ -36,12 +36,12 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $prodiResults,
+        'xResults' => $prResults,
         'selectX' => 'selectProdi',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id',
-        'itemsAllString' => 'prodi_items',
+        'itemsAllString' => 'pr_items',
 
         'resetXInput' => 'resetProdiInput()',
         'typeXString' => 'prodi',
@@ -50,7 +50,7 @@
 
         'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
-        'nameSearchString' => 'prodiNameSearch',
+        'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchProdi'

@@ -27,16 +27,16 @@ trait WithRPSSearchFilters
 
     private function mapRPS($collection)
     {
-        return $collection->map(fn ($mk) => [
-            'id' => $mk->id,
-            'mk_id' => $mk->mk_id,
-            'kode' => $mk->kode,
-            'rps' => $mk->rps,
-            'mk' => $mk->mk,
-            'akademik' => $mk->akademik,
-            'draf_text' => $mk->draf_text,
-            'tanggal_revisi' => $mk->tanggal_revisi,
-            'wajib_text' => $mk->wajib_text,
+        return $collection->map(fn ($m) => [
+            'id' => $m->id,
+            'mk_id' => $m->mk_id,
+            'kode' => $m->kode,
+            'rps' => $m->rps,
+            'mk' => $m->mk,
+            'akademik' => $m->akademik,
+            'draf_text' => $m->draf_text,
+            'revisi' => $m->revisi,
+            'wajib_text' => $m->wajib_text,
         ])->toArray();
     }
 
@@ -53,7 +53,7 @@ trait WithRPSSearchFilters
         return [
             'id' => $r->id,
             'kode' => $r->kode,
-            'name' => $r->rps,
+            'slot1' => $r->rps,
         ];
     }
 

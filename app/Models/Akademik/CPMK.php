@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Carbon\Carbon;
 
 class CPMK extends Model
 {
@@ -15,6 +14,10 @@ class CPMK extends Model
     protected $table = 'cpmks';
     protected $guarded = ['id'];
     protected $appends = ['kode'];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
 
 
     protected function kode(): Attribute
@@ -27,21 +30,20 @@ class CPMK extends Model
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
+
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->updated_at) {
+            if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
 

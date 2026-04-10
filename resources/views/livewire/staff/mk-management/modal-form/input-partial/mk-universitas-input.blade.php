@@ -35,12 +35,12 @@
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
-        'xResults' => $prodiResults,
+        'xResults' => $prResults,
         'selectX' => 'selectProdiArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
-        'itemsAllString' => 'prodi_items_array',
+        'itemsAllString' => 'pr_items_array',
 
         'typeXString' => 'prodi',
         'typeX2String' => 'jurusan',
@@ -48,7 +48,7 @@
 
         'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
-        'nameSearchString' => 'prodiNameSearch',
+        'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchProdi'

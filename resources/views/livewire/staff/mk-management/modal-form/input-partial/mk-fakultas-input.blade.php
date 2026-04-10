@@ -6,7 +6,7 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'labelString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'fakultas_items',
+                    'kodeString' => 'fk_items',
                     'placeholder' => '---',
                     'iconString' => 'building-library'
                 ])
@@ -38,18 +38,18 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $fakultasResults,
+        'xResults' => $fkResults,
         'selectX' => 'selectFakultas',
         'modelString' => 'nama_fk_search',
 
         'idString' => 'fk_id',
-        'itemsAllString' => 'fakultas_items',
+        'itemsAllString' => 'fk_items',
 
         'resetXInput' => 'resetFakultasInput()',
         'typeXString' => 'fakultas',
         'nameXString' => 'Fakultas',
         'searchString' => 'fakultas_search',
-        'nameSearchString' => 'fakultasNameSearch',
+        'nameSearchString' => 'fkNameSearch',
         'fetchString' => 'fetchFakultas',
         'iconString' => 'academic-cap',
         'wireLoading' => 'fetchFakultas'
@@ -57,12 +57,12 @@
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
-        'xResults' => $prodiResults,
+        'xResults' => $prResults,
         'selectX' => 'selectProdiArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
-        'itemsAllString' => 'prodi_items_array',
+        'itemsAllString' => 'pr_items_array',
 
         'typeXString' => 'prodi',
         'typeX2String' => 'jurusan',
@@ -70,7 +70,7 @@
 
         'nameXString' => 'Program Studi',
         'searchString' => 'prodi_search',
-        'nameSearchString' => 'prodiNameSearch',
+        'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
     

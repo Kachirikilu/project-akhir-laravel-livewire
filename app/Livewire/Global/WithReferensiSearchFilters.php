@@ -55,9 +55,9 @@ trait WithReferensiSearchFilters
         return [
             'id' => $r->id,
             'kode' => $r->kode,
-            'name' => $r->judul,
-            'name2' => $r->penulis_tahun,
-            'name3' => $r->penerbit,
+            'slot1' => $r->judul,
+            'slot2' => $r->penulis_tahun,
+            'slot3' => $r->penerbit,
         ];
     }
 

@@ -3,7 +3,6 @@
 namespace App\Models\Akademik;
 
 use App\Models\ProgramStudi\Prodi;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,14 +12,16 @@ class MataKuliah extends Model
     use SoftDeletes;
 
     protected $table = 'mata_kuliahs';
-
     protected $fillable = [
-        'tingkatan_mk', 'kode_mk', 'digit_semester', 'digit_mk',
+        'level_mk', 'kode_mk', 'digit_semester', 'digit_mk',
         'nama_mk', 'semester', 'sks_kuliah', 'tipe_sks',
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
-
     protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
 
     public function prodis()
     {
@@ -34,7 +35,7 @@ class MataKuliah extends Model
     // protected function tingkatanMode(): Attribute
     // {
     //     return Attribute::get(function () {
-    //         return match ((int) $this->tingkatan_mk) {
+    //         return match ((int) $this->level_mk) {
     //             1 => 'mk-prodi',
     //             2 => 'mk-jurusan',
     //             3 => 'mk-fakultas',
@@ -52,13 +53,13 @@ class MataKuliah extends Model
             $prodi = $this->prodis->first();
 
             if ($prodi) {
-                if ($this->tingkatan_mk == 1) { // Tingkat Prodi
+                if ($this->level_mk == 1) { // Tingkat Prodi
                     $prefix = $prodi->kode_pr ?? $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->tingkatan_mk == 2) { // Tingkat Jurusan
+                } elseif ($this->level_mk == 2) { // Tingkat Jurusan
                     $prefix = $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->tingkatan_mk == 3) { // Tingkat Fakultas
+                } elseif ($this->level_mk == 3) { // Tingkat Fakultas
                     $prefix = $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->tingkatan_mk == 4) { // Tingkat Universitas
+                } elseif ($this->level_mk == 4) { // Tingkat Universitas
                     $prefix = $prefixDefault ?? 'UNI';
                 }
             } else {
@@ -205,8 +206,7 @@ class MataKuliah extends Model
             if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
 
@@ -216,8 +216,7 @@ class MataKuliah extends Model
             if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
 
@@ -314,7 +313,7 @@ class MataKuliah extends Model
                     //                                 });
                     //                         });
                     //                 })
-                    //                 ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('tingkatan_mk', '4'));
+                    //                 ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('level_mk', '4'));
                     //         });
                     //     }
                     //     if (!empty($digitPart)) {
@@ -337,7 +336,7 @@ class MataKuliah extends Model
 
                                 // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke jurusan, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.tingkatan_mk', 1)
+                                        $q->where('mata_kuliahs.level_mk', 1)
                                             ->whereHas('prodis', function ($pro) use ($prefixPart) {
                                                 $pro->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
                                                     ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
@@ -347,7 +346,7 @@ class MataKuliah extends Model
 
                                 // 3. Tingkatan MK = 2 (Jurusan): Cari di jurusan, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.tingkatan_mk', 2)
+                                        $q->where('mata_kuliahs.level_mk', 2)
                                             ->whereHas('prodis.jr_rel', function ($jur) use ($prefixPart) {
                                                 $jur->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
                                                     ->whereRaw("COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
@@ -356,7 +355,7 @@ class MataKuliah extends Model
 
                                 // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
                                     ->orWhere(function ($q) use ($prefixPart) {
-                                        $q->where('mata_kuliahs.tingkatan_mk', 3)
+                                        $q->where('mata_kuliahs.level_mk', 3)
                                             ->whereHas('prodis.jr_rel.fk_rel', function ($fak) use ($prefixPart) {
                                                 $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
@@ -364,7 +363,7 @@ class MataKuliah extends Model
 
                                 // 5. Khusus tingkat Universitas (Tingkatan 4)
                                     ->when($prefixPart === 'UNI', function ($query) {
-                                        $query->orWhere('mata_kuliahs.tingkatan_mk', 4);
+                                        $query->orWhere('mata_kuliahs.level_mk', 4);
                                     });
                             });
                         }

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Fakultas extends Model
 {
@@ -16,6 +15,10 @@ class Fakultas extends Model
     
     protected $fillable = ['kode_fk', 'nama_fk'];
     protected $appends = ['kode', 'fakultas'];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
+    ];
 
     public function jurusans(): HasMany 
     {
@@ -62,24 +65,21 @@ class Fakultas extends Model
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->updated_at) {
+            if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
-
 
     public function scopeSearchFakultas(Builder $query, $search)
     {

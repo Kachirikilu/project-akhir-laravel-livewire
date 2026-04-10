@@ -21,14 +21,14 @@ trait WithSubCPMKFilters
             $querySCPMK->searchSCPMK($search);
         }
 
-        if (! empty($this->selectedProdiId)) {
-            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
         if (! empty($this->selectedMKId)) {
             $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));

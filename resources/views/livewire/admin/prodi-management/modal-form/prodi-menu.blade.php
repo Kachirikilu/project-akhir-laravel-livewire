@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                    {{-- $store.prodi?.resetSelect(); --}}
+                    $store.prodi?.resetSelect();
 
                     const type = '{{ $typeXString }}';
 

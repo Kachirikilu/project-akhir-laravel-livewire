@@ -42,16 +42,16 @@ trait WithUserFilters
             $queryUser->searchUser($search);
         }
             
-        if ($this->selectedProdiId) {
-            $queryUser->inLocationUser('prodi', $this->selectedProdiId);
+        if ($this->selectedPrId) {
+            $queryUser->inLocationUser('prodi', $this->selectedPrId);
         }
         
-        if ($this->selectedJurusanId) {
-            $queryUser->inLocationUser('jurusan', $this->selectedJurusanId);
+        if ($this->selectedJrId) {
+            $queryUser->inLocationUser('jurusan', $this->selectedJrId);
         }
 
-        if ($this->selectedFakultasId) {
-            $queryUser->inLocationUser('fakultas', $this->selectedFakultasId);
+        if ($this->selectedFkId) {
+            $queryUser->inLocationUser('fakultas', $this->selectedFkId);
         }
 
         $this->sortFieldOrderUser($queryUser);

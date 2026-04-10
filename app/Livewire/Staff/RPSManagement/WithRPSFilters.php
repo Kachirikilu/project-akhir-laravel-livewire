@@ -32,14 +32,14 @@ trait WithRPSFilters
 
         $this->sortFieldOrderRPS($queryRPS);
         
-        if (! empty($this->selectedProdiId)) {
-            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
         if (! empty($this->selectedMKId)) {
             $queryRPS->where('rps.mk_id', $this->selectedMKId);
@@ -54,7 +54,7 @@ trait WithRPSFilters
         if ($this->filterRPS === 'rps-akademik') {
             $queryRPS->where('akademik', 'like', '%' . $currentYear . '%');
         } elseif ($this->filterRPS === 'rps-ref-new') {
-            $queryRPS->whereYear('tanggal_revisi', $currentYear);
+            $queryRPS->whereYear('revisi', $currentYear);
         } elseif ($this->filterRPS === 'rps-aktif') {
             $queryRPS->where('is_draf', false);
         } elseif ($this->filterRPS === 'rps-draf') {
@@ -99,7 +99,7 @@ trait WithRPSFilters
     //             'kode' => $this->applyRPSKodeSort($queryRPS),
                 
     //             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
-    //             'tanggal_revisi' => $queryRPS->orderBy('tanggal_revisi', $this->sortDirection),
+    //             'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
     //             'is_draf'        => $queryRPS->orderBy('is_draf', $this->sortDirection),
     //             default          => $queryRPS->orderBy('rps.id', 'desc'),
     //         },
@@ -147,7 +147,7 @@ trait WithRPSFilters
             'kode'   => $this->applyRPSKodeSort($queryRPS),
             
             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
-            'revisi' => $queryRPS->orderBy('tanggal_revisi', $this->sortDirection),
+            'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
             'is_draf' => $queryRPS->orderBy('is_draf', $this->sortDirection),
             'created_at' => $queryRPS->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryRPS->orderBy('updated_at', $this->sortDirection),
@@ -168,10 +168,10 @@ trait WithRPSFilters
             ->orderBy(DB::raw("
                 CONCAT(
                     MAX(CASE 
-                        WHEN mata_kuliahs.tingkatan_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-                        WHEN mata_kuliahs.tingkatan_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.tingkatan_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.tingkatan_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
+                        WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
                         ELSE 'UNI'
                     END),
                     MAX(mata_kuliahs.digit_semester),

@@ -18,12 +18,12 @@ trait WithJurusanFilters
             $queryJr->searchJurusan($search)->get();
         }
 
-        if (! empty($this->selectedFakultasId)) {
-            $queryJr->where('jurusans.fk_id', $this->selectedFakultasId);
+        if (! empty($this->selectedFkId)) {
+            $queryJr->where('jurusans.fk_id', $this->selectedFkId);
         }
 
-        if (! empty($this->selectedJurusanId)) {
-            $queryJr->where('jurusans.id', $this->selectedJurusanId);
+        if (! empty($this->selectedJrId)) {
+            $queryJr->where('jurusans.id', $this->selectedJrId);
         }
 
         $this->sortFieldOrderJurusan($queryJr);

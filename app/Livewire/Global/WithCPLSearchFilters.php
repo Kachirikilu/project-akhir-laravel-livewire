@@ -50,7 +50,7 @@ trait WithCPLSearchFilters
         return [
             'id' => $c->id,
             'kode' => $c->kode,
-            'name' => $c->deskripsi,
+            'slot1' => $c->deskripsi,
         ];
     }
 

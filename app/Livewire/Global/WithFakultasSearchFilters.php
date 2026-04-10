@@ -10,28 +10,28 @@ trait WithFakultasSearchFilters
 {
     use WithPagination;
 
-    public $fakultasSearchQuery = '';
+    public $fkSearchQuery = '';
 
-    public $fakultasSearchResults = [];
+    public $fkSearchResults = [];
 
     public $fk_id;
 
-    public $fakultas_name = '';
+    public $fk_name = '';
 
-    public $fakultas_items;
+    public $fk_items;
 
-    public $fakultasNameSearch = '';
+    public $fkNameSearch = '';
 
-    public $fakultasResults = [];
+    public $fkResults = [];
 
-    public $selectedFakultasId = null;
+    public $selectedFkId = null;
 
     private function mapFakultas($collection)
     {
-        return $collection->map(fn ($fk) => [
-            'id' => $fk->id,
-            'kode' => $fk->kode,
-            'fakultas' => $fk->fakultasFk
+        return $collection->map(fn ($f) => [
+            'id' => $f->id,
+            'kode' => $f->kode,
+            'fakultas' => $f->fakultasFk
         ])->toArray();
     }
     
@@ -40,38 +40,38 @@ trait WithFakultasSearchFilters
         return Fakultas::query();
     }
 
-    private function itemsFk($fk)
+    private function itemsFk($f)
     {
-        if (! $fk) {
+        if (! $f) {
             return null;
         }
         return [
-            'id' => $fk->id,
-            'kode' => $fk->kode,
-            'name' => $fk->fakultasFk,
+            'id' => $f->id,
+            'kode' => $f->kode,
+            'slot1' => $f->fakultasFk,
         ];
     }
 
     public function inputFakultasFilter()
     {
-        $search = trim($this->fakultasSearchQuery);
+        $search = trim($this->fkSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fakultas_name) {
-            $this->fakultasSearchResults = $this->mapFakultas(
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fk_name) {
+            $this->fkSearchResults = $this->mapFakultas(
                 $this->fkQuery()
                     ->searchFakultas($search)
                     ->limit(12)->get()
             );
-        } elseif (empty($search) || $this->fakultas_name) {
-            $this->fakultasSearchResults = $this->getFakultasbyUser();
+        } elseif (empty($search) || $this->fk_name) {
+            $this->fkSearchResults = $this->getFakultasbyUser();
         } else {
-            $this->fakultasSearchResults = [];
+            $this->fkSearchResults = [];
         }
     }
 
     public function resetFakultasFilter()
     {
-        $this->reset(['selectedFakultasId', 'fakultasSearchQuery', 'fakultas_name', 'fakultas_items']);
+        $this->reset(['selectedFkId', 'fkSearchQuery', 'fk_name', 'fk_items']);
         $this->resetPage();
     }
 
@@ -79,11 +79,11 @@ trait WithFakultasSearchFilters
     {
         $data = $this->fkQuery()->find($id);
         if ($data) {
-            $this->selectedFakultasId = $id;
-            $this->fakultas_name = $data->fakultasFk;
-            $this->fakultasSearchQuery = $data->fakultasFk;
-            $this->fakultas_items = $this->itemsFk($data);
-            $this->fakultasSearchResults = [];
+            $this->selectedFkId = $id;
+            $this->fk_name = $data->fakultasFk;
+            $this->fkSearchQuery = $data->fakultasFk;
+            $this->fk_items = $this->itemsFk($data);
+            $this->fkSearchResults = [];
             $this->resetPage();
         }
     }
@@ -91,15 +91,15 @@ trait WithFakultasSearchFilters
     public function updatedFakultasNameSearch($value)
     {
         $this->fk_id = null;
-        $this->fakultas_items = null;
-        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
+        $this->fk_items = null;
+        $this->resetErrorBag(['fk_id', 'fkNameSearch']);
 
         $query = $this->fkQuery()
             ->select('fakultas.*');
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchFakultas($value)->limit(12)->get();
-            $this->fakultasResults = $this->mapFakultas($results);
+            $this->fkResults = $this->mapFakultas($results);
 
             $exactMatch = $results->first(function ($fakultas) use ($value) {
                 $input = str($value)->lower()->trim();
@@ -115,16 +115,16 @@ trait WithFakultasSearchFilters
 
             if ($exactMatch) {
                 $this->fk_id = $exactMatch->id;
-                $this->fakultas_items = $this->itemsFk($exactMatch);
-                $this->fakultasNameSearch = $exactMatch->fakultasFk;
-                $this->fakultasResults = [];
+                $this->fk_items = $this->itemsFk($exactMatch);
+                $this->fkNameSearch = $exactMatch->fakultasFk;
+                $this->fkResults = [];
             }
 
         } else {
             if (Auth::user()->fk_id) {
-                $this->fakultasResults = $this->getFakultasbyUser();
+                $this->fkResults = $this->getFakultasbyUser();
             } else {
-                $this->fakultasResults = $this->mapFakultas(
+                $this->fkResults = $this->mapFakultas(
                     $query->orderBy('fakultas.nama_fk')->limit(12)->get()
                 );
             }
@@ -158,7 +158,7 @@ trait WithFakultasSearchFilters
     public function fetchFakultas($query = '')
     {
         if (empty($query) || $this->fk_id) {
-            $this->fakultasResults = $this->getFakultasbyUser();
+            $this->fkResults = $this->getFakultasbyUser();
 
             return;
         }
@@ -167,37 +167,37 @@ trait WithFakultasSearchFilters
     public function selectFakultas($id, $fakultasName)
     {
         $this->fk_id = $id;
-        $this->fakultasNameSearch = $fakultasName;
-        $this->fakultasResults = $this->getFakultasbyUser();
+        $this->fkNameSearch = $fakultasName;
+        $this->fkResults = $this->getFakultasbyUser();
 
         $data = $this->fkQuery()->find($id);
         if ($data) {
-            $this->fakultas_items = $this->itemsFk($data);
+            $this->fk_items = $this->itemsFk($data);
         }
 
         // if (property_exists($this, 'pr_id_array')) {
         //     $this->pr_id_array = [];
-        //     $this->prodi_name_array = [];
-        //     $this->prodi_items_array = [];
-        //     $this->prodiNameSearch = '';
+        //     $this->pr_name_array = [];
+        //     $this->pr_items_array = [];
+        //     $this->prNameSearch = '';
         // }
 
-        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
+        $this->resetErrorBag(['fk_id', 'fkNameSearch']);
     }
 
     public function resetFakultasInput()
     {
         $this->fk_id = null;
-        $this->fakultas_items = null;
-        $this->fakultasNameSearch = '';
+        $this->fk_items = null;
+        $this->fkNameSearch = '';
 
         // if (property_exists($this, 'pr_id_array')) {
         //     $this->pr_id_array = [];
-        //     $this->prodi_name_array = [];
-        //     $this->prodi_items_array = [];
+        //     $this->pr_name_array = [];
+        //     $this->pr_items_array = [];
         // }
 
         $this->updatedFakultasNameSearch('');
-        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
+        $this->resetErrorBag(['fk_id', 'fkNameSearch']);
     }
 }

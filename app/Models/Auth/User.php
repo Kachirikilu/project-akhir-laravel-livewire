@@ -12,7 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -43,6 +42,10 @@ class User extends Authenticatable
         'identity2',
         'identity3',
         'status',
+    ];
+    protected $casts = [
+        'created_at' => 'date',
+        'updated_at' => 'date',
     ];
 
     /**
@@ -261,21 +264,19 @@ class User extends Authenticatable
     protected function createdDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->created_at) {
+            if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->updated_at) {
+            if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
     /// Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping

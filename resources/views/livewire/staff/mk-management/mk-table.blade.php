@@ -137,7 +137,7 @@
             <td class="{{ $secondKolom }}">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($mk->tingkatan_mk)
+                        @switch($mk->level_mk)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
                             @break
@@ -154,7 +154,7 @@
 
                     @include('livewire.staff.mk-management.modal-form.mk-menu', [
                         'x' => $mk,
-                        'typeXString' => $mk->tingkatan_mk,
+                        'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -206,7 +206,7 @@
 
                     @include('livewire.staff.mk-management.modal-form.mk-menu', [
                         'x' => $mk,
-                        'typeXString' => $mk->tingkatan_mk,
+                        'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -254,7 +254,7 @@
 
                     @include('livewire.staff.mk-management.modal-form.mk-menu', [
                         'x' => $mk,
-                        'typeXString' => $mk->tingkatan_mk,
+                        'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -271,7 +271,7 @@
 
                     @include('livewire.staff.mk-management.modal-form.mk-menu', [
                         'x' => $mk,
-                        'typeXString' => $mk->tingkatan_mk,
+                        'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',

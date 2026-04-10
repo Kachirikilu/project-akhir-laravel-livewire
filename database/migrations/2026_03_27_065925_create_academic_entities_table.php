@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->string('akademik', 9);
             $table->boolean('is_draf')->default(true);
-            $table->date('tanggal_revisi')->nullable();
+            $table->date('revisi')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

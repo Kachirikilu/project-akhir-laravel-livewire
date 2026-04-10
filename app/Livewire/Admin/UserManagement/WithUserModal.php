@@ -53,7 +53,7 @@ trait WithUserModal
         $this->isEditing = false;
         $this->roleType = $role;
         $this->showUserModal = true;
-        $this->updatedProdiNameSearch($this->prodiNameSearch);
+        $this->updatedProdiNameSearch($this->prNameSearch);
     }
 
     public function editUser($id)
@@ -74,21 +74,8 @@ trait WithUserModal
         $this->pr_id = $user->pr_id;
         $this->pr_id_2 = $user->pr_id;
 
-        if ($this->pr_id) {
-            $prodi = Prodi::find($this->pr_id);
-            $this->prodiNameSearch = $prodi ? $prodi->prodi : '';
-            $this->prodi_items = [
-                    'id'  => $prodi->id,
-                    'kode'  => $prodi->kode,
-                    'name'  => $prodi->prodi,
-                    'name2'  => $prodi->jurusanJr,
-                    'name3'  => $prodi->fakultasFk
-                ];
-        } else {
-            $this->prodiNameSearch = '';
-        }
         $this->getProdibyUser();
-        $this->fetchProdi($this->prodiNameSearch);
+        $this->fetchProdi($this->prNameSearch);
 
         $this->roleType = strtolower($user->role);
     }
@@ -499,7 +486,7 @@ trait WithUserModal
         ];
 
         // if (! $keepProdi) {
-        //     $fields = array_merge($fields, ['pr_id', 'prodiNameSearch', 'prodiResults']);
+        //     $fields = array_merge($fields, ['pr_id', 'prNameSearch', 'prResults']);
         // }
 
         $this->reset($fields);

@@ -10,29 +10,29 @@ trait WithJurusanSearchFilters
 {
     use WithPagination;
 
-    public $jurusanSearchQuery = '';
+    public $jrSearchQuery = '';
 
-    public $jurusanSearchResults = [];
+    public $jrSearchResults = [];
 
     public $jr_id;
 
-    public $jurusan_name = '';
+    public $jr_name = '';
 
-    public $jurusan_items;
+    public $jr_items;
 
-    public $jurusanNameSearch = '';
+    public $jrNameSearch = '';
 
-    public $jurusanResults = [];
+    public $jrResults = [];
 
-    public $selectedJurusanId = null;
+    public $selectedJrId = null;
 
     private function mapJurusan($collection)
     {
-        return $collection->map(fn ($jr) => [
-            'id' => $jr->id,
-            'kode' => $jr->kode,
-            'jurusan' => $jr->jurusanJr,
-            'fakultas' => $jr->fakultasFk
+        return $collection->map(fn ($j) => [
+            'id' => $j->id,
+            'kode' => $j->kode,
+            'jurusan' => $j->jurusanJr,
+            'fakultas' => $j->fakultasFk
         ])->toArray();
     }
 
@@ -41,39 +41,39 @@ trait WithJurusanSearchFilters
         return Jurusan::query()->with('fk_rel');
     }
 
-    private function itemsJr($jr)
+    private function itemsJr($j)
     {
-        if (! $jr) {
+        if (! $j) {
             return null;
         }
         return [
-            'id' => $jr->id,
-            'kode' => $jr->kode,
-            'name' => $jr->jurusanJr,
-            'name2' => $jr->fakultasFk,
+            'id' => $j->id,
+            'kode' => $j->kode,
+            'slot1' => $j->jurusanJr,
+            'slot2' => $j->fakultasFk,
         ];
     }
 
     public function inputJurusanFilter()
     {
-        $search = trim($this->jurusanSearchQuery);
+        $search = trim($this->jrSearchQuery);
 
-        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->jurusan_name) {
-            $this->jurusanSearchResults = $this->mapJurusan(
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->jr_name) {
+            $this->jrSearchResults = $this->mapJurusan(
                 $this->jrQuery()
                     ->searchJurusan($search)
                     ->limit(12)->get()
             );
-        } elseif (empty($search) || $this->jurusan_name) {
-            $this->jurusanSearchResults = $this->getJurusanbyUser();
+        } elseif (empty($search) || $this->jr_name) {
+            $this->jrSearchResults = $this->getJurusanbyUser();
         } else {
-            $this->jurusanSearchResults = [];
+            $this->jrSearchResults = [];
         }
     }
 
     public function resetJurusanFilter()
     {
-        $this->reset(['selectedJurusanId', 'jurusanSearchQuery', 'jurusan_name', 'jurusan_items']);
+        $this->reset(['selectedJrId', 'jrSearchQuery', 'jr_name', 'jr_items']);
         $this->resetPage();
     }
 
@@ -82,11 +82,11 @@ trait WithJurusanSearchFilters
         $data = $this->jrQuery()->find($id);
 
         if ($data) {
-            $this->selectedJurusanId = $id;
-            $this->jurusan_name = $data->jurusanJr;
-            $this->jurusanSearchQuery = $data->jurusanJr;
-            $this->jurusan_items = $this->itemsJr($data);
-            $this->jurusanSearchResults = [];
+            $this->selectedJrId = $id;
+            $this->jr_name = $data->jurusanJr;
+            $this->jrSearchQuery = $data->jurusanJr;
+            $this->jr_items = $this->itemsJr($data);
+            $this->jrSearchResults = [];
             $this->resetPage();
         }
     }
@@ -94,15 +94,15 @@ trait WithJurusanSearchFilters
     public function updatedJurusanNameSearch($value)
     {
         $this->jr_id = null;
-        $this->jurusan_items = null;
-        $this->resetErrorBag(['jr_id', 'jurusanNameSearch']);
+        $this->jr_items = null;
+        $this->resetErrorBag(['jr_id', 'jrNameSearch']);
 
         $query = $this->jrQuery()->select('jurusans.*');
 
         if (trim(strlen($value)) > 0) {
 
             $results = $query->searchJurusan($value)->limit(12)->get();
-            $this->jurusanResults = $this->mapJurusan($results);
+            $this->jrResults = $this->mapJurusan($results);
 
             $exactMatch = $results->first(function ($jurusan) use ($value) {
                 $input = str($value)->lower()->trim();
@@ -118,16 +118,16 @@ trait WithJurusanSearchFilters
 
             if ($exactMatch) {
                 $this->jr_id = $exactMatch->id;
-                $this->jurusan_items = $this->itemsJr($exactMatch);
-                $this->jurusanNameSearch = $exactMatch->jurusanJr;
-                $this->jurusanResults = [];
+                $this->jr_items = $this->itemsJr($exactMatch);
+                $this->jrNameSearch = $exactMatch->jurusanJr;
+                $this->jrResults = [];
             }
 
         } else {
             if (Auth::user()->jr_id) {
-                $this->jurusanResults = $this->getJurusanbyUser();
+                $this->jrResults = $this->getJurusanbyUser();
             } else {
-                $this->jurusanResults = $this->mapJurusan(
+                $this->jrResults = $this->mapJurusan(
                     $query->orderBy('jurusans.nama_jr')->limit(12)->get()
                 );
             }
@@ -171,7 +171,7 @@ trait WithJurusanSearchFilters
     public function fetchJurusan($query = '')
     {
         if (empty($query) || $this->jr_id) {
-            $this->jurusanResults = $this->getJurusanbyUser();
+            $this->jrResults = $this->getJurusanbyUser();
 
             return;
         }
@@ -180,28 +180,28 @@ trait WithJurusanSearchFilters
     public function selectJurusan($id, $jurusanName)
     {
         $this->jr_id = $id;
-        $this->jurusanNameSearch = $jurusanName;
-        $this->jurusanResults = $this->getJurusanbyUser();
+        $this->jrNameSearch = $jurusanName;
+        $this->jrResults = $this->getJurusanbyUser();
 
         $data = $this->jrQuery()->find($id);
         if ($data) {
-            $this->jurusan_items = $this->itemsJr($data);
+            $this->jr_items = $this->itemsJr($data);
         }
 
         if (method_exists($this, 'fetchJurusan')) {
             $this->fetchJurusan('');
         }
 
-        $this->resetErrorBag(['jr_id', 'jurusanNameSearch']);
+        $this->resetErrorBag(['jr_id', 'jrNameSearch']);
     }
 
     public function resetJurusanInput()
     {
         $this->jr_id = null;
-        $this->jurusan_items = null;
-        $this->jurusanNameSearch = '';
+        $this->jr_items = null;
+        $this->jrNameSearch = '';
 
         $this->updatedJurusanNameSearch('');
-        $this->resetErrorBag(['jr_id', 'jurusanNameSearch']);
+        $this->resetErrorBag(['jr_id', 'jrNameSearch']);
     }
 }

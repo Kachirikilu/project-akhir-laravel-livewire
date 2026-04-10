@@ -21,14 +21,14 @@ trait WithCPLFilters
             $queryCPL->searchCPL($search);
         }
 
-        if (! empty($this->selectedProdiId)) {
-            $queryCPL->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $queryCPL->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $queryCPL->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $queryCPL->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $queryCPL->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $queryCPL->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
         if (! empty($this->selectedMKId)) {
             $queryCPL->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
@@ -37,14 +37,14 @@ trait WithCPLFilters
             $queryCPL->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
         }
 
-        if (! empty($this->selectedProdiId)) {
-            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $queryCPL->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
         if (! empty($this->selectedMKId)) {
             $queryCPL->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));

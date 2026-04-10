@@ -47,58 +47,58 @@ document.addEventListener("alpine:init", () => {
             namaProdi,
             strata,
             idJurusan,
-            namaJurusan,
+            jurusan,
             idFakultas,
-            namaFakultas,
+            fakultas,
             kodePr,
             kodeJr,
             kodeFk,
         ) {
             this.nama_pr = namaProdi;
             this.jr_id = idJurusan;
-            this.nama_jr_search = namaJurusan;
+            this.nama_jr_search = jurusan;
             this.kode_pr = kodePr;
             this.strata = strata;
 
-            this.nama_jr = namaJurusan;
+            this.nama_jr = jurusan;
             this.fk_id = idFakultas;
-            this.nama_fk_search = namaFakultas;
+            this.nama_fk_search = fakultas;
             this.kode_jr = kodePr;
 
-            this.nama_fk = namaFakultas;
+            this.nama_fk = fakultas;
             this.kode_fk = kodePr;
 
-            this.jurusan_items = {
+            this.jr_items = {
                 "kode": kodeJr,
-                "name": namaJurusan,
-                "name2": namaFakultas,
+                "slot1": jurusan,
+                "slot2": fakultas,
             };
 
-            this.fakultas_items = {
+            this.fk_items = {
                 "kode": kodeFk,
-                "name": namaFakultas,
+                "slot1": fakultas,
             };
         },
 
         setDeleteProdi(
             namaProdi,
-            namaJurusan,
-            namaFakultas,
+            jurusan,
+            fakultas,
             kodePrDelete,
             type,
             forceDelete
         ) {
             this.nama_pr_delete = namaProdi;
-            this.nama_jr_delete = namaJurusan;
-            this.nama_fk_delete = namaFakultas;
+            this.nama_jr_delete = jurusan;
+            this.nama_fk_delete = fakultas;
             this.kode_delete = kodePrDelete;
             this.typeModal_delete = type;
             this.isForceDelete = forceDelete;
         },
 
-        // resetSelect() {
-        //     this.strata = "";
-        // },
+        resetSelect() {
+            this.strata = "";
+        },
         
         reset() {
             this.typeModal = "",
@@ -121,8 +121,8 @@ document.addEventListener("alpine:init", () => {
             this.nama_fk = "";
             this.kode_fk = "";
 
-            this.jurusan_items = "";
-            this.fakultas_items = "";
+            this.jr_items = "";
+            this.fk_items = "";
 
             this.nama_pr_delete = "",
             this.nama_jr_delete = "",

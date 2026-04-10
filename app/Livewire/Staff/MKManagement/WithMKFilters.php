@@ -30,14 +30,14 @@ trait WithMKFilters
         }
 
         // Filter Dropdown Silsilah (Tetap di luar closure search)
-        if (! empty($this->selectedProdiId)) {
-            $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+        if (! empty($this->selectedPrId)) {
+            $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJurusanId)) {
-            $queryMK->whereHas('prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
+        if (! empty($this->selectedJrId)) {
+            $queryMK->whereHas('prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
         }
-        if (! empty($this->selectedFakultasId)) {
-            $queryMK->whereHas('prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
+        if (! empty($this->selectedFkId)) {
+            $queryMK->whereHas('prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
         }
 
         // Filter Tab/Pills
@@ -121,10 +121,10 @@ trait WithMKFilters
             ->orderByRaw("
                 CONCAT(
                     MAX(CASE 
-                        WHEN mata_kuliahs.tingkatan_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-                        WHEN mata_kuliahs.tingkatan_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.tingkatan_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.tingkatan_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
+                        WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+                        WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
                         ELSE 'UNI'
                     END), 
                     MAX(mata_kuliahs.digit_semester), 

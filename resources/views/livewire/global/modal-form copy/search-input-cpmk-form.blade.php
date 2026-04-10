@@ -40,14 +40,26 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, slot1, slot2, slot3, subData) {
+    {{-- addItem(id, name, kode, subData) {
+        let normalizedId = Number(id);
+        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
+            this.items.push(normalizedId);
+            this.itemsAll.push(name);
+
+            this.subItems.push(subData);
+            this.syncToRpsStore();
+        }
+        this.search = '';
+    }, --}}
+
+    addItem(id, kode, name, slot2, slot3, subData) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
 
             this.itemsAll.push({
                 kode: kode,
-                slot1: slot1,
+                name: name,
                 slot2: slot2,
                 slot3: slot3
             });
@@ -266,7 +278,7 @@
 
                                 {{-- NAMA UTAMA --}}
                                 <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
-                                    x-text="itemsAll[index]?.slot1"></span>
+                                    x-text="itemsAll[index]?.name"></span>
 
                                 {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
                                 <div

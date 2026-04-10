@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                {{-- $store.mk?.resetSelect(); --}}
+                $store.mk?.resetSelect();
 
                 const type = '{{ $typeXString }}';
                 console.log('Nilai type saat ini:', type);
@@ -31,7 +31,7 @@
                 $store.mk?.setColor(colors[type] ?? 'text-gray-700');
 
                     $store.mk?.setValueMK(
-                        '{{ $mk->tingkatan_mk ?? '' }}',
+                        '{{ $mk->level_mk ?? '' }}',
                         '{{ $mk->mk ?? '' }}',
                         '{{ $mk->kode_blok ?? '' }}',
                         '{{ $mk->digit_semester ?? '' }}',

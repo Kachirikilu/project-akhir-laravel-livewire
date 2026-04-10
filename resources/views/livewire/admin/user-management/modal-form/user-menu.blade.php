@@ -14,7 +14,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                {{-- $store.user?.resetSelect(); --}}
+                $store.user?.resetSelect();
 
                 const type = '{{ strtolower($x->role) }}';
 

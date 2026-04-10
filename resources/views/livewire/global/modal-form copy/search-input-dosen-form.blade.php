@@ -28,7 +28,7 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, slot1, slot2, slot3) {
+    addItem(id, kode, name, slot2, slot3) {
         let normalizedId = Number(id);
 
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
@@ -42,7 +42,7 @@
             this.itemsAll.push({
                 id: normalizedId,
                 kode: kode,
-                slot1: slot1,
+                name: name,
                 slot2: slot2,
                 slot3: slot3,
                 peran: isFirst ? 'Koordinator' : 'Pengajar',
@@ -294,7 +294,7 @@
                                     >Ketua</span>
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
-                            <span class="text-sm font-bold text-[var(--contrast-main-text)]" x-text="itemsAll[index]?.slot1"></span>
+                            <span class="text-sm font-bold text-[var(--contrast-main-text)]" x-text="itemsAll[index]?.name"></span>
                             <span class="text-xs text-gray-500" x-text="itemsAll[index]?.kode + ' | ' + itemsAll[index]?.slot2"></span>
                         </div>
                     </div>

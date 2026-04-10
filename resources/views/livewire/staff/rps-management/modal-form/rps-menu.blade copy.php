@@ -31,7 +31,7 @@
                 $store.rps?.setColor(colors[type] ?? 'text-gray-700');
 
                     $store.rps?.setValueMK(
-                        '{{ $mk->tingkatan_mk ?? '' }}',
+                        '{{ $mk->level_mk ?? '' }}',
                         '{{ $mk->mk ?? '' }}',
                         '{{ $mk->kode_blok ?? '' }}',
                         '{{ $mk->digit_semester ?? '' }}',

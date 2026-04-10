@@ -30,9 +30,9 @@ document.addEventListener("alpine:init", () => {
 
         // nama_pr_search_array: [],
         // pr_id: "",
-        // prodi_items: "",
+        // pr_items: "",
         // pr_id_array: [],
-        // prodi_items_array: [],
+        // pr_items_array: [],
 
     // init() {
     //     // Listener untuk mengisi store dari Livewire
@@ -40,7 +40,7 @@ document.addEventListener("alpine:init", () => {
     //         this.isEdit = event.detail.isEdit;
     //         this.pr_id = event.detail.pr_id;
     //         this.nama_pr = event.detail.nama_pr;
-    //         this.prodi_items = event.detail.prodi_items;
+    //         this.pr_items = event.detail.pr_items;
     //     });
     // },
 
@@ -74,12 +74,12 @@ document.addEventListener("alpine:init", () => {
 
             // this.nama_pr_search = namaProdi;
             // this.pr_id = idProdi;
-            // this.prodi_items = kodePr;
-            // this.prodi_items = {
+            // this.pr_items = kodePr;
+            // this.pr_items = {
             //     "kode": kodePr,
-            //     "name": namaProdi,
-            //     // "name2": namaJurusan,
-            //     // "name3": namaFakultas,
+            //     "slot1": namaProdi,
+            //     // "slot2": namaJurusan,
+            //     // "slot3": namaFakultas,
             // };
         },
 
@@ -93,12 +93,12 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        // resetSelect() {
-        //     this.kode_blok = "";
-        //     this.semester = "";
-        //     this.tipe_sks = ""; 
-        //     this.is_wajib = "";
-        // },
+        resetSelect() {
+            this.kode_blok = "";
+            this.semester = "";
+            this.tipe_sks = ""; 
+            this.is_wajib = "";
+        },
         
         reset() {
             this.typeModal = "",
@@ -124,10 +124,10 @@ document.addEventListener("alpine:init", () => {
 
             // this.nama_pr_search = "";
             // this.pr_id = "";
-            // this.prodi_items = "";
+            // this.pr_items = "";
             // this.nama_pr_array = [];
             // this.pr_id_array = [];
-            // this.prodi_items_array = [];
+            // this.pr_items_array = [];
         }
     });
 });

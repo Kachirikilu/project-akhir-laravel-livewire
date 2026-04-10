@@ -23,12 +23,12 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
-        'xResults' => $jurusanResults,
+        'xResults' => $jrResults,
         'selectX' => 'selectJurusan',
         'modelString' => 'nama_jr_search',
 
         'idString' => 'jr_id',
-        'itemsAllString' => 'jurusan_items',
+        'itemsAllString' => 'jr_items',
 
         'resetXInput' => 'resetJurusanInput()',
         'typeXString' => 'jurusan',
@@ -36,7 +36,7 @@
 
         'nameXString' => 'Jurusan',
         'searchString' => 'jurusan_search',
-        'nameSearchString' => 'jurusanNameSearch',
+        'nameSearchString' => 'jrNameSearch',
         'fetchString' => 'fetchJurusan',
         'iconString' => 'book-open',
         'wireLoading' => 'fetchJurusan'

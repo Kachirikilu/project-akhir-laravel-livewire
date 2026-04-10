@@ -32,11 +32,11 @@ trait WithMKModal
         $this->showMKModal = true;
 
         if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedProdiNameSearch($this->prodiNameSearch);
+            $this->updatedProdiNameSearch($this->prNameSearch);
         } elseif ($tingkatan == 2) {
-            $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+            $this->updatedJurusanNameSearch($this->jrNameSearch);
         } elseif ($tingkatan == 3) {
-            $this->updatedFakultasNameSearch($this->fakultasNameSearch);
+            $this->updatedFakultasNameSearch($this->fkNameSearch);
         }
     }
 
@@ -55,20 +55,15 @@ trait WithMKModal
         $this->mkType = $tingkatan;
         $this->isEditing = true;
 
-        $this->prodiResults = [];
+        $this->prResults = [];
 
 
         try {
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
 
             $this->pr_id_array = $mk->prodis->pluck('id')->toArray();
-            foreach ($mk->prodis as $prodi) {
-                $this->prodi_items_array[] = [
-                    'kode' => $prodi->kode,
-                    'name' => $prodi->prodi,
-                    'name2' => $prodi->jurusanJr,
-                    'name3' => $prodi->fakultasFk,
-                ];
+            foreach ($mk->prodis as $pr) {
+                $this->pr_items_array[] = $this->itemsPr($pr);
             }
 
             // $this->dispatch('refresh-component');
@@ -77,37 +72,32 @@ trait WithMKModal
 
             if ($firstProdi) {
                 $this->jr_id = $firstProdi->jr_id;
-                $this->jurusanNameSearch = $firstProdi->jurusanJr;
+                $this->jrNameSearch = $firstProdi->jurusanJr;
                 $this->jurusan_kode = $firstProdi->kode;
 
                 $this->fk_id = $firstProdi->fk_id;
-                $this->fakultasNameSearch = $firstProdi->fakultasFk;
+                $this->fkNameSearch = $firstProdi->fakultasFk;
                 $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->pr_id = $firstProdi->id;
                 }
                 if ($tingkatan == 1) {
-                    $this->prodiNameSearch = $firstProdi->prodi;
-                    $this->prodi_items = [
-                        'kode' => $firstProdi->kode,
-                        'name' => $firstProdi->prodi,
-                        'name2' => $firstProdi->jurusanJr,
-                        'name3' => $firstProdi->fakultasFk,
-                    ];
-                    $this->fetchProdi($this->prodiNameSearch);
+                    $this->prNameSearch = $firstProdi->prodi;
+                    $this->pr_items = $this->itemsPr($firstProdi);
+                    $this->fetchProdi($this->prNameSearch);
                 }
             }
 
             
 
             if ($tingkatan == 4) {
-                $this->updatedProdiNameSearch($this->prodiNameSearch);
+                $this->updatedProdiNameSearch($this->prNameSearch);
             } elseif ($tingkatan == 2) {
-                $this->updatedJurusanNameSearch($this->jurusanNameSearch);
+                $this->updatedJurusanNameSearch($this->jrNameSearch);
                 $this->fetchJurusan();
             } elseif ($tingkatan == 3) {
-                $this->updatedFakultasNameSearch($this->fakultasNameSearch);
+                $this->updatedFakultasNameSearch($this->fkNameSearch);
                 $this->fetchFakultas();
             }
 
@@ -226,7 +216,7 @@ trait WithMKModal
             DB::transaction(function () use ($validated, $tingkatan, $data) {
 
                 $mk = MataKuliah::create([
-                    'tingkatan_mk' => $tingkatan,
+                    'level_mk' => $tingkatan,
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
@@ -367,16 +357,16 @@ trait WithMKModal
 
     private function resetInputMK()
     {
-        $this->prodiNameSearch = '';
-        $this->jurusanNameSearch = '';
-        $this->fakultasNameSearch = '';
+        $this->prNameSearch = '';
+        $this->jrNameSearch = '';
+        $this->fkNameSearch = '';
 
         $this->pr_id = null;
         $this->jr_id = null;
         $this->fk_id = null;
 
         $this->pr_id_array = [];
-        $this->prodi_items_array = [];
+        $this->pr_items_array = [];
 
         $this->resetErrorBag();
     }

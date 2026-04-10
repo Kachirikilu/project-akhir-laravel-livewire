@@ -45,43 +45,43 @@ trait WithCPMKSearchFilters
                 'kode' => $c->kode,
                 'deskripsi' => $c->deskripsi,
 
-                'scpmk' => $c->scpmks->map(function ($sub) use ($cpmkRefIds) {
+                'scpmk' => $c->scpmks->map(function ($s) use ($cpmkRefIds) {
                     return [
-                        'id' => $sub->id,
-                        'kode' => $sub->kode,
-                        'deskripsi' => $sub->deskripsi,
-                        'materi' => $sub->materi,
-                        'metodologi' => $sub->metodologi,
-                        'indikator' => $sub->indikator,
-                        'metode' => $sub->metode,
-                        'bobot' => $sub->bobot ?? 0,
-                        'tugas' => $sub->tugas,
-                        'w_tugas' => $sub->w_tugas,
-                        'w_mandiri' => $sub->w_mandiri,
-                        'ref' => $sub->refs
-                            ->filter(fn ($sub_ref) => ! in_array($sub_ref->id, $cpmkRefIds))
-                            ->map(fn ($sub_ref) => [
-                                'id' => $sub_ref->id,
-                                'kode' => $sub_ref->kode,
-                                'judul' => $sub_ref->judul,
-                                'penulis' => $sub_ref->penulis,
-                                'penerbit' => $sub_ref->penerbit,
-                                'tahun' => $sub_ref->tahun,
-                                'link' => $sub_ref->link,
+                        'id' => $s->id,
+                        'kode' => $s->kode,
+                        'deskripsi' => $s->deskripsi,
+                        'materi' => $s->materi,
+                        'metodologi' => $s->metodologi,
+                        'indikator' => $s->indikator,
+                        'metode' => $s->metode,
+                        'bobot' => $s->bobot ?? 0,
+                        'tugas' => $s->tugas,
+                        'w_tugas' => $s->w_tugas,
+                        'w_mandiri' => $s->w_mandiri,
+                        'ref' => $s->refs
+                            ->filter(fn ($sr) => ! in_array($sr->id, $cpmkRefIds))
+                            ->map(fn ($sr) => [
+                                'id' => $sr->id,
+                                'kode' => $sr->kode,
+                                'judul' => $sr->judul,
+                                'penulis' => $sr->penulis,
+                                'penerbit' => $sr->penerbit,
+                                'tahun' => $sr->tahun,
+                                'link' => $sr->link,
 
                             ]),
                     ];
                 })->toArray(),
 
                 // Referensi Utama dari CPMK
-                'ref' => $c->refs->map(fn ($ref) => [
-                    'id' => $ref->id,
-                    'kode' => $ref->kode,
-                    'judul' => $ref->judul,
-                    'penulis' => $ref->penulis,
-                    'penerbit' => $ref->penerbit,
-                    'tahun' => $ref->tahun,
-                    'link' => $ref->link,
+                'ref' => $c->refs->map(fn ($r) => [
+                    'id' => $r->id,
+                    'kode' => $r->kode,
+                    'judul' => $r->judul,
+                    'penulis' => $r->penulis,
+                    'penerbit' => $r->penerbit,
+                    'tahun' => $r->tahun,
+                    'link' => $r->link,
                 ]),
 
                 // CPL diambil dari relasi cpls() yang ada di Model CPMK
@@ -110,8 +110,8 @@ trait WithCPMKSearchFilters
         return [
             'id' => $c->id,
             'kode' => $c->kode,
-            'name' => $c->deskripsi,
-            'name2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
+            'slot1' => $c->deskripsi,
+            'slot2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
         ];
     }
 

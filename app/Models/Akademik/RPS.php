@@ -3,7 +3,6 @@
 namespace App\Models\Akademik;
 
 use App\Models\Auth\Dosen;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,13 +14,12 @@ class RPS extends Model
     use SoftDeletes;
 
     protected $table = 'rps';
-
     protected $guarded = ['id'];
-
-    protected $appends = ['kode', 'mk', 'tingkatan_mk', 'akademik', 'revisi'];
-
+    protected $appends = ['kode', 'mk', 'level_mk', 'revisi_day'];
     protected $casts = [
-        'tanggal_revisi' => 'date',
+        'revisi' => 'date',
+        'created_at' => 'date',
+        'updated_at' => 'date',
     ];
 
     public function mk_rel(): BelongsTo
@@ -66,9 +64,9 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->mk);
     }
 
-    protected function tingkatanMk(): Attribute
+    protected function levelMk(): Attribute
     {
-        return Attribute::get(fn () => $this->mk_rel?->tingkatan_mk);
+        return Attribute::get(fn () => $this->mk_rel?->level_mk);
     }
 
     protected function rps(): Attribute
@@ -78,14 +76,14 @@ class RPS extends Model
         );
     }
 
-    protected function revisi(): Attribute
+
+    protected function revisiDay(): Attribute
     {
         return Attribute::get(function () {
-            if (! $this->tanggal_revisi) {
+            if (!$this->revisi) {
                 return null;
             }
-
-            return Carbon::parse($this->tanggal_revisi)->translatedFormat('D, d M Y');
+            return $this->revisi->translatedFormat('D, d M Y');
         });
     }
 
@@ -105,8 +103,7 @@ class RPS extends Model
             if (! $this->created_at) {
                 return null;
             }
-
-            return Carbon::parse($this->created_at)->translatedFormat('D, d M Y');
+            return $this->created_at->translatedFormat('D, d M Y');
         });
     }
 
@@ -116,8 +113,7 @@ class RPS extends Model
             if (! $this->updated_at) {
                 return null;
             }
-
-            return Carbon::parse($this->updated_at)->translatedFormat('D, d M Y');
+            return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
 
@@ -198,10 +194,10 @@ class RPS extends Model
 
                 // C. Filter Tanggal (Revisi, Created, Updated)
                 $group->orWhere(function ($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(rps.tanggal_revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("DATE_FORMAT(rps.tanggal_revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.tanggal_revisi, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
-                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.tanggal_revisi, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                    $dq->whereRaw("DATE_FORMAT(rps.revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(rps.revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
                         ->orWhereRaw("DATE_FORMAT(rps.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
                         ->orWhereRaw("DATE_FORMAT(rps.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])

@@ -41,7 +41,7 @@ class RPSSeeder extends Seeder
                     'deskripsi' => "Mata kuliah {$mk->nama_mk} ({$mk->kode_mk}) ini mencakup analisis teoritis dan implementasi praktis Teknik Elektro.",
                     'akademik' => $tahunAkademik[$index % count($tahunAkademik)],
                     'is_draf' => ($index % 4 == 0),
-                    'tanggal_revisi' => $waktuPalsu,
+                    'revisi' => $waktuPalsu,
                     'created_at' => $waktuPalsu,
                     'updated_at' => $waktuPalsu,
                 ]);

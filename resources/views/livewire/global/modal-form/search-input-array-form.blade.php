@@ -14,16 +14,16 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, name, name2, name3) {
+    addItem(id, kode, slot1, slot2, slot3) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
 
             this.itemsAll.push({
                 kode: kode,
-                name: name,
-                name2: name2,
-                name3: name3
+                slot1: slot1,
+                slot2: slot2,
+                slot3: slot3
             });
         }
     },
@@ -212,7 +212,7 @@
                             </div>
 
                             <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
-                                x-text="itemsAll[index]?.name"></span>
+                                x-text="itemsAll[index]?.slot1"></span>
 
                             <div
                                 class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
@@ -220,12 +220,12 @@
 
                                 @if ($typeX2String ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
-                                    <span x-text="itemsAll[index]?.name2"></span>
+                                    <span x-text="itemsAll[index]?.slot2"></span>
                                 @endif
 
                                 @if ($typeX3String ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
-                                    <span x-text="itemsAll[index]?.name3"></span>
+                                    <span x-text="itemsAll[index]?.slot3"></span>
                                 @endif
                             </div>
                         </div>

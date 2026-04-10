@@ -60,7 +60,7 @@ class UserManagement extends Component
         'sortField' => ['except' => 'name'],
         'sortDirection' => ['except' => 'asc']
 
-        // 'prodi_name' => ['except' => ''],
+        // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
         // 'isEditing' => ['except' => false],
         // 'showUserModal' => ['except' => false],
@@ -71,7 +71,7 @@ class UserManagement extends Component
         // 'nim' => ['except' => ''],
         // 'angkatan' => ['except' => ''],
         // 'pr_id' => ['except' => ''],
-        // 'prodiNameSearch' => ['except' => ''],
+        // 'prNameSearch' => ['except' => ''],
     ];
 
     public function updatedPerPage()

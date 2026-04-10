@@ -55,9 +55,9 @@ trait WithDosenSearchFilters
         return [
             'id' => $d->id,
             'kode' => $d->nip,
-            'name' => $d->name,
-            'name2' => $d->nidn_nidk,
-            'name3' => $d->status,
+            'slot1' => $d->name,
+            'slot2' => $d->nidn_nidk,
+            'slot3' => $d->status,
             'peran' => $d->pivot->peran ?? 'Pengajar',
             'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
         ];

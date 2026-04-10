@@ -80,6 +80,12 @@ trait WithRPSModal
             })->toArray();
             $this->cpmk_sub_items_array = $this->mapCPMK($rps->cpmks);
 
+            // $totalSubCPMK = 0;
+            // foreach ($this->cpmk_sub_items_array as $group) {
+            //     $totalSubCPMK += count($group['scpmk'] ?? []);
+            // }
+            // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $rps->is_draf;
+
             // 2. Fill Data CPL & Referensi Tambahan (Manual)
             $this->cpl_id_array = $rps->cpls->pluck('id')->toArray();
             $this->cpl_items_array = $rps->cpls->map(function ($c) {
@@ -187,7 +193,22 @@ trait WithRPSModal
             'cpl_id_array' => 'nullable|array',
             'ref_id_array' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
-            'dosen_items_array' => 'required|array|min:1',
+            'dosen_items_array' => [
+                'required',
+                'array',
+                'min:1',
+                function ($attribute, $value, $fail) {
+                    // Cek apakah ada minimal satu dosen yang 'is_ketua' bernilai true
+                    $hasKetua = collect($value)->contains(function ($item) {
+                        // Pastikan mengecek nilai boolean atau truthy dari is_ketua
+                        return isset($item['is_ketua']) && ($item['is_ketua'] === true || $item['is_ketua'] === 1 || $item['is_ketua'] === 'true');
+                    });
+
+                    if (! $hasKetua) {
+                        $fail('Harus ada minimal satu dosen yang dipilih sebagai Ketua Tim.');
+                    }
+                },
+            ],
             'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
         ];
 
@@ -372,7 +393,6 @@ trait WithRPSModal
                     ];
                 }
                 $rps->dosens()->sync($syncDosen);
-                
 
                 // 3. Sync CPMK
                 $syncCpmk = [];

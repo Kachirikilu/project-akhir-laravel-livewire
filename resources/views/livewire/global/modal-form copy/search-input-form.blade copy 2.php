@@ -1,6 +1,7 @@
 <div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
+    items: @entangle($idString).live,
     itemsAll: @entangle($itemsAllString).live,
     isManual: false
 }"
@@ -9,15 +10,18 @@ x-effect="
     
     if (config?.isEdit === 0) {
         search = '';
+        items = null;
         itemsAll = null;
     } else {
         let currentId = config?.['{{ $idString }}'];
 
         if (!currentId) {
             search = '';
+            items = null;
             itemsAll = null;
         } else {
             search = config?.['{{ $modelString }}'];
+            items = currentId;
             itemsAll = config?.['{{ $itemsAllString }}'];
         }
     }
@@ -51,15 +55,16 @@ x-effect="
         {{-- Tombol Reset --}}
         @include('livewire.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
-            'xClick' => "search = ''; itemsAll = null",
+            'xClick' => "search = ''; items = null; itemsAll = null",
             'xWire' => $resetXInput,
             'xWire2' => $fetchString . "(null, 'single')",
-            'xAlpine' => $itemsAllString,
+            'xAlpine' => $idString,
+            'xAlpine2' => $itemsAllString,
         ])
     </div>
 
     {{-- Info Terpilih --}}
-    <div x-show="itemsAll && search" x-cloak>
+    <div x-show="items && search" x-cloak>
         <p class="text-[var(--focus-color)] text-xs mt-1 font-medium italic">
             Terpilih:
             <span x-text="itemsAll?.name" class="ml-1"></span>
@@ -68,14 +73,14 @@ x-effect="
 
             @if ($typeX2String ?? null)
                 <span class="mx-1">|</span>
-                <span x-text="itemsAll?.name2"></span>
+                <span x-text="itemsAll?.slot2"></span>
             @endif
             @if ($typeX3String ?? null)
                 <span class="mx-1">|</span>
-                <span x-text="itemsAll?.name3"></span>
+                <span x-text="itemsAll?.slot3"></span>
             @endif
             <span class="mx-1">|</span>
-            ID: <span x-text="itemsAll?.id"></span>
+            ID: <span x-text="items"></span>
         </p>
     </div>
 
@@ -93,15 +98,16 @@ x-effect="
                     let newKode = '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}';
 
                     search = newSearch;
+                    items = {{ $x['id'] }};
                     itemsAll = { 
-                        id: {{ $x['id'] }},
                         kode: '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}',
                         name: '{{ $x[$typeXString] ?? '' }}',
-                        name2: '{{ isset($typeX2String) ? ($x[$typeX2String] ?? '') : '' }}',
-                        name3: '{{ isset($typeX3String) ? ($x[$typeX3String] ?? '') : '' }}'
+                        slot2: '{{ isset($typeX2String) ? ($x[$typeX2String] ?? '') : '' }}',
+                        slot3: '{{ isset($typeX3String) ? ($x[$typeX3String] ?? '') : '' }}'
                     };
                     isManual = true;
 
+                    $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;
                     $store.{{ $alpine ?? 'config' }}['{{ $itemsAllString }}'] = itemsAll;
                     $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $x[$typeXString] }}';
 
