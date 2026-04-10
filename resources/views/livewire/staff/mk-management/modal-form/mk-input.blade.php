@@ -15,10 +15,10 @@
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'mk',
             'labelString' => 'Nama Mata Kuliah',
-            'modelString' => 'nama_matkul',
+            'modelString' => 'nama_mk',
             'iconString' => 'rectangle-stack',
             'placeholder' => 'Masukkan nama Mata Kuliah',
-            'message' => $errors->first('nama_matkul')
+            'message' => $errors->first('nama_mk')
         ])
 
         <div class="relative">
@@ -27,19 +27,19 @@
             @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addMK, editMK'])
 
             <template x-if="$store.mk?.typeModal == 1" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-prodi-input')
+                @include('livewire.staff.mk-management.modal-form.input-partial.mk-prodi-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 2" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-jurusan-input')
+                @include('livewire.staff.mk-management.modal-form.input-partial.mk-jurusan-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 3" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-fakultas-input')
+                @include('livewire.staff.mk-management.modal-form.input-partial.mk-fakultas-input')
             </template>
 
             <template x-if="$store.mk?.typeModal == 4" x-cloak>
-                @include('livewire.staff.matkul-management.modal-form.input-partial.mk-universitas-input')
+                @include('livewire.staff.mk-management.modal-form.input-partial.mk-universitas-input')
             </template>
         </div>
 
@@ -126,6 +126,6 @@
             </div>
         </div>
 
-        {{-- <div x-data x-init="$watch('$store.mk.nama_matkul', value => console.log('nama_matkul: ', value))"></div> --}}
+        {{-- <div x-data x-init="$watch('$store.mk.nama_mk', value => console.log('nama_mk: ', value))"></div> --}}
     </div>
 </div>

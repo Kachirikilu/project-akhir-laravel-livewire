@@ -57,21 +57,21 @@ trait WithProdiDelete
 
     private function getFormattedName($data): string
     {
-        if (isset($data->nama_strata) && isset($data->nama_prodi)) {
-            $strata = match ($data->nama_strata) {
+        if (isset($data->strata) && isset($data->nama_pr)) {
+            $strata = match ($data->strata) {
                 'Sarjana' => 'S1',
                 'Magister' => 'S2',
                 'Doktor' => 'S3',
-                default => $data->nama_strata,
+                default => $data->strata,
             };
 
-            return 'Program Studi '.$strata.' '.$data->nama_prodi;
+            return 'Program Studi '.$strata.' '.$data->nama_pr;
         }
-        if (isset($data->nama_jurusan)) {
-            return 'Jurusan '.$data->nama_jurusan;
+        if (isset($data->nama_jr)) {
+            return 'Jurusan '.$data->nama_jr;
         }
-        if (isset($data->nama_fakultas)) {
-            return 'Fakultas '.$data->nama_fakultas;
+        if (isset($data->nama_fk)) {
+            return 'Fakultas '.$data->nama_fk;
         }
 
         return null;

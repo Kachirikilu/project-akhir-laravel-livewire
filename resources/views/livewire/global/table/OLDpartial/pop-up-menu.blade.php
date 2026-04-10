@@ -39,18 +39,18 @@
                         '{{ $detail->nim ?? '' }}',
                         '{{ $detail->tahun_angkatan ?? '' }}',
                         '{{ $detail->status ?? '' }}',
-                        '{{ $detail->prodi_id ?? '' }}',
-                        '{{ $detail->prodi->prodi ?? '' }}',
-                        '{{ $detail->prodi->kode ?? '' }}'
+                        '{{ $detail->pr_id ?? '' }}',
+                        '{{ $detail->pr_rel->prodi ?? '' }}',
+                        '{{ $detail->pr_rel->kode ?? '' }}'
                     );
                     $flux.modal('user-modal').show();
                 } else if (editMode == 'editProdi') { 
                     $store.config?.setValueProdi(
                         '{{ $x->prodi ?? '' }}',
                         '{{ $x->strata ?? '' }}',
-                        '{{ $x->jurusan_id ?? '' }}',
+                        '{{ $x->jr_id ?? '' }}',
                         '{{ $x->jurusan ?? '' }}',
-                        '{{ $x->fakultas_id ?? '' }}',
+                        '{{ $x->fk_id ?? '' }}',
                         '{{ $x->fakultas ?? '' }}',
                         '{{ $x->kode ?? '' }}',
                         '{{ $x->kode ?? '' }}',

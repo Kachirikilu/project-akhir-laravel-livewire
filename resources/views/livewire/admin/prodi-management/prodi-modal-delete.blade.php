@@ -7,9 +7,9 @@
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
                     x-text="
-                            $store.prodi?.typeModal_delete == 'prodi' ? '***Program Studi ' + $store.prodi?.nama_prodi_delete + '***' : 
-                            ($store.prodi?.typeModal_delete == 'jurusan' ? '***Jurusan ' + $store.prodi?.nama_jurusan_delete + '***' : 
-                            ($store.prodi?.typeModal_delete == 'fakultas' ? '***Fakultas ' + $store.prodi?.nama_fakultas_delete + '***' : '***Data ini***'))
+                            $store.prodi?.typeModal_delete == 'prodi' ? '***Program Studi ' + $store.prodi?.nama_pr_delete + '***' : 
+                            ($store.prodi?.typeModal_delete == 'jurusan' ? '***Jurusan ' + $store.prodi?.nama_jr_delete + '***' : 
+                            ($store.prodi?.typeModal_delete == 'fakultas' ? '***Fakultas ' + $store.prodi?.nama_fk_delete + '***' : '***Data ini***'))
                         ">
                 </strong> dengan <strong class="text-red-700 dark:text-red-400"
                     x-text="

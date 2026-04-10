@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Livewire\Staff\MatkulManagement;
+namespace App\Livewire\Staff\MKManagement;
 
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 
-trait WithMatkulDelete
+trait WithMKDelete
 {
     public $showMKDelete = false;
     public $mkIdToDelete;
@@ -26,7 +26,7 @@ trait WithMatkulDelete
         }
 
         $this->mkIdToDelete = $id;
-        $this->mkNamaToDelete = $mk->matkul;
+        $this->mkNamaToDelete = $mk->mk;
         $this->mkKodeToDelete = $mk->kode;
         $this->isPermanentDelete = $isTrashed;
         
@@ -78,7 +78,7 @@ trait WithMatkulDelete
             $mk = MataKuliah::withTrashed()->findOrFail($id);
             $mk->restore();
 
-            $this->js("Flux.toast('Mata Kuliah {$mk->matkul} berhasil dipulihkan!')");
+            $this->js("Flux.toast('Mata Kuliah {$mk->mk} berhasil dipulihkan!')");
             $this->dispatch('refresh-data');
 
         } catch (\Exception $e) {

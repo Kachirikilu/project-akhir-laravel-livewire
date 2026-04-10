@@ -52,7 +52,7 @@
             <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.mk)"
                 enctype="multipart/form-data" id="mkForm">
 
-                @include('livewire.staff.matkul-management.modal-form.matkul-input')
+                @include('livewire.staff.mk-management.modal-form.mk-input')
 
                 {{-- 3. Footer / Button Action --}}
                 <div
@@ -62,7 +62,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        @include('livewire.staff.matkul-management.modal-form.matkul-message-form')
+                        @include('livewire.staff.mk-management.modal-form.mk-message-form')
                         @include('livewire.global.modal-form.button-form', [
                             'xType' => $mkType,
                             'targetX' => 'addMK, saveMK, editMK, updateMK',

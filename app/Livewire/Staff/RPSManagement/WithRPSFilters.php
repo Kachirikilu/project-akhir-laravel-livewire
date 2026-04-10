@@ -22,7 +22,7 @@ trait WithRPSFilters
     public function inputRPSSearch()
     {
         $queryRPS = RPS::query()
-            ->with(['matkul_rel.prodis', 'matkul_rel.prodis.jurusan_rel', 'matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+            ->with(['mk_rel.prodis', 'mk_rel.prodis.jr_rel', 'mk_rel.prodis.jr_rel.fk_rel']);
         
         $search = $this->search;
 
@@ -33,16 +33,16 @@ trait WithRPSFilters
         $this->sortFieldOrderRPS($queryRPS);
         
         if (! empty($this->selectedProdiId)) {
-            $queryRPS->whereHas('matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $queryRPS->whereHas('matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $queryRPS->whereHas('matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
         }
-        if (! empty($this->selectedMatkulId)) {
-            $queryRPS->where('rps.mk_id', $this->selectedMatkulId);
+        if (! empty($this->selectedMKId)) {
+            $queryRPS->where('rps.mk_id', $this->selectedMKId);
         }
 
         return $queryRPS;
@@ -93,8 +93,8 @@ trait WithRPSFilters
     // {
     //     match ($this->switchTable) {
     //         'rps' => match ($this->sortField) {
-    //             'matkul' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-    //                             ->orderBy('mata_kuliahs.nama_matkul', $this->sortDirection),
+    //             'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+    //                             ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
                 
     //             'kode' => $this->applyRPSKodeSort($queryRPS),
                 
@@ -141,8 +141,8 @@ trait WithRPSFilters
         $queryRPS->select('rps.*');
 
         return match ($this->sortField) {
-            'matkul' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-                            ->orderBy('mata_kuliahs.nama_matkul', $this->sortDirection),
+            'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+                            ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
             
             'kode'   => $this->applyRPSKodeSort($queryRPS),
             
@@ -160,9 +160,9 @@ trait WithRPSFilters
     {
         return $queryRPS->leftJoin('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
             ->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-            ->leftJoin('prodis', 'prodi_pivot_mk.prodi_id', '=', 'prodis.id')
-            ->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-            ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+            ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
+            ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+            ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
             ->select('rps.*')
             ->groupBy('rps.id')
             ->orderBy(DB::raw("

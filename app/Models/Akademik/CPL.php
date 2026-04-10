@@ -48,7 +48,7 @@ class CPL extends Model
 
     public function prodis(): BelongsToMany
     {
-        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'prodi_id')
+        return $this->belongsToMany(Prodi::class, 'prodi_pivot_cpl', 'cpl_id', 'pr_id')
                     ->withPivot('sort_order');
     }
 

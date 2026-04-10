@@ -33,12 +33,12 @@
             isEdit: 0,
             colorIcon: 'text-red-700',
 
-            nama_prodi: '',
-            nama_strata: '',
-            jurusan_id: '',
-            nama_jurusan: '',
-            fakultas_id: '',
-            nama_fakultas: '',
+            nama_pr: '',
+            strata: '',
+            jr_id: '',
+            nama_jr: '',
+            fk_id: '',
+            nama_fk: '',
 
             setType(val) {
                 this.typeModal = val
@@ -53,12 +53,12 @@
             },
 
             setValueProdi(namaProdi, strata, idJurusan, namaJurusan, idFakultas, namaFakultas) {
-                this.nama_prodi = namaProdi
-                this.nama_strata = strata
-                this.jurusan_id = idJurusan
-                this.nama_jurusan = namaJurusan
-                this.fakultas_id = idFakultas
-                this.nama_fakultas = namaFakultas
+                this.nama_pr = namaProdi
+                this.strata = strata
+                this.jr_id = idJurusan
+                this.nama_jr = namaJurusan
+                this.fk_id = idFakultas
+                this.nama_fk = namaFakultas
             },
 
             reset() {
@@ -66,12 +66,12 @@
                 this.isEdit = 0
                 this.colorIcon = 'text-gray-700'
 
-                this.nama_prodi = ''
-                this.nama_strata = ''
-                this.jurusan_id = ''
-                this.nama_jurusan = ''
-                this.fakultas_id = ''
-                this.nama_fakultas = ''
+                this.nama_pr = ''
+                this.strata = ''
+                this.jr_id = ''
+                this.nama_jr = ''
+                this.fk_id = ''
+                this.nama_fk = ''
             }
         })
     })

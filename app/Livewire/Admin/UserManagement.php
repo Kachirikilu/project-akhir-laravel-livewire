@@ -70,7 +70,7 @@ class UserManagement extends Component
         // 'nip' => ['except' => ''],
         // 'nim' => ['except' => ''],
         // 'tahun_angkatan' => ['except' => ''],
-        // 'prodi_id' => ['except' => ''],
+        // 'pr_id' => ['except' => ''],
         // 'prodiNameSearch' => ['except' => ''],
     ];
 

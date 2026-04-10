@@ -11,7 +11,7 @@ trait WithJurusanFilters
 
     public function inputJurusanSearch()
     {
-        $queryJr = Jurusan::query()->with(['fakultas_rel', 'prodis']);
+        $queryJr = Jurusan::query()->with(['fk_rel', 'prodis']);
         $search = $this->search;
 
         if (! empty($search)) {
@@ -19,7 +19,7 @@ trait WithJurusanFilters
         }
 
         if (! empty($this->selectedFakultasId)) {
-            $queryJr->where('jurusans.fakultas_id', $this->selectedFakultasId);
+            $queryJr->where('jurusans.fk_id', $this->selectedFakultasId);
         }
 
         if (! empty($this->selectedJurusanId)) {
@@ -33,13 +33,13 @@ trait WithJurusanFilters
 
     public function sortFieldOrderJurusan($queryJr)
     {
-        $queryJr->select('jurusans.*')->join('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id');;
+        $queryJr->select('jurusans.*')->join('fakultas', 'jurusans.fk_id', '=', 'fakultas.id');;
 
         return match ($this->sortField) {
             'kode'  => $queryJr->orderBy('kode_jr', $this->sortDirection)
                             ->orderBy('fakultas.kode_fk', $this->sortDirection),
-            'jurusan'  => $queryJr->orderBy('nama_jurusan', $this->sortDirection),
-            'fakultas' => $queryJr->orderBy('fakultas.nama_fakultas', $this->sortDirection),
+            'jurusan'  => $queryJr->orderBy('nama_jr', $this->sortDirection),
+            'fakultas' => $queryJr->orderBy('fakultas.nama_fk', $this->sortDirection),
             'created_at' => $queryJr->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryJr->orderBy('updated_at', $this->sortDirection),
             default    => $queryJr->orderBy('id', 'desc'),

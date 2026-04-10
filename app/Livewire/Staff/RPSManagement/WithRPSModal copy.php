@@ -31,7 +31,7 @@ trait WithRPSModal
         $this->isEditing = false;
         $this->showRPSModal = true;
 
-        $this->updatedMatkulNameSearch($this->matkulNameSearch);
+        $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         $this->updatedCPLNameSearch($this->cplNameSearch);
         $this->updatedRefNameSearch($this->refNameSearch);
@@ -56,7 +56,7 @@ trait WithRPSModal
         try {
             $mk = RPS::with(['prodis', 'cpmks.scpmks', 'cpmks.scpmks.refs', 'cpmks.refs', 'cpmks.cpls'])->findOrFail($id);
 
-            $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
+            $this->pr_id_array = $mk->prodis->pluck('id')->toArray();
             $this->prodi_name_array = $mk->prodis->pluck('prodi')->toArray();
             $this->prodi_kode_array = $mk->prodis->pluck('kode')->toArray();
 
@@ -65,16 +65,16 @@ trait WithRPSModal
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
-                $this->jurusan_id = $firstProdi->jurusan_id;
+                $this->jr_id = $firstProdi->jr_id;
                 $this->jurusanNameSearch = 'Jurusan '.$firstProdi->jurusan;
                 $this->jurusan_kode = $firstProdi->kode;
 
-                $this->fakultas_id = $firstProdi->fakultas_id;
+                $this->fk_id = $firstProdi->fk_id;
                 $this->fakultasNameSearch = 'Fakultas '.$firstProdi->fakultas;
                 $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
-                    $this->prodi_id = $firstProdi->id;
+                    $this->pr_id = $firstProdi->id;
                     $this->prodiNameSearch = $firstProdi->prodi;
                     $this->prodi_kode = $firstProdi->kode;
                 }
@@ -146,11 +146,11 @@ private function inputModalRPS($isEditing, $data)
     // --- RULES VALIDASI ---
     $rules = [
         'deskripsi' => 'required|string|max:1000',
-        'matkul_id' => 'required|exists:mata_kuliahs,id',
+        'mk_id' => 'required|exists:mata_kuliahs,id',
         'tahun_akademik' => [
             'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
             function ($attribute, $value, $fail) use ($data, $isEditing) {
-                $query = DB::table('rps')->where('mk_id', $data['matkul_id'])->where('tahun_akademik', $value);
+                $query = DB::table('rps')->where('mk_id', $data['mk_id'])->where('tahun_akademik', $value);
                 if ($isEditing) {
                     $query->where('id', '!=', $this->selected_id);
                 }
@@ -250,7 +250,7 @@ public function saveRPS($data)
     }
 
     // 1. Sinkronisasi awal data dari state Livewire ke parameter
-    $data['matkul_id'] = $this->matkul_id;
+    $data['mk_id'] = $this->mk_id;
     $data['is_draf'] = ($data['is_draf'] !== '') ? (int) $data['is_draf'] : 1;
     $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
     $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
@@ -268,7 +268,7 @@ DB::transaction(function () use ($validated) {
     // 1. Buat Header RPS
     $rps = RPS::create([
         'deskripsi'      => $validated['deskripsi'],
-        'mk_id'          => $validated['matkul_id'],
+        'mk_id'          => $validated['mk_id'],
         'tahun_akademik' => $validated['tahun_akademik'],
         'tahun_awal'     => $validated['tahun_akademik_1'],
         'tahun_akhir'    => $validated['tahun_akademik_2'],
@@ -310,8 +310,8 @@ DB::transaction(function () use ($validated) {
 });
 
         // 4. Feedback & Reset
-        $namaMatkul = $this->matkul_items['nama'] ?? $this->matkul_name;
-        $this->toast(message: "RPS $namaMatkul ({$validated['tahun_akademik']}) berhasil disimpan.");
+        $namaMK = $this->mk_items['nama'] ?? $this->mk_name;
+        $this->toast(message: "RPS $namaMK ({$validated['tahun_akademik']}) berhasil disimpan.");
 
         $this->resetInputRPS();
         $this->dispatch('refresh-data');
@@ -332,8 +332,8 @@ DB::transaction(function () use ($validated) {
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $data['prodi_id'] = $this->prodi_id;
-        $data['prodi_id_array'] = $this->prodi_id_array;
+        $data['pr_id'] = $this->pr_id;
+        $data['pr_id_array'] = $this->pr_id_array;
 
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
@@ -352,7 +352,7 @@ DB::transaction(function () use ($validated) {
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
-                    'nama_matkul' => $this->normalizeNama($validated['nama_matkul']),
+                    'nama_mk' => $this->normalizeNama($validated['nama_mk']),
                     'semester' => $validated['semester'],
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
@@ -363,8 +363,8 @@ DB::transaction(function () use ($validated) {
 
                 // 4. LOGIKA TARGET IDs
                 $targetIds = ($tingkatan === 1)
-                            ? [$this->prodi_id]
-                            : ($this->prodi_id_array ?: []);
+                            ? [$this->pr_id]
+                            : ($this->pr_id_array ?: []);
 
                 $cleanIds = array_values(array_filter($targetIds));
 
@@ -382,7 +382,7 @@ DB::transaction(function () use ($validated) {
 
             $this->dispatch('refresh-data');
             $this->showRPSModal = false;
-            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_matkul']), type: 'update');
+            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']), type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
@@ -398,11 +398,11 @@ DB::transaction(function () use ($validated) {
     {
         return [
             // Relasi Mata Kuliah & Prodi
-            'matkul_id.required' => 'Mata Kuliah asal wajib dipilih!',
-            'matkul_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
-            'prodi_id.required' => 'Program Studi wajib diisi!',
-            'prodi_id_array.required' => 'Program Studi wajib diisi!',
-            'prodi_id_array.min' => 'Pilih minimal satu Program Studi!',
+            'mk_id.required' => 'Mata Kuliah asal wajib dipilih!',
+            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
+            'pr_id.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
 
             // Tahun Akademik
             'tahun_akademik.required' => 'Tahun Akademik wajib diisi!',
@@ -433,7 +433,7 @@ DB::transaction(function () use ($validated) {
             'dosen_items_array.*.peran.required' => 'Peran dosen harus dipilih!',
 
             // Form Mata Kuliah (Legacy/Template)
-            'nama_matkul.required' => 'Nama Mata Kuliah wajib diisi!',
+            'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
             'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'semester.required' => 'Semester wajib diisi!',
             'semester.integer' => 'Semester harus berupa angka!',
@@ -453,7 +453,7 @@ DB::transaction(function () use ($validated) {
 
     private function resetInputRPS()
     {
-        $this->matkulNameSearch = '';
+        $this->mkNameSearch = '';
         $this->cpmkNameSearch = '';
         $this->cplNameSearch = '';
         $this->refNameSearch = '';

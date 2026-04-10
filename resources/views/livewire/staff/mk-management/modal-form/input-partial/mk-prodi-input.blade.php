@@ -13,7 +13,7 @@
             </div>
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.matkul-management.modal-form.partial.digit-semester')
+                @include('livewire.staff.mk-management.modal-form.partial.digit-semester')
             </div>
 
             <div class="sm:col-span-2">
@@ -38,9 +38,9 @@
         'alpine' => 'mk',
         'xResults' => $prodiResults,
         'selectX' => 'selectProdi',
-        'modelString' => 'nama_prodi_search',
+        'modelString' => 'nama_pr_search',
 
-        'idString' => 'prodi_id',
+        'idString' => 'pr_id',
         'itemsAllString' => 'prodi_items',
 
         'resetXInput' => 'resetProdiInput()',
@@ -57,9 +57,9 @@
     ])
 
 
-    {{-- <div x-data x-init="$watch('$store.mk.nama_matkul', value => console.log('nama_matkul: ', value))"></div>
+    {{-- <div x-data x-init="$watch('$store.mk.nama_mk', value => console.log('nama_mk: ', value))"></div>
 
-    <div x-data x-init="$watch('$store.mk.prodi_id', value => console.log('prodi_id: ', value))"></div>
+    <div x-data x-init="$watch('$store.mk.pr_id', value => console.log('pr_id: ', value))"></div>
     <div x-data x-init="$watch('$store.mk.prodi_kode', value => console.log('kode_pr: ', value))"></div>
     <div x-data x-init="$watch('$store.mk.prodi_kode', value => console.log('prodi_kode: ', value))"></div>
 

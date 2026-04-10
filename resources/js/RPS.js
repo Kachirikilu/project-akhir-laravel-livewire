@@ -24,9 +24,9 @@ document.addEventListener("alpine:init", () => {
         kode: "",
         digit_akademik: "",
 
-        matkul_id: "",
-        nama_matkul_search: "",
-        matkul_items: "",
+        mk_id: "",
+        nama_mk_search: "",
+        mk_items: "",
 
         tahun_akademik: "",
         tahun_akademik_1: "",
@@ -93,9 +93,9 @@ document.addEventListener("alpine:init", () => {
             kode,
             kodeBlok,
             deskripsi,
-            idMatkul,
+            idMK,
             kodeMK,
-            namaMatkul,
+            namaMK,
             tahunAkademik,
             drafText
         ) {
@@ -103,11 +103,11 @@ document.addEventListener("alpine:init", () => {
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
 
-            this.matkul_id = idMatkul;
-            this.nama_matkul_search = namaMatkul;
-            this.matkul_items = {
+            this.mk_id = idMK;
+            this.nama_mk_search = namaMK;
+            this.mk_items = {
                 "kode": kodeMK,
-                "name": namaMatkul
+                "name": namaMK
             };
 
             this.tahun_akademik = tahunAkademik;
@@ -153,9 +153,9 @@ document.addEventListener("alpine:init", () => {
 
             this.kode = "";
 
-            this.matkul_id = "";
-            this.nama_matkul_search = "";
-            this.matkul_items = "";
+            this.mk_id = "";
+            this.nama_mk_search = "";
+            this.mk_items = "";
 
             this.digit_akademik = "";
             this.tahun_akademik = "";

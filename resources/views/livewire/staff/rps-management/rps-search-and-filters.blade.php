@@ -302,18 +302,18 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputMatkulFilter',
-                'xSearchResultsString' => 'matkulSearchResults',
+                'inputXFilterString' => 'inputMKFilter',
+                'xSearchResultsString' => 'mkSearchResults',
                 'iconString' => 'rectangle-stack',
                 'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
-                'xSearchQueryString' => 'matkulSearchQuery',
-                'selectedXId' => $selectedMatkulId,
-                'selectedXName' => $matkul_name,
-                'resetXFilter' => 'resetMatkulFilter()',
-                'xSearchQuery' => $matkulSearchQuery,
-                'xSearchResults' => $matkulSearchResults,
-                'selectXForFilterString' => 'selectMatkulForFilter',
-                'typeXString' => 'matkul',
+                'xSearchQueryString' => 'mkSearchQuery',
+                'selectedXId' => $selectedMKId,
+                'selectedXName' => $mk_name,
+                'resetXFilter' => 'resetMKFilter()',
+                'xSearchQuery' => $mkSearchQuery,
+                'xSearchResults' => $mkSearchResults,
+                'selectXForFilterString' => 'selectMKForFilter',
+                'typeXString' => 'mk',
                 'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
             ])
         </div>

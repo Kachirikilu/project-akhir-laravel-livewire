@@ -38,7 +38,7 @@ class RPSSeeder extends Seeder
 
                 $rps = RPS::create([
                     'mk_id' => $mk->id,
-                    'deskripsi' => "Mata kuliah {$mk->nama_matkul} ({$mk->kode_mk}) ini mencakup analisis teoritis dan implementasi praktis Teknik Elektro.",
+                    'deskripsi' => "Mata kuliah {$mk->nama_mk} ({$mk->kode_mk}) ini mencakup analisis teoritis dan implementasi praktis Teknik Elektro.",
                     'tahun_akademik' => $tahunAkademik[$index % count($tahunAkademik)],
                     'is_draf' => ($index % 4 == 0),
                     'tanggal_revisi' => $waktuPalsu,
@@ -62,7 +62,7 @@ class RPSSeeder extends Seeder
                 for ($r = 1; $r <= 2; $r++) {
                     $ref = Referensi::create([
                         'kode_ref' => 'REF-'.$mk->id.'-'.$index.$r,
-                        'judul' => "Buku Ajar {$mk->nama_matkul} Vol. {$r}",
+                        'judul' => "Buku Ajar {$mk->nama_mk} Vol. {$r}",
                         'penulis' => 'Dosen Teknik UNSRI',
                         'tahun' => rand(2020, 2026),
                         'penerbit' => 'UNSRI Press',
@@ -99,7 +99,7 @@ class RPSSeeder extends Seeder
 
             $cpmk = CPMK::create([
                 'kode_cpmk' => 'CPMK-'.$mk->id.'-'.$i,
-                'deskripsi' => 'Mahasiswa mampu menguasai kompetensi tingkat '.($i == 1 ? 'Dasar' : ($i == 2 ? 'Menengah' : 'Lanjut'))." pada mata kuliah {$mk->nama_matkul}.",
+                'deskripsi' => 'Mahasiswa mampu menguasai kompetensi tingkat '.($i == 1 ? 'Dasar' : ($i == 2 ? 'Menengah' : 'Lanjut'))." pada mata kuliah {$mk->nama_mk}.",
                 'created_at' => $waktu,
             ]);
 
@@ -170,7 +170,7 @@ class RPSSeeder extends Seeder
         // Versi simpel: 1 CPMK, 1 CPL, 1 Sub-CPMK
         $cpmk = CPMK::create([
             'kode_cpmk' => 'CPMK-'.$mk->id.'-P',
-            'deskripsi' => 'Memahami prinsip dasar dan fondasi utama dari '.$mk->nama_matkul,
+            'deskripsi' => 'Memahami prinsip dasar dan fondasi utama dari '.$mk->nama_mk,
             'created_at' => $waktu,
         ]);
 

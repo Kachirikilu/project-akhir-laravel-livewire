@@ -31,20 +31,20 @@
                 $store.mk?.setColor(colors[type] ?? 'text-gray-700');
 
                     $store.mk?.setValueMK(
-                        '{{ $matkul->tingkatan_mk ?? '' }}',
-                        '{{ $matkul->matkul ?? '' }}',
-                        '{{ $matkul->kode_blok ?? '' }}',
-                        '{{ $matkul->digit_semester ?? '' }}',
-                        '{{ $matkul->digit_mk ?? '' }}',
-                        {{-- '{{ $matkul->id_prodi ?? '' }}', --}}
-                        {{-- '{{ $matkul->kode_pr ?? '' }}', --}}
-                        {{-- '{{ $matkul->nama_prodi ?? '' }}', --}}
-                        {{-- '{{ $matkul->nama_jurusan ?? '' }}',
-                        '{{ $matkul->nama_fakultas ?? '' }}', --}}
-                        '{{ $matkul->semester ?? '' }}',
-                        '{{ $matkul->sks ?? '' }}',
-                        '{{ $matkul->tipe_sks ?? '' }}',
-                        '{{ $matkul->wajib ?? '' }}'
+                        '{{ $mk->tingkatan_mk ?? '' }}',
+                        '{{ $mk->mk ?? '' }}',
+                        '{{ $mk->kode_blok ?? '' }}',
+                        '{{ $mk->digit_semester ?? '' }}',
+                        '{{ $mk->digit_mk ?? '' }}',
+                        {{-- '{{ $mk->id_prodi ?? '' }}', --}}
+                        {{-- '{{ $mk->kode_pr ?? '' }}', --}}
+                        {{-- '{{ $mk->nama_pr ?? '' }}', --}}
+                        {{-- '{{ $mk->nama_jr ?? '' }}',
+                        '{{ $mk->nama_fk ?? '' }}', --}}
+                        '{{ $mk->semester ?? '' }}',
+                        '{{ $mk->sks ?? '' }}',
+                        '{{ $mk->tipe_sks ?? '' }}',
+                        '{{ $mk->wajib ?? '' }}'
                     );
 
                     $flux.modal('mk-modal').show();
@@ -67,7 +67,7 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
                         $store.mk?.setDeleteMK(
-                            '{{ $x->matkul ?? '' }}',
+                            '{{ $x->mk ?? '' }}',
                             '{{ $x->kode ?? '' }}'
                         );
                         $flux.modal('mk-delete').show();
@@ -101,7 +101,7 @@
             <flux:menu.item
                 @click="
                             $store.mk?.setDeleteMK(
-                            '{{ $x->matkul ?? '' }}',
+                            '{{ $x->mk ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $isTrashed }}'
                         );

@@ -17,7 +17,7 @@ class Admin extends Model
 
     protected $fillable = [
         'user_id',
-        'prodi_id',
+        'pr_id',
         'nip',
         'nitk',
         'name',
@@ -28,9 +28,9 @@ class Admin extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function prodi(): BelongsTo
+    public function pr_rel(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class)->withTrashed();
+        return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
     }
 
     protected static function booted()

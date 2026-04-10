@@ -51,9 +51,9 @@
         'alpine' => 'user',
         'xResults' => $prodiResults,
         'selectX' => 'selectProdi',
-        'modelString' => 'nama_prodi_search',
+        'modelString' => 'nama_pr_search',
 
-        'idString' => 'prodi_id',
+        'idString' => 'pr_id',
         'itemsAllString' => 'prodi_items',
 
         'resetXInput' => 'resetProdiInput()',

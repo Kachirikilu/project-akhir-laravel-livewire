@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Livewire\Staff\MatkulManagement;
-
+namespace App\Livewire\Staff\MKManagement;
 
 use App\Models\Akademik\MataKuliah;
 use Livewire\WithPagination;
 
-trait WithMatkulFilters
+trait WithMKFilters
 {
     use WithPagination;
 
@@ -22,7 +21,7 @@ trait WithMatkulFilters
     public function inputMKSearch()
     {
         $queryMK = MataKuliah::query()
-        ->with(['prodis', 'prodis.jurusan_rel', 'prodis.jurusan_rel.fakultas_rel']);
+        ->with(['prodis', 'prodis.jr_rel', 'prodis.jr_rel.fk_rel']);
         
         $search = $this->search;
 
@@ -35,10 +34,10 @@ trait WithMatkulFilters
             $queryMK->whereHas('prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $queryMK->whereHas('prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $queryMK->whereHas('prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $queryMK->whereHas('prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $queryMK->whereHas('prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
         }
 
         // Filter Tab/Pills
@@ -76,7 +75,7 @@ trait WithMatkulFilters
         $queryMK->select('mata_kuliahs.*');
 
         return match ($this->sortField) {
-            'matkul'  => $queryMK->orderBy('nama_matkul', $this->sortDirection),
+            'mk'  => $queryMK->orderBy('nama_mk', $this->sortDirection),
             'semester'=> $queryMK->orderBy('semester', $this->sortDirection),
             'sks'     => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
             'wajib'   => $queryMK->orderBy('is_wajib', $this->sortDirection),
@@ -115,9 +114,9 @@ trait WithMatkulFilters
     private function applyMKKodeSort($queryMK)
     {
         return $queryMK->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-            ->leftJoin('prodis', 'prodi_pivot_mk.prodi_id', '=', 'prodis.id')
-            ->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-            ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+            ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
+            ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+            ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
             ->groupBy('mata_kuliahs.id')
             ->orderByRaw("
                 CONCAT(

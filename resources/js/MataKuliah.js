@@ -6,7 +6,7 @@ document.addEventListener("alpine:init", () => {
         isForceDelete: 0,
         colorIcon: "",
 
-        nama_matkul_delete: "",
+        nama_mk_delete: "",
         kode_mk_delete: "",
         
         setType(val) {
@@ -19,7 +19,7 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
-        nama_matkul: "",
+        nama_mk: "",
         digit_semester: "",
         digit_mk: "",
         semester: "",
@@ -28,25 +28,25 @@ document.addEventListener("alpine:init", () => {
         sks_kuliah: "",
         is_wajib: "",
 
-        // nama_prodi_search_array: [],
-        // prodi_id: "",
+        // nama_pr_search_array: [],
+        // pr_id: "",
         // prodi_items: "",
-        // prodi_id_array: [],
+        // pr_id_array: [],
         // prodi_items_array: [],
 
     // init() {
     //     // Listener untuk mengisi store dari Livewire
     //     window.addEventListener('fill-store-mk', (event) => {
     //         this.isEdit = event.detail.isEdit;
-    //         this.prodi_id = event.detail.prodi_id;
-    //         this.nama_prodi = event.detail.nama_prodi;
+    //         this.pr_id = event.detail.pr_id;
+    //         this.nama_pr = event.detail.nama_pr;
     //         this.prodi_items = event.detail.prodi_items;
     //     });
     // },
 
         setValueMK(
             tingkatanMode,
-            namaMatkul,
+            namaMK,
             kodeBlok,
             digitSemester,
             digitMk,
@@ -61,7 +61,7 @@ document.addEventListener("alpine:init", () => {
             isWajib
         ) {
             this.typeModal = tingkatanMode;
-            this.nama_matkul = namaMatkul;
+            this.nama_mk = namaMK;
 
             this.kode_blok = kodeBlok;
             this.digit_semester = digitSemester;
@@ -72,8 +72,8 @@ document.addEventListener("alpine:init", () => {
             this.tipe_sks = tipeSks; 
             this.is_wajib = isWajib;
 
-            // this.nama_prodi_search = namaProdi;
-            // this.prodi_id = idProdi;
+            // this.nama_pr_search = namaProdi;
+            // this.pr_id = idProdi;
             // this.prodi_items = kodePr;
             // this.prodi_items = {
             //     "kode": kodePr,
@@ -88,7 +88,7 @@ document.addEventListener("alpine:init", () => {
             kodeMkDelete,
             forceDelete
         ) {
-            this.nama_matkul_delete = namaProdi;
+            this.nama_mk_delete = namaProdi;
             this.kode_mk_delete = kodeMkDelete;
             this.isForceDelete = forceDelete;
         },
@@ -108,7 +108,7 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = "",
 
             this.typeModal = "";
-            this.nama_matkul = "";
+            this.nama_mk = "";
 
             this.kode_blok = "";
             this.digit_semester = "";
@@ -119,14 +119,14 @@ document.addEventListener("alpine:init", () => {
             this.tipe_sks = ""; 
             this.is_wajib = "";
 
-            this.nama_matkul_delete = "";
+            this.nama_mk_delete = "";
             this.kode_mk_delete = "";
 
-            // this.nama_prodi_search = "";
-            // this.prodi_id = "";
+            // this.nama_pr_search = "";
+            // this.pr_id = "";
             // this.prodi_items = "";
-            // this.nama_prodi_array = [];
-            // this.prodi_id_array = [];
+            // this.nama_pr_array = [];
+            // this.pr_id_array = [];
             // this.prodi_items_array = [];
         }
     });

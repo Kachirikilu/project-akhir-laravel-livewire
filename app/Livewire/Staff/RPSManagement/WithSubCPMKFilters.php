@@ -14,7 +14,7 @@ trait WithSubCPMKFilters
 
     public function inputSCPMKSearch()
     {
-        $querySCPMK = SubCPMK::query()->with(['cpmks.rps.matkul_rel', 'cpmks.rps.matkul_rel.prodis', 'cpmks.rps.matkul_rel.prodis.jurusan_rel', 'cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel']);
+        $querySCPMK = SubCPMK::query()->with(['cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
         $search = $this->search;
 
         if (! empty($search)) {
@@ -22,16 +22,16 @@ trait WithSubCPMKFilters
         }
 
         if (! empty($this->selectedProdiId)) {
-            $querySCPMK->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedProdiId));
         }
         if (! empty($this->selectedJurusanId)) {
-            $querySCPMK->whereHas('cpmks.rps.matkul_rel.prodis', fn ($q) => $q->where('jurusan_id', $this->selectedJurusanId));
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJurusanId));
         }
         if (! empty($this->selectedFakultasId)) {
-            $querySCPMK->whereHas('cpmks.rps.matkul_rel.prodis.jurusan_rel', fn ($q) => $q->where('fakultas_id', $this->selectedFakultasId));
+            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFakultasId));
         }
-        if (! empty($this->selectedMatkulId)) {
-            $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMatkulId));
+        if (! empty($this->selectedMKId)) {
+            $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
         }
         if (! empty($this->selectedRPSId)) {
             $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));

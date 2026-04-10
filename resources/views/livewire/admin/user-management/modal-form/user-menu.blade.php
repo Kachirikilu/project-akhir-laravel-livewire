@@ -39,11 +39,11 @@
                         '{{ $detail->nim ?? '' }}',
                         '{{ $detail->tahun_angkatan ?? '' }}',
                         '{{ $detail->status ?? '' }}',
-                        '{{ $detail->prodi_id ?? '' }}',
-                        '{{ $detail->prodi->prodi ?? '' }}',
-                        '{{ $detail->prodi->jurusanJr ?? '' }}',
-                        '{{ $detail->prodi->fakultasFk ?? '' }}',
-                        '{{ $detail->prodi->kode ?? '' }}'
+                        '{{ $detail->pr_id ?? '' }}',
+                        '{{ $detail->pr_rel->prodi ?? '' }}',
+                        '{{ $detail->pr_rel->jurusanJr ?? '' }}',
+                        '{{ $detail->pr_rel->fakultasFk ?? '' }}',
+                        '{{ $detail->pr_rel->kode ?? '' }}'
                     );
                     $flux.modal('user-modal').show();
             "

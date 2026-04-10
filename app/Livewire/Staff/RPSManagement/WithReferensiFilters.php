@@ -14,9 +14,9 @@ trait WithReferensiFilters
     public function inputRefSearch()
     {
         $queryRef = Referensi::query()->with([
-            'rps.matkul_rel', 'rps.matkul_rel.prodis', 'rps.matkul_rel.prodis.jurusan_rel', 'rps.matkul_rel.prodis.jurusan_rel.fakultas_rel',
-            'cpmks.rps.matkul_rel', 'cpmks.rps.matkul_rel.prodis', 'cpmks.rps.matkul_rel.prodis.jurusan_rel', 'cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel',
-            'scpmks.cpmks.rps.matkul_rel', 'scpmks.cpmks.rps.matkul_rel.prodis', 'scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', 'scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel.fakultas_rel'
+            'rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis.jr_rel.fk_rel',
+            'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel',
+            'scpmks.cpmks.rps.mk_rel', 'scpmks.cpmks.rps.mk_rel.prodis', 'scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'scpmks.cpmks.rps.mk_rel.prodis.jr_rel.fk_rel'
 
             ]);
         $search = $this->search;
@@ -28,30 +28,30 @@ trait WithReferensiFilters
 
         if (! empty($this->selectedProdiId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId)
-                ->orWhereRelation('cpmks.rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId)
-                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis', 'prodis.id', $this->selectedProdiId);
+                $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedProdiId);
             });
         }
         if (! empty($this->selectedJurusanId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId)
-                ->orWhereRelation('cpmks.rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId)
-                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis', 'jurusan_id', $this->selectedJurusanId);
+                $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJurusanId);
             });
         }
         if (! empty($this->selectedFakultasId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId)
-                ->orWhereRelation('cpmks.rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId)
-                ->orWhereRelation('scpmks.cpmks.rps.matkul_rel.prodis.jurusan_rel', 'fakultas_id', $this->selectedFakultasId);
+                $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId)
+                ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId)
+                ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFakultasId);
             });
         }
-        if (! empty($this->selectedMatkulId)) {
+        if (! empty($this->selectedMKId)) {
             $queryRef->where(function ($q) {
-                $q->whereRelation('rps', 'mk_id', $this->selectedMatkulId)
-                ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMatkulId)
-                ->orWhereRelation('scpmks.cpmks.rps', 'mk_id', $this->selectedMatkulId);
+                $q->whereRelation('rps', 'mk_id', $this->selectedMKId)
+                ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMKId)
+                ->orWhereRelation('scpmks.cpmks.rps', 'mk_id', $this->selectedMKId);
             });
         }
         if (! empty($this->selectedRPSId)) {

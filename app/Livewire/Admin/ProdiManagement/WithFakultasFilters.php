@@ -39,7 +39,7 @@ trait WithFakultasFilters
 
         return match ($this->sortField) {
             'kode'  => $queryFk->orderBy('kode_fk', $this->sortDirection),
-            'fakultas' => $queryFk->orderBy('nama_fakultas', $this->sortDirection),
+            'fakultas' => $queryFk->orderBy('nama_fk', $this->sortDirection),
             'created_at' => $queryFk->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryFk->orderBy('updated_at', $this->sortDirection),
             default    => $queryFk->orderBy('id', 'desc'),

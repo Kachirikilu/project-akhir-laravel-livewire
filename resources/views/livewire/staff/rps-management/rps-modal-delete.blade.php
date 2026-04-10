@@ -6,7 +6,7 @@
             <flux:subheading>
                 Apakah Anda yakin ingin menghapus
                 <strong class="text-red-700 dark:text-red-400"
-                    x-text="$store.rps?.nama_matkul_delete ? '*** Mata Kuliah' + $store.rps?.nama_matkul_delete + '***' : '***Mata Kuliah ini***'
+                    x-text="$store.rps?.nama_mk_delete ? '*** Mata Kuliah' + $store.rps?.nama_mk_delete + '***' : '***Mata Kuliah ini***'
                     ">
                 </strong> dengan 
                 <strong class="text-red-700 dark:text-red-400"

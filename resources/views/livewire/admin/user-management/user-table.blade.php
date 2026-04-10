@@ -265,7 +265,7 @@
             </td>
 
             <td class="{{ $secondKolom }} min-w-48">
-                {{ $detail->prodi->prodi ?? '-' }}</td>
+                {{ $detail->pr_rel->prodi ?? '-' }}</td>
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>

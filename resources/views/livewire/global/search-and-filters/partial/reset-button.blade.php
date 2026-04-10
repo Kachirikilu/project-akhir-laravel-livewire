@@ -11,9 +11,9 @@
         @if ($xAlpine2 ?? null) $store.{{ $alpine ?? 'config' }}.{{ $xAlpine2 }} = '' @endif
     "
     {{-- @if ($xLivewire ?? null) $wire.{{ $xLivewire }}; @endif --}}
-    {{-- @if ($jurusan_id ?? null) 
+    {{-- @if ($jr_id ?? null) 
         wire:loading.attr="disabled"
-        wire:target="{{ $jurusan_id }}"
+        wire:target="{{ $jr_id }}"
     @endif --}}
     class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-[var(--contrast-main-text)]' }} hover:text-red-500 dark:hover:text-red-400 transition duration-200"
     @empty($xColor)

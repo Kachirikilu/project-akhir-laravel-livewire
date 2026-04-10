@@ -14,11 +14,11 @@
         'alpine' => 'prodi',
         // 'colorIcon' => $colorIcon,
         'labelString' => 'Nama Fakultas',
-        'modelString' => 'nama_fakultas',
+        'modelString' => 'nama_fk',
         // 'typeString' => 'text',
         'iconString' => 'building-library',
         'placeholder' => 'Masukkan nama Fakultas',
-        'message' => $errors->first('nama_fakultas')
+        'message' => $errors->first('nama_fk')
     ])
 
     {{-- 📧 Kode Fakultas Input --}}

@@ -34,7 +34,7 @@ trait WithUserFilters
     public function inputUserSearch()
     {
         $queryUser = User::query()
-            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.prodi', 'mahasiswa.prodi.jurusan_rel', 'mahasiswa.prodi.jurusan_rel.fakultas_rel']);
+            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.jr_rel', 'mahasiswa.pr_rel.jr_rel.fk_rel']);
 
         $search = $this->search;
 
@@ -135,10 +135,10 @@ trait WithUserFilters
 
     private function joinProdiAndGetSortSql($queryUser)
     {
-        $queryUser->leftJoin('prodis as admin_prodis', 'admins.prodi_id', '=', 'admin_prodis.id')
-            ->leftJoin('prodis as dosen_prodis', 'dosens.prodi_id', '=', 'dosen_prodis.id')
-            ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.prodi_id', '=', 'mahasiswa_prodis.id');
+        $queryUser->leftJoin('prodis as admin_prodis', 'admins.pr_id', '=', 'admin_prodis.id')
+            ->leftJoin('prodis as dosen_prodis', 'dosens.pr_id', '=', 'dosen_prodis.id')
+            ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.pr_id', '=', 'mahasiswa_prodis.id');
 
-        return "COALESCE(admin_prodis.nama_prodi, dosen_prodis.nama_prodi, mahasiswa_prodis.nama_prodi)";
+        return "COALESCE(admin_prodis.nama_pr, dosen_prodis.nama_pr, mahasiswa_prodis.nama_pr)";
     }
 }

@@ -132,7 +132,7 @@ trait WithSubCPMKSearchFilters
                 }
             }
         } else {
-            if (Auth::user()->prodi_id) {
+            if (Auth::user()->pr_id) {
                 $this->scpmkResults = $this->getSCPMKbyUser();
             } else {
                 $this->scpmkResults = $this->mapSCPMK(
@@ -145,7 +145,7 @@ trait WithSubCPMKSearchFilters
     public function getSCPMKbyUser()
     {
         $user = Auth::user();
-        $prodiId = $user->prodi_id ?? null;
+        $prodiId = $user->pr_id ?? null;
 
         $query = $this->scpmkQuery();
         
@@ -158,7 +158,7 @@ trait WithSubCPMKSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('cpmks.rps.matkul_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('cpmks.rps.mk_rel.prodis', function($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)

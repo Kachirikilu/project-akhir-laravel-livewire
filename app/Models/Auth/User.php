@@ -77,11 +77,11 @@ class User extends Authenticatable
         return $query->where(function ($q) use ($type, $id) {
             $roles = ['admin', 'dosen', 'mahasiswa'];
             foreach ($roles as $role) {
-                $q->orWhereHas($role . ($type !== 'prodi' ? '.prodi' : ''), function ($r) use ($type, $id) {
-                    if ($type === 'prodi') $r->where('prodi_id', $id);
-                    if ($type === 'jurusan') $r->where('jurusan_id', $id);
+                $q->orWhereHas($role . ($type !== 'prodi' ? '.pr_rel' : ''), function ($r) use ($type, $id) {
+                    if ($type === 'prodi') $r->where('pr_id', $id);
+                    if ($type === 'jurusan') $r->where('jr_id', $id);
                     if ($type === 'fakultas') {
-                        $r->whereHas('jurusan_rel', fn($j) => $j->where('fakultas_id', $id));
+                        $r->whereHas('jr_rel', fn($j) => $j->where('fk_id', $id));
                     }
                 });
             }
@@ -99,6 +99,7 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
 
     protected function name(): Attribute
     {
@@ -228,25 +229,43 @@ class User extends Authenticatable
     protected function prodiId(): Attribute
     {
         return Attribute::get(function () {
-            return $this->admin?->prodi_id 
-                ?? $this->dosen?->prodi_id 
-                ?? $this->mahasiswa?->prodi_id;
+            return $this->admin?->pr_id 
+                ?? $this->dosen?->pr_id 
+                ?? $this->mahasiswa?->pr_id;
         });
     }
 
-    protected function jurusanId(): Attribute
+    protected function prodi(): Attribute
     {
         return Attribute::get(function () {
-            $prodi = $this->admin?->prodi ?? $this->dosen?->prodi ?? $this->mahasiswa?->prodi;
-            return $prodi?->jurusan_id;
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel->prodi;
         });
     }
 
-    protected function fakultasId(): Attribute
+    protected function kodePr(): Attribute
     {
         return Attribute::get(function () {
-            $prodi = $this->admin?->prodi ?? $this->dosen?->prodi ?? $this->mahasiswa?->prodi;
-            return $prodi?->jurusan_rel?->fakultas_id;
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel->kode;
+        });
+    }
+
+    protected function jrId(): Attribute
+    {
+        return Attribute::get(function () {
+            $prodi = $this->admin?->pr_rel ?? $this->dosen?->pr_rel ?? $this->mahasiswa?->pr_rel;
+            return $prodi?->jr_id;
+        });
+    }
+
+    protected function fkId(): Attribute
+    {
+        return Attribute::get(function () {
+            $prodi = $this->admin?->pr_rel ?? $this->dosen?->pr_rel ?? $this->mahasiswa?->pr_rel;
+            return $prodi?->jr_rel?->fk_id;
         });
     }
 
@@ -337,14 +356,14 @@ class User extends Authenticatable
                 });
 
                 // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
-                $q->orWhereHas("$role.prodi", function ($p) use ($searchTerm) {
-                    $p->where('nama_prodi', 'like', $searchTerm)
-                        ->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
-                            $j->where('nama_jurusan', 'like', $searchTerm)
-                                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                                ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
-                                    $f->where('nama_fakultas', 'like', $searchTerm)
-                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
+                    $p->where('nama_pr', 'like', $searchTerm)
+                        ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
+                            $j->where('nama_jr', 'like', $searchTerm)
+                                ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+                                ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+                                    $f->where('nama_fk', 'like', $searchTerm)
+                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
                                 });
                         });
                 });

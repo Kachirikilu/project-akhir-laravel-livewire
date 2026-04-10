@@ -53,7 +53,7 @@
                 'isMain' => 1,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'matkul',
+                'sortFieldString' => 'mk',
                 'rowSpan' => 2,
                 'headString' => 'Mata Kuliah',
             ])
@@ -129,32 +129,32 @@
     </x-slot:header>
 
 
-    @forelse($matkuls as $matkul)
-        <tr wire:key="matkul-{{ $matkul->id }}" data-matkul-id="{{ $matkul->id }}"
+    @forelse($mks as $mk)
+        <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $secondKolom }} text-center">{{ $matkul->id }}</td>
+            <td class="{{ $secondKolom }} text-center">{{ $mk->id }}</td>
             <td class="{{ $secondKolom }}">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($matkul->tingkatan_mk)
+                        @switch($mk->tingkatan_mk)
                             @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
                             @break
                             @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="book-open" color="amber" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
                             @break
                             @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
                             @break
                             @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $matkul->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
                         @endswitch 
                     </button>
 
-                    @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
-                        'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mk,
+                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                        'x' => $mk,
+                        'typeXString' => $mk->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -166,47 +166,47 @@
             <td class="{{ $mainKolom }}">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($matkul->semester)
+                        @switch($mk->semester)
                             {{-- Tahun 1: Biru/Cyan --}}
                             @case(1)
-                                <flux:badge color="blue" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="blue" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             @case(2)
-                                <flux:badge color="cyan" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="cyan" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             {{-- Tahun 2: Hijau/Emerald --}}
                             @case(3)
-                                <flux:badge color="green" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="green" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             @case(4)
-                                <flux:badge color="emerald" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="emerald" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             {{-- Tahun 3: Kuning/Oranye --}}
                             @case(5)
-                                <flux:badge color="yellow" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="yellow" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             @case(6)
-                                <flux:badge color="orange" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="orange" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             {{-- Tahun 4: Merah/Ungu (Fase Tugas Akhir) --}}
                             @case(7)
-                                <flux:badge color="red" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="red" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                             @break
 
                             @default
-                                <flux:badge color="purple" size="sm">{{ $matkul->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="purple" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
                         @endswitch
                     </button>
 
-                    @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
-                        'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mk,
+                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                        'x' => $mk,
+                        'typeXString' => $mk->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -215,35 +215,35 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-84">{{ $matkul->matkul ?? '-' }}</td>
-            <td class="{{ $secondKolom }} text-center">{{ $matkul->semester ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-84">{{ $mk->mk ?? '-' }}</td>
+            <td class="{{ $secondKolom }} text-center">{{ $mk->semester ?? '-' }}</td>
 
-            {{-- <td class="px-6 py-4 text-sm text-[var(--contrast-second-text)]">{{ $matkul->sks ?? '-' }}</td> --}}
-            <td class="{{ $mainKolom }} text-center">{{ $matkul->sks ?? '-' }}</td>
+            {{-- <td class="px-6 py-4 text-sm text-[var(--contrast-second-text)]">{{ $mk->sks ?? '-' }}</td> --}}
+            <td class="{{ $mainKolom }} text-center">{{ $mk->sks ?? '-' }}</td>
 
             @if ($switchTable == 'tatap_muka' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderRight }} text-center">{{ $matkul->sks_tm ?? '-' }}</td>
+                <td class="{{ $subKolom }} {{ $borderRight }} text-center">{{ $mk->sks_tm ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktikum' || $switchTable == '')
                 <td class="{{ $subKolom }} {{ $borderRight }} text-center">
-                    {{ $matkul->sks_pr ?? '-' }}</td>
+                    {{ $mk->sks_pr ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktek_lapangan' || $switchTable == '')
                 <td class="{{ $subKolom }} {{ $borderRight }} text-center">
-                    {{ $matkul->sks_pl ?? '-' }}</td>
+                    {{ $mk->sks_pl ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'simulasi' || $switchTable == '')
                 <td class="{{ $subKolom }} border-r text-center">
-                    {{ $matkul->sks_sm ?? '-' }}</td>
+                    {{ $mk->sks_sm ?? '-' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @if ($matkul->wajib)
+                        @if ($mk->wajib)
                             <flux:badge icon="check" color="green" size="sm" inset="top bottom">Wajib
                             </flux:badge>
                         @else
@@ -252,9 +252,9 @@
                         @endif
                     </button>
 
-                    @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
-                        'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mk,
+                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                        'x' => $mk,
+                        'typeXString' => $mk->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -269,9 +269,9 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.matkul-management.modal-form.matkul-menu', [
-                        'x' => $matkul,
-                        'typeXString' => $matkul->tingkatan_mk,
+                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                        'x' => $mk,
+                        'typeXString' => $mk->tingkatan_mk,
                         'editString' => 'editMK',
                         'nameXString' => 'Mata Kuliah',
                         'confirmDeleteString' => 'deleteMK',
@@ -280,8 +280,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48">{{ $matkul->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48">{{ $matkul->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $mk->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
@@ -295,7 +295,7 @@
 
         <x-slot:footer>
             @include('livewire.global.table.footer-table', [
-                'typeXString' => $matkuls,
+                'typeXString' => $mks,
             ])
         </x-slot:footer>
 

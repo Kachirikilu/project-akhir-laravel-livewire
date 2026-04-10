@@ -6,14 +6,13 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'labelString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'jurusan_items',
-                    'placeholder' => '---',
-                    'iconString' => 'book-open'
+                    'secondValue' => 'UNI',
+                    'iconString' => 'globe-alt'
                 ])
             </div>
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.matkul-management.modal-form.partial.digit-semester')
+                @include('livewire.staff.mk-management.modal-form.partial.digit-semester')
             </div>
 
             <div class="sm:col-span-2">
@@ -25,7 +24,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1,
+                    'isFocusSelect' => 1
                 ])
             </div>
         </div>
@@ -34,34 +33,13 @@
         @enderror
     </div>
 
-    @include('livewire.global.modal-form.search-input-form', [
-        'alpine' => 'mk',
-        'xResults' => $jurusanResults,
-        'selectX' => 'selectJurusan',
-        'modelString' => 'nama_jurusan_search',
-
-        'idString' => 'jurusan_id',
-        'itemsAllString' => 'jurusan_items',
-
-        'resetXInput' => 'resetJurusanInput()',
-        'typeXString' => 'jurusan',
-        'typeX2String' => 'fakultas',
-        
-        'nameXString' => 'Jurusan',
-        'searchString' => 'jurusan_search',
-        'nameSearchString' => 'jurusanNameSearch',
-        'fetchString' => 'fetchJurusan',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchJurusan'
-    ])
-
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prodiResults,
         'selectX' => 'selectProdiArray',
-        'modelString' => 'nama_prodi_search',
+        'modelString' => 'nama_pr_search',
 
-        'idString' => 'prodi_id_array',
+        'idString' => 'pr_id_array',
         'itemsAllString' => 'prodi_items_array',
 
         'typeXString' => 'prodi',
@@ -73,10 +51,6 @@
         'nameSearchString' => 'prodiNameSearch',
         'fetchString' => 'fetchProdi',
         'iconString' => 'academic-cap',
-    
-        'parentIdString' => 'jurusan_id',
-        'nameXParent' => 'Jurusan',
-        'wireLoading' => 'fetchProdi',
-        'wireLoadingParent' => 'selectJurusan, resetJurusanInput, selectJurusanForFilter, resetJurusanFilter',
+        'wireLoading' => 'fetchProdi'
     ])
 </div>

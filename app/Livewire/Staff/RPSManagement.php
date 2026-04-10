@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Global\WithMatkulSearchFilters;
+use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
@@ -43,7 +43,7 @@ class RPSManagement extends Component
     use WithJurusanSearchFilters;
     use WithProdiSearchFilters;
     
-    use WithMatkulSearchFilters;
+    use WithMKSearchFilters;
     use WithRPSSearchFilters;
     use WithCPMKSearchFilters;
     use WithSubCPMKSearchFilters;
@@ -102,7 +102,7 @@ class RPSManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'matkul', 4 => 'akademik', 5 => 'is_draf', 6 => 'revisi', 7 => 'created_at', 8 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'mk', 4 => 'akademik', 5 => 'is_draf', 6 => 'revisi', 7 => 'created_at', 8 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'bobot', 6 => 'indikator', 7 => 'created_at', 8 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
@@ -114,8 +114,8 @@ class RPSManagement extends Component
         }
 
         $aliases = [
-            'deskripsi' => ['matkul', 'deskripsi', 'judul'],
-            'materi'    => ['materi', 'matkul', 'penulis'],
+            'deskripsi' => ['mk', 'deskripsi', 'judul'],
+            'materi'    => ['materi', 'mk', 'penulis'],
             'akademik'  => ['akademik', 'bobot'],
             'is_draf'   => ['is_draf', 'indikator'],
             'created_at' => ['created_at'],
@@ -182,7 +182,7 @@ class RPSManagement extends Component
 
     public function render()
     {
-        $this->inputMatkulFilter();
+        $this->inputMKFilter();
         $this->inputRPSFilter();
         $this->inputCPMKFilter();
         $this->inputSCPMKFilter();

@@ -18,24 +18,24 @@
 
         @include('livewire.global.modal-form.search-input-form', [
             'alpine' => 'rps',
-            'xResults' => $matkulResults,
-            'selectX' => 'selectMatkul',
-            'modelString' => 'nama_matkul_search',
+            'xResults' => $mkResults,
+            'selectX' => 'selectMK',
+            'modelString' => 'nama_mk_search',
         
-            'idString' => 'matkul_id',
-            'itemsAllString' => 'matkul_items',
+            'idString' => 'mk_id',
+            'itemsAllString' => 'mk_items',
         
-            'resetXInput' => 'resetMatkulInput()',
-            'typeXString' => 'matkul',
+            'resetXInput' => 'resetMKInput()',
+            'typeXString' => 'mk',
             // 'typeX2String' => 'jurusan',
             // 'typeX3String' => 'fakultas',
         
             'nameXString' => 'Mata Kuliah',
-            'searchString' => 'matkul_search',
-            'nameSearchString' => 'matkulNameSearch',
-            'fetchString' => 'fetchMatkul',
+            'searchString' => 'mk_search',
+            'nameSearchString' => 'mkNameSearch',
+            'fetchString' => 'fetchMK',
             'iconString' => 'rectangle-stack',
-            'wireLoading' => 'fetchMatkul',
+            'wireLoading' => 'fetchMK',
         ])
 
         <div class="relative">
@@ -48,7 +48,7 @@
                         @include('livewire.global.modal-form.kode-input', [
                             'alpine' => 'rps',
                             'labelString' => 'Kode RPS',
-                            'kodeString' => 'matkul_items',
+                            'kodeString' => 'mk_items',
                             'placeholder' => '--------',
                             'iconString' => 'clipboard-document-list',
                         ])
@@ -172,7 +172,7 @@
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-referensi-input')
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-dosen-input')
 
-    <div x-data x-init="$watch('$store.rps.matkul_id', value => console.log('matkul_id: ', value))"></div>
-    <div x-data x-init="$watch('$store.rps.matkul_items', value => console.log('matkul_items: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.mk_id', value => console.log('mk_id: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.mk_items', value => console.log('mk_items: ', value))"></div>
 
 </div>

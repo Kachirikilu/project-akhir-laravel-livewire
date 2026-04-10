@@ -1,0 +1,219 @@
+<?php
+
+namespace App\Livewire\Global;
+
+use App\Models\Akademik\MataKuliah;
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
+
+trait WithMKSearchFilters
+{
+    use WithPagination;
+
+    public $mkSearchQuery = '';
+    public $mkSearchResults = [];
+    public $modeMK = '';
+    public $mk_id;
+    public $mk_name = '';
+    public $mk_items;
+    public $mkNameSearch = '';
+    public $mkResults = [];
+    public $selectedMKId = null;
+
+    public $mk_id_array = [];
+    public $mk_items_array = [];
+
+
+    private function mapMK($collection)
+    {
+        return $collection->map(fn ($mk) => [
+            'id' => $mk->id,
+            'kode' => $mk->kode,
+            'mk' => $mk->mk,
+            'semester' => $mk->semester,
+            'sks' => $mk->sks,
+            'tipe_sks_text' => $mk->tipe_sks_text,
+            'wajib_text' => $mk->wajib_text,
+            'tingkatan_mk' => $mk->tingkatan_mk 
+        ])->toArray();
+    }
+
+    private function mkQuery()
+    {
+        return MataKuliah::query()->with('prodis');
+    }
+
+    private function itemsMK($mk)
+    {
+        if (! $mk) {
+            return null;
+        }
+        return [
+            'id' => $mk->id,
+            'kode' => $mk->kode,
+            'name' => $mk->mk,
+        ];
+    }
+
+    public function inputMKFilter()
+    {
+        $search = trim($this->mkSearchQuery);
+
+        if ((strlen($search) > 1 || is_numeric($search)) && ! $this->mk_name) {
+            $this->mkSearchResults = $this->mapMK(
+                $this->mkQuery()->searchMK($search)->limit(12)->get()
+            );
+        } elseif (empty($search) || $this->mk_name) {
+            $this->mkSearchResults = $this->getMKbyUser();
+        } else {
+            $this->mkSearchResults = [];
+        }
+    }
+
+    public function resetMKFilter()
+    {
+        $this->reset(['selectedMKId', 'mkSearchQuery', 'mk_name', 'mk_items']);
+        $this->resetPage();
+    }
+
+    public function selectMKForFilter($id)
+    {
+        $data = $this->mkQuery()->find($id);
+
+        if ($data) {
+            $this->selectedMKId = $id;
+            $this->mk_name = $data->mk;
+            $this->mkSearchQuery = $data->mk;
+            $this->mk_items = $this->itemsMK($data);
+            $this->mkSearchResults = [];
+            $this->resetPage();
+        }
+    }
+
+    public function updatedMKNameSearch($value)
+    {
+        $this->mk_id = null;
+        $this->mk_items = null;
+        $this->resetErrorBag(['mk_id', 'mkNameSearch']);
+
+        $query = $this->mkQuery();
+
+        if (trim(strlen($value)) > 0) {
+            $results = $query->searchMK($value)->limit(12)->get();
+            $this->mkResults = $this->mapMK($results);
+
+            $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+            $exactMatch = $results->first(function ($mk) use ($value, $normalizedValue) {
+                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($mk->kode));
+                
+                return strtolower($mk->mk) === strtolower($value) 
+                    || $normalizedMkKode === $normalizedValue;
+            });
+
+            if ($exactMatch) {
+                $this->mkNameSearch = $exactMatch->mk;
+                if ($this->modeMK == 'single') {
+                    $this->mk_id = $exactMatch->id;
+                    $this->mk_items = $this->itemsMK($exactMatch);
+                    $this->mkResults = [];
+                } else {
+                    $this->mk_id_array[] = $exactMatch->id;
+                    $this->mk_items_array[] = $this->itemsMK($exactMatch);
+                }
+            }
+        }else {
+            if (Auth::user()->pr_id) {
+                $this->mkResults = $this->getMKbyUser();
+            } else {
+                $this->mkResults = $this->mapMK(
+                    $query->orderBy('mks.nama_mk')->limit(12)->get()
+                );
+            }
+        }
+    }
+
+    public function getMKbyUser()
+    {
+        $user = Auth::user();
+        $prodiId = $user->pr_id ?? null;
+
+        $query = $this->mkQuery();
+        
+        if (!$prodiId) {
+            $defaultMK = $query
+                ->latest()
+                ->limit(12)
+                ->get();
+            return $this->mapMK($defaultMK);
+        }
+
+        $mainResults = $query
+            ->whereHas('prodis', function($q) use ($prodiId) {
+                $q->where('prodis.id', $prodiId);
+            })
+            ->limit(12)
+            ->get();
+
+        if ($mainResults->count() < 12) {
+            $extra = $this->mkQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                ->limit(12 - $mainResults->count())
+                ->get();
+                
+            $mainResults = $mainResults->concat($extra);
+        }
+
+        return $this->mapMK($mainResults);
+    }
+
+    public function fetchMK($query = '', $mode = 'single')
+    {
+        $this->modeMK = $mode;
+        if (empty($query) || $this->mk_id) {
+            $this->mkResults = $this->getMKbyUser();
+        }
+
+        return;
+    }
+
+
+    public function selectMK($id, $mkName)
+    {
+        $this->mk_id = $id;
+        $this->mkNameSearch = $mkName;
+
+        $data = $this->mkQuery()->find($id);
+        if ($data) {
+            $this->mk_items = $this->itemsMK($data);
+        }
+
+        // if (method_exists($this, 'fetchMK')) {
+        //     $this->fetchMK('');
+        // }
+
+        $this->mkResults = $this->getMKbyUser();
+        $this->resetErrorBag(['mk_id', 'mkNameSearch']);
+    }
+    public function selectMKArray($id)
+    {
+        $data = $this->mkQuery()->find($id);
+
+        if ($data && ! in_array($id, $this->mk_id_array)) {
+            $this->mk_id_array[] = $id;
+            $this->mk_items_array[] = $this->itemsMK($data);
+            $this->mk_search = '';
+        }
+    }
+
+    public function resetMKInput()
+    {
+        $this->reset(['mk_id', 'mk_items', 'mkNameSearch']);
+        $this->mkResults = $this->getMKbyUser();
+    }
+
+    public function resetMKArray()
+    {
+        $this->mk_id_array = [];
+        $this->mk_items_array = [];
+        $this->mkNameSearch = '';
+    }
+}

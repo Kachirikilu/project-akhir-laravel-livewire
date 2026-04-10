@@ -13,21 +13,21 @@
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
         'labelString' => 'Nama Program Studi',
-        'modelString' => 'nama_prodi',
+        'modelString' => 'nama_pr',
         // 'typeString' => 'text',
         // 'colorIcon' => $colorIcon,
         'iconString' => 'academic-cap',
         'placeholder' => 'Masukkan nama Program Studi',
-        'message' => $errors->first('nama_prodi')
+        'message' => $errors->first('nama_pr')
     ])
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
         'xResults' => $jurusanResults,
         'selectX' => 'selectJurusan',
-        'modelString' => 'nama_jurusan_search',
+        'modelString' => 'nama_jr_search',
 
-        'idString' => 'jurusan_id',
+        'idString' => 'jr_id',
         'itemsAllString' => 'jurusan_items',
 
         'resetXInput' => 'resetJurusanInput()',
@@ -58,10 +58,10 @@
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'prodi',
         'labelString' => 'Nama Strata',
-        'modelString' => 'nama_strata',
+        'modelString' => 'strata',
         'xOptions' => ['Sarjana', 'Magister', 'Doktor'],
         'iconString' => 'bookmark-square',
         'placeholder' => 'Pilih Strata...',
-        'message' => $errors->first('nama_strata'),
+        'message' => $errors->first('strata'),
     ])
 </div>

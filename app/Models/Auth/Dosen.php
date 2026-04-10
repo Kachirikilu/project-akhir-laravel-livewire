@@ -18,7 +18,7 @@ class Dosen extends Model
 
     protected $fillable = [
         'user_id',
-        'prodi_id',
+        'pr_id',
         'name',
         'nip',
         'nidn',
@@ -38,9 +38,9 @@ class Dosen extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function prodi(): BelongsTo
+    public function pr_rel(): BelongsTo
     {
-        return $this->belongsTo(Prodi::class)->withTrashed();
+        return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
     }
 
     protected function nidnNidk(): Attribute
@@ -105,13 +105,13 @@ class Dosen extends Model
 
             // 3. Pencarian Berdasarkan Lokasi (Prodi, Jurusan, Fakultas)
             $q->orWhereHas('prodi', function ($p) use ($searchTerm) {
-                $p->where('nama_prodi', 'like', $searchTerm)
-                    ->orWhereHas('jurusan_rel', function ($j) use ($searchTerm) {
-                        $j->where('nama_jurusan', 'like', $searchTerm)
-                            ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm])
-                            ->orWhereHas('fakultas_rel', function ($f) use ($searchTerm) {
-                                $f->where('nama_fakultas', 'like', $searchTerm)
-                                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                $p->where('nama_pr', 'like', $searchTerm)
+                    ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
+                        $j->where('nama_jr', 'like', $searchTerm)
+                            ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+                            ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+                                $f->where('nama_fk', 'like', $searchTerm)
+                                    ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
                             });
                     });
             });

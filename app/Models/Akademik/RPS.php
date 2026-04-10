@@ -6,6 +6,7 @@ use App\Models\Auth\Dosen;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,21 +18,20 @@ class RPS extends Model
 
     protected $guarded = ['id'];
 
-    protected $appends = ['kode', 'matkul', 'tingkatan_mk', 'akademik', 'revisi'];
+    protected $appends = ['kode', 'mk', 'tingkatan_mk', 'akademik', 'revisi'];
 
     protected $casts = [
         'tanggal_revisi' => 'date',
     ];
 
-    public function matkul_rel()
+    public function mk_rel(): BelongsTo
     {
         return $this->belongsTo(MataKuliah::class, 'mk_id')->withTrashed();
     }
 
-
     protected function kodeMk(): Attribute
     {
-        return Attribute::get(fn () => $this->matkul_rel?->kode);
+        return Attribute::get(fn () => $this->mk_rel?->kode);
     }
 
     protected function kodeBlok(): Attribute
@@ -51,24 +51,24 @@ class RPS extends Model
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
-            $kodeMatkul = $this->kode_mk;
-            if (!$kodeMatkul || !$this->tahun_akademik) {
+            $kodeMK = $this->kode_mk;
+            if (!$kodeMK || !$this->tahun_akademik) {
                 return null;
             }
             $suffixTahun = $this->kode_blok;
-            return "{$kodeMatkul}-{$suffixTahun}";
+            return "{$kodeMK}-{$suffixTahun}";
         });
     }
 
 
-    protected function matkul(): Attribute
+    protected function mk(): Attribute
     {
-        return Attribute::get(fn () => $this->matkul_rel?->matkul);
+        return Attribute::get(fn () => $this->mk_rel?->mk);
     }
 
     protected function tingkatanMk(): Attribute
     {
-        return Attribute::get(fn () => $this->matkul_rel?->tingkatan_mk);
+        return Attribute::get(fn () => $this->mk_rel?->tingkatan_mk);
     }
 
     protected function akademik(): Attribute
@@ -79,7 +79,7 @@ class RPS extends Model
     protected function rps(): Attribute
     {
         return Attribute::get(fn () => 
-            ($this->matkul_rel?->matkul ?? 'Tanpa MK') . ' ' . $this->akademik
+            ($this->mk_rel?->mk ?? 'Tanpa MK') . ' ' . $this->akademik
         );
     }
 
@@ -192,7 +192,7 @@ class RPS extends Model
             $q->where(function ($group) use ($mkPartClean, $yearPart, $searchTerm, $searchLower) {
 
                 // A. Filter Mata Kuliah
-                $group->whereHas('matkul_rel', function ($mq) use ($mkPartClean) {
+                $group->whereHas('mk_rel', function ($mq) use ($mkPartClean) {
                     $mq->searchMK($mkPartClean);
                 });
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire\Staff\MatkulManagement;
+namespace App\Livewire\Staff\MKManagement;
 
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Global\HasToast;
 
-trait WithMatkulDelete
+trait WithMKDelete
 {
     use HasToast;
     public $showMKDelete = false;
@@ -31,7 +31,7 @@ trait WithMatkulDelete
         }
 
         $this->mkIdToDelete = $id;
-        $this->mkNamaToDelete = $mk->matkul;
+        $this->mkNamaToDelete = $mk->mk;
         $this->mkKodeToDelete = $mk->kode;
         $this->isPermanentDelete = $isTrashed;
         
@@ -95,7 +95,7 @@ trait WithMatkulDelete
             $mk->restore();
 
             $this->dispatch('refresh-data');
-            $this->toast(message: 'Mata Kuliah '. $mk->matkul, type: 'recycle', isAkun: true);
+            $this->toast(message: 'Mata Kuliah '. $mk->mk, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {
             $this->dispatch('refresh-data');

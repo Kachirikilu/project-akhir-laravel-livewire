@@ -122,7 +122,7 @@ trait WithCPLSearchFilters
                 }
             }
         } else {
-            if (Auth::user()->prodi_id) {
+            if (Auth::user()->pr_id) {
                 $this->cplResults = $this->getCPLbyUser();
             } else {
                 $this->cplResults = $this->mapCPL(
@@ -135,7 +135,7 @@ trait WithCPLSearchFilters
     public function getCPLbyUser()
     {
         $user = Auth::user();
-        $prodiId = $user->prodi_id ?? null;
+        $prodiId = $user->pr_id ?? null;
 
         $query = $this->cplQuery();
         
@@ -148,7 +148,7 @@ trait WithCPLSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('cpmks.rps.matkul_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('cpmks.rps.mk_rel.prodis', function($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)

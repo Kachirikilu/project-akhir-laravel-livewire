@@ -31,7 +31,7 @@ trait WithRPSModal
         $this->isEditing = false;
         $this->showRPSModal = true;
 
-        $this->updatedMatkulNameSearch($this->matkulNameSearch);
+        $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
         $this->updatedCPLNameSearch($this->cplNameSearch);
         $this->updatedRefNameSearch($this->refNameSearch);
@@ -54,7 +54,7 @@ trait WithRPSModal
         try {
             // 1. Load data RPS dengan relasi yang sangat lengkap
             $rps = RPS::with([
-                'matkul_rel',
+                'mk_rel',
                 'dosens',
                 'cpmks.scpmks.refs', // Penting untuk mapping Sub-CPMK
                 'cpmks.refs',        // Referensi Utama CPMK
@@ -63,9 +63,9 @@ trait WithRPSModal
                 'refs',              // Referensi manual di tingkat RPS
             ])->findOrFail($id);
 
-            $this->matkulNameSearch = $rps->matkul_rel?->matkul;
-            $this->matkul_id = $rps->mk_id;
-            $this->matkul_items = $this->itemsMK($rps->matkul_rel);
+            $this->mkNameSearch = $rps->mk_rel?->mk;
+            $this->mk_id = $rps->mk_id;
+            $this->mk_items = $this->itemsMK($rps->mk_rel);
 
             // 2. Fill Data Dosen
             $this->dosen_id_array = $rps->dosens->pluck('id')->toArray();
@@ -91,7 +91,7 @@ trait WithRPSModal
                 return $this->itemsRef($r);
             })->toArray();
 
-            $this->fetchMatkul($this->matkulNameSearch);
+            $this->fetchMK($this->mkNameSearch);
             $this->updatedCPMKNameSearch($this->cpmkNameSearch);
             $this->updatedCPLNameSearch($this->cplNameSearch);
             $this->updatedRefNameSearch($this->refNameSearch);
@@ -147,11 +147,11 @@ trait WithRPSModal
         // --- RULES VALIDASI ---
         $rules = [
             'deskripsi' => 'required|string|max:1000',
-            'matkul_id' => 'required|exists:mata_kuliahs,id',
+            'mk_id' => 'required|exists:mata_kuliahs,id',
             'tahun_akademik' => [
                 'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
                 function ($attribute, $value, $fail) use ($data, $isEditing) {
-                    $query = DB::table('rps')->where('mk_id', $data['matkul_id'])->where('tahun_akademik', $value);
+                    $query = DB::table('rps')->where('mk_id', $data['mk_id'])->where('tahun_akademik', $value);
                     if ($isEditing) {
                         $query->where('id', '!=', $this->selected_id);
                     }
@@ -230,7 +230,7 @@ trait WithRPSModal
         }
 
         // 1. Sinkronisasi awal data dari state Livewire ke parameter
-        $data['matkul_id'] = $this->matkul_id;
+        $data['mk_id'] = $this->mk_id;
         $data['is_draf'] = ($data['is_draf'] !== '') ? (int) $data['is_draf'] : 1;
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
@@ -247,7 +247,7 @@ trait WithRPSModal
             DB::transaction(function () use ($validated) {
                 $rps = RPS::create([
                     'deskripsi' => $validated['deskripsi'],
-                    'mk_id' => $validated['matkul_id'],
+                    'mk_id' => $validated['mk_id'],
                     'tahun_akademik' => $validated['tahun_akademik'],
                     'tahun_awal' => $validated['tahun_akademik_1'],
                     'tahun_akhir' => $validated['tahun_akademik_2'],
@@ -311,10 +311,10 @@ trait WithRPSModal
                 }
             });
             // 4. Feedback & Reset
-            $kodeMatkul = $this->matkul_items['kode'];
+            $kodeMK = $this->mk_items['kode'];
             $kodeRPS = $data['digit_akademik'];
-            $namaMatkul = $this->matkul_items['name'];
-            $this->toast(message: "RPS $kodeMatkul-$kodeRPS $namaMatkul ({$validated['tahun_akademik']})");
+            $namaMK = $this->mk_items['name'];
+            $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['tahun_akademik']})");
             $this->resetInputRPS();
             $this->dispatch('refresh-data');
             $this->showRPSModal = false;
@@ -336,7 +336,7 @@ trait WithRPSModal
         }
 
         // Sinkronkan state Livewire ke array data sebelum validasi
-        $data['matkul_id'] = $this->matkul_id;
+        $data['mk_id'] = $this->mk_id;
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
@@ -353,7 +353,7 @@ trait WithRPSModal
                 // 1. Update Data Utama
                 $rps->update([
                     'deskripsi' => $validated['deskripsi'],
-                    'mk_id' => $validated['matkul_id'],
+                    'mk_id' => $validated['mk_id'],
                     'tahun_akademik' => $validated['tahun_akademik'],
                     'tahun_awal' => $validated['tahun_akademik_1'],
                     'tahun_akhir' => $validated['tahun_akademik_2'],
@@ -427,11 +427,11 @@ trait WithRPSModal
     {
         return [
             // Relasi Mata Kuliah & Prodi
-            'matkul_id.required' => 'Mata Kuliah asal wajib dipilih!',
-            'matkul_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
-            'prodi_id.required' => 'Program Studi wajib diisi!',
-            'prodi_id_array.required' => 'Program Studi wajib diisi!',
-            'prodi_id_array.min' => 'Pilih minimal satu Program Studi!',
+            'mk_id.required' => 'Mata Kuliah asal wajib dipilih!',
+            'mk_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
+            'pr_id.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
 
             // Tahun Akademik
             'tahun_akademik.required' => 'Tahun Akademik wajib diisi!',
@@ -462,7 +462,7 @@ trait WithRPSModal
             'dosen_items_array.*.peran.required' => 'Peran dosen harus dipilih!',
 
             // Form Mata Kuliah (Legacy/Template)
-            'nama_matkul.required' => 'Nama Mata Kuliah wajib diisi!',
+            'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
             'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'semester.required' => 'Semester wajib diisi!',
             'semester.integer' => 'Semester harus berupa angka!',

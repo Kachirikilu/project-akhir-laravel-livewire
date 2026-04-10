@@ -16,19 +16,20 @@ class MataKuliah extends Model
 
     protected $fillable = [
         'tingkatan_mk', 'kode_mk', 'digit_semester', 'digit_mk',
-        'nama_matkul', 'semester', 'sks_kuliah', 'tipe_sks',
+        'nama_mk', 'semester', 'sks_kuliah', 'tipe_sks',
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
 
-    protected $appends = ['kode', 'kode_blok', 'matkul', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
+    protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
 
     public function prodis()
     {
-        return $this->belongsToMany(Prodi::class, 'prodi_pivot_mk', 'mk_id', 'prodi_id')
+        return $this->belongsToMany(Prodi::class, 'prodi_pivot_mk', 'mk_id', 'pr_id')
             ->withTrashed()
             ->withPivot('sort_order')
             ->orderBy('prodi_pivot_mk.sort_order', 'asc');
     }
+    
 
     // protected function tingkatanMode(): Attribute
     // {
@@ -52,11 +53,11 @@ class MataKuliah extends Model
 
             if ($prodi) {
                 if ($this->tingkatan_mk == 1) { // Tingkat Prodi
-                    $prefix = $prodi->kode_pr ?? $prodi->jurusan_rel?->kode_jr ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->kode_pr ?? $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->tingkatan_mk == 2) { // Tingkat Jurusan
-                    $prefix = $prodi->jurusan_rel?->kode_jr ?? $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->tingkatan_mk == 3) { // Tingkat Fakultas
-                    $prefix = $prodi->jurusan_rel?->fakultas_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->tingkatan_mk == 4) { // Tingkat Universitas
                     $prefix = $prefixDefault ?? 'UNI';
                 }
@@ -100,7 +101,7 @@ class MataKuliah extends Model
 
     // protected function namaProdi(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->nama_prodi);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->nama_pr);
     // }
 
     // // Data Jurusan (Asumsi Prodi belongsTo Jurusan)
@@ -116,7 +117,7 @@ class MataKuliah extends Model
 
     // protected function namaJurusan(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->nama_jurusan);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->nama_jr);
     // }
 
     // // Data Fakultas (Asumsi Jurusan belongsTo Fakultas)
@@ -132,12 +133,12 @@ class MataKuliah extends Model
 
     // protected function namaFakultas(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->fakultas?->nama_fakultas);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->fakultas?->nama_fk);
     // }
 
-    protected function matkul(): Attribute
+    protected function mk(): Attribute
     {
-        return Attribute::get(fn () => $this->nama_matkul);
+        return Attribute::get(fn () => $this->nama_mk);
     }
 
     // protected function semesterText(): Attribute
@@ -232,7 +233,7 @@ class MataKuliah extends Model
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Cari Nama & Kode Manual
-            $q->where('mata_kuliahs.nama_matkul', 'like', $searchTerm)
+            $q->where('mata_kuliahs.nama_mk', 'like', $searchTerm)
                 ->orWhere('mata_kuliahs.kode_mk', 'like', $searchTerm);
 
             if (is_numeric($search)) {
@@ -306,9 +307,9 @@ class MataKuliah extends Model
                     //             $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
                     //                 ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
                     //                     $pro->where('kode_pr', 'like', $prefixPart . '%')
-                    //                         ->orWhereHas('jurusan_rel', function ($jur) use ($prefixPart) {
+                    //                         ->orWhereHas('jr_rel', function ($jur) use ($prefixPart) {
                     //                             $jur->where('kode_jr', 'like', $prefixPart . '%')
-                    //                                 ->orWhereHas('fakultas_rel', function ($fak) use ($prefixPart) {
+                    //                                 ->orWhereHas('fk_rel', function ($fak) use ($prefixPart) {
                     //                                     $fak->where('kode_fk', 'like', $prefixPart . '%');
                     //                                 });
                     //                         });
@@ -338,8 +339,8 @@ class MataKuliah extends Model
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 1)
                                             ->whereHas('prodis', function ($pro) use ($prefixPart) {
-                                                $pro->leftJoin('jurusans', 'prodis.jurusan_id', '=', 'jurusans.id')
-                                                    ->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                                                $pro->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+                                                    ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
                                                     ->whereRaw("COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
@@ -347,8 +348,8 @@ class MataKuliah extends Model
                                 // 3. Tingkatan MK = 2 (Jurusan): Cari di jurusan, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 2)
-                                            ->whereHas('prodis.jurusan_rel', function ($jur) use ($prefixPart) {
-                                                $jur->leftJoin('fakultas', 'jurusans.fakultas_id', '=', 'fakultas.id')
+                                            ->whereHas('prodis.jr_rel', function ($jur) use ($prefixPart) {
+                                                $jur->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
                                                     ->whereRaw("COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
@@ -356,7 +357,7 @@ class MataKuliah extends Model
                                 // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.tingkatan_mk', 3)
-                                            ->whereHas('prodis.jurusan_rel.fakultas_rel', function ($fak) use ($prefixPart) {
+                                            ->whereHas('prodis.jr_rel.fk_rel', function ($fak) use ($prefixPart) {
                                                 $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
@@ -384,13 +385,13 @@ class MataKuliah extends Model
 
             // 7. Silsilah (Prodi/Jurusan/Fakultas)
             // $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
-            //     $pq->where('nama_prodi', 'like', $searchTerm)
+            //     $pq->where('nama_pr', 'like', $searchTerm)
             //         ->orWhere('kode_pr', 'like', $searchTerm)
-            //         ->orWhereHas('jurusan_rel', function ($jq) use ($searchTerm) {
-            //             $jq->where('nama_jurusan', 'like', $searchTerm)
+            //         ->orWhereHas('jr_rel', function ($jq) use ($searchTerm) {
+            //             $jq->where('nama_jr', 'like', $searchTerm)
             //                 ->orWhere('kode_jr', 'like', $searchTerm)
-            //                 ->orWhereHas('fakultas_rel', function ($fq) use ($searchTerm) {
-            //                     $fq->where('nama_fakultas', 'like', $searchTerm)
+            //                 ->orWhereHas('fk_rel', function ($fq) use ($searchTerm) {
+            //                     $fq->where('nama_fk', 'like', $searchTerm)
             //                         ->orWhere('kode_fk', 'like', $searchTerm);
             //                 });
             //         });

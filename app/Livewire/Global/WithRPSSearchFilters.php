@@ -32,7 +32,7 @@ trait WithRPSSearchFilters
             'mk_id' => $mk->mk_id,
             'kode' => $mk->kode,
             'rps' => $mk->rps,
-            'matkul' => $mk->matkul,
+            'mk' => $mk->mk,
             'akademik' => $mk->akademik,
             'draf_text' => $mk->draf_text,
             'tanggal_revisi' => $mk->tanggal_revisi,
@@ -42,7 +42,7 @@ trait WithRPSSearchFilters
 
     private function rpsQuery()
     {
-        return RPS::query()->with(['matkul_rel', 'cpmks', 'cpmks.scpmks']);
+        return RPS::query()->with(['mk_rel', 'cpmks', 'cpmks.scpmks']);
     }
 
     private function itemsRPS($r)
@@ -81,7 +81,7 @@ trait WithRPSSearchFilters
 
     public function selectRPSForFilter($id)
     {
-        $data = $this->rpsQuery()->with(['matkul_rel'])->find($id);
+        $data = $this->rpsQuery()->with(['mk_rel'])->find($id);
 
         if ($data) {
             $this->selectedRPSId = $id;
@@ -110,7 +110,7 @@ trait WithRPSSearchFilters
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($r->kode));
                 
                 return strtolower($r->rps) === strtolower($value) 
-                    || strtolower($r->matkul) === strtolower($value)
+                    || strtolower($r->mk) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
 
@@ -126,11 +126,11 @@ trait WithRPSSearchFilters
                 }
             }
         } else {
-            if (Auth::user()->prodi_id) {
+            if (Auth::user()->pr_id) {
                 $this->rpsResults = $this->getRPSbyUser();
             } else {
                 $this->rpsResults = $this->mapRPS(
-                    $query->orderBy('rps.matkul_rel.nama_matkul')->limit(12)->get()
+                    $query->orderBy('rps.mk_rel.nama_mk')->limit(12)->get()
                 );
             }
         }
@@ -139,7 +139,7 @@ trait WithRPSSearchFilters
     public function getRPSbyUser()
     {
         $user = Auth::user();
-        $prodiId = $user->prodi_id ?? null;
+        $prodiId = $user->pr_id ?? null;
 
         $query = $this->rpsQuery();
         
@@ -152,7 +152,7 @@ trait WithRPSSearchFilters
         }
 
         $mainResults = $query
-            ->whereHas('matkul_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('mk_rel.prodis', function($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)

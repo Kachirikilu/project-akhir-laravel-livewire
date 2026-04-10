@@ -23,7 +23,7 @@
                 selectProdiForFilter, resetProdiFilter,
                 selectJurusanForFilter, resetJurusanFilter,
                 selectFakultasForFilter, resetFakultasFilter,
-                selectMatkulForFilter, resetMatkulFilter,
+                selectMKForFilter, resetMKFilter,
                 selectRPSForFilter, resetRPSFilter,
                 selectCPMKForFilter, resetCPMKFilter,
                 selectSCPMKForFilter, resetSCPMKFilter,

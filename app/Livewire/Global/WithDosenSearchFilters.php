@@ -142,7 +142,7 @@ trait WithDosenSearchFilters
                 }
             }
         } else {
-            if (Auth::user()->prodi_id) {
+            if (Auth::user()->pr_id) {
                 $this->dosenResults = $this->getDosenbyUser();
             } else {
                 $this->dosenResults = $this->mapDosen(
@@ -155,7 +155,7 @@ trait WithDosenSearchFilters
     public function getDosenbyUser()
     {
         $user = Auth::user();
-        $prodiId = $user->prodi_id ?? null;
+        $prodiId = $user->pr_id ?? null;
 
         $query = $this->dosenQuery();
         

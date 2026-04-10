@@ -11,24 +11,24 @@ return new class extends Migration
         Schema::create('fakultas', function (Blueprint $table) {
             $table->id();
             $table->string('kode_fk')->unique();
-            $table->string('nama_fakultas');
+            $table->string('nama_fk');
             $table->softDeletes();
             $table->timestamps();
         });
         Schema::create('jurusans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('fakultas_id')->nullable() ->constrained('fakultas')->onDelete('set null');
+            $table->foreignId('fk_id')->nullable() ->constrained('fakultas')->onDelete('set null');
             $table->string('kode_jr')->nullable();
-            $table->string('nama_jurusan');
+            $table->string('nama_jr');
             $table->softDeletes();
             $table->timestamps();
         });
         Schema::create('prodis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jurusan_id')->nullable() ->constrained('jurusans')->onDelete('set null');
+            $table->foreignId('jr_id')->nullable() ->constrained('jurusans')->onDelete('set null');
             $table->string('kode_pr')->nullable();
-            $table->string('nama_prodi');
-            $table->enum('nama_strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
+            $table->string('nama_pr');
+            $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
             $table->softDeletes();
             $table->timestamps();
         });

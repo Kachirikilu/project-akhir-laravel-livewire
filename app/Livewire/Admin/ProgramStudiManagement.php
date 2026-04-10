@@ -109,7 +109,7 @@ class ProgramStudiManagement extends Component
     public function buttonStrataFilter($queryPr)
     {
         if (in_array($this->filterPr, ['sarjana', 'magister', 'doktor'])) {
-            $queryPr->where('nama_strata', ucfirst($this->filterPr));
+            $queryPr->where('strata', ucfirst($this->filterPr));
         }
     }
 
@@ -155,15 +155,15 @@ class ProgramStudiManagement extends Component
             'jurusans' => $jurusans,
             'fakultas' => $fakultas,
             // 'totalProdis' => Prodi::count(),
-            // 'totalSarjanas' => Prodi::where('nama_strata', 'Sarjana')->count(),
-            // 'totalMagisters' => Prodi::where('nama_strata', 'Magister')->count(),
-            // 'totalDoktors' => Prodi::where('nama_strata', 'Doktor')->count(),
+            // 'totalSarjanas' => Prodi::where('strata', 'Sarjana')->count(),
+            // 'totalMagisters' => Prodi::where('strata', 'Magister')->count(),
+            // 'totalDoktors' => Prodi::where('strata', 'Doktor')->count(),
             // 'totalJurusan' => Jurusan::count(),
             // 'totalFakultas' => Fakultas::count()
             'totalProdis' => (clone $queryProdi)->count(),
-            'totalSarjanas' => (clone $queryProdi)->where('nama_strata', 'Sarjana')->count(),
-            'totalMagisters' => (clone $queryProdi)->where('nama_strata', 'Magister')->count(),
-            'totalDoktors' => (clone $queryProdi)->where('nama_strata', 'Doktor')->count(),
+            'totalSarjanas' => (clone $queryProdi)->where('strata', 'Sarjana')->count(),
+            'totalMagisters' => (clone $queryProdi)->where('strata', 'Magister')->count(),
+            'totalDoktors' => (clone $queryProdi)->where('strata', 'Doktor')->count(),
             'totalJurusan' => (clone $queryJurusan)->count(),
             'totalFakultas' => (clone $queryFakultas)->count()
         ]);

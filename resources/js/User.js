@@ -33,8 +33,8 @@ document.addEventListener("alpine:init", () => {
         status: "",
 
         // Prodi
-        prodi_id: "",
-        nama_prodi_search: "",
+        pr_id: "",
+        nama_pr_search: "",
         prodi_items: "",
 
         setValueUser(
@@ -66,7 +66,7 @@ document.addEventListener("alpine:init", () => {
             this.tahun_angkatan = tahunAngkatan;
             this.status = status;
 
-            this.nama_prodi_search = namaProdi;
+            this.nama_pr_search = namaProdi;
             this.prodi_items = {
                 "id": idProdi,
                 "kode": kodePr,
@@ -104,8 +104,8 @@ document.addEventListener("alpine:init", () => {
             this.status = "",
 
             // Prodi
-            this.prodi_id = "",
-            this.nama_prodi_search = "",
+            this.pr_id = "",
+            this.nama_pr_search = "",
             this.prodi_items = "",
 
             // Delete

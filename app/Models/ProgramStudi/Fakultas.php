@@ -14,17 +14,24 @@ class Fakultas extends Model
 {
     use SoftDeletes;
     
-    protected $fillable = ['kode_fk', 'nama_fakultas'];
+    protected $fillable = ['kode_fk', 'nama_fk'];
     protected $appends = ['kode', 'fakultas'];
 
     public function jurusans(): HasMany 
     {
-        return $this->hasMany(Jurusan::class);
+        return $this->hasMany(Jurusan::class, 'fk_id');
     }
 
     public function prodis(): HasManyThrough
     {
-        return $this->hasManyThrough(Prodi::class, Jurusan::class);
+        return $this->hasManyThrough(
+            Prodi::class, 
+            Jurusan::class, 
+            'fk_id', 
+            'jr_id', 
+            'id', 
+            'id'
+        );
     }
 
     protected function kode(): Attribute {
@@ -45,11 +52,11 @@ class Fakultas extends Model
     }
 
     protected function fakultas(): Attribute {
-        return Attribute::get(fn() => $this->nama_fakultas);
+        return Attribute::get(fn() => $this->nama_fk);
     }
     protected function fakultasFk(): Attribute
     {
-        return Attribute::get(fn () => 'Fakultas '.$this->nama_fakultas);
+        return Attribute::get(fn () => 'Fakultas '.$this->nama_fk);
     }
 
     protected function createdDay(): Attribute
@@ -85,9 +92,9 @@ class Fakultas extends Model
         $searchTerm = '%'.$search.'%';
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-            $q->where('fakultas.nama_fakultas', 'like', $searchTerm)
+            $q->where('fakultas.nama_fk', 'like', $searchTerm)
                 ->orWhere('fakultas.kode_fk', 'like', $searchTerm)
-                ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
                 
                 if (is_numeric($search)) {
                     $q->orWhere('fakultas.id', 'like', $search);

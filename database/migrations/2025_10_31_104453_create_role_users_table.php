@@ -22,7 +22,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
 
-            $table->foreignId('prodi_id')->nullable();
+            $table->foreignId('pr_id')->nullable();
             $table->string('name');
 
             $table->enum('status', [
@@ -50,7 +50,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
                 ->unique();
-            $table->foreignId('prodi_id')->nullable();
+            $table->foreignId('pr_id')->nullable();
 
             $table->string('name');
 
@@ -79,7 +79,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->unique();
 
-            $table->foreignId('prodi_id')->nullable();
+            $table->foreignId('pr_id')->nullable();
 
             $table->string('name');
             $table->year('tahun_angkatan');

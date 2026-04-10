@@ -104,7 +104,7 @@ trait WithUserExcel
                 'nidk'             => $data['nidk'] ?? '',
                 'nim'              => $data['nim'] ?? '',
                 'tahun_angkatan'   => $data['tahun angkatan'] ?? '',
-                // 'program_id'    => $this->prodi_id ?? '',
+                // 'program_id'    => $this->pr_id ?? '',
                 'role'             => strtolower($data['role'] ?? ''),
             ];
         }
@@ -143,7 +143,7 @@ trait WithUserExcel
     {
         $rules = [
             'excel_file' => 'required|file|mimes:xlsx,xls|max:10240',
-            'prodi_id' => 'required|exists:prodis,id',
+            'pr_id' => 'required|exists:prodis,id',
         ];
         $this->validate($rules, $this->validationMessagesUser());
 
@@ -248,9 +248,9 @@ trait WithUserExcel
 
         // $prodiName = $data['program_studi'] ?? null;
         // if ($prodiName) {
-        //     $this->prodi_id = Prodi::where('nama_prodi', $prodiName)->value('id');
+        //     $this->pr_id = Prodi::where('nama_pr', $prodiName)->value('id');
             
-        //     if (!$this->prodi_id) {
+        //     if (!$this->pr_id) {
         //         throw new \Exception("Program studi '$prodiName' tidak ditemukan di database");
         //     }
         // } else {
@@ -271,7 +271,7 @@ trait WithUserExcel
                 'name' => $this->name,
                 'nip' => $this->nip,
                 'nitk' => $this->nitk,
-                'prodi_id' => $this->prodi_id
+                'pr_id' => $this->pr_id
             ]);
         }
         elseif ($this->roleType === 'dosen') {
@@ -281,7 +281,7 @@ trait WithUserExcel
                 'nidn' => $this->nidn,
                 'nidk' => $this->nidk,
                 'name' => $this->name,
-                'prodi_id' => $this->prodi_id
+                'pr_id' => $this->pr_id
             ]);
         }
         elseif ($this->roleType === 'mahasiswa') {
@@ -290,7 +290,7 @@ trait WithUserExcel
                 'nim' => $this->nim,
                 'tahun_angkatan' => $this->tahun_angkatan,
                 'name' => $this->name,
-                'prodi_id' => $this->prodi_id,
+                'pr_id' => $this->pr_id,
             ]);
         }
 

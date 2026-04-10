@@ -52,7 +52,7 @@ class CreateNewUser implements CreatesNewUsers
                 Admin::create([
                     'user_id' => $user->id,
                     'name' => $input['name'],
-                    'prodi_id' => null,
+                    'pr_id' => null,
                 ]);
             }
 

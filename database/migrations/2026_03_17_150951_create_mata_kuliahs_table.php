@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('kode_mk')->nullable();
             $table->char('digit_semester', 2);
             $table->char('digit_mk', 2)->nullable();
-            $table->string('nama_matkul');
+            $table->string('nama_mk');
             $table->integer('semester');
             $table->integer('sks_kuliah')->default(1);
             $table->enum('tipe_sks', [1, 2, 3, 4])->default(1);
@@ -27,7 +27,7 @@ return new class extends Migration
 
         Schema::create('prodi_pivot_mk', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
+            $table->foreignId('pr_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
             $table->integer('sort_order')->default(0);
             $table->timestamps();

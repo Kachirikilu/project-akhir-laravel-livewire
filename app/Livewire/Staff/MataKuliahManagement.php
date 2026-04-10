@@ -6,9 +6,9 @@ use App\Models\Akademik\MataKuliah;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Staff\MatkulManagement\WithMatkulDelete;
-use App\Livewire\Staff\MatkulManagement\WithMatkulFilters;
-use App\Livewire\Staff\MatkulManagement\WithMatkulModal;
+use App\Livewire\Staff\MKManagement\WithMKDelete;
+use App\Livewire\Staff\MKManagement\WithMKFilters;
+use App\Livewire\Staff\MKManagement\WithMKModal;
 // use App\Models\ProgramStudi\Prodi;
 // use App\Models\ProgramStudi\Jurusan;
 // use App\Models\ProgramStudi\Fakultas;
@@ -21,9 +21,9 @@ class MataKuliahManagement extends Component
 {
     use WithFakultasSearchFilters;
     use WithJurusanSearchFilters;
-    use WithMatkulDelete;
-    use WithMatkulFilters;
-    use WithMatkulModal;
+    use WithMKDelete;
+    use WithMKFilters;
+    use WithMKModal;
     use WithPagination;
     use WithProdiSearchFilters;
 
@@ -41,7 +41,7 @@ class MataKuliahManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshMatkulsList',
+    protected $listeners = ['refresh-table' => 'refreshMKsList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -64,7 +64,7 @@ class MataKuliahManagement extends Component
         $this->resetPage();
     }
 
-    public function refreshMatkulsList()
+    public function refreshMKsList()
     {
         $this->resetPage();
     }
@@ -161,8 +161,8 @@ class MataKuliahManagement extends Component
             // Terapkan filter tambahan dari button (jika ada)
             $this->buttonMKFilter($queryMK);
 
-            return view('livewire.staff.matkul-management', [
-                'matkuls' => $queryMK->paginate($this->perPage),
+            return view('livewire.staff.mk-management', [
+                'mks' => $queryMK->paginate($this->perPage),
                 'totalAllOpsi' => $totalAllOpsi,
                 'totalWajib' => $totalWajib,
                 'totalPilihan' => $totalPilihan,
@@ -177,8 +177,8 @@ class MataKuliahManagement extends Component
         } catch (QueryException $e) {
             session()->flash('error', 'Terjadi kesalahan database: '.$e->getMessage());
 
-            return view('livewire.staff.matkul-management', [
-                'matkuls' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
+            return view('livewire.staff.mk-management', [
+                'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
                 'totalAllOpsi' => 0,
                 'totalWajib' => 0,
                 'totalPilihan' => 0,

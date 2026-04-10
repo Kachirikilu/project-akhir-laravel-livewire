@@ -26,7 +26,7 @@
                         '{{ $x->deskripsi ?? '' }}',
                         '{{ $x->mk_id ?? '' }}',
                         '{{ $x->kode_mk ?? '' }}',
-                        '{{ $x->matkul ?? '' }}',
+                        '{{ $x->mk ?? '' }}',
                         '{{ $x->tahun_akademik ?? '' }}',
                         '{{ $x->draf_text ?? '' }}'
                     );
@@ -51,7 +51,7 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
                         $store.rps?.setDeleteProdi(
-                            '{{ $x->matkul ?? '' }}',
+                            '{{ $x->mk ?? '' }}',
                             '{{ $x->kode ?? '' }}'
                         );
                         $flux.modal('mk-delete').show();

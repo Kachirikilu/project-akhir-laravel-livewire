@@ -37,7 +37,7 @@
 
             @if ($switchTable === 'rps')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'matkul',
+                    'sortFieldString' => 'mk',
                     'headString' => 'Mata Kuliah'
                 ])
                 @include('livewire.global.table.head-table', [
@@ -152,7 +152,7 @@
             
 
             @if ($switchTable === 'rps')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->matkul ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">{{ $x->mk ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->akademik ?? '-' }}</td>
 
                 <td class="{{ $mainKolom }} text-center">

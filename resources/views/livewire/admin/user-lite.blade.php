@@ -31,7 +31,7 @@
                         <td class="px-4 py-2">{{ $user->identity1 ?? '' }}</td>
                         <td class="px-4 py-2">{{ $user->identity2 ?? '' }}</td>
                         <td class="px-4 py-2">{{ $user->identity3 ?? '' }}</td>
-                        <td class="px-4 py-2">{{ $user->admin->prodi->prodi ?? $user->dosen->prodi->prodi ?? $user->mahasiswa->prodi->prodi ?? '' }}</td>
+                        <td class="px-4 py-2">{{ $user->admin->pr_rel->prodi ?? $user->dosen->pr_rel->prodi ?? $user->mahasiswa->pr_rel->prodi ?? '' }}</td>
                         <td class="px-4 py-2">{{ $user->status ?? '' }}</td>
                     </tr>
                 @empty

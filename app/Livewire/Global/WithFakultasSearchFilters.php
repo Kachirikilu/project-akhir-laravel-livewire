@@ -14,7 +14,7 @@ trait WithFakultasSearchFilters
 
     public $fakultasSearchResults = [];
 
-    public $fakultas_id;
+    public $fk_id;
 
     public $fakultas_name = '';
 
@@ -90,9 +90,9 @@ trait WithFakultasSearchFilters
 
     public function updatedFakultasNameSearch($value)
     {
-        $this->fakultas_id = null;
+        $this->fk_id = null;
         $this->fakultas_items = null;
-        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
+        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
 
         $query = $this->fkQuery()
             ->select('fakultas.*');
@@ -114,18 +114,18 @@ trait WithFakultasSearchFilters
             });
 
             if ($exactMatch) {
-                $this->fakultas_id = $exactMatch->id;
+                $this->fk_id = $exactMatch->id;
                 $this->fakultas_items = $this->itemsFk($exactMatch);
                 $this->fakultasNameSearch = $exactMatch->fakultasFk;
                 $this->fakultasResults = [];
             }
 
         } else {
-            if (Auth::user()->fakultas_id) {
+            if (Auth::user()->fk_id) {
                 $this->fakultasResults = $this->getFakultasbyUser();
             } else {
                 $this->fakultasResults = $this->mapFakultas(
-                    $query->orderBy('fakultas.nama_fakultas')->limit(12)->get()
+                    $query->orderBy('fakultas.nama_fk')->limit(12)->get()
                 );
             }
         }
@@ -134,20 +134,20 @@ trait WithFakultasSearchFilters
     public function getFakultasbyUser()
     {
         $user = Auth::user();
-        $fakultasId = $user->fakultas_id ?? null;
+        $fakultasId = $user->fk_id ?? null;
 
         $query = $this->fkQuery();
 
         if (! $fakultasId) {
             $defaultFakultas = $query
-                ->orderBy('nama_fakultas', 'asc')
+                ->orderBy('nama_fk', 'asc')
                 ->limit(12)
                 ->get();
             return $this->mapFakultas($defaultFakultas);
         }
 
         $mainResults = $query
-            ->orderBy('nama_fakultas', 'asc')
+            ->orderBy('nama_fk', 'asc')
             ->get()
             ->sortBy(fn ($f) => $f->id === $fakultasId ? 0 : 1)
             ->take(12);
@@ -157,7 +157,7 @@ trait WithFakultasSearchFilters
 
     public function fetchFakultas($query = '')
     {
-        if (empty($query) || $this->fakultas_id) {
+        if (empty($query) || $this->fk_id) {
             $this->fakultasResults = $this->getFakultasbyUser();
 
             return;
@@ -166,7 +166,7 @@ trait WithFakultasSearchFilters
 
     public function selectFakultas($id, $fakultasName)
     {
-        $this->fakultas_id = $id;
+        $this->fk_id = $id;
         $this->fakultasNameSearch = $fakultasName;
         $this->fakultasResults = $this->getFakultasbyUser();
 
@@ -175,29 +175,29 @@ trait WithFakultasSearchFilters
             $this->fakultas_items = $this->itemsFk($data);
         }
 
-        // if (property_exists($this, 'prodi_id_array')) {
-        //     $this->prodi_id_array = [];
+        // if (property_exists($this, 'pr_id_array')) {
+        //     $this->pr_id_array = [];
         //     $this->prodi_name_array = [];
         //     $this->prodi_items_array = [];
         //     $this->prodiNameSearch = '';
         // }
 
-        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
+        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
     }
 
     public function resetFakultasInput()
     {
-        $this->fakultas_id = null;
+        $this->fk_id = null;
         $this->fakultas_items = null;
         $this->fakultasNameSearch = '';
 
-        // if (property_exists($this, 'prodi_id_array')) {
-        //     $this->prodi_id_array = [];
+        // if (property_exists($this, 'pr_id_array')) {
+        //     $this->pr_id_array = [];
         //     $this->prodi_name_array = [];
         //     $this->prodi_items_array = [];
         // }
 
         $this->updatedFakultasNameSearch('');
-        $this->resetErrorBag(['fakultas_id', 'fakultasNameSearch']);
+        $this->resetErrorBag(['fk_id', 'fakultasNameSearch']);
     }
 }

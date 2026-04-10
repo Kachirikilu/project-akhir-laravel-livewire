@@ -80,7 +80,7 @@ return new class extends Migration
         // Prodis - CPL (Ownership)
         Schema::create('prodi_pivot_cpl', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
+            $table->foreignId('pr_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('cpl_id')->constrained('cpls')->onDelete('cascade');
             $table->integer('sort_order')->default(0);
         });

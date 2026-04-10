@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\MatkulManagement;
+namespace App\Livewire\Staff\MKManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\MataKuliah;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-trait WithMatkulModal
+trait WithMKModal
 {
     use HasToast;
 
@@ -61,7 +61,7 @@ trait WithMatkulModal
         try {
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
 
-            $this->prodi_id_array = $mk->prodis->pluck('id')->toArray();
+            $this->pr_id_array = $mk->prodis->pluck('id')->toArray();
             foreach ($mk->prodis as $prodi) {
                 $this->prodi_items_array[] = [
                     'kode' => $prodi->kode,
@@ -76,16 +76,16 @@ trait WithMatkulModal
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
-                $this->jurusan_id = $firstProdi->jurusan_id;
+                $this->jr_id = $firstProdi->jr_id;
                 $this->jurusanNameSearch = $firstProdi->jurusanJr;
                 $this->jurusan_kode = $firstProdi->kode;
 
-                $this->fakultas_id = $firstProdi->fakultas_id;
+                $this->fk_id = $firstProdi->fk_id;
                 $this->fakultasNameSearch = $firstProdi->fakultasFk;
                 $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
-                    $this->prodi_id = $firstProdi->id;
+                    $this->pr_id = $firstProdi->id;
                 }
                 if ($tingkatan == 1) {
                     $this->prodiNameSearch = $firstProdi->prodi;
@@ -128,10 +128,10 @@ trait WithMatkulModal
         //     1 => 1, 2 => 2, 3 => 3, 4 => 4,
         // ];
         $tingkatan = $this->mkType ?? 1;
-        $targetProdiIds = ($tingkatan === 1) ? [$this->prodi_id] : ($this->prodi_id_array ?: []);
+        $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
 
         $rules = [
-            'nama_matkul' => 'required|string|max:255',
+            'nama_mk' => 'required|string|max:255',
             'semester' => 'required|integer|min:1|max:8',
             'digit_semester' => 'required|string|size:2',
             'digit_mk' => [
@@ -148,7 +148,7 @@ trait WithMatkulModal
 
                         $query = DB::table('mata_kuliahs')
                             ->join('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-                            ->where('prodi_pivot_mk.prodi_id', $pId)
+                            ->where('prodi_pivot_mk.pr_id', $pId)
                             ->where('mata_kuliahs.digit_mk', $value);
 
                         if ($isEditing) {
@@ -156,7 +156,7 @@ trait WithMatkulModal
                         }
 
                         if ($query->exists()) {
-                            $namaProdi = DB::table('prodis')->where('id', $pId)->value('nama_prodi') ?? "Prodi ID: $pId";
+                            $namaProdi = DB::table('prodis')->where('id', $pId)->value('nama_pr') ?? "Prodi ID: $pId";
                             $fail("Digit MK '$value' sudah terpakai di Program Studi: ***$namaProdi***.");
                             break;
                         }
@@ -169,9 +169,9 @@ trait WithMatkulModal
         ];
 
         if ($tingkatan === 1) {
-            $rules['prodi_id'] = 'required|exists:prodis,id';
+            $rules['pr_id'] = 'required|exists:prodis,id';
         } else {
-            $rules['prodi_id_array'] = 'required|array|min:1';
+            $rules['pr_id_array'] = 'required|array|min:1';
         }
 
         $validator = Validator::make($data, $rules, $this->validationMessagesMK());
@@ -211,8 +211,8 @@ trait WithMatkulModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $data['prodi_id'] = $this->prodi_id;
-        $data['prodi_id_array'] = $this->prodi_id_array;
+        $data['pr_id'] = $this->pr_id;
+        $data['pr_id_array'] = $this->pr_id_array;
 
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
@@ -230,7 +230,7 @@ trait WithMatkulModal
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
-                    'nama_matkul' => $this->normalizeNama($validated['nama_matkul']),
+                    'nama_mk' => $this->normalizeNama($validated['nama_mk']),
                     'semester' => $validated['semester'],
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
@@ -239,7 +239,7 @@ trait WithMatkulModal
                     'deskripsi' => $data['deskripsi'] ?? null,
                 ]);
 
-                $targetIds = ($tingkatan === 1) ? [$this->prodi_id] : ($this->prodi_id_array ?: []);
+                $targetIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
                 $targetIds = array_filter($targetIds);
                 if (! empty($targetIds)) {
                     $mk->prodis()->attach($targetIds);
@@ -249,7 +249,7 @@ trait WithMatkulModal
             $this->resetInputMK();
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_matkul']));
+            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']));
 
         } catch (ValidationException $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
@@ -266,8 +266,8 @@ trait WithMatkulModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $data['prodi_id'] = $this->prodi_id;
-        $data['prodi_id_array'] = $this->prodi_id_array;
+        $data['pr_id'] = $this->pr_id;
+        $data['pr_id_array'] = $this->pr_id_array;
 
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
@@ -286,7 +286,7 @@ trait WithMatkulModal
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
-                    'nama_matkul' => $this->normalizeNama($validated['nama_matkul']),
+                    'nama_mk' => $this->normalizeNama($validated['nama_mk']),
                     'semester' => $validated['semester'],
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
@@ -297,8 +297,8 @@ trait WithMatkulModal
 
                 // 4. LOGIKA TARGET IDs
                 $targetIds = ($tingkatan === 1)
-                            ? [$this->prodi_id]
-                            : ($this->prodi_id_array ?: []);
+                            ? [$this->pr_id]
+                            : ($this->pr_id_array ?: []);
 
                 $cleanIds = array_values(array_filter($targetIds));
 
@@ -313,7 +313,7 @@ trait WithMatkulModal
 
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_matkul']), type: 'update');
+            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']), type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: $e->getMessage(), variant: 'danger');
@@ -328,16 +328,16 @@ trait WithMatkulModal
     private function validationMessagesMK()
     {
         return [
-            'prodi_id.required' => 'Program Studi wajib diisi!',
+            'pr_id.required' => 'Program Studi wajib diisi!',
 
-            'prodi_id_array.required' => 'Program Studi wajib diisi!',
-            'prodi_id_array.array' => 'Program Studi dalam bentuk Array!',
-            'prodi_id_array.min' => 'Program Studi minimal berisi satu data!',
+            'pr_id_array.required' => 'Program Studi wajib diisi!',
+            'pr_id_array.array' => 'Program Studi dalam bentuk Array!',
+            'pr_id_array.min' => 'Program Studi minimal berisi satu data!',
 
             // Nama Mata Kuliah
-            'nama_matkul.required' => 'Nama Mata Kuliah wajib diisi!',
-            'nama_matkul.string' => 'Nama Mata Kuliah harus berupa teks!',
-            'nama_matkul.max' => 'Nama Mata Kuliah tidak boleh lebih dari 255 karakter!',
+            'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
+            'nama_mk.string' => 'Nama Mata Kuliah harus berupa teks!',
+            'nama_mk.max' => 'Nama Mata Kuliah tidak boleh lebih dari 255 karakter!',
 
             // Semester (Integer)
             'semester.required' => 'Semester wajib diisi!',
@@ -371,11 +371,11 @@ trait WithMatkulModal
         $this->jurusanNameSearch = '';
         $this->fakultasNameSearch = '';
 
-        $this->prodi_id = null;
-        $this->jurusan_id = null;
-        $this->fakultas_id = null;
+        $this->pr_id = null;
+        $this->jr_id = null;
+        $this->fk_id = null;
 
-        $this->prodi_id_array = [];
+        $this->pr_id_array = [];
         $this->prodi_items_array = [];
 
         $this->resetErrorBag();

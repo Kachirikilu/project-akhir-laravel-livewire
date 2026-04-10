@@ -36,7 +36,7 @@ class UserRoleSeeder extends Seeder
             ]);
             Admin::create([
                 'user_id' => $adminUser->id,
-                'prodi_id' => $prodiUtama->id, // Tambahkan prodi_id
+                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
                 'nip' => '199001012024011001',
                 'name' => 'Wildan Athif Muttaqien (Admin)',
                 'status' => 'Aktif',
@@ -49,7 +49,7 @@ class UserRoleSeeder extends Seeder
             ]);
             Dosen::create([
                 'user_id' => $dosenUser->id,
-                'prodi_id' => $prodiUtama->id, // Tambahkan prodi_id
+                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
                 'nip' => '199001012024011002',
                 'nidn' => '0012345678',
                 'name' => 'Wildan Athif Muttaqien (Dosen)',
@@ -63,7 +63,7 @@ class UserRoleSeeder extends Seeder
             ]);
             Mahasiswa::create([
                 'user_id' => $mhsUser->id,
-                'prodi_id' => $prodiUtama->id, // Tambahkan prodi_id
+                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
                 'nim' => '06111281722000',
                 'name' => 'Wildan Athif Muttaqien (Mhs)',
                 'tahun_angkatan' => 2021,
@@ -83,7 +83,7 @@ class UserRoleSeeder extends Seeder
                 $uA = User::create(['email' => "admin.test{$i}@gmail.com", 'password' => $defaultPw]);
                 Admin::create([
                     'user_id' => $uA->id, 
-                    'prodi_id' => $randomProdiId,
+                    'pr_id' => $randomProdiId,
                     'name' => "Admin Test {$i}", 
                     'nip' => "888{$i}", 
                     'status' => 'Aktif'
@@ -93,7 +93,7 @@ class UserRoleSeeder extends Seeder
                 $uD = User::create(['email' => "dosen.test{$i}@gmail.com", 'password' => $defaultPw]);
                 Dosen::create([
                     'user_id' => $uD->id, 
-                    'prodi_id' => $randomProdiId,
+                    'pr_id' => $randomProdiId,
                     'name' => "Dosen Test {$i}", 
                     'nip' => "777{$i}", 
                     'status' => 'Aktif'
@@ -103,7 +103,7 @@ class UserRoleSeeder extends Seeder
                 $uM = User::create(['email' => "mhs.test{$i}@gmail.com", 'password' => $defaultPw]);
                 Mahasiswa::create([
                     'user_id' => $uM->id, 
-                    'prodi_id' => $randomProdiId,
+                    'pr_id' => $randomProdiId,
                     'name' => "Mhs Test {$i}", 
                     'nim' => "0611{$i}", 
                     'tahun_angkatan' => 2021, 

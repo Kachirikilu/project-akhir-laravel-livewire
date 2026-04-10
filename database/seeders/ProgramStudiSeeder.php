@@ -42,24 +42,24 @@ class ProgramStudiSeeder extends Seeder
             foreach ($data as $f) {
                 // 1. Create Fakultas
                 $fakultas = Fakultas::create([
-                    'nama_fakultas' => $f['nama'],
+                    'nama_fk' => $f['nama'],
                     'kode_fk' => $f['kode'],
                 ]);
 
                 foreach ($f['jurusan'] as $j) {
                     // 2. Create Jurusan
                     $jurusan = Jurusan::create([
-                        'fakultas_id' => $fakultas->id,
-                        'nama_jurusan' => $j['nama'],
+                        'fk_id' => $fakultas->id,
+                        'nama_jr' => $j['nama'],
                         'kode_jr' => $j['kode'],
                     ]);
 
                     foreach ($strataOptions as $strata) {
                         // 3. Create Prodi (S1, S2, S3)
                         Prodi::create([
-                            'jurusan_id' => $jurusan->id,
-                            'nama_prodi' => $j['nama'], // Nama prodi sama dengan nama jurusan sesuai request
-                            'nama_strata' => $strata,
+                            'jr_id' => $jurusan->id,
+                            'nama_pr' => $j['nama'], // Nama prodi sama dengan nama jurusan sesuai request
+                            'strata' => $strata,
                         ]);
                     }
                 }

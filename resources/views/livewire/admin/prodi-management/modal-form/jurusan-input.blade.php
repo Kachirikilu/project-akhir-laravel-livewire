@@ -14,20 +14,20 @@
         'alpine' => 'prodi',
         // 'colorIcon' => $colorIcon,
         'labelString' => 'Nama Jurusan',
-        'modelString' => 'nama_jurusan',
+        'modelString' => 'nama_jr',
         // 'typeString' => 'text',
         'iconString' => 'book-open',
         'placeholder' => 'Masukkan nama Jurusan',
-        'message' => $errors->first('nama_jurusan')
+        'message' => $errors->first('nama_jr')
     ])
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
         'xResults' => $fakultasResults,
         'selectX' => 'selectFakultas',
-        'modelString' => 'nama_fakultas_search',
+        'modelString' => 'nama_fk_search',
 
-        'idString' => 'fakultas_id',
+        'idString' => 'fk_id',
         'itemsAllString' => 'fakultas_items',
 
         'resetXInput' => 'resetFakultasInput()',

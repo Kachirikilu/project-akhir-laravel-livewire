@@ -129,7 +129,7 @@ trait WithReferensiSearchFilters
                 }
             }
         } else {
-            if (Auth::user()->prodi_id) {
+            if (Auth::user()->pr_id) {
                 $this->refResults = $this->getRefbyUser();
             } else {
                 $this->refResults = $this->mapRef(
@@ -142,7 +142,7 @@ trait WithReferensiSearchFilters
     public function getRefbyUser()
     {
         $user = Auth::user();
-        $prodiId = $user->prodi_id ?? null;
+        $prodiId = $user->pr_id ?? null;
 
         $query = $this->refQuery();
         
@@ -155,9 +155,9 @@ trait WithReferensiSearchFilters
         }
 
         $mainResults = $query->where(function ($q) use ($prodiId) {
-            $q->whereRelation('scpmks.cpmks.rps.matkul_rel.prodis', 'prodis.id', $prodiId)
-            ->orWhereRelation('cpmks.rps.matkul_rel.prodis', 'prodis.id', $prodiId)
-            ->orWhereRelation('rps.matkul_rel.prodis', 'prodis.id', $prodiId);
+            $q->whereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'prodis.id', $prodiId)
+            ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $prodiId)
+            ->orWhereRelation('rps.mk_rel.prodis', 'prodis.id', $prodiId);
         })->limit(12)->get();
         
 

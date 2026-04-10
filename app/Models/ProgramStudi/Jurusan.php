@@ -14,21 +14,21 @@ class Jurusan extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['fakultas_id', 'kode_jr', 'nama_jurusan'];
+    protected $fillable = ['fk_id', 'kode_jr', 'nama_jr'];
     protected $appends = ['kode', 'jurusan', 'fakultas'];
 
-    public function fakultas_rel()
+    public function fk_rel()
     {
-        return $this->belongsTo(Fakultas::class, 'fakultas_id')->withTrashed();
+        return $this->belongsTo(Fakultas::class, 'fk_id')->withTrashed();
     }
 
     public function prodis(): HasMany
     {
-        return $this->hasMany(Prodi::class);
+        return $this->hasMany(Prodi::class, 'jr_id');
     }
 
     protected function jurusan(): Attribute {
-        return Attribute::get(fn() => $this->nama_jurusan);
+        return Attribute::get(fn() => $this->nama_jr);
     }
 
     protected function kode(): Attribute
@@ -37,7 +37,7 @@ class Jurusan extends Model
             if (!empty($this->attributes['kode_jr'])) {
                 return $this->attributes['kode_jr'];
             }
-            $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            $kodeFakultas = $this->fk_rel?->kode_fk;
             if (!empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -48,7 +48,7 @@ class Jurusan extends Model
     protected function kodeFk(): Attribute
     {
         return Attribute::get(function () {
-            $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            $kodeFakultas = $this->fk_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -62,7 +62,7 @@ class Jurusan extends Model
     //         if (!empty($this->attributes['kode_jr'])) {
     //             return $this->attributes['kode_jr'];
     //         }
-    //         $kodeFakultas = $this->fakultas_rel?->kode_fk;
+    //         $kodeFakultas = $this->fk_rel?->kode_fk;
     //         if (!empty($kodeFakultas)) {
     //             return $kodeFakultas;
     //         }
@@ -75,7 +75,7 @@ class Jurusan extends Model
             if (!empty($this->attributes['kode_jr'])) {
                 return 2;
             }
-            $kodeFakultas = $this->fakultas_rel?->kode_fk;
+            $kodeFakultas = $this->fk_rel?->kode_fk;
             if (!empty($kodeFakultas)) {
                 return 3;
             }
@@ -85,14 +85,14 @@ class Jurusan extends Model
 
     protected function jurusanJr(): Attribute
     {
-        return Attribute::get(fn () => 'Jurusan '.$this->nama_jurusan);
+        return Attribute::get(fn () => 'Jurusan '.$this->nama_jr);
     }
     protected function fakultas(): Attribute {
-        return Attribute::get(fn() => $this->fakultas_rel?->nama_fakultas);
+        return Attribute::get(fn() => $this->fk_rel?->nama_fk);
     }
     protected function fakultasFk(): Attribute
     {
-        return Attribute::get(fn () => 'Fakultas '.$this->fakultas_rel?->nama_fakultas);
+        return Attribute::get(fn () => 'Fakultas '.$this->fk_rel?->nama_fk);
     }
 
     protected function createdDay(): Attribute
@@ -128,9 +128,9 @@ class Jurusan extends Model
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Filter dasar Jurusan
-            $q->where('jurusans.nama_jurusan', 'like', $searchTerm)
+            $q->where('jurusans.nama_jr', 'like', $searchTerm)
                 ->orWhere('jurusans.kode_jr', 'like', $searchTerm)
-                ->orWhereRaw("CONCAT('Jurusan ', nama_jurusan) LIKE ?", [$searchTerm]);
+                ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm]);
 
             if (is_numeric($search)) {
                 $q->orWhere('jurusans.id', 'like', $search);
@@ -152,10 +152,10 @@ class Jurusan extends Model
                 });
 
             // 2. Filter berdasarkan Fakultas (Relasi)
-            $q->orWhereHas('fakultas_rel', function ($sq) use ($searchTerm) {
-                $sq->where('nama_fakultas', 'like', $searchTerm)
+            $q->orWhereHas('fk_rel', function ($sq) use ($searchTerm) {
+                $sq->where('nama_fk', 'like', $searchTerm)
                     ->orWhere('kode_fk', 'like', $searchTerm)
-                    ->orWhereRaw("CONCAT('Fakultas ', nama_fakultas) LIKE ?", [$searchTerm]);
+                    ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
             });
         });
     }

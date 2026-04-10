@@ -31,9 +31,9 @@
                         $store.prodi?.setValueProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->strata ?? '' }}',
-                            '{{ $x->jurusan_id ?? '' }}',
+                            '{{ $x->jr_id ?? '' }}',
                             '{{ $x->jurusanJr ?? '' }}',
-                            '{{ $x->fakultas_id ?? '' }}',
+                            '{{ $x->fk_id ?? '' }}',
                             '{{ $x->fakultasFk ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $x->kode_jr ?? '' }}',

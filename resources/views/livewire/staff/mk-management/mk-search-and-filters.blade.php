@@ -24,7 +24,7 @@
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}
         @include('livewire.global.search-and-filters.page-control', [
             'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150],
-            'key' => 'page-control-matkul'
+            'key' => 'page-control-mk'
         ])
     </div>
 
