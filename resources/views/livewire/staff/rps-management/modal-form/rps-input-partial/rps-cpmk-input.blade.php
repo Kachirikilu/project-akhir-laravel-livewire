@@ -27,7 +27,6 @@
             'typeX2String' => 'total_bobot',
         
             'nameXString' => 'Capaian Pembelajaran Mata Kuliah (CPMK)',
-            'searchString' => 'cpmk_search',
             'nameSearchString' => 'cpmkNameSearch',
             'fetchString' => 'fetchCPMK',
             'iconString' => 'academic-cap',

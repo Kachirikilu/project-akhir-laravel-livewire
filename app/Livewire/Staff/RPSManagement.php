@@ -22,6 +22,8 @@ use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
+use App\Livewire\Staff\RPSManagement\WithCPMKModal;
+
 
 use App\Models\Akademik\Rps;
 use App\Models\Akademik\Cpmk;
@@ -52,6 +54,7 @@ class RPSManagement extends Component
     use WithDosenSearchFilters;
 
     use WithRPSModal;
+    use WithCPMKModal;
 
     use WithPagination;
 
@@ -102,9 +105,9 @@ class RPSManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'mk', 4 => 'akademik', 5 => 'is_draf', 6 => 'revisi', 7 => 'created_at', 8 => 'updated_at'],
-            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
-            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'bobot', 6 => 'indikator', 7 => 'created_at', 8 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'mk', 4 => 'count-cpmk', 5 => 'count-scpmk', 6 => 'total_bobot', 7 => 'revisi', 8 => 'is_draf', 9 => 'revisi', 10 => 'created_at', 11 => 'updated_at'],
+            'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
+            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'metodologi', 6 => 'indikator', 7 => 'metode', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at']
         ];
@@ -115,8 +118,8 @@ class RPSManagement extends Component
 
         $aliases = [
             'deskripsi' => ['mk', 'deskripsi', 'judul'],
-            'materi'    => ['materi', 'mk', 'penulis'],
-            'akademik'  => ['akademik', 'bobot'],
+            'materi'    => ['materi', 'penulis'],
+            'akademik'  => ['akademik', 'bobot', 'total_bobot'],
             'is_draf'   => ['is_draf', 'indikator'],
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at']
@@ -190,9 +193,9 @@ class RPSManagement extends Component
         $this->inputRefFilter();
         $this->inputDosenFilter();
 
-        $this->inputProdiFilter();
-        $this->inputJurusanFilter();
-        $this->inputFakultasFilter();
+        $this->inputPrFilter();
+        $this->inputJrFilter();
+        $this->inputFkFilter();
 
         $queryRPS = $this->inputRPSSearch();
         $baseDataRPS = $this->inputRPSSearch()

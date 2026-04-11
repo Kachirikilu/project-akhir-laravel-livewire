@@ -125,21 +125,16 @@ trait WithDosenSearchFilters
             });
 
             if ($exactMatch) {
-                $this->dosen_id = $exactMatch->id;
-                $this->dosen_items = $this->itemsDosen($exactMatch);
-                $this->dosenNameSearch = $exactMatch->name;
-                $this->dosenResults = [];
-            }
-            if ($exactMatch) {
-                $this->dosenNameSearch = $exactMatch->name;
                 if ($this->modeDosen == 'single') {
+                    $this->dosenNameSearch = $exactMatch->name;
                     $this->dosen_id = $exactMatch->id;
                     $this->dosen_items = $this->itemsDosen($exactMatch);
-                    $this->dosenResults = [];
                 } else {
+                    $this->dosenNameSearch = '';
                     $this->dosen_id_array[] = $exactMatch->id;
                     $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
                 }
+                $this->dosenResults = $this->getDosenbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -220,7 +215,6 @@ trait WithDosenSearchFilters
             $this->dosen_id_array[] = $id;
             $this->dosen_name_array[] = $data->name;
             $this->dosen_items_array[] = $this->itemsDosen($data);
-            $this->dosen_search = '';
         }
     }
 

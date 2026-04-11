@@ -115,12 +115,12 @@ class ProgramStudiManagement extends Component
 
     public function render()
     {
-        $this->inputJurusanFilter();
-        $this->inputFakultasFilter();
+        $this->inputJrFilter();
+        $this->inputFkFilter();
 
         $queryProdi = $this->inputProdiSearch();
         $queryJurusan = $this->inputJurusanSearch();
-        $queryFakultas = $this->inputFakultasSearch();
+        $queryFakultas = $this->inputFkSearch();
 
         $queryPr = clone $queryProdi;
         $queryJr = clone $queryJurusan;

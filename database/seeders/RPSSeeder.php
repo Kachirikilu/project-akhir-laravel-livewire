@@ -61,7 +61,7 @@ class RPSSeeder extends Seeder
                 $refIds = [];
                 for ($r = 1; $r <= 2; $r++) {
                     $ref = Referensi::create([
-                        'kode_ref' => 'REF-'.$mk->id.'-'.$index.$r,
+                        'kode_ref' => 'REF'.$mk->id.$index.$r,
                         'judul' => "Buku Ajar {$mk->nama_mk} Vol. {$r}",
                         'penulis' => 'Dosen Teknik UNSRI',
                         'tahun' => rand(2020, 2026),
@@ -98,7 +98,7 @@ class RPSSeeder extends Seeder
         for ($i = 1; $i <= 3; $i++) {
 
             $cpmk = CPMK::create([
-                'kode_cpmk' => 'CPMK-'.$mk->id.'-'.$i,
+                'kode_cpmk' => 'CPMK'.$mk->id.$i,
                 'deskripsi' => 'Mahasiswa mampu menguasai kompetensi tingkat '.($i == 1 ? 'Dasar' : ($i == 2 ? 'Menengah' : 'Lanjut'))." pada mata kuliah {$mk->nama_mk}.",
                 'created_at' => $waktu,
             ]);
@@ -139,7 +139,7 @@ class RPSSeeder extends Seeder
             for ($j = 1; $j <= 2; $j++) {
 
                 $sub = SubCPMK::create([
-                    'kode_scpmk' => 'Sub-'.$i.'.'.$j,
+                    'kode_scpmk' => 'SUB'.$i.$j,
                     'deskripsi' => 'Mampu menjelaskan dan menerapkan konsep materi bagian '.$i.'.'.$j,
                     'materi' => 'Topik Bahasan ke-'.$i.'.'.$j,
                     'metodologi' => 'Problem Based Learning',
@@ -169,7 +169,7 @@ class RPSSeeder extends Seeder
     {
         // Versi simpel: 1 CPMK, 1 CPL, 1 Sub-CPMK
         $cpmk = CPMK::create([
-            'kode_cpmk' => 'CPMK-'.$mk->id.'-P',
+            'kode_cpmk' => 'CPMK'.$mk->id,
             'deskripsi' => 'Memahami prinsip dasar dan fondasi utama dari '.$mk->nama_mk,
             'created_at' => $waktu,
         ]);
@@ -180,7 +180,7 @@ class RPSSeeder extends Seeder
         $cpmk->cpls()->attach($cpl1->id);
 
         $sub = SubCPMK::create([
-            'kode_scpmk' => 'Sub-1',
+            'kode_scpmk' => 'SUB1',
             'deskripsi' => 'Mendeskripsikan ruang lingkup mata kuliah secara umum',
             'materi' => 'Pendahuluan dan Kontrak Perkuliahan',
             'metodologi' => 'Discovery Learning',

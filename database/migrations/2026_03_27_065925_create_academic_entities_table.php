@@ -22,17 +22,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('cpls', function (Blueprint $table) {
-            $table->id();
-            $table->string('kode_cpl');
-            $table->text('deskripsi');
-            $table->softDeletes();
-            $table->timestamps();
-        });
-
         Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_cpmk', 10);
+            $table->string('kode_cpmk');
             $table->text('deskripsi');
             $table->softDeletes();
             $table->timestamps();
@@ -40,7 +32,7 @@ return new class extends Migration
 
         Schema::create('sub_cpmks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_scpmk', 10);
+            $table->string('kode_scpmk');
             $table->text('deskripsi');
             $table->text('materi');
             $table->text('metodologi');
@@ -58,9 +50,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('cpls', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_cpl');
+            $table->text('deskripsi');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+
         Schema::create('referensis', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_ref', 10);
+            $table->string('kode_ref');
             $table->string('judul');
             $table->string('penulis');
             $table->string('penerbit');

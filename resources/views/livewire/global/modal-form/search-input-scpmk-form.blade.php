@@ -19,19 +19,33 @@
         if (!Array.isArray(this.subItems)) this.subItems = [];
 
         this.$nextTick(() => {
-            this.syncToRpsStore();
+            this.syncToCpmkStore();
         });
 
         this.$watch('subItems', (value) => {
-            this.syncToRpsStore();
+            this.syncToCpmkStore();
         });
     },
 
-    syncToRpsStore() {
-        if (typeof $store.rps !== 'undefined') {
-            $store.rps.update(this.subItems || []);
-            $store.rps.setCountSCPMK(this.totalSubCPMK);
+    syncToCpmkStore() {
+        if (typeof $store.cpmk !== 'undefined') {
+            let allRefs = (this.subItems || []).flatMap(item => item.ref || []);
+            
+            $store.cpmk.ref_scpmk = Array.from(new Map(allRefs.map(r => [r.id, r])).values());
+            
+            $store.cpmk.setCountSCPMK(this.totalSubCPMK);
+            $store.cpmk.total_bobot = this.grandTotalBobot;
         }
+    },
+
+    get grandTotalBobot() {
+        return (this.subItems || []).reduce((total, item) => {
+            // Karena subItems[index] berisi { ref: [...], scpmk: [...] }
+            const subArray = item?.scpmk || [];
+            return total + subArray.reduce((subTotal, sub) => {
+                return subTotal + (parseFloat(sub?.bobot) || 0);
+            }, 0);
+        }, 0);
     },
 
     parentSelectedId: @entangle($parentIdString ?? null).live,
@@ -40,32 +54,20 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    {{-- addItem(id, name, kode, subData) {
-        let normalizedId = Number(id);
-        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-            this.items.push(normalizedId);
-            this.itemsAll.push(name);
-
-            this.subItems.push(subData);
-            this.syncToRpsStore();
-        }
-        this.search = '';
-    }, --}}
-
-    addItem(id, kode, name, slot2, slot3, subData) {
+    addItem(id, kode, slot1, slot2, slot3, subData) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
 
             this.itemsAll.push({
                 kode: kode,
-                name: name,
+                slot1: slot1,
                 slot2: slot2,
                 slot3: slot3
             });
 
             this.subItems.push(subData);
-            this.syncToRpsStore();
+            this.syncToCpmkStore();
         }
     },
 
@@ -75,7 +77,7 @@
         this.subItems.splice(index, 1);
 
         if (this.expanded === index) this.expanded = null;
-        this.syncToRpsStore();
+        this.syncToCpmkStore();
     },
 
     move(index, direction) {
@@ -90,53 +92,27 @@
         if (this.expanded === index) this.expanded = to;
         else if (this.expanded === to) this.expanded = index;
 
-        this.syncToRpsStore();
+        this.syncToCpmkStore();
     },
 
-    get grandTotalBobot() {
-        return this.subItems.reduce((total, item) => {
-            let subArray = item.scpmk || [];
-            return total + subArray.reduce((subTotal, sub) => subTotal + Number(sub.bobot || 0), 0);
-        }, 0);
-    },
 
     get totalSubCPMK() {
-        if (!this.subItems) return 0;
-        return this.subItems.reduce((total, item) => {
-            let subArray = item.scpmk || [];
-            return total + subArray.length;
+        return (this.subItems || []).reduce((total, item) => {
+            return total + (item?.scpmk?.length || 0);
         }, 0);
     },
 
 }">
 
-    <label class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
-        {{ $nameXString }} 
+    <label for="{{ $modelString }}"  class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
+        {{ $nameXString }}
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif
     </label>
 
     {{-- 1. INPUT SEARCH --}}
-    <div class="relative">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini"
-                x-bind:class="isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400'" />
-        </div>
-
-        <input x-model="search" autocomplete="off" type="text" :disabled="!isParentReady"
-            @focus="open = true; $wire.{{ $fetchString }}(search);"
-            @input.debounce.300ms="open = true; $wire.{{ $fetchString }}(search);" @click.outside="open = false"
-            :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' : 'Pilih Induk terlebih dahulu...'"
-            :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
-                'bg-[var(--second-table-color)]'"
-            class="border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 focus:ring-2 focus:ring-[var(--focus-color)] transition-all">
-
-        @include('livewire.global.search-and-filters.partial.reset-button', [
-            'xShow' => 'search',
-            'xClick' => "search = ''",
-        ])
-    </div>
+    @include('livewire.global.modal-form.partial.input-search')
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -157,10 +133,9 @@
                             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
                             <span>{{ $x['kode'] }}</span>
                             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>Bobot: {{ $x['total_bobot'] }}%</span>
+                            <span>Bobot: {{ $x['bobot'] }}%</span>
                         </div>
                     </div>
-
                     <button type="button"
                         x-on:click="
                             if (items.includes({{ $x['id'] }})) {
@@ -178,13 +153,27 @@
                                     @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
                                     @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
                                     { 
-                                        scpmk: {{ json_encode($x['scpmk']) }}, 
+                                        // Kirim data lengkap untuk perhitungan
                                         ref: {{ json_encode($x['ref']) }},
-                                        cpl: {{ json_encode($x['cpl']) }} 
+                                        scpmk: [
+                                            {
+                                                id: {{ $x['id'] }},
+                                                kode: '{{ $x['kode'] }}',
+                                                deskripsi: '{{ $x['deskripsi'] }}',
+                                                materi: '{{ $x['materi'] }}',
+                                                metodologi: '{{ $x['metodologi'] }}',
+                                                indikator: '{{ $x['indikator'] }}',
+                                                metode: '{{ $x['metode'] }}',
+                                                bobot: {{ $x['bobot'] }},
+                                                w_tugas: '{{ $x['w_tugas'] }}',
+                                                w_mandiri: '{{ $x['w_mandiri'] }}',
+                                                tugas: '{{ $x['deskripsi'] }}' // Sesuaikan jika ada field tugas khusus
+                                            }
+                                        ]
                                     }
                                 );
                             }
-                         "
+                        "
                         x-bind:class="items.includes({{ $x['id'] }}) ? 'bg-green-500 hover:bg-red-500' :
                             'bg-[var(--focus-color)]'"
                         class="p-1.5 rounded-md text-white transition-all shadow-sm group">
@@ -223,12 +212,12 @@
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 80 && grandTotalBobot > 20">
+                <template x-if="grandTotalBobot > 20 && grandTotalBobot < 80">
                     <flux:badge color="orange" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 140 && grandTotalBobot > 80">
+                <template x-if="grandTotalBobot >= 80 && grandTotalBobot <= 140">
                     <flux:badge color="green" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
@@ -278,7 +267,7 @@
 
                                 {{-- NAMA UTAMA --}}
                                 <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
-                                    x-text="itemsAll[index]?.name"></span>
+                                    x-text="itemsAll[index]?.slot1"></span>
 
                                 {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
                                 <div
@@ -316,83 +305,7 @@
                     </div>
 
                     {{-- Expanded Sub-CPMK Table --}}
-                    <div x-show="expanded.includes(index)" x-collapse>
-                        <div class="px-4 pb-4 bg-white/20 dark:bg-black/5">
-                            <div
-                                class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-medium">
-                                <table class="w-full text-xs text-left border-collapse min-w-[800px]">
-                                    <thead>
-                                        <tr
-                                            class="text-gray-400 uppercase tracking-tighter border-b border-[var(--border-table-color)]">
-                                            <th class="pb-3 px-4 text-center font-bold min-w-16">Kode</th>
-                                            <th class="pb-3 px-4 min-w-32">Deskripsi</th>
-                                            <th class="pb-3 px-4 min-w-32">Materi</th>
-                                            <th class="pb-3 px-4 min-w-32">Metodologi</th>
-                                            <th class="pb-3 px-4 min-w-32">Indikator</th>
-                                            <th class="pb-3 px-4 text-center">Metode</th>
-                                            <th class="pb-3 px-4 text-center">Bobot</th>
-                                            <th class="pb-3 px-4 min-w-32">Deskripsi Tugas</th>
-                                            <th class="pb-3 px-4 text-center">Waktu Tugas</th>
-                                            <th class="pb-3 px-4 text-center">Waktu Mandiri</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-[var(--border-table-color)]">
-                                        <template x-for="sub in subItems[index]?.scpmk" :key="sub.id">
-                                            <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                                                <td class="py-2.5 px-2">
-                                                    <flux:badge color="fuchsia" size="sm"
-                                                        class="py-0 px-1.5 text-xs font-bold uppercase">
-                                                        <span x-text="sub.kode || '-'"></span>
-                                                    </flux:badge>
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed"
-                                                    x-text="sub.metodologi || '-'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed">
-                                                    <div class="flex justify-center">
-                                                        <template x-if="sub.metode === 'UTS' || sub.metode === 'UAS'">
-                                                            <flux:badge color="amber" size="sm"
-                                                                class="text-xs font-bold uppercase"
-                                                                x-text="sub.metode"></flux:badge>
-                                                        </template>
-                                                        <template x-if="sub.metode === 'Teori'">
-                                                            <flux:badge color="emerald" size="sm"
-                                                                class="text-xs font-bold">Teori</flux:badge>
-                                                        </template>
-                                                        <template
-                                                            x-if="['Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge color="cyan" size="sm"
-                                                                class="text-xs font-bold" x-text="sub.metode">
-                                                            </flux:badge>
-                                                        </template>
-                                                        <template
-                                                            x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge color="zinc" size="sm"
-                                                                class="text-xs font-bold" x-text="sub.metode || '-'">
-                                                            </flux:badge>
-                                                        </template>
-                                                    </div>
-                                                </td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed font-black text-[var(--hover-focus-color)]"
-                                                    x-text="sub.bobot + '%'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.tugas || '-'"></td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.w_tugas || '-'"></td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.w_mandiri || '-'"></td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    @include('livewire.global.modal-form.partial.scpmk-table')
                 </div>
             </template>
 

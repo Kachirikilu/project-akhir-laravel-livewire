@@ -3,7 +3,7 @@
     @include('livewire.staff.rps-management.rps-switch-table')
     @include('livewire.staff.rps-management.rps-search-and-filters')
 
-        <div wire:loading.class="opacity-50" wire:target="switchingTable">
+    <div wire:loading.class="opacity-50" wire:target="switchingTable">
         @include('livewire.staff.rps-management.rps-table', [
             'xResults' => match ($this->switchTable) {
                 'rps' => $rps,
@@ -11,7 +11,7 @@
                 'scpmk' => $scpmk,
                 'cpl' => $cpl,
                 'ref' => $ref,
-                'dosen' => $dosen,
+                // 'dosen' => $dosen,
                 default => collect([]),
             },
             'xNameString' => match ($this->switchTable) {
@@ -20,20 +20,13 @@
                 'scpmk' => 'Sub-CPMK',
                 'cpl' => 'CPL',
                 'ref' => 'Referensi',
-                'dosen' => 'Dosen',
+                // 'dosen' => 'Dosen',
                 default => 'Data',
             },
         ])
     </div>
 
     @include('livewire.staff.rps-management.rps-modal-form')
+    @include('livewire.staff.rps-management.cpmk-modal-form')
     {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>
-
-{{-- <script>
-// document.addEventListener('alpine:init', () => {
-//     Alpine.store('rps', {
-
-//     });
-// });
-</script> --}}

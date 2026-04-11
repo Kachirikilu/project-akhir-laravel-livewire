@@ -95,7 +95,6 @@
         
             'nameXString' => 'Capaian Pembelajaran Lulusan',
             'nameX2String' => 'Tambah CPL Baru',
-            'searchString' => 'cpl_search',
             'nameSearchString' => 'cplNameSearch',
             'fetchString' => 'fetchCPL',
             'iconString' => 'document-text',

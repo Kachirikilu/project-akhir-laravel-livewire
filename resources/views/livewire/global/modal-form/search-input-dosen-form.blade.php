@@ -127,7 +127,7 @@
 
 
 
-    <label class="block text-sm font-medium mb-2">
+    <label for="{{ $modelString }}" class="block text-sm font-medium mb-2">
         {{ $nameXString }} 
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>

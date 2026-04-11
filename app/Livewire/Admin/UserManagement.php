@@ -116,9 +116,9 @@ class UserManagement extends Component
 
     public function render()
     {
-        $this->inputProdiFilter();
-        $this->inputJurusanFilter();
-        $this->inputFakultasFilter();
+        $this->inputPrFilter();
+        $this->inputJrFilter();
+        $this->inputFkFilter();
 
         $this->syncSortField($this->filterUser, $this->sortField);
 

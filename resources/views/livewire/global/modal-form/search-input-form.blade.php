@@ -1,6 +1,7 @@
 <div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
+    items: @entangle($idString).live,
     itemsAll: @entangle($itemsAllString).live,
     isManual: false
 }"
@@ -9,20 +10,23 @@ x-effect="
     
     if (config?.isEdit === 0) {
         search = '';
+        items = null;
         itemsAll = null;
     } else {
         let currentId = config?.['{{ $idString }}'];
 
         if (!currentId) {
             search = '';
+            items = null;
             itemsAll = null;
         } else {
             search = config?.['{{ $modelString }}'];
+            items =  config?.['{{ $idString }}'];
             itemsAll = config?.['{{ $itemsAllString }}'];
         }
     }
 ">
-    <label for="{{ $searchString }}" class="block text-sm font-medium">
+    <label for="{{ $modelString }}" class="block text-sm font-medium">
         {{ $nameXString }} <span class="text-red-500">*</span>
     </label>
 
@@ -42,7 +46,7 @@ x-effect="
                 open = true;
                 $wire.{{ $fetchString }}(search, 'single'); 
             "
-            @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $searchString }}"
+            @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $modelString }}"
             placeholder="Cari nama {{ $nameXString }}..."
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
                 placeholder-[var(--contrast-third-text)]
@@ -51,10 +55,11 @@ x-effect="
         {{-- Tombol Reset --}}
         @include('livewire.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
-            'xClick' => "search = ''; itemsAll = null",
+            'xClick' => "search = ''; items = null; itemsAll = null",
             'xWire' => $resetXInput,
             'xWire2' => $fetchString . "(null, 'single')",
-            'xAlpine' => $itemsAllString,
+            'xAlpine1' => $idString,
+            'xAlpine2' => $itemsAllString,
         ])
     </div>
 
@@ -96,12 +101,13 @@ x-effect="
                     itemsAll = { 
                         id: {{ $x['id'] }},
                         kode: '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}',
-                        name: '{{ $x[$typeXString] ?? '' }}',
+                        slot1: '{{ $x[$typeXString] ?? '' }}',
                         slot2: '{{ isset($typeX2String) ? ($x[$typeX2String] ?? '') : '' }}',
                         slot3: '{{ isset($typeX3String) ? ($x[$typeX3String] ?? '') : '' }}'
                     };
                     isManual = true;
 
+                    $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;
                     $store.{{ $alpine ?? 'config' }}['{{ $itemsAllString }}'] = itemsAll;
                     $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '{{ $x[$typeXString] }}';
 

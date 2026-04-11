@@ -64,23 +64,22 @@
         @include('livewire.global.modal-form.search-input-form', [
             'alpine' => 'user',
             'xResults' => $prResults,
-            'selectX' => 'selectProdi',
+            'selectX' => 'selectPr',
             'modelString' => 'nama_pr',
 
             'idString' => 'pr_id',
             'itemsAllString' => 'pr_items',
 
-            'resetXInput' => 'resetProdiInput()',
+            'resetXInput' => 'resetPrInput()',
             'typeXString' => 'prodi',
             'typeX2String' => 'jurusan',
             'typeX3String' => 'fakultas',
 
             'nameXString' => 'Program Studi',
-            'searchString' => 'prodi_search',
             'nameSearchString' => 'prNameSearch',
-            'fetchString' => 'fetchProdi',
+            'fetchString' => 'fetchPr',
             'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchProdi'
+            'wireLoading' => 'fetchPr'
         ])
 
         <h4 class="text-lg font-medium text-[var(--contrast-second-text)] border-b dark:border-neutral-700 pb-2">

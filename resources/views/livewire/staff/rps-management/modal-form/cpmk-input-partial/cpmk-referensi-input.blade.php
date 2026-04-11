@@ -10,37 +10,24 @@
 
     <div class="relative space-y-4">
 
-        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
+        @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addCPMK, editCPMK'])
 
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-            {{-- 1. REFERENSI UTAMA (CPMK) --}}
+            {{-- 1. REFERENSI PENDUKUNG (Sub-CPMK) --}}
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.referensi-output', [
-                    'alpine' => 'rps',
-                    'modelString' => 'ref_cpmk',
-                    'targetString' => 'CPMK',
-                    'textString' => 'Sumber Utama Mata Kuliah',
-                    'colorLink' => 'blue',
+                    'alpine' => 'cpmk',
+                    'modelString' => 'ref_scpmk',
+                    'targetString' => 'Sub-CPMK',
+                    'textString' => 'Detail Sumber per Pertemuan',
+                    'colorLink' => 'emerald',
                 ])
-            </div>
-
-            {{-- 2. REFERENSI PENDUKUNG (Sub-CPMK) --}}
-            <div class="sm:col-span-2">
-                <div class="sm:col-span-2">
-                    @include('livewire.global.modal-form.referensi-output', [
-                        'alpine' => 'rps',
-                        'modelString' => 'ref_scpmk',
-                        'targetString' => 'Sub-CPMK',
-                        'textString' => 'Detail Sumber per Pertemuan',
-                        'colorLink' => 'emerald',
-                    ])
-                </div>
             </div>
         </div>
 
         @include('livewire.global.modal-form.search-input-array-form', [
-            'alpine' => 'rps',
+            'alpine' => 'cpmk',
             'xResults' => $refResults,
             'selectX' => 'selectRefArray',
             'modelString' => 'nama_ref_search',
@@ -59,8 +46,8 @@
             'fetchString' => 'fetchRef',
             'iconString' => 'document-text',
         
-            'parentIdString' => 'cpmk_id_array',
-            'nameXParent' => 'CPMK',
+            'parentIdString' => 'scpmk_id_array',
+            'nameXParent' => 'Sub-CPMK',
             'wireLoading' => 'fetchRef',
         
             'isRequired' => 0,

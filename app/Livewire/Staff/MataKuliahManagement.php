@@ -105,9 +105,9 @@ class MataKuliahManagement extends Component
     public function render()
     {
         // 1. Jalankan filter input (Prodi, Jurusan, Fakultas)
-        $this->inputProdiFilter();
-        $this->inputJurusanFilter();
-        $this->inputFakultasFilter();
+        $this->inputPrFilter();
+        $this->inputJrFilter();
+        $this->inputFkFilter();
 
         try {
             // 2. Inisialisasi Base Query (Pencarian Utama)

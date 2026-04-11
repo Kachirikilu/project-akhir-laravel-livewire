@@ -25,8 +25,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1,
-                    'wireLoadingParent' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
+                    'isFocusSelect' => 1
                 ])
             </div>
         </div>
@@ -39,26 +38,25 @@
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
         'xResults' => $fkResults,
-        'selectX' => 'selectFakultas',
+        'selectX' => 'selectFk',
         'modelString' => 'nama_fk_search',
 
         'idString' => 'fk_id',
         'itemsAllString' => 'fk_items',
 
-        'resetXInput' => 'resetFakultasInput()',
+        'resetXInput' => 'resetFkInput()',
         'typeXString' => 'fakultas',
         'nameXString' => 'Fakultas',
-        'searchString' => 'fakultas_search',
         'nameSearchString' => 'fkNameSearch',
-        'fetchString' => 'fetchFakultas',
+        'fetchString' => 'fetchFk',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchFakultas'
+        'wireLoading' => 'fetchFk'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prResults,
-        'selectX' => 'selectProdiArray',
+        'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
@@ -69,14 +67,13 @@
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',
-        'searchString' => 'prodi_search',
         'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchProdi',
+        'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
     
         'parentIdString' => 'fk_id',
         'nameXParent' => 'Fakultas',
-        'wireLoading' => 'fetchProdi',
-        'wireLoadingParent' => 'selectFakultas, resetFakultasInput, selectFakultasForFilter, resetFakultasFilter',
+        'wireLoading' => 'fetchPr',
+        'wireLoadingParent' => 'selectFk, resetFkInput, selectFkForFilter, resetFkFilter',
     ])
 </div>

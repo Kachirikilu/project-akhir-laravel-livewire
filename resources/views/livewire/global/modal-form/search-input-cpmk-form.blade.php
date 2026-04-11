@@ -31,7 +31,17 @@
         if (typeof $store.rps !== 'undefined') {
             $store.rps.update(this.subItems || []);
             $store.rps.setCountSCPMK(this.totalSubCPMK);
+            $store.rps.total_bobot = this.grandTotalBobot;
         }
+    },
+
+    get grandTotalBobot() {
+        return (this.subItems || []).reduce((total, item) => {
+            const subArray = item?.scpmk || [];
+            return total + subArray.reduce((subTotal, sub) => {
+                return subTotal + (parseFloat(sub?.bobot) || 0);
+            }, 0);
+        }, 0);
     },
 
     parentSelectedId: @entangle($parentIdString ?? null).live,
@@ -81,12 +91,6 @@
         this.syncToRpsStore();
     },
 
-    get grandTotalBobot() {
-        return this.subItems.reduce((total, item) => {
-            let subArray = item.scpmk || [];
-            return total + subArray.reduce((subTotal, sub) => subTotal + Number(sub.bobot || 0), 0);
-        }, 0);
-    },
 
     get totalSubCPMK() {
         if (!this.subItems) return 0;
@@ -98,33 +102,15 @@
 
 }">
 
-    <label class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
-        {{ $nameXString }} 
+    <label for="{{ $modelString }}" class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
+        {{ $nameXString }}
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif
     </label>
 
     {{-- 1. INPUT SEARCH --}}
-    <div class="relative">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <flux:icon icon="{{ $iconString }}" variant="mini"
-                x-bind:class="isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400'" />
-        </div>
-
-        <input x-model="search" autocomplete="off" type="text" :disabled="!isParentReady"
-            @focus="open = true; $wire.{{ $fetchString }}(search);"
-            @input.debounce.300ms="open = true; $wire.{{ $fetchString }}(search);" @click.outside="open = false"
-            :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' : 'Pilih Induk terlebih dahulu...'"
-            :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
-                'bg-[var(--second-table-color)]'"
-            class="border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2.5 focus:ring-2 focus:ring-[var(--focus-color)] transition-all">
-
-        @include('livewire.global.search-and-filters.partial.reset-button', [
-            'xShow' => 'search',
-            'xClick' => "search = ''",
-        ])
-    </div>
+    @include('livewire.global.modal-form.partial.input-search')
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -211,12 +197,12 @@
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 80 && grandTotalBobot > 20">
+                <template x-if="grandTotalBobot > 20 && grandTotalBobot < 80">
                     <flux:badge color="orange" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
                 </template>
-                <template x-if="grandTotalBobot <= 140 && grandTotalBobot > 80">
+                <template x-if="grandTotalBobot >= 80 && grandTotalBobot <= 140">
                     <flux:badge color="green" size="sm" variant="pill">
                         Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
                     </flux:badge>
@@ -271,7 +257,8 @@
                                 {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
                                 <div
                                     class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
-                                    <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
+                                    <span class="font-bold text-[var(--hover-focus-color)]"
+                                        x-text="'ID: ' + id"></span>
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <span class="flex items-center gap-1">
                                         Total Bobot:
@@ -304,83 +291,7 @@
                     </div>
 
                     {{-- Expanded Sub-CPMK Table --}}
-                    <div x-show="expanded.includes(index)" x-collapse>
-                        <div class="px-4 pb-4 bg-white/20 dark:bg-black/5">
-                            <div
-                                class="border-t border-[var(--border-table-color)] pt-3 overflow-x-auto scrollbar-medium">
-                                <table class="w-full text-xs text-left border-collapse min-w-[800px]">
-                                    <thead>
-                                        <tr
-                                            class="text-gray-400 uppercase tracking-tighter border-b border-[var(--border-table-color)]">
-                                            <th class="pb-3 px-4 text-center font-bold min-w-16">Kode</th>
-                                            <th class="pb-3 px-4 min-w-32">Deskripsi</th>
-                                            <th class="pb-3 px-4 min-w-32">Materi</th>
-                                            <th class="pb-3 px-4 min-w-32">Metodologi</th>
-                                            <th class="pb-3 px-4 min-w-32">Indikator</th>
-                                            <th class="pb-3 px-4 text-center">Metode</th>
-                                            <th class="pb-3 px-4 text-center">Bobot</th>
-                                            <th class="pb-3 px-4 min-w-32">Deskripsi Tugas</th>
-                                            <th class="pb-3 px-4 text-center">Waktu Tugas</th>
-                                            <th class="pb-3 px-4 text-center">Waktu Mandiri</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-[var(--border-table-color)]">
-                                        <template x-for="sub in subItems[index]?.scpmk" :key="sub.id">
-                                            <tr class="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                                                <td class="py-2.5 px-2">
-                                                    <flux:badge color="fuchsia" size="sm"
-                                                        class="py-0 px-1.5 text-xs font-bold uppercase">
-                                                        <span x-text="sub.kode || '-'"></span>
-                                                    </flux:badge>
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.materi || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed"
-                                                    x-text="sub.metodologi || '-'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.indikator || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 leading-relaxed" x-text="sub.deskripsi || '-'">
-                                                </td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed">
-                                                    <div class="flex justify-center">
-                                                        <template x-if="sub.metode === 'UTS' || sub.metode === 'UAS'">
-                                                            <flux:badge color="amber" size="sm"
-                                                                class="text-xs font-bold uppercase"
-                                                                x-text="sub.metode"></flux:badge>
-                                                        </template>
-                                                        <template x-if="sub.metode === 'Teori'">
-                                                            <flux:badge color="emerald" size="sm"
-                                                                class="text-xs font-bold">Teori</flux:badge>
-                                                        </template>
-                                                        <template
-                                                            x-if="['Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge color="cyan" size="sm"
-                                                                class="text-xs font-bold" x-text="sub.metode">
-                                                            </flux:badge>
-                                                        </template>
-                                                        <template
-                                                            x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
-                                                            <flux:badge color="zinc" size="sm"
-                                                                class="text-xs font-bold" x-text="sub.metode || '-'">
-                                                            </flux:badge>
-                                                        </template>
-                                                    </div>
-                                                </td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed font-black text-[var(--hover-focus-color)]"
-                                                    x-text="sub.bobot + '%'"></td>
-                                                <td class="py-2.5 px-2 leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.tugas || '-'"></td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.w_tugas || '-'"></td>
-                                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
-                                                    x-text="sub.w_mandiri || '-'"></td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    @include('livewire.global.modal-form.partial.scpmk-table')
                 </div>
             </template>
 

@@ -12,7 +12,7 @@
                 <flux:menu.heading>Pilih Tingkatan</flux:menu.heading>
                 <flux:menu.separator />
 
-                {{-- Program Studi --}}
+                {{-- RPS --}}
                 <flux:menu.item
                     @click="
                         $store.rps?.setType();
@@ -22,9 +22,27 @@
                         $wire.addRPS();
                     "
                     class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
-                    <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
+                    <flux:icon name="clipboard-document-list" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Rencana Pembelajaran Semester</span>
+                        <flux:icon wire:loading wire:target="addRPS()" name="arrow-path"
+                            class="animate-spin h-4 w-4" />
+                    </div>
+                </flux:menu.item>
+
+                {{-- CPMK --}}
+                <flux:menu.item
+                    @click="
+                        $store.cpmk?.setType();
+                        $store.cpmk?.setEdit(0);
+                        $store.cpmk?.setColor('text-amber-700 dark:text-amber-400');
+                        $flux.modal('cpmk-modal').show();
+                        $wire.addCPMK();
+                    "
+                    class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-50 dark:hover:!bg-amber-900/30">
+                    <flux:icon name="academic-cap" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
+                    <div class="flex justify-between items-center w-full">
+                        <span>Capaian Pembelajaran Mata Kuliah</span>
                         <flux:icon wire:loading wire:target="addRPS()" name="arrow-path"
                             class="animate-spin h-4 w-4" />
                     </div>

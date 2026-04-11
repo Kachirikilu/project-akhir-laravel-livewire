@@ -28,15 +28,15 @@ trait WithReferensiSearchFilters
 
     private function mapRef($collection)
     {
-        return $collection->map(fn ($c) => [
-            'id' => $c->id,
-            'kode' => $c->kode,
-            'judul' => $c->judul,
-            'penulis' => $c->penulis,
-            'penulis_tahun' => $c->penulis_tahun,
-            'penerbit' => $c->penerbit,
-            'tahun' => $c->tahun,
-            'link' => $c->link,
+        return $collection->map(fn ($r) => [
+            'id' => $r->id,
+            'kode' => $r->kode,
+            'judul' => $r->judul,
+            'penulis' => $r->penulis,
+            'penulis_tahun' => $r->penulis_tahun,
+            'penerbit' => $r->penerbit,
+            'tahun' => $r->tahun,
+            'link' => $r->link,
         ])->toArray();
     }
 
@@ -58,6 +58,7 @@ trait WithReferensiSearchFilters
             'slot1' => $r->judul,
             'slot2' => $r->penulis_tahun,
             'slot3' => $r->penerbit,
+            'link' => $r->link
         ];
     }
 
@@ -111,22 +112,24 @@ trait WithReferensiSearchFilters
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
-                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($r->kode));
+                $normalizedRefKode = str_replace(['-', ' '], '', strtolower($r->kode));
                 
                 return strtolower($r->judul) === strtolower($value) 
-                    || $normalizedMkKode === $normalizedValue;
+                    || $normalizedRefKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                $this->refNameSearch = $exactMatch->judul;
                 if ($this->modeRef == 'single') {
+                    $this->refNameSearch = $exactMatch->judul;
                     $this->ref_id = $exactMatch->id;
                     $this->ref_items = $this->itemsRef($exactMatch);
                     $this->refResults = [];
                 } else {
+                    $this->refNameSearch = '';
                     $this->ref_id_array[] = $exactMatch->id;
                     $this->ref_items_array[] = $this->itemsRef($exactMatch);
                 }
+                $this->refResults = $this->getRefbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -207,13 +210,6 @@ trait WithReferensiSearchFilters
             $this->ref_id_array[] = $id;
             $this->ref_name_array[] = $data->judul;
             $this->ref_items_array[] = $data->kode;
-            $this->ref_search = '';
-            // $this->ref_item_array[] = [
-            //     'penulis' => $data->penulis,
-            //     'penerbit' => $data->penerbit,
-            //     'tahun' => $data->tahun,
-            //     'link' => $data->link
-            // ];
         }
     }
 

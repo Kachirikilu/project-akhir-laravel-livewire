@@ -44,24 +44,24 @@ document.addEventListener("alpine:init", () => {
         fakultasItems: "",
 
         setValueProdi(
-            namaProdi,
+            prodi,
             strata,
-            idJurusan,
+            idJr,
             jurusan,
-            idFakultas,
+            idFk,
             fakultas,
             kodePr,
             kodeJr,
             kodeFk,
         ) {
-            this.nama_pr = namaProdi;
-            this.jr_id = idJurusan;
+            this.nama_pr = prodi;
+            this.jr_id = idJr;
             this.nama_jr_search = jurusan;
             this.kode_pr = kodePr;
             this.strata = strata;
 
             this.nama_jr = jurusan;
-            this.fk_id = idFakultas;
+            this.fk_id = idFk;
             this.nama_fk_search = fakultas;
             this.kode_jr = kodePr;
 
@@ -69,26 +69,28 @@ document.addEventListener("alpine:init", () => {
             this.kode_fk = kodePr;
 
             this.jr_items = {
+                "id": idJr,
                 "kode": kodeJr,
                 "slot1": jurusan,
                 "slot2": fakultas,
             };
 
             this.fk_items = {
+                "id": idFk,
                 "kode": kodeFk,
                 "slot1": fakultas,
             };
         },
 
         setDeleteProdi(
-            namaProdi,
+            prodi,
             jurusan,
             fakultas,
             kodePrDelete,
             type,
             forceDelete
         ) {
-            this.nama_pr_delete = namaProdi;
+            this.nama_pr_delete = prodi;
             this.nama_jr_delete = jurusan;
             this.nama_fk_delete = fakultas;
             this.kode_delete = kodePrDelete;

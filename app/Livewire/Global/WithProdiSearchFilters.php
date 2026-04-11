@@ -36,7 +36,7 @@ trait WithProdiSearchFilters
 
     public $showMKModal = false;
 
-    private function mapProdi($collection)
+    private function mapPr($collection)
     {
         return $collection->map(fn ($p) => [
             'id' => $p->id,
@@ -67,30 +67,30 @@ trait WithProdiSearchFilters
         ];
     }
 
-    public function inputProdiFilter()
+    public function inputPrFilter()
     {
         $search = trim($this->prSearchQuery);
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->pr_name) {
-            $this->prSearchResults = $this->mapProdi(
+            $this->prSearchResults = $this->mapPr(
                 $this->prQuery()
                     ->searchProdi($search)
                     ->limit(12)->get()
             );
         } elseif (empty($search) || $this->pr_name) {
-            $this->prSearchResults = $this->getProdibyUser();
+            $this->prSearchResults = $this->getPrbyUser();
         } else {
             $this->prSearchResults = [];
         }
     }
 
-    public function resetProdiFilter()
+    public function resetPrFilter()
     {
         $this->reset(['selectedPrId', 'prSearchQuery', 'pr_name', 'pr_items']);
         $this->resetPage();
     }
 
-    public function selectProdiForFilter($id)
+    public function selectPrForFilter($id)
     {
         $data = $this->prQuery()->find($id);
 
@@ -104,20 +104,21 @@ trait WithProdiSearchFilters
         }
     }
 
-    public function updatedProdiNameSearch($value)
+    public function updatedPrNameSearch($value)
     {
         $this->pr_id = null;
         $this->pr_items = null;
+        
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
 
         $input = str($value)->lower()->trim();
 
         // Jika input kosong, kembalikan ke daftar default yang sudah difilter
         if (empty($input->toString())) {
-            $this->prResults = $this->getProdibyUser();
-
+            $this->prResults = $this->getPrbyUser();
             return;
         }
+
 
         $query = $this->prQuery()->select('prodis.*');
 
@@ -127,6 +128,7 @@ trait WithProdiSearchFilters
         } elseif (($this->mkType == 3) && filled($this->fk_id) && $this->showMKModal) {
             $query->whereHas('jr_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         }
+
         // 1. Logika shortcut 'uni' untuk mkType 4
         if ($this->modePr !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
             $allProdis = $query->get();
@@ -137,14 +139,14 @@ trait WithProdiSearchFilters
                 }
             }
             $this->prNameSearch = '';
-            $this->prResults = $this->getProdibyUser();
+            $this->prResults = $this->getPrbyUser();
 
             return;
         }
 
         // 2. Jalankan Query Pencarian Biasa (untuk filter dropdown)
         $results = $query->searchProdi($value)->limit(12)->get();
-        $this->prResults = $this->mapProdi($results);
+        $this->prResults = $this->mapPr($results);
 
         // 3. Pencocokan "Exact Match" yang Diperluas (Leveling)
         $matches = $results->filter(function ($prodi) use ($input) {
@@ -183,9 +185,9 @@ trait WithProdiSearchFilters
         if ($matches->isNotEmpty()) {
             if ($this->modePr == 'single') {
                 $exactMatch = $matches->first();
+                $this->prNameSearch = $exactMatch->prodi;
                 $this->pr_id = $exactMatch->id;
                 $this->pr_items = $this->itemsPr($exactMatch);
-                $this->prNameSearch = $exactMatch->prodi;
             } else {
                 foreach ($matches as $match) {
                     if (! in_array($match->id, $this->pr_id_array)) {
@@ -195,11 +197,11 @@ trait WithProdiSearchFilters
                 }
                 $this->prNameSearch = '';
             }
-            $this->prResults = $this->getProdibyUser();
+            $this->prResults = $this->getPrbyUser();
         }
     }
 
-    public function getProdibyUser()
+    public function getPrbyUser()
     {
         $user = Auth::user();
         $prodiId = $user?->pr_id;
@@ -214,7 +216,7 @@ trait WithProdiSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapProdi($defaultProdis);
+            return $this->mapPr($defaultProdis);
         }
 
         if (($this->mkType == 2) && filled($this->jr_id) && $this->showMKModal) {
@@ -248,39 +250,19 @@ trait WithProdiSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapProdi($mainResults);
+        return $this->mapPr($mainResults);
     }
 
-    // public function fetchProdi2($query = '', $mode = 'single')
-    // {
-    //     $this->modePr = $mode;
-
-    //     if (empty(trim($query))) {
-    //         $this->prResults = $this->getProdibyUser();
-
-    //         return;
-    //     }
-
-    //     $results = $this->prQuery()
-    //         ->searchProdi($query)
-    //         ->limit(12)
-    //         ->get();
-
-    //     $this->prResults = $this->mapProdi($results);
-    // }
-
-    public function fetchProdi($query = '', $mode = 'single')
+    public function fetchPr($query = '', $mode = 'single')
     {
-
         $this->modePr = $mode;
         if (empty($query) || $this->pr_id) {
-            $this->prResults = $this->getProdibyUser();
-
+            $this->prResults = $this->getPrbyUser();
             return;
         }
     }
 
-    public function selectProdi($id, $prodiName)
+    public function selectPr($id, $prodiName)
     {
         $this->pr_id = $id;
         $this->prNameSearch = $prodiName;
@@ -290,32 +272,31 @@ trait WithProdiSearchFilters
             $this->pr_items = $this->itemsPr($data);
         }
 
-        $this->prResults = $this->getProdibyUser();
+        $this->prResults = $this->getPrbyUser();
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
     }
 
-    public function selectProdiArray($id)
+    public function selectPrArray($id)
     {
         $data = $this->prQuery()->find($id);
 
         if ($data && ! in_array($id, (array) $this->pr_id_array)) {
             $this->pr_id_array[] = $id;
             $this->pr_items_array[] = $this->itemsPr($data);
-            $this->prodi_search = '';
         }
     }
 
-    public function resetProdiInput()
+    public function resetPrInput()
     {
         $this->pr_id = null;
         $this->pr_items = null;
         $this->prNameSearch = '';
 
-        $this->updatedProdiNameSearch('');
+        $this->updatedPrNameSearch('');
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
     }
 
-    public function resetProdiArray()
+    public function resetPrArray()
     {
         $this->pr_id_array = [];
         $this->pr_items_array = [];

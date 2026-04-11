@@ -26,7 +26,6 @@
             'typeX3String' => 'status',
         
             'nameXString' => 'Dosen Pengajar',
-            'searchString' => 'dosen_search',
             'nameSearchString' => 'dosenNameSearch',
             'fetchString' => 'fetchDosen',
             'iconString' => 'user',

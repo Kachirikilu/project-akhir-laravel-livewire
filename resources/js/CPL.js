@@ -1,13 +1,13 @@
 document.addEventListener("alpine:init", () => {
-    Alpine.store("rps", {
+    Alpine.store("cpmk", {
         typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
-        rps_delete: "",
-        kode_rps_delete: "",
+        cpmk_delete: "",
+        kode_cpmk_delete: "",
         
         setType(val) {
             this.typeModal = val;
@@ -20,6 +20,8 @@ document.addEventListener("alpine:init", () => {
         },
 
         deskripsi: "",
+        
+        kode: "",
         digit_akademik: "",
 
         mk_id: "",
@@ -101,6 +103,7 @@ document.addEventListener("alpine:init", () => {
             countScpmk,
             totalBobot
         ) {
+            this.kode = kode;
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
 
@@ -137,8 +140,8 @@ document.addEventListener("alpine:init", () => {
             kodeMkDelete,
             forceDelete
         ) {
-            this.rps_delete = namaProdi;
-            this.kode_rps_delete = kodeMkDelete;
+            this.cpmk_delete = namaProdi;
+            this.kode_cpmk_delete = kodeMkDelete;
             this.isForceDelete = forceDelete;
         },
 
@@ -158,6 +161,8 @@ document.addEventListener("alpine:init", () => {
 
             this.typeModal = "";
             this.deskripsi = "";
+
+            this.kode = "";
 
             this.mk_id = "";
             this.nama_mk_search = "";

@@ -37,28 +37,27 @@
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
         'xResults' => $jrResults,
-        'selectX' => 'selectJurusan',
+        'selectX' => 'selectJr',
         'modelString' => 'nama_jr_search',
 
         'idString' => 'jr_id',
         'itemsAllString' => 'jr_items',
 
-        'resetXInput' => 'resetJurusanInput()',
+        'resetXInput' => 'resetJrInput()',
         'typeXString' => 'jurusan',
         'typeX2String' => 'fakultas',
         
         'nameXString' => 'Jurusan',
-        'searchString' => 'jurusan_search',
         'nameSearchString' => 'jrNameSearch',
-        'fetchString' => 'fetchJurusan',
+        'fetchString' => 'fetchJr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchJurusan'
+        'wireLoading' => 'fetchJr'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prResults,
-        'selectX' => 'selectProdiArray',
+        'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
@@ -69,14 +68,13 @@
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',
-        'searchString' => 'prodi_search',
         'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchProdi',
+        'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
     
         'parentIdString' => 'jr_id',
         'nameXParent' => 'Jurusan',
-        'wireLoading' => 'fetchProdi',
-        'wireLoadingParent' => 'selectJurusan, resetJurusanInput, selectJurusanForFilter, resetJurusanFilter',
+        'wireLoading' => 'fetchPr',
+        'wireLoadingParent' => 'selectJr, resetJrInput, selectJrForFilter, resetJrFilter',
     ])
 </div>

@@ -36,7 +36,7 @@
     @include('livewire.global.modal-form.search-input-array-form', [
         'alpine' => 'mk',
         'xResults' => $prResults,
-        'selectX' => 'selectProdiArray',
+        'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id_array',
@@ -47,10 +47,9 @@
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',
-        'searchString' => 'prodi_search',
         'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchProdi',
+        'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchProdi'
+        'wireLoading' => 'fetchPr'
     ])
 </div>

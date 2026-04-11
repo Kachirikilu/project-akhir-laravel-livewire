@@ -8,7 +8,22 @@
             $editCall = "editUser($x->id)";
             $deleteCall = "deleteUser($x->id, $isTrashed)";
             $restoreCall = "restoreUser($x->id)";
+
+            $typeXString = '';
+            if ($user->role == 'mahasiswa') {
+                $typeXString = 'NIM';
+            } else {
+                $typeXString = 'NIP';
+            }
         @endphp
+
+            
+        @include('livewire.global.table.text-copy', [
+            'xType' => $user->identity1,
+            'typeXString' => $typeXString . ' ' . $user->role
+        ])
+
+        <flux:menu.separator />
 
         @if (!$isTrashed)
             {{-- Tombol Edit --}}

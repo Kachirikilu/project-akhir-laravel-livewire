@@ -47,7 +47,7 @@ document.addEventListener("alpine:init", () => {
             nim,
             angkatan,
             status,
-            idProdi,
+            idPr,
             kodePr,
             prodi,
             jurusan,
@@ -65,10 +65,10 @@ document.addEventListener("alpine:init", () => {
             this.angkatan = angkatan;
             this.status = status;
 
-            this.pr_id = idProdi;
+            this.pr_id = idPr;
             this.nama_pr_search = prodi;
             this.pr_items = {
-                "id": idProdi,
+                "id": idPr,
                 "kode": kodePr,
                 "slot1": prodi,
                 "slot2": jurusan,

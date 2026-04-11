@@ -26,74 +26,118 @@
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
-                'isCenter' => 1
+                'isCenter' => 1,
             ])
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
-                'isCenter' => 1
+                'isCenter' => 1,
             ])
 
             @if ($switchTable === 'rps')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
-                    'headString' => 'Mata Kuliah'
+                    'headString' => 'Mata Kuliah',
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'akademik',
                     'headString' => 'Tahun Akademik',
-                    'isCenter' => 1
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_cpmk',
+                    'headString' => 'CPMK',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_scpmk',
+                    'headString' => 'Sub-CPMK',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'total_bobot',
+                    'headString' => 'Total Bobot',
+                    'isCenter' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'is_draf',
                     'headString' => 'Status',
                     'isMain' => 1,
-                    'isCenter' => 1
                 ])
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'revisi',
-                    'headString' => 'Tanggal Revisi'
+                    'headString' => 'Tanggal Revisi',
                 ])
             @endif
 
             @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'deskripsi'])
             @endif
-            @if ($switchTable === 'scpmk')
-{{-- 
-                            <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->metode ?? '-' }}</td>
-                <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->w_tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->w_mandiri ?? '-' }}</td> --}}
 
-                
+            @if ($switchTable === 'cpmk')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_scpmk',
+                    'headString' => 'Sub-CPMK',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'total_bobot',
+                    'headString' => 'Total Bobot',
+                    'isCenter' => 1,
+                ])
+            @endif
+            @if ($switchTable === 'scpmk')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'materi'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'metodologi'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'indikator'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'metode', 'isCenter' => 1])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'bobot','isMain' => 1, 'isCenter' => 1])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'tugas', 'headString' => 'Deskripsi Tugas'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'w_tugas', 'headString' => 'Waktu Tugas', 'isCenter' => 1])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'w_mandiri', 'headString' => 'Waktu Mandiri', 'isCenter' => 1])
-
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'metode',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'bobot',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'tugas',
+                    'headString' => 'Deskripsi Tugas',
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'w_tugas',
+                    'headString' => 'Waktu Tugas',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'w_mandiri',
+                    'headString' => 'Waktu Mandiri',
+                    'isCenter' => 1,
+                ])
             @endif
             @if ($switchTable === 'ref')
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'judul'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'penulis'])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'penerbit'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'tahun','isMain' => 1, 'isCenter' => 1])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'tahun',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                ])
                 @include('livewire.global.table.head-table', ['sortFieldString' => 'link'])
             @endif
 
             <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At'])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At'])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'created_at',
+                'headString' => 'Created At',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'updated_at',
+                'headString' => 'Updated At',
+            ])
 
         </tr>
     </x-slot:header>
@@ -112,30 +156,43 @@
                         @if ($switchTable === 'rps')
                             @switch($x->level_mk)
                                 @case(1)
-                                    <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                                 @break
+
                                 @case(2)
-                                    <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                                 @break
+
                                 @case(3)
-                                    <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                                 @break
+
                                 @default
-                                    <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                             @endswitch
                         @else
                             @switch($switchTable)
                                 @case('cpmk')
-                                    <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                                 @break
+
                                 @case('scpmk')
-                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                                 @break
+
                                 @case('cpl')
                                     <flux:badge icon="beaker" color="lime" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
                                 @break
+
                                 @default
-                                    <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '-' }}
+                                    </flux:badge>
                             @endswitch
                         @endif
                     </button>
@@ -148,17 +205,79 @@
                 </flux:dropdown>
             </td>
 
-            
-            
+
+
 
             @if ($switchTable === 'rps')
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->mk ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->akademik ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->count_cpmk . ' CPMK' ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48 text-center">
+
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @if ($x->count_scpmk >= 14)
+                                <flux:badge color="green" size="sm">
+                                    {{ $x->count_scpmk }} Pertemuan
+                                </flux:badge>
+                            @elseif ($x->count_scpmk >= 7 && $x->count_scpmk < 14)
+                                <flux:badge color="yellow" size="sm">
+                                    {{ $x->count_scpmk }} Pertemuan
+                                </flux:badge>
+                            @elseif ($x->count_scpmk >= 4 && $x->count_scpmk < 7)
+                                <flux:badge color="orange" size="sm">
+                                    {{ $x->count_scpmk }} Pertemuan
+                                </flux:badge>
+                            @else
+                                <flux:badge color="red" size="sm">
+                                    {{ $x->count_scpmk ?? 0 }} Pertemuan
+                                </flux:badge>
+                            @endif
+                        </button>
+
+                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+                </td>
+                <td class="{{ $secondKolom }} text-center">
+
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @if ($x->total_bobot >= 80 && $x->total_bobot < 140)
+                                <flux:badge icon="check-circle" color="green" size="sm">
+                                    {{ $x->total_bobot }}%
+                                </flux:badge>
+                            @elseif ($x->total_bobot >= 140)
+                                <flux:badge icon="exclamation-triangle" color="blue" size="sm">
+                                    {{ $x->total_bobot }}%
+                                </flux:badge>
+                            @elseif ($x->total_bobot > 20 && $x->total_bobot < 80)
+                                <flux:badge icon="clock" color="orange" size="sm">
+                                    {{ $x->total_bobot }}%
+                                </flux:badge>
+                            @else
+                                <flux:badge icon="no-symbol" color="red" size="sm">
+                                    {{ $x->total_bobot ?? 0 }}%
+                                </flux:badge>
+                            @endif
+                        </button>
+
+                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+
+                </td>
 
                 <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if($x->draf == 0)
+                            @if ($x->draf == 0)
                                 <flux:badge color="green" size="sm">
                                     Aktif
                                 </flux:badge>
@@ -183,6 +302,11 @@
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->deskripsi ?? '-' }}</td>
             @endif
 
+            @if ($switchTable === 'cpmk')
+                <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
+                <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot . '%' ?? '-' }}</td>
+            @endif
+
             @if ($switchTable === 'scpmk')
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
@@ -193,7 +317,8 @@
                         <button class="cursor-pointer">
                             @switch($x->metode)
                                 @case('Teori')
-                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori</flux:badge>
+                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
+                                    </flux:badge>
                                 @break
 
                                 @case('Praktik')
@@ -201,36 +326,44 @@
                                 @break
 
                                 @case('Tugas')
-                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas</flux:badge>
+                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
+                                    </flux:badge>
                                 @break
 
                                 @case('UTS')
                                 @case('UAS')
-                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">{{ $x->metode }}</flux:badge>
+                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">
+                                        {{ $x->metode }}</flux:badge>
                                 @break
 
                                 @case('Hasil Projek')
-                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Projek</flux:badge>
+                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Projek
+                                    </flux:badge>
                                 @break
 
                                 @case('Kerja Praktek')
-                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek</flux:badge>
+                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
+                                    </flux:badge>
                                 @break
 
                                 @case('Skripsi')
-                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi</flux:badge>
+                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
+                                    </flux:badge>
                                 @break
 
                                 @case('Aktivitas Partisipasif')
-                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif</flux:badge>
+                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
+                                    </flux:badge>
                                 @break
 
                                 @case('Mandiri')
-                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri</flux:badge>
+                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
+                                    </flux:badge>
                                 @break
 
                                 @default
-                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">{{ $x->metode ?? '-' }}</flux:badge>
+                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
+                                        {{ $x->metode ?? '-' }}</flux:badge>
                             @endswitch
                         </button>
 
@@ -278,7 +411,7 @@
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'rps' => 9,
+                    'rps' => 12,
                     'cpmk' => 6,
                     'scpmk' => 14,
                     'cpl' => 6,
@@ -298,4 +431,4 @@
             ])
         </x-slot:footer>
 
-    </x-admin.global.table.main-layout-table>
+        </x-admin.global.table.main-layout-table>

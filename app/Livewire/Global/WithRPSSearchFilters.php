@@ -115,15 +115,17 @@ trait WithRPSSearchFilters
             });
 
             if ($exactMatch) {
-                $this->rpsNameSearch = $exactMatch->rps;
                 if ($this->modeRPS == 'single') {
+                    $this->rpsNameSearch = $exactMatch->rps;
                     $this->rps_id = $exactMatch->id;
                     $this->rps_items = $this->itemsRPS($exactMatch);
                     $this->rpsResults = [];
                 } else {
+                    $this->rpsNameSearch = '';
                     $this->rps_id_array[] = $exactMatch->id;
                     $this->rps_items_array[] = $this->itemsRPS($exactMatch);
                 }
+                $this->rpsResults = $this->getRPSbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -204,7 +206,6 @@ trait WithRPSSearchFilters
             $this->rps_id_array[] = $id;
             $this->rps_name_array[] = $data->rps;
             $this->rps_items_array[] = $this->itemsRPS($data);
-            $this->rps_search = '';
         }
     }
 

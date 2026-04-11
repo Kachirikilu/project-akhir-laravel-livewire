@@ -14,7 +14,7 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, slot1, slot2, slot3) {
+    addItem(id, kode, slot1, slot2, slot3, link) {
         let normalizedId = Number(id);
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
             this.items.push(normalizedId);
@@ -23,7 +23,8 @@
                 kode: kode,
                 slot1: slot1,
                 slot2: slot2,
-                slot3: slot3
+                slot3: slot3,
+                link: link
             });
         }
     },
@@ -42,61 +43,16 @@
     }
 }">
 
-    <label class="block text-sm font-medium mb-2">
-        {{ $nameX2String ?? $nameXString }} 
+    <label for="{{ $modelString }}" class="block text-sm font-medium mb-2">
+        {{ $nameX2String ?? $nameXString }}
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif
     </label>
 
     {{-- 1. INPUT SEARCH --}}
-    <div class="relative">
+    @include('livewire.global.modal-form.partial.input-search')
 
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            @if ($wireLoadingParent ?? null)
-                <div wire:loading wire:target="{{ $wireLoadingParent }}">
-                    <svg class="animate-spin h-4 w-4 text-[var(--focus-color)]" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                </div>
-            @endif
-            <div @if ($wireLoadingParent ?? null) wire:loading.remove wire:target="{{ $wireLoadingParent }}" @endif>
-                <flux:icon icon="{{ $iconString }}" variant="mini"
-                    x-bind:class="isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400'" />
-            </div>
-        </div>
-
-        <input x-model="search" autocomplete="off" type="text"
-            @if ($wireLoadingParent ?? null) wire:loading.attr="disabled"
-             wire:target="{{ $wireLoadingParent }}" @endif
-            :disabled="!isParentReady" @focus="open = true; if(search === '') $wire.{{ $fetchString }}('', 'array');"
-            @input.debounce.300ms="
-                open = true; 
-                if(search === '') { 
-                    $wire.{{ $fetchString }}('', 'array'); 
-                } else {
-                    $wire.{{ $fetchString }}(search, 'array');
-                }
-            "
-            @click.outside="open = false"
-            :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' :
-                'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
-            :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
-                'bg-[var(--second-table-color)]'"
-            class="border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2 focus:ring-2 focus:ring-[var(--focus-color)] transition-all">
-
-        @include('livewire.global.search-and-filters.partial.reset-button', [
-            'xShow' => 'search',
-            'xClick' => "search = ''",
-        ])
-    </div>
-
-    {{-- 2. DROPDOWN HASIL --}}
 
 
     {{-- 2. DROPDOWN HASIL --}}
@@ -142,7 +98,8 @@
                                 '{{ $x['kode'] }}', 
                                 '{{ $x[$typeXString] }}', 
                                 @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
-                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset
+                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
+                                @isset($typeLinkString) '{{ $x[$typeLinkString] ?? '' }}' @else null @endisset,
                             );
                         }
                         "
@@ -214,9 +171,9 @@
                             <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
                                 x-text="itemsAll[index]?.slot1"></span>
 
-                            <div
-                                class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
-                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
+                            <div class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
+                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]"
+                                    x-text="'ID: ' + id"></span>
 
                                 @if ($typeX2String ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
@@ -226,6 +183,15 @@
                                 @if ($typeX3String ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <span x-text="itemsAll[index]?.slot3"></span>
+                                @endif
+
+                                @if ($typeLinkString ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <a :href="itemsAll[index]?.link" target="_blank"
+                                        class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
+                                        <flux:icon.link variant="micro" /> <span
+                                            x-text="itemsAll[index]?.link"></span>
+                                    </a>
                                 @endif
                             </div>
                         </div>

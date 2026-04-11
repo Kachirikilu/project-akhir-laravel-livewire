@@ -1,8 +1,8 @@
-<flux:modal name="rps-modal" wire:model="showRPSModal" x-data @refresh-data.window="$store.rps.reset()"
+<flux:modal name="cpmk-modal" wire:model="showCPMKModal" x-data @refresh-data.window="$store.cpmk.reset()"
    class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
-    <div wire:loading wire:target="saveRPS, updateRPS">
+    <div wire:loading wire:target="saveCPMK, updateCPMK">
         <div class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
@@ -16,8 +16,8 @@
         <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
             <h3 class="text-xl font-semibold">
 
-                <flux:badge icon="clipboard-document-list" color="emerald" size="lg">
-                    <span x-text="$store.rps?.isEdit ? 'Edit OBE - Rencana Pembelajaran Semester' : 'Tambah OBE - Rencana Pembelajaran Semester'"></span>
+                <flux:badge icon="academic-cap" color="amber" size="lg">
+                    <span x-text="$store.cpmk?.isEdit ? 'Edit OBE - Capaian Pembelajaran Mata Kuliah' : 'Tambah OBE - Capaian Pembelajaran Mata Kuliah'"></span>
                 </flux:badge>
 
             </h3>
@@ -25,10 +25,10 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingRPS ? 'updateRPS' : 'saveRPS' }}($store.rps)"
+            <form x-on:submit.prevent="$wire.{{ $isEditingCPMK ? 'updateCPMK' : 'saveCPMK' }}($store.cpmk)"
                 enctype="multipart/form-data" id="mkForm">
 
-                @include('livewire.staff.rps-management.modal-form.rps-input')
+                @include('livewire.staff.rps-management.modal-form.cpmk-input')
 
                 <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
@@ -38,7 +38,7 @@
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.staff.rps-management.modal-form.rps-message-form')
                         @include('livewire.global.modal-form.button-form', [
-                            'targetX' => 'addRPS, saveRPS, editRPS, updateRPS',
+                            'targetX' => 'addCPMK, saveCPMK, editCPMK, updateCPMK',
                         ])
                     </div>
                 </div>

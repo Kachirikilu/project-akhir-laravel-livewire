@@ -11,19 +11,31 @@ trait WithSubCPMKSearchFilters
     use WithPagination;
 
     public $scpmkSearchQuery = '';
+
     public $scpmkSearchResults = [];
+
     public $modeSCPMK = '';
+
     public $scpmk_id;
+
     public $scpmk_name = '';
+
     public $scpmk_items;
+
     public $scpmkNameSearch = '';
+
     public $scpmkResults = [];
+
     public $selectedSCPMKId = null;
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $scpmk_id_array = [];
+
     public $scpmk_name_array = [];
+
     public $scpmk_items_array = [];
+
+    public $scpmk_sub_items_array = [];
 
     private function mapSCPMK($collection)
     {
@@ -35,9 +47,19 @@ trait WithSubCPMKSearchFilters
             'metodologi' => $s->metodologi,
             'indikator' => $s->indikator,
             'metode' => $s->metode,
-            'waktu_tugas' => $s->waktu_tugas,
-            'waktu_mandiri' => $s->waktu_mandiri,
+            'w_tugas' => $s->w_tugas,
+            'w_mandiri' => $s->w_mandiri,
             'bobot' => $s->bobot,
+
+            'ref' => $s->refs->map(fn ($r) => [
+                'id' => $r->id,
+                'kode' => $r->kode,
+                'judul' => $r->judul,
+                'penulis' => $r->penulis,
+                'penerbit' => $r->penerbit,
+                'tahun' => $r->tahun,
+                'link' => $r->link,
+            ]),
         ])->toArray();
     }
 
@@ -51,6 +73,7 @@ trait WithSubCPMKSearchFilters
         if (! $s) {
             return null;
         }
+
         return [
             'id' => $s->id,
             'kode' => $s->kode,
@@ -109,8 +132,8 @@ trait WithSubCPMKSearchFilters
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($sc) use ($value, $normalizedValue) {
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($sc->kode));
-                
-                return strtolower($sc->deskripsi) === strtolower($value) 
+
+                return strtolower($sc->deskripsi) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
 
@@ -121,15 +144,17 @@ trait WithSubCPMKSearchFilters
                 $this->scpmkResults = [];
             }
             if ($exactMatch) {
-                $this->scpmkNameSearch = $exactMatch->deskripsi;
                 if ($this->modeSCPMK == 'single') {
+                    $this->scpmkNameSearch = $exactMatch->deskripsi;
                     $this->scpmk_id = $exactMatch->id;
                     $this->scpmk_items = $this->itemsSCPMK($exactMatch);
                     $this->scpmkResults = [];
                 } else {
+                    $this->scpmkNameSearch = '';
                     $this->scpmk_id_array[] = $exactMatch->id;
                     $this->scpmk_items_array[] = $this->itemsSCPMK($exactMatch);
                 }
+                $this->scpmkResults = $this->getSCPMKbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -148,17 +173,18 @@ trait WithSubCPMKSearchFilters
         $prodiId = $user->pr_id ?? null;
 
         $query = $this->scpmkQuery();
-        
-        if (!$prodiId) {
+
+        if (! $prodiId) {
             $defaultSCPMK = $query
                 ->latest()
                 ->limit(12)
                 ->get();
+
             return $this->mapSCPMK($defaultSCPMK);
         }
 
         $mainResults = $query
-            ->whereHas('cpmks.rps.mk_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('cpmks.rps.mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -168,7 +194,7 @@ trait WithSubCPMKSearchFilters
             $extra = SubCPMK::whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
-                
+
             $mainResults = $mainResults->concat($extra);
         }
 
@@ -182,9 +208,7 @@ trait WithSubCPMKSearchFilters
             $this->scpmkResults = $this->getSCPMKbyUser();
         }
 
-        return;
     }
-
 
     public function selectSCPMK($id, $scpmkName)
     {
@@ -203,6 +227,7 @@ trait WithSubCPMKSearchFilters
 
         $this->resetErrorBag(['scpmk_id', 'scpmkNameSearch']);
     }
+
     public function selectSCPMKArray($id)
     {
         $data = $this->scpmkQuery()->find($id);
@@ -210,7 +235,6 @@ trait WithSubCPMKSearchFilters
             $this->scpmk_id_array[] = $id;
             $this->scpmk_name_array[] = $data->deskripsi;
             $this->scpmk_items_array[] = $this->itemsSCPMK($data);
-            $this->scpmk_search = '';
         }
     }
 

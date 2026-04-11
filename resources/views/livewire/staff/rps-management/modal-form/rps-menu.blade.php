@@ -8,7 +8,22 @@
             $editCall = "editRPS($x->id)";
             $deleteCall = "deleteRPS($x->id, $isTrashed)";
             $restoreCall = "restoreRPS($x->id)";
+
+            $typeX2String = $typeXString;
+            if ($typeX2String == 'scpmk') {
+                $typeX2String = 'Sub-CPMK';
+            } else  if ($typeX2String == 'ref') {
+                $typeX2String = 'Referensi';
+            }
         @endphp
+
+        @include('livewire.global.table.text-copy', [
+            'xType' => $x->kode,
+            'typeXString' => 'Kode ' . $typeX2String
+        ])
+
+        <flux:menu.separator />
+
 
         @if (!$isTrashed)
             {{-- Tombol Edit --}}
@@ -28,7 +43,9 @@
                         '{{ $x->kode_mk ?? '' }}',
                         '{{ $x->mk ?? '' }}',
                         '{{ $x->akademik ?? '' }}',
-                        '{{ $x->draf ?? '' }}'
+                        '{{ $x->draf ?? '' }}',
+                        '{{ $x->count_scpmk }}',
+                        '{{ $x->total_bobot }}'
                     );
 
                     $flux.modal('rps-modal').show();
@@ -67,7 +84,6 @@
                 </div>
             </flux:menu.item>
         @else
-
         @endif
 
     </flux:menu>

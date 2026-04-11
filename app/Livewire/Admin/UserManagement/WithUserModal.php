@@ -53,7 +53,7 @@ trait WithUserModal
         $this->isEditing = false;
         $this->roleType = $role;
         $this->showUserModal = true;
-        $this->updatedProdiNameSearch($this->prNameSearch);
+        $this->updatedPrNameSearch($this->prNameSearch);
     }
 
     public function editUser($id)
@@ -69,15 +69,19 @@ trait WithUserModal
         $this->showUserModal = true;
         $this->isEditing = true;
 
-        $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
-        $this->user_id = $user->id;
-        $this->pr_id = $user->pr_id;
-        $this->pr_id_2 = $user->pr_id;
+        try {
+            $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
+            $this->user_id = $user->id;
+            $this->pr_id = $user->pr_id;
+            $this->pr_id_2 = $user->pr_id;
 
-        $this->getProdibyUser();
-        $this->fetchProdi($this->prNameSearch);
+            $this->getPrbyUser();
+            $this->fetchPr($this->prNameSearch);
 
-        $this->roleType = strtolower($user->role);
+            $this->roleType = strtolower($user->role);
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
     }
 
     private function inputModalUser($isEditing, $data)
@@ -345,10 +349,10 @@ trait WithUserModal
             $this->toast(message: ucfirst($this->roleType), isAkun: true);
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showUserModal = false;
         }
@@ -434,10 +438,10 @@ trait WithUserModal
             }
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showUserDelete = false;
         }

@@ -10,6 +10,13 @@
             $restoreCall = "restoreMK($x->id)";
         @endphp
 
+        @include('livewire.global.table.text-copy', [
+            'xType' => $x->kode,
+            'typeXString' => 'Kode MK'
+        ])
+
+        <flux:menu.separator />
+
         @if (!$isTrashed)
             {{-- Tombol Edit --}}
             <flux:menu.item

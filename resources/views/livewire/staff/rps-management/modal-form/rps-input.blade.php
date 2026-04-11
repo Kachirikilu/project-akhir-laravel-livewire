@@ -11,7 +11,7 @@
             'alpine' => 'rps',
             'labelString' => 'Deskripsi RPS',
             'modelString' => 'deskripsi',
-            'iconString' => 'rectangle-stack',
+            'iconString' => 'clipboard-document-list',
             'placeholder' => 'Masukkan deskripsi ringkas tentang RPS...',
             'message' => $errors->first('deskripsi'),
         ])
@@ -31,7 +31,6 @@
             // 'typeX3String' => 'fakultas',
         
             'nameXString' => 'Mata Kuliah',
-            'searchString' => 'mk_search',
             'nameSearchString' => 'mkNameSearch',
             'fetchString' => 'fetchMK',
             'iconString' => 'rectangle-stack',
@@ -65,21 +64,16 @@
                             if (year && year >= 0) {
                                 $store.rps.akademik_2 = year + 1;
                             }
-                        });
-                        $watch('$store.rps.akademik_2', value => {
-                            let year = parseInt(value);
-                            if (year && year >= 0) {
-                                $store.rps.akademik_1 = year - 1;
-                            }
-                        });"
+                            });
+                            $watch('$store.rps.akademik_2', value => {
+                                let year = parseInt(value);
+                                if (year && year >= 0) {
+                                    $store.rps.akademik_1 = year - 1;
+                                }
+                            });"
                             x-effect="
-
                             if ($store.rps.akademik_1 && $store.rps.akademik_2) {
-                                {{-- if ($store.rps.akademik_1.length < 4 || $store.rps.akademik_2.length < 4) {
-                                    $store.rps.akademik = '';
-                                } else { --}}
-                                    $store.rps.akademik = $store.rps.akademik_1 + '/' + $store.rps.akademik_2;
-                                {{-- } --}}
+                                $store.rps.akademik = $store.rps.akademik_1 + '/' + $store.rps.akademik_2;
                             } else {
                                 $store.rps.akademik = '';
                             }
@@ -124,29 +118,63 @@
         </div>
 
 
-        <div x-data="{}">
-            {{-- Kondisi 1: Kurang dari 14 (Hanya Draf) --}}
-            <template x-if="$store.rps.count_scpmk < 14">
+        <div x-data
+            x-effect="
+                {{-- Syarat: Count < 14 ATAU Bobot == 80 ATAU Bobot > 140 --}}
+                const isInvalid = $store.rps.count_scpmk < 14 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 140;
+                if(isInvalid) { 
+                    $store.rps.is_draf = 1; 
+                }
+            ">
+            {{-- 1. TEMPLATE KONDISI TERKUNCI (DRAF ONLY) --}}
+            <template
+                x-if="$store.rps.count_scpmk < 14 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 140">
                 <div wire:key="status-draf-only">
                     @include('livewire.global.modal-form.select-form', [
                         'alpine' => 'rps',
-                        'labelString' => 'Draf / Aktif',
+                        'labelString' => 'Status RPS (Terkunci)',
                         'modelString' => 'is_draf',
-                        'xOptions' => ['Draf', 'Aktif'],
-                        'xValues' => [1, 0],
-                        'iconString' => 'tag',
-                        'placeholder' => 'Status Aktif Terkunci...',
+                        'xOptions' => ['Draf'],
+                        'xValues' => [1],
+                        'iconString' => 'lock-closed',
+                        'disabled' => true,
                         'message' => $errors->first('is_draf'),
                     ])
-                    <p class="mt-2 text-sm text-red-500 italic flex items-center gap-1 font-medium">
-                        <flux:icon icon="information-circle" variant="mini" class="w-3 h-3" />
-                        Status "Aktif" terkunci. Sub-CPMK baru <span x-text="$store.rps.count_scpmk + '/14'"></span>
-                    </p>
+
+                    <div class="mt-2 space-y-1">
+                        {{-- Pesan Error Sub-CPMK --}}
+                        <template x-if="$store.rps.count_scpmk < 14">
+                            <p class="text-sm text-red-500 italic flex items-center gap-1 font-medium">
+                                <flux:icon icon="information-circle" variant="mini" class="w-4 h-4" />
+                                Sub-CPMK minimal 14 (Saat ini: <span x-text="$store.rps.count_scpmk + ' Sub-CPMK)!'"></span>
+                            </p>
+                        </template>
+
+                        {{-- Pesan Error Bobot 80 --}}
+                        <template x-if="$store.rps.total_bobot < 80">
+                            <p class="text-sm text-red-500 italic flex items-center gap-1 font-medium">
+                                <flux:icon icon="exclamation-triangle" variant="mini" class="w-4 h-4" />
+                                Total bobot kurang (Min 80%, saat ini: <span
+                                    x-text="$store.rps.total_bobot + '%)!'"></span>
+                            </p>
+                        </template>
+
+                        {{-- Pesan Error Bobot > 140 --}}
+                        <template x-if="$store.rps.total_bobot > 140">
+                            <p class="text-sm text-red-500 italic flex items-center gap-1 font-medium">
+                                <flux:icon icon="x-circle" variant="mini" class="w-4 h-4" />
+                                Total bobot melebihi batas (Max 140%, saat ini: <span
+                                    x-text="$store.rps.total_bobot + '%)!'"></span>
+                            </p>
+                        </template>
+                    </div>
                 </div>
             </template>
 
-            <template x-if="$store.rps.count_scpmk >= 14">
-                <div wire:key="status-full-options">
+            {{-- 2. TEMPLATE KONDISI NORMAL --}}
+            <template
+                x-if="$store.rps.count_scpmk >= 14 && $store.rps.total_bobot >= 80 && $store.rps.total_bobot <= 140">
+                <div wire:key="status-normal">
                     @include('livewire.global.modal-form.select-form', [
                         'alpine' => 'rps',
                         'labelString' => 'Draf / Aktif',
@@ -154,12 +182,11 @@
                         'xOptions' => ['Draf', 'Aktif'],
                         'xValues' => [1, 0],
                         'iconString' => 'tag',
-                        'placeholder' => 'Pilih Status...',
                         'message' => $errors->first('is_draf'),
                     ])
-                    <p class="mt-2 text-sm text-emerald-600 italic flex items-center gap-1 font-medium">
-                        <flux:icon icon="check-circle" variant="mini" class="w-3 h-3" />
-                        Syarat minimal pertemuan terpenuhi <span x-text="'(' + $store.rps.count_scpmk + '/14)'"></span>
+                    <p class="mt-2 text-sm text-green-600 flex items-center gap-1 font-medium">
+                        <flux:icon icon="check-circle" variant="mini" class="w-4 h-4" />
+                        Syarat terpenuhi (Bobot: <span x-text="$store.rps.total_bobot"></span>%).
                     </p>
                 </div>
             </template>
@@ -172,7 +199,7 @@
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-referensi-input')
     @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-dosen-input')
 
-    <div x-data x-init="$watch('$store.rps.mk_id', value => console.log('mk_id: ', value))"></div>
-    <div x-data x-init="$watch('$store.rps.mk_items', value => console.log('mk_items: ', value))"></div>
+    {{-- <div x-data x-init="$watch('$store.rps.mk_id', value => console.log('mk_id: ', value))"></div>
+    <div x-data x-init="$watch('$store.rps.mk_items', value => console.log('mk_items: ', value))"></div> --}}
 
 </div>

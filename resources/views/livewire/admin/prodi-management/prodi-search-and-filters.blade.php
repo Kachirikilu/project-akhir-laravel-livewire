@@ -99,7 +99,7 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputJurusanFilter',
+                'inputXFilterString' => 'inputJrFilter',
                 'xSearchResultsString' => 'jrSearchResults',
                 'selectedXNameString' => 'jr_name',
                 'iconString' => 'book-open',
@@ -107,10 +107,10 @@
                 'xSearchQueryString' => 'jrSearchQuery',
                 'selectedXId' => $selectedJrId,
                 'selectedXName' => $jr_name,
-                'resetXFilter' => 'resetJurusanFilter()',
+                'resetXFilter' => 'resetJrFilter()',
                 'xSearchQuery' => $jrSearchQuery,
                 'xSearchResults' => $jrSearchResults,
-                'selectXForFilterString' => 'selectJurusanForFilter',
+                'selectXForFilterString' => 'selectJrForFilter',
                 'typeXString' => 'jurusan',
                 'unfoundString' => 'Tidak ada Jurusan ditemukan!',
             ])
@@ -118,7 +118,7 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputFakultasFilter',
+                'inputXFilterString' => 'inputFkFilter',
                 'xSearchResultsString' => 'fkSearchResults',
                 'selectedXNameString' => 'fk_name',
                 'iconString' => 'building-library',
@@ -126,10 +126,10 @@
                 'xSearchQueryString' => 'fkSearchQuery',
                 'selectedXId' => $selectedFkId,
                 'selectedXName' => $fk_name,
-                'resetXFilter' => 'resetFakultasFilter()',
+                'resetXFilter' => 'resetFkFilter()',
                 'xSearchQuery' => $fkSearchQuery,
                 'xSearchResults' => $fkSearchResults,
-                'selectXForFilterString' => 'selectFakultasForFilter',
+                'selectXForFilterString' => 'selectFkForFilter',
                 'typeXString' => 'fakultas',
                 'unfoundString' => 'Tidak ada Fakultas ditemukan!',
             ])

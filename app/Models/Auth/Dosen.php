@@ -104,7 +104,7 @@ class Dosen extends Model
             });
 
             // 3. Pencarian Berdasarkan Lokasi (Prodi, Jurusan, Fakultas)
-            $q->orWhereHas('prodi', function ($p) use ($searchTerm) {
+            $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
                 $p->where('nama_pr', 'like', $searchTerm)
                     ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
                         $j->where('nama_jr', 'like', $searchTerm)

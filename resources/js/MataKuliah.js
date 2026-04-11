@@ -50,7 +50,7 @@ document.addEventListener("alpine:init", () => {
             kodeBlok,
             digitSemester,
             digitMk,
-            // idProdi,
+            // idPr,
             // kodePr,
             // namaProdi,
             // namaJurusan,
@@ -73,7 +73,7 @@ document.addEventListener("alpine:init", () => {
             this.is_wajib = isWajib;
 
             // this.nama_pr_search = namaProdi;
-            // this.pr_id = idProdi;
+            // this.pr_id = idPr;
             // this.pr_items = kodePr;
             // this.pr_items = {
             //     "kode": kodePr,

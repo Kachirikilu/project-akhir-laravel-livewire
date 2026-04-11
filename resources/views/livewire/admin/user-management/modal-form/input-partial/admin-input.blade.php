@@ -47,23 +47,22 @@
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'user',
         'xResults' => $prResults,
-        'selectX' => 'selectProdi',
+        'selectX' => 'selectPr',
         'modelString' => 'nama_pr_search',
 
         'idString' => 'pr_id',
         'itemsAllString' => 'pr_items',
 
-        'resetXInput' => 'resetProdiInput()',
+        'resetXInput' => 'resetPrInput()',
         'typeXString' => 'prodi',
         'typeX2String' => 'jurusan',
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',
-        'searchString' => 'prodi_search',
         'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchProdi',
+        'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchProdi'
+        'wireLoading' => 'fetchPr'
     ])
 
     {{-- 📧 Status Input --}}

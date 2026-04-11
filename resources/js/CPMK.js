@@ -1,13 +1,13 @@
 document.addEventListener("alpine:init", () => {
-    Alpine.store("rps", {
+    Alpine.store("cpmk", {
         typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
-        rps_delete: "",
-        kode_rps_delete: "",
+        cpmk_delete: "",
+        kode_cpmk_delete: "",
         
         setType(val) {
             this.typeModal = val;
@@ -19,7 +19,62 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        kode_cpmk: "",
+        kode_cpmk_1: "",
+        kode_cpmk_2: "",
         deskripsi: "",
+
+        count_scpmk: 0,
+        total_bobot: 0,
+
+        init() {
+            Alpine.effect(() => {
+                this.kode_cpmk = (this.kode_cpmk_1 + this.kode_cpmk_2).trim();
+            })
+        },
+
+        ref_scpmk: [],
+
+        // Di dalam Alpine.store('rps')
+        update(allSubItems) {
+            if (!allSubItems || allSubItems.length === 0) {
+                this.ref_scpmk = [];
+                return;
+            }
+
+            this.ref_scpmk = [];
+
+            allSubItems.forEach(item => {
+                if (item.scpmk) {
+                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
+                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
+                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
+                }
+            });
+        },
+
+    // setValueCPMK(k1, k2, ...) {
+    //     this.kode_cpmk_1 = k1;
+    //     this.kode_cpmk_2 = k2;
+    //     // ... sisanya
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         digit_akademik: "",
 
         mk_id: "",
@@ -31,9 +86,6 @@ document.addEventListener("alpine:init", () => {
         akademik_2: "",
         is_draf: "",
 
-        count_scpmk: 0,
-        total_bobot: 0,
-
         setCountSCPMK(val) {
             this.count_scpmk = val;
 
@@ -42,42 +94,6 @@ document.addEventListener("alpine:init", () => {
             } else if (val < 14 && this.is_draf === "") {
                 this.is_draf = "";
             } 
-        },
-
-
-        ref_cpmk: [], 
-        ref_scpmk: [],
-        cpl_cpmk: [],
-
-        // Di dalam Alpine.store('rps')
-        update(allSubItems) {
-            if (!allSubItems || allSubItems.length === 0) {
-                this.ref_cpmk = [];
-                this.ref_scpmk = [];
-                this.cpl_cpmk = [];
-                this.count_scpmk = 0;
-                return;
-            }
-
-            this.ref_cpmk = [];
-            this.ref_scpmk = [];
-            this.cpl_cpmk = [];
-
-            allSubItems.forEach(item => {
-                if (item.scpmk) {
-                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
-                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
-                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
-                }
-                if (item.cpl) {
-                    const combinedCPL = [...this.cpl_cpmk, ...item.cpl];
-                    this.cpl_cpmk = Array.from(new Map(combinedCPL.map(i => [i.id, i])).values());
-                }
-                if (item.ref) {
-                    const combinedRef = [...this.ref_cpmk, ...item.ref];
-                    this.ref_cpmk = Array.from(new Map(combinedRef.map(i => [i.id, i])).values());
-                }
-            });
         },
 
 
@@ -101,6 +117,7 @@ document.addEventListener("alpine:init", () => {
             countScpmk,
             totalBobot
         ) {
+            this.kode = kode;
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
 
@@ -137,8 +154,8 @@ document.addEventListener("alpine:init", () => {
             kodeMkDelete,
             forceDelete
         ) {
-            this.rps_delete = namaProdi;
-            this.kode_rps_delete = kodeMkDelete;
+            this.cpmk_delete = namaProdi;
+            this.kode_cpmk_delete = kodeMkDelete;
             this.isForceDelete = forceDelete;
         },
 
@@ -158,6 +175,8 @@ document.addEventListener("alpine:init", () => {
 
             this.typeModal = "";
             this.deskripsi = "";
+
+            this.kode = "";
 
             this.mk_id = "";
             this.nama_mk_search = "";

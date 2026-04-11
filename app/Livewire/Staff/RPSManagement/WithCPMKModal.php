@@ -9,94 +9,91 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-trait WithRPSModal
+trait WithCPMKModal
 {
     use HasToast;
 
-    public $selected_id_rps;
+    public $selected_id_cpmk;
 
-    public $isEditingRPS = false;
+    public $isEditingCPMK = false;
 
-    public $showRPSModal = false;
+    public $showCPMKModal = false;
 
     public $mk_id_2;
 
-    public function addRPS()
+    public function addCPMK()
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $this->resetInputRPS();
+        $this->resetInputCPMK();
 
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditingRPS = false;
-        $this->showRPSModal = true;
+        $this->isEditingCPMK = false;
+        $this->showCPMKModal = true;
 
-        $this->updatedMKNameSearch($this->mkNameSearch);
-        $this->updatedCPMKNameSearch($this->cpmkNameSearch);
-        $this->updatedCPLNameSearch($this->cplNameSearch);
+        $this->updatedSCPMKNameSearch($this->scpmkNameSearch);
         $this->updatedRefNameSearch($this->refNameSearch);
-        $this->updatedDosenNameSearch($this->refNameSearch);
     }
 
-    public function editRPS($id)
+    public function editCPMK($id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        $this->resetInputRPS();
+        $this->resetInputCPMK();
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->selected_id_rps = $id;
-        $this->isEditingRPS = true;
+        $this->selected_id_cpmk = $id;
+        $this->isEditingCPMK = true;
 
         try {
-            // 1. Load data RPS dengan relasi yang sangat lengkap
-            $rps = RPS::with([
+            // 1. Load data CPMK dengan relasi yang sangat lengkap
+            $cpmk = CPMK::with([
                 'mk_rel',
                 'dosens',
                 'cpmks.scpmks.refs', // Penting untuk mapping Sub-CPMK
                 'cpmks.refs',        // Referensi Utama CPMK
                 'cpmks.cpls',        // CPL dari CPMK
-                'cpls',              // CPL manual di tingkat RPS
-                'refs',              // Referensi manual di tingkat RPS
+                'cpls',              // CPL manual di tingkat CPMK
+                'refs',              // Referensi manual di tingkat CPMK
             ])->findOrFail($id);
 
-            $this->mkNameSearch = $rps->mk_rel?->mk;
-            $this->mk_id = $rps->mk_id;
-            $this->mk_id_2 = $rps->mk_id;
-            $this->mk_items = $this->itemsMK($rps->mk_rel);
+            $this->mkNameSearch = $cpmk->mk_rel?->mk;
+            $this->mk_id = $cpmk->mk_id;
+            $this->mk_id_2 = $cpmk->mk_id;
+            $this->mk_items = $this->itemsMK($cpmk->mk_rel);
 
             // 2. Fill Data Dosen
-            $this->dosen_id_array = $rps->dosens->pluck('id')->toArray();
-            $this->dosen_items_array = $rps->dosens->map(function ($d) {
+            $this->dosen_id_array = $cpmk->dosens->pluck('id')->toArray();
+            $this->dosen_items_array = $cpmk->dosens->map(function ($d) {
                 return $this->itemsDosen($d);
             })->toArray();
 
             // 3. MAPPING CPMK (MENGGUNAKAN FUNGSI mapCPMK ANDA)
-            $this->cpmk_id_array = $rps->cpmks->pluck('id')->toArray();
-            $this->cpmk_items_array = $rps->cpmks->map(function ($c) {
+            $this->cpmk_id_array = $cpmk->cpmks->pluck('id')->toArray();
+            $this->cpmk_items_array = $cpmk->cpmks->map(function ($c) {
                 return $this->itemsCPMK($c);
             })->toArray();
-            $this->cpmk_sub_items_array = $this->mapCPMK($rps->cpmks);
+            $this->cpmk_sub_items_array = $this->mapCPMK($cpmk->cpmks);
 
             // $totalSubCPMK = 0;
             // foreach ($this->cpmk_sub_items_array as $group) {
             //     $totalSubCPMK += count($group['scpmk'] ?? []);
             // }
-            // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $rps->is_draf;
+            // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $cpmk->is_draf;
 
             // 2. Fill Data CPL & Referensi Tambahan (Manual)
-            $this->cpl_id_array = $rps->cpls->pluck('id')->toArray();
-            $this->cpl_items_array = $rps->cpls->map(function ($c) {
+            $this->cpl_id_array = $cpmk->cpls->pluck('id')->toArray();
+            $this->cpl_items_array = $cpmk->cpls->map(function ($c) {
                 return $this->itemsCPL($c);
             })->toArray();
 
-            $this->ref_id_array = $rps->refs->pluck('id')->toArray();
-            $this->ref_items_array = $rps->refs->map(function ($r) {
+            $this->ref_id_array = $cpmk->refs->pluck('id')->toArray();
+            $this->ref_items_array = $cpmk->refs->map(function ($r) {
                 return $this->itemsRef($r);
             })->toArray();
 
@@ -106,10 +103,10 @@ trait WithRPSModal
             $this->updatedRefNameSearch($this->refNameSearch);
             $this->updatedDosenNameSearch($this->refNameSearch);
 
-            $this->showRPSModal = true;
+            $this->showCPMKModal = true;
 
             // Dispatch ke AlpineJS
-            $this->dispatch('fill-modal-rps', rps: $rps);
+            $this->dispatch('fill-modal-cpmk', cpmk: $cpmk);
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
@@ -117,7 +114,7 @@ trait WithRPSModal
         }
     }
 
-    private function inputModalRPS($isEditingRPS, $data)
+    private function inputModalCPMK($isEditingCPMK, $data)
     {
         // 1. Ambil data dari CPMK terpilih
         $cplFromCpmk = [];
@@ -159,13 +156,13 @@ trait WithRPSModal
             'mk_id' => 'required|exists:mata_kuliahs,id',
             'akademik' => [
                 'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
-                function ($attribute, $value, $fail) use ($data, $isEditingRPS) {
-                    $query = DB::table('rps')->where('mk_id', $data['mk_id'])->where('akademik', $value);
-                    if ($isEditingRPS) {
-                        $query->where('id', '!=', $this->selected_id_rps);
+                function ($attribute, $value, $fail) use ($data, $isEditingCPMK) {
+                    $query = DB::table('cpmk')->where('mk_id', $data['mk_id'])->where('akademik', $value);
+                    if ($isEditingCPMK) {
+                        $query->where('id', '!=', $this->selected_id_cpmk);
                     }
                     if ($query->exists()) {
-                        $fail("RPS untuk Mata Kuliah ini pada tahun akademik $value sudah ada.");
+                        $fail("CPMK untuk Mata Kuliah ini pada tahun akademik $value sudah ada.");
                     }
                 },
             ],
@@ -215,7 +212,7 @@ trait WithRPSModal
             'dosen_items_array.*.peran' => 'required|in:Koordinator,Pengajar,Asisten',
         ];
 
-        $validator = Validator::make($data, $rules, $this->validationMessagesRPS());
+        $validator = Validator::make($data, $rules, $this->validationMessagesCPMK());
 
         if ($validator->fails()) {
             $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
@@ -247,7 +244,7 @@ trait WithRPSModal
         return $validated;
     }
 
-    public function saveRPS($data)
+    public function saveCPMK($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -265,21 +262,21 @@ trait WithRPSModal
 
         try {
             // 2. Jalankan validasi dan pembersihan duplikat
-            $validated = $this->inputModalRPS(false, $data);
+            $validated = $this->inputModalCPMK(false, $data);
 
             // 3. Eksekusi Database
             DB::transaction(function () use ($validated) {
-                $rps = RPS::create([
+                $cpmk = CPMK::create([
                     'deskripsi' => $validated['deskripsi'],
                     'mk_id' => $validated['mk_id'],
                     'akademik' => $validated['akademik'],
                     'tahun_awal' => $validated['akademik_1'],
                     'tahun_akhir' => $validated['akademik_2'],
                     'is_draf' => $validated['is_draf'],
-                    // 'isi_rps_json' => json_encode($validated['cpmk_sub_items_array'] ?? []),
+                    // 'isi_cpmk_json' => json_encode($validated['cpmk_sub_items_array'] ?? []),
                 ]);
 
-                $rps->refresh();
+                $cpmk->refresh();
 
                 // 1. Sync Dosen
                 if (! empty($validated['dosen_id_array'])) {
@@ -292,7 +289,7 @@ trait WithRPSModal
                             'sort_order' => $index,
                         ];
                     }
-                    $rps->dosens()->sync($syncDosen);
+                    $cpmk->dosens()->sync($syncDosen);
                 }
 
                 // 3. Mapping CPMK
@@ -305,7 +302,7 @@ trait WithRPSModal
                             ];
                         }
                     }
-                    $rps->cpmks()->sync($cpmkSync);
+                    $cpmk->cpmks()->sync($cpmkSync);
                 }
 
                 // 4. Mapping CPL (ID Baru/Manual)
@@ -318,7 +315,7 @@ trait WithRPSModal
                             ];
                         }
                     }
-                    $rps->cpls()->sync($cplSync);
+                    $cpmk->cpls()->sync($cplSync);
                 }
 
                 // 5. Mapping Referensi (ID Baru/Manual)
@@ -331,17 +328,17 @@ trait WithRPSModal
                             ];
                         }
                     }
-                    $rps->refs()->sync($refSync);
+                    $cpmk->refs()->sync($refSync);
                 }
             });
             // 4. Feedback & Reset
             $kodeMK = $this->mk_items['kode'];
-            $kodeRPS = $data['digit_akademik'];
+            $kodeCPMK = $data['digit_akademik'];
             $namaMK = $this->mk_items['name'];
-            $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})");
-            $this->resetInputRPS();
+            $this->toast(message: "CPMK $kodeMK-$kodeCPMK $namaMK ({$validated['akademik']})");
+            $this->resetInputCPMK();
             $this->dispatch('refresh-data');
-            $this->showRPSModal = false;
+            $this->showCPMKModal = false;
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -349,11 +346,11 @@ trait WithRPSModal
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
-            $this->showRPSModal = false;
+            $this->showCPMKModal = false;
         }
     }
 
-    public function updateRPS($data)
+    public function updateCPMK($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -372,20 +369,20 @@ trait WithRPSModal
         $data['ref_id_array'] = $this->ref_id_array ?? [];
 
         try {
-            $validated = $this->inputModalRPS(true, $data);
+            $validated = $this->inputModalCPMK(true, $data);
 
             DB::transaction(function () use ($validated) {
-                $rps = RPS::findOrFail($this->selected_id_rps);
+                $cpmk = CPMK::findOrFail($this->selected_id_cpmk);
 
                 // 1. Update Data Utama
-                $rps->update([
+                $cpmk->update([
                     'deskripsi' => $validated['deskripsi'],
                     'mk_id' => $validated['mk_id'],
                     'akademik' => $validated['akademik'],
                     'tahun_awal' => $validated['akademik_1'],
                     'tahun_akhir' => $validated['akademik_2'],
                     'is_draf' => $validated['is_draf'],
-                    // 'isi_rps_json' => json_encode($validated['cpmk_sub_items_array']),
+                    // 'isi_cpmk_json' => json_encode($validated['cpmk_sub_items_array']),
                 ]);
 
                 // 2. Sync Dosen dengan Pivot Data
@@ -398,32 +395,32 @@ trait WithRPSModal
                         'sort_order' => $index,
                     ];
                 }
-                $rps->dosens()->sync($syncDosen);
+                $cpmk->dosens()->sync($syncDosen);
 
                 // 3. Sync CPMK
                 $syncCpmk = [];
                 foreach ($validated['cpmk_id_array'] as $index => $id) {
                     $syncCpmk[(int) $id] = ['sort_order' => $index];
                 }
-                $rps->cpmks()->sync($syncCpmk);
+                $cpmk->cpmks()->sync($syncCpmk);
 
                 // 4. Sync CPL (Manual/Tambahan)
                 $syncCpl = [];
                 foreach ($validated['cpl_id_array'] as $index => $id) {
                     $syncCpl[(int) $id] = ['sort_order' => $index];
                 }
-                $rps->cpls()->sync($syncCpl);
+                $cpmk->cpls()->sync($syncCpl);
 
                 // 5. Sync Referensi (Manual/Tambahan)
                 $syncRef = [];
                 foreach ($validated['ref_id_array'] as $index => $id) {
                     $syncRef[(int) $id] = ['sort_order' => $index];
                 }
-                $rps->refs()->sync($syncRef);
+                $cpmk->refs()->sync($syncRef);
             });
 
-            $this->toast(message: 'RPS Berhasil diperbarui', type: 'update');
-            $this->showRPSModal = false;
+            $this->toast(message: 'CPMK Berhasil diperbarui', type: 'update');
+            $this->showCPMKModal = false;
             $this->dispatch('refresh-data');
 
         } catch (ValidationException $e) {
@@ -432,11 +429,11 @@ trait WithRPSModal
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
-            $this->showRPSModal = false;
+            $this->showCPMKModal = false;
         }
     }
 
-    private function validationMessagesRPS()
+    private function validationMessagesCPMK()
     {
         return [
             // Relasi Mata Kuliah & Prodi
@@ -455,13 +452,13 @@ trait WithRPSModal
             'akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
 
             // Deskripsi & Status
-            'deskripsi.required' => 'Deskripsi RPS wajib diisi!',
-            'deskripsi.max' => 'Deskripsi RPS tidak boleh lebih dari 1000 karakter!',
-            'is_draf.required' => 'Status RPS wajib ditentukan!',
+            'deskripsi.required' => 'Deskripsi CPMK wajib diisi!',
+            'deskripsi.max' => 'Deskripsi CPMK tidak boleh lebih dari 1000 karakter!',
+            'is_draf.required' => 'Status CPMK wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
 
             // CPMK & Relasi Data
-            'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk RPS ini!',
+            'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk CPMK ini!',
             'cpmk_id_array.array' => 'Format data CPMK tidak valid!',
             'cpmk_id_array.min' => 'Minimal harus ada satu CPMK yang dipilih!',
 
@@ -476,7 +473,7 @@ trait WithRPSModal
 
             // Form Mata Kuliah (Legacy/Template)
             'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
-            'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
+            'deskripsi.max' => 'Deskripsi CPMK terlalu panjang (Maksimal 1000 karakter)!',
             'semester.required' => 'Semester wajib diisi!',
             'semester.integer' => 'Semester harus berupa angka!',
             'semester.min' => 'Semester minimal adalah 1!',
@@ -493,27 +490,27 @@ trait WithRPSModal
         ];
     }
 
-    private function resetInputRPS()
+    private function resetInputCPMK()
     {
         $this->cpmkNameSearch = '';
         $this->cplNameSearch = '';
         $this->refNameSearch = '';
         $this->refNameSearch = '';
 
-        // ambil id untuk simpan ke rps_pivot_cpmk
+        // ambil id untuk simpan ke cpmk_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
 
-        // ambil id untuk simpan ke rps_pivot_cpl
+        // ambil id untuk simpan ke cpmk_pivot_cpl
         $this->cpl_id_array = [];
         $this->cpl_items_array = [];
 
-        // ambil id untuk simpan ke rps_pivot_ref
+        // ambil id untuk simpan ke cpmk_pivot_ref
         $this->ref_id_array = [];
         $this->ref_items_array = [];
 
-        // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke rps_pivot_dosen
+        // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke cpmk_pivot_dosen
         $this->dosen_id_array = [];
         $this->dosen_items_array = [];
 

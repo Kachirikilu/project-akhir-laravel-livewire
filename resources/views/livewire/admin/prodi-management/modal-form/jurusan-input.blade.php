@@ -24,21 +24,20 @@
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
         'xResults' => $fkResults,
-        'selectX' => 'selectFakultas',
+        'selectX' => 'selectFk',
         'modelString' => 'nama_fk_search',
 
         'idString' => 'fk_id',
         'itemsAllString' => 'fk_items',
 
-        'resetXInput' => 'resetFakultasInput()',
+        'resetXInput' => 'resetFkInput()',
         'typeXString' => 'fakultas',
 
         'nameXString' => 'Fakultas',
-        'searchString' => 'fakultas_search',
         'nameSearchString' => 'fkNameSearch',
-        'fetchString' => 'fetchFakultas',
+        'fetchString' => 'fetchFk',
         'iconString' => 'building-library',
-        'wireLoading' => 'fetchFakultas'
+        'wireLoading' => 'fetchFk'
     ])
 
     {{-- 📧 Kode Jurusan Input --}}

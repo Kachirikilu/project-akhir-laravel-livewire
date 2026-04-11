@@ -52,12 +52,12 @@
                 this.colorIcon = val
             },
 
-            setValueProdi(namaProdi, strata, idJurusan, namaJurusan, idFakultas, namaFakultas) {
+            setValueProdi(namaProdi, strata, idJr, namaJurusan, idFk, namaFakultas) {
                 this.nama_pr = namaProdi
                 this.strata = strata
-                this.jr_id = idJurusan
+                this.jr_id = idJr
                 this.nama_jr = namaJurusan
-                this.fk_id = idFakultas
+                this.fk_id = idFk
                 this.nama_fk = namaFakultas
             },
 

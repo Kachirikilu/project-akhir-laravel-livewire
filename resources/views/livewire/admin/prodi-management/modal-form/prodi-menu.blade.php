@@ -8,7 +8,19 @@
             $editCall = "editProdi($x->id, '$typeXString')";
             $deleteCall = "deleteProdi($x->id, '$typeXString', $isTrashed)";
             $restoreCall = "restoreProdi($x->id, '$typeXString')";
+
+            $typeX2String = $typeXString;
+            if ($typeX2String == 'prodi') {
+                $typeX2String = 'Program Studi';
+            }
         @endphp
+
+        @include('livewire.global.table.text-copy', [
+            'xType' => $x->kode,
+            'typeXString' => 'Kode ' . $typeX2String
+        ])
+
+        <flux:menu.separator />
 
         @if (!$isTrashed)
             {{-- Tombol Edit --}}

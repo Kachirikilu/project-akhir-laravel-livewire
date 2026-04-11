@@ -172,15 +172,17 @@ trait WithCPMKSearchFilters
             });
 
             if ($exactMatch) {
-                $this->cpmkNameSearch = $exactMatch->deskripsi;
                 if ($this->modeCPMK == 'single') {
+                    $this->cpmkNameSearch = $exactMatch->deskripsi;
                     $this->cpmk_id = $exactMatch->id;
                     $this->cpmk_items = $this->itemsCPMK($exactMatch);
                     $this->cpmkResults = [];
                 } else {
+                    $this->cpmkNameSearch = '';
                     $this->cpmk_id_array[] = $exactMatch->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($exactMatch);
                 }
+                $this->cpmkResults = $this->getCPMKbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -263,8 +265,6 @@ trait WithCPMKSearchFilters
 
             $mappedData = $this->mapCPMK(collect([$data]));
             $this->cpmk_sub_items_array[] = $mappedData[0];
-
-            $this->cpmk_search = '';
         }
     }
 

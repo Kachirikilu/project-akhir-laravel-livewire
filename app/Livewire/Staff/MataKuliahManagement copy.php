@@ -96,9 +96,9 @@ class MataKuliahManagement extends Component
 
     public function render()
     {
-        $this->inputProdiFilter();
-        $this->inputJurusanFilter();
-        $this->inputFakultasFilter();
+        $this->inputPrFilter();
+        $this->inputJrFilter();
+        $this->inputFkFilter();
 
         $query = $this->inputMKSearch();
 

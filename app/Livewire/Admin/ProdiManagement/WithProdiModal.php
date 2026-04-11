@@ -47,9 +47,9 @@ trait WithProdiModal
         $this->prodiType = $prodi;
         $this->showProdiModal = true;
         if ($prodi === 'prodi') {
-            $this->updatedJurusanNameSearch($this->jrNameSearch);
+            $this->updatedJrNameSearch($this->jrNameSearch);
         } elseif ($prodi === 'jurusan') {
-            $this->updatedFakultasNameSearch($this->fkNameSearch);
+            $this->updatedFkNameSearch($this->fkNameSearch);
         }
     }
 
@@ -83,8 +83,8 @@ trait WithProdiModal
                 } else {
                     $this->jrNameSearch = '';
                 }
-                $this->getJurusanbyUser();
-                $this->fetchJurusan($this->jrNameSearch);
+                $this->getJrbyUser();
+                $this->fetchJr($this->jrNameSearch);
 
             } elseif ($type === 'jurusan') {
                 $jurusan = Jurusan::with('fk_rel')->findOrFail($id);
@@ -100,8 +100,8 @@ trait WithProdiModal
                 } else {
                     $this->fkNameSearch = '';
                 }
-                $this->getFakultasbyUser();
-                $this->fetchFakultas($this->fkNameSearch);
+                $this->getFkbyUser();
+                $this->fetchFk($this->fkNameSearch);
 
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
@@ -111,7 +111,7 @@ trait WithProdiModal
             $this->showProdiModal = true;
 
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
         }
     }
 
@@ -356,10 +356,10 @@ trait WithProdiModal
             $this->toast(message: $message);
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showProdiModal = false;
         }
@@ -420,10 +420,10 @@ trait WithProdiModal
             $this->toast(message: $message, type: 'update');
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showProdiDelete = false;
         }

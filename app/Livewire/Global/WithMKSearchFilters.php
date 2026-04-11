@@ -111,15 +111,17 @@ trait WithMKSearchFilters
             });
 
             if ($exactMatch) {
-                $this->mkNameSearch = $exactMatch->mk;
                 if ($this->modeMK == 'single') {
+                    $this->mkNameSearch = $exactMatch->mk;
                     $this->mk_id = $exactMatch->id;
                     $this->mk_items = $this->itemsMK($exactMatch);
                     $this->mkResults = [];
                 } else {
+                    $this->mkNameSearch = '';
                     $this->mk_id_array[] = $exactMatch->id;
                     $this->mk_items_array[] = $this->itemsMK($exactMatch);
                 }
+                $this->mkResults = $this->getMKbyUser();
             }
         }else {
             if (Auth::user()->pr_id) {
@@ -200,7 +202,6 @@ trait WithMKSearchFilters
         if ($data && ! in_array($id, $this->mk_id_array)) {
             $this->mk_id_array[] = $id;
             $this->mk_items_array[] = $this->itemsMK($data);
-            $this->mk_search = '';
         }
     }
 

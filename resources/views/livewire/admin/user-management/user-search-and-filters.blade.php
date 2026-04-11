@@ -33,17 +33,17 @@
 
         <div class="order-3 sm:order-2 sm:col-span-3 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputProdiFilter',
+                'inputXFilterString' => 'inputPrFilter',
                 'xSearchResultsString' => 'prSearchResults',
                 'iconString' => 'academic-cap',
                 'placeholderString' => 'Filter berdasarkan Program Studi...',
                 'xSearchQueryString' => 'prSearchQuery',
                 'selectedXId' => $selectedPrId,
                 'selectedXName' => $pr_name,
-                'resetXFilter' => 'resetProdiFilter()',
+                'resetXFilter' => 'resetPrFilter()',
                 'xSearchQuery' => $prSearchQuery,
                 'xSearchResults' => $prSearchResults,
-                'selectXForFilterString' => 'selectProdiForFilter',
+                'selectXForFilterString' => 'selectPrForFilter',
                 'typeXString' => 'prodi',
                 'unfoundString' => 'Tidak ada Program Studi ditemukan!',
             ])
@@ -62,17 +62,17 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputJurusanFilter',
+                'inputXFilterString' => 'inputJrFilter',
                 'xSearchResultsString' => 'jrSearchResults',
                 'iconString' => 'book-open',
                 'placeholderString' => 'Filter berdasarkan Jurusan...',
                 'xSearchQueryString' => 'jrSearchQuery',
                 'selectedXId' => $selectedJrId,
                 'selectedXName' => $jr_name,
-                'resetXFilter' => 'resetJurusanFilter()',
+                'resetXFilter' => 'resetJrFilter()',
                 'xSearchQuery' => $jrSearchQuery,
                 'xSearchResults' => $jrSearchResults,
-                'selectXForFilterString' => 'selectJurusanForFilter',
+                'selectXForFilterString' => 'selectJrForFilter',
                 'typeXString' => 'jurusan',
                 'unfoundString' => 'Tidak ada Jurusan ditemukan!',
             ])
@@ -80,17 +80,17 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputFakultasFilter',
+                'inputXFilterString' => 'inputFkFilter',
                 'xSearchResultsString' => 'fkSearchResults',
                 'iconString' => 'building-library',
                 'placeholderString' => 'Filter berdasarkan Fakultas...',
                 'xSearchQueryString' => 'fkSearchQuery',
                 'selectedXId' => $selectedFkId,
                 'selectedXName' => $fk_name,
-                'resetXFilter' => 'resetFakultasFilter()',
+                'resetXFilter' => 'resetFkFilter()',
                 'xSearchQuery' => $fkSearchQuery,
                 'xSearchResults' => $fkSearchResults,
-                'selectXForFilterString' => 'selectFakultasForFilter',
+                'selectXForFilterString' => 'selectFkForFilter',
                 'typeXString' => 'fakultas',
                 'unfoundString' => 'Tidak ada Fakultas ditemukan!',
             ])

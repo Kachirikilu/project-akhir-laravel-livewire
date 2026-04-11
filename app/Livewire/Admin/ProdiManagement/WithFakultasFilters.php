@@ -9,7 +9,7 @@ trait WithFakultasFilters
 {
     use WithPagination;
 
-    public function inputFakultasSearch()
+    public function inputFkSearch()
     {
         $queryFk = Fakultas::query()->with(['jurusans', 'jurusans.prodis']);
         $search = $this->search;

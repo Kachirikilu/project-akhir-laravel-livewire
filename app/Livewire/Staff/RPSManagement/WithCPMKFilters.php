@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\RPSManagement;
 
 use App\Models\Akademik\CPMK;
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithCPMKFilters
@@ -72,8 +73,23 @@ trait WithCPMKFilters
 
         return match ($this->sortField) {
             'kode'   => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
-            
             'deskripsi' => $queryCPMK->orderBy('deskripsi', $this->sortDirection),
+
+            'count_scpmk' => $queryCPMK->orderBy(
+                DB::table('cpmk_pivot_scpmk')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
+
+            'total_bobot' => $queryCPMK->orderBy(
+                DB::table('cpmk_pivot_scpmk')
+                    ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
+                    ->selectRaw('sum(sub_cpmks.bobot)')
+                    ->whereColumn('cpmk_pivot_scpmk.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
+
             'created_at' => $queryCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryCPMK->orderBy('updated_at', $this->sortDirection),
             

@@ -32,11 +32,11 @@ trait WithMKModal
         $this->showMKModal = true;
 
         if ($tingkatan == 1 || $tingkatan == 4) {
-            $this->updatedProdiNameSearch($this->prNameSearch);
+            $this->updatedPrNameSearch($this->prNameSearch);
         } elseif ($tingkatan == 2) {
-            $this->updatedJurusanNameSearch($this->jrNameSearch);
+            $this->updatedJrNameSearch($this->jrNameSearch);
         } elseif ($tingkatan == 3) {
-            $this->updatedFakultasNameSearch($this->fkNameSearch);
+            $this->updatedFkNameSearch($this->fkNameSearch);
         }
     }
 
@@ -85,20 +85,20 @@ trait WithMKModal
                 if ($tingkatan == 1) {
                     $this->prNameSearch = $firstProdi->prodi;
                     $this->pr_items = $this->itemsPr($firstProdi);
-                    $this->fetchProdi($this->prNameSearch);
+                    $this->fetchPr($this->prNameSearch);
                 }
             }
 
             
 
             if ($tingkatan == 4) {
-                $this->updatedProdiNameSearch($this->prNameSearch);
+                $this->updatedPrNameSearch($this->prNameSearch);
             } elseif ($tingkatan == 2) {
-                $this->updatedJurusanNameSearch($this->jrNameSearch);
-                $this->fetchJurusan();
+                $this->updatedJrNameSearch($this->jrNameSearch);
+                $this->fetchJr();
             } elseif ($tingkatan == 3) {
-                $this->updatedFakultasNameSearch($this->fkNameSearch);
-                $this->fetchFakultas();
+                $this->updatedFkNameSearch($this->fkNameSearch);
+                $this->fetchFk();
             }
 
             $this->showMKModal = true;
@@ -107,7 +107,7 @@ trait WithMKModal
             $this->dispatch('refresh-component');
 
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
         }
     }
 
@@ -242,10 +242,10 @@ trait WithMKModal
             $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']));
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
         }
@@ -306,10 +306,10 @@ trait WithMKModal
             $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']), type: 'update');
 
         } catch (ValidationException $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-            $this->toast(text: $e->getMessage(), variant: 'danger');
+            $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data');
             $this->showMKModal = false;
         }

@@ -111,15 +111,17 @@ trait WithCPLSearchFilters
             });
 
             if ($exactMatch) {
-                $this->cplNameSearch = $exactMatch->deskripsi;
                 if ($this->modeCPL == 'single') {
+                    $this->cplNameSearch = $exactMatch->deskripsi;
                     $this->cpl_id = $exactMatch->id;
                     $this->cpl_items = $this->itemsCPL($exactMatch);
                     $this->cplResults = [];
                 } else {
+                    $this->cplNameSearch = '';
                     $this->cpl_id_array[] = $exactMatch->id;
                     $this->cpl_items_array[] = $this->itemsCPL($exactMatch);
                 }
+                $this->cplResults = $this->getCPLbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
@@ -200,7 +202,6 @@ trait WithCPLSearchFilters
             $this->cpl_id_array[] = $id;
             $this->cpl_name_array[] = $data->deskripsi;
             $this->cpl_items_array[] = $data->kode;
-            $this->cpl_search = '';
         }
     }
 

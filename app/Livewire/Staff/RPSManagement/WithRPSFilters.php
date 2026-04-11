@@ -3,8 +3,8 @@
 namespace App\Livewire\Staff\RPSManagement;
 
 use App\Models\Akademik\RPS;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
+use Livewire\WithPagination;
 
 trait WithRPSFilters
 {
@@ -23,7 +23,7 @@ trait WithRPSFilters
     {
         $queryRPS = RPS::query()
             ->with(['mk_rel.prodis', 'mk_rel.prodis.jr_rel', 'mk_rel.prodis.jr_rel.fk_rel']);
-        
+
         $search = $this->search;
 
         if (! empty($search)) {
@@ -31,7 +31,7 @@ trait WithRPSFilters
         }
 
         $this->sortFieldOrderRPS($queryRPS);
-        
+
         if (! empty($this->selectedPrId)) {
             $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
@@ -48,11 +48,10 @@ trait WithRPSFilters
         return $queryRPS;
     }
 
-
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {
         if ($this->filterRPS === 'rps-akademik') {
-            $queryRPS->where('akademik', 'like', '%' . $currentYear . '%');
+            $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
         } elseif ($this->filterRPS === 'rps-ref-new') {
             $queryRPS->whereYear('revisi', $currentYear);
         } elseif ($this->filterRPS === 'rps-aktif') {
@@ -95,9 +94,9 @@ trait WithRPSFilters
     //         'rps' => match ($this->sortField) {
     //             'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
     //                             ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
-                
+
     //             'kode' => $this->applyRPSKodeSort($queryRPS),
-                
+
     //             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
     //             'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
     //             'is_draf'        => $queryRPS->orderBy('is_draf', $this->sortDirection),
@@ -142,16 +141,41 @@ trait WithRPSFilters
 
         return match ($this->sortField) {
             'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-                            ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
-            
-            'kode'   => $this->applyRPSKodeSort($queryRPS),
-            
+                ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
+
+            'kode' => $this->applyRPSKodeSort($queryRPS),
+
             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
-            'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
+
+            'count_cpmk' => $queryRPS->orderBy(
+                DB::table('rps_pivot_cpmk')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
+                $this->sortDirection
+            ),
+
+            'count_scpmk' => $queryRPS->orderBy(
+                DB::table('rps_pivot_cpmk')
+                    ->join('cpmk_pivot_scpmk', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_scpmk.cpmk_id')
+                    ->selectRaw('count(cpmk_pivot_scpmk.scpmk_id)')
+                    ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
+                $this->sortDirection
+            ),
+
+            'total_bobot' => $queryRPS->orderBy(
+                DB::table('rps_pivot_cpmk')
+                    ->join('cpmk_pivot_scpmk', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_scpmk.cpmk_id')
+                    ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
+                    ->selectRaw('sum(sub_cpmks.bobot)')
+                    ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
+                $this->sortDirection
+            ),
+
             'is_draf' => $queryRPS->orderBy('is_draf', $this->sortDirection),
+            'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
             'created_at' => $queryRPS->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryRPS->orderBy('updated_at', $this->sortDirection),
-            
+
             default => $queryRPS->orderBy('id', $this->sortDirection),
         };
     }
