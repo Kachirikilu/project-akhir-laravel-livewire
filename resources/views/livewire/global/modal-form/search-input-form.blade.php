@@ -5,7 +5,7 @@
     itemsAll: @entangle($itemsAllString).live,
     isManual: false
 }"
-x-effect="
+    x-effect="
     const config = $store.{{ $alpine ?? 'config' }};
     
     if (config?.isEdit === 0) {
@@ -26,11 +26,9 @@ x-effect="
         }
     }
 ">
-    <label for="{{ $modelString }}" class="block text-sm font-medium">
-        {{ $nameXString }} <span class="text-red-500">*</span>
-    </label>
+    @include('livewire.global.modal-form.partial.label')
 
-    <div class="relative mt-2">
+    <div class="relative">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString }}" variant="mini"
                 x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
@@ -85,10 +83,8 @@ x-effect="
     </div>
 
     {{-- DROPDOWN HASIL --}}
-    <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-transition:enter="transition ease-out duration-200"
+    <div x-show="open" x-cloak {{-- x-collapse.duration.300ms --}} x-cloak x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-        x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100"
-        x-transition:leave-end="opacity-0 scale-95"
         class="scrollbar-medium bg-[var(--main-pop-up-color)] border-[var(--focus-color)] border absolute left-0 right-0 z-[100] mt-1 rounded-lg shadow-2xl max-h-80 overflow-y-auto custom-scrollbar">
 
         @forelse ($xResults as $x)
@@ -102,8 +98,8 @@ x-effect="
                         id: {{ $x['id'] }},
                         kode: '{{ filled($x['kode']) ? $x['kode'] : 'UNI' }}',
                         slot1: '{{ $x[$typeXString] ?? '' }}',
-                        slot2: '{{ isset($typeX2String) ? ($x[$typeX2String] ?? '') : '' }}',
-                        slot3: '{{ isset($typeX3String) ? ($x[$typeX3String] ?? '') : '' }}'
+                        slot2: '{{ isset($typeX2String) ? $x[$typeX2String] ?? '' : '' }}',
+                        slot3: '{{ isset($typeX3String) ? $x[$typeX3String] ?? '' : '' }}'
                     };
                     isManual = true;
 
@@ -122,26 +118,8 @@ x-effect="
                 text-sm">
 
                 <div class="flex justify-between items-center">
-                    <div class="flex flex-col mr-4">
-                        <div class="text-[var(--contrast-main-text)] font-medium">
-                            {{ $x[$typeXString] }}
-                        </div>
+                                        @include('livewire.global.modal-form.partial.dropdown-items')
 
-                        <div class="text-[var(--contrast-main-text)] font-medium text-xs flex items-center mt-0.5">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                                    {{ $x['id'] }}</span></span>
-
-                            @if ($typeX2String ?? null)
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX2String] }}</span>
-                            @endif
-                            @if ($typeX3String ?? null)
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX3String] }}</span>
-                            @endif
-                        </div>
-
-                    </div>
                     <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
                         {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
                     </span>

@@ -9,7 +9,7 @@
 
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'rps',
-            'labelString' => 'Deskripsi RPS',
+            'nameXString' => 'Deskripsi RPS',
             'modelString' => 'deskripsi',
             'iconString' => 'clipboard-document-list',
             'placeholder' => 'Masukkan deskripsi ringkas tentang RPS...',
@@ -46,7 +46,7 @@
 
                         @include('livewire.global.modal-form.kode-input', [
                             'alpine' => 'rps',
-                            'labelString' => 'Kode RPS',
+                            'nameXString' => 'Kode RPS',
                             'kodeString' => 'mk_items',
                             'placeholder' => '--------',
                             'iconString' => 'clipboard-document-list',
@@ -82,7 +82,7 @@
                             <div class="sm:col-span-2">
                                 @include('livewire.global.modal-form.input-form', [
                                     'alpine' => 'rps',
-                                    'labelString' => 'Tahun Akademik',
+                                    'nameXString' => 'Tahun Akademik',
                                     'modelString' => 'akademik_1',
                                     'numberOnly' => 1,
                                     'maxlength' => 4,
@@ -95,7 +95,7 @@
                                 {{-- @include('livewire.staff.rps-management.modal-form.partial.tahun-akademik-2') --}}
                                 @include('livewire.global.modal-form.input-form', [
                                     'alpine' => 'rps',
-                                    'labelString' => 'Tahun Akademik',
+                                    'nameXString' => 'Tahun Akademik',
                                     'modelString' => 'akademik_2',
                                     'numberOnly' => 1,
                                     'maxlength' => 4,
@@ -132,7 +132,7 @@
                 <div wire:key="status-draf-only">
                     @include('livewire.global.modal-form.select-form', [
                         'alpine' => 'rps',
-                        'labelString' => 'Status RPS (Terkunci)',
+                        'nameXString' => 'Status RPS (Terkunci)',
                         'modelString' => 'is_draf',
                         'xOptions' => ['Draf'],
                         'xValues' => [1],
@@ -177,7 +177,7 @@
                 <div wire:key="status-normal">
                     @include('livewire.global.modal-form.select-form', [
                         'alpine' => 'rps',
-                        'labelString' => 'Draf / Aktif',
+                        'nameXString' => 'Draf / Aktif',
                         'modelString' => 'is_draf',
                         'xOptions' => ['Draf', 'Aktif'],
                         'xValues' => [1, 0],

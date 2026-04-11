@@ -12,7 +12,7 @@
     {{-- 📧 Program Studi Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        'labelString' => 'Nama Program Studi',
+        'nameXString' => 'Nama Program Studi',
         'modelString' => 'nama_pr',
         // 'typeString' => 'text',
         // 'colorIcon' => $colorIcon,
@@ -44,7 +44,7 @@
     {{-- 📧 Kode Program Studi Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        'labelString' => 'Kode Program Studi',
+        'nameXString' => 'Kode Program Studi',
         'modelString' => 'kode_pr',
         'iconString' => 'hashtag',
         'placeholder' => 'Masukkan 3 huruf Kode Program Studi',
@@ -56,7 +56,7 @@
     {{-- 📧 Nama Strata Input --}}
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'prodi',
-        'labelString' => 'Nama Strata',
+        'nameXString' => 'Nama Strata',
         'modelString' => 'strata',
         'xOptions' => ['Sarjana', 'Magister', 'Doktor'],
         'iconString' => 'bookmark-square',

@@ -14,7 +14,7 @@
         {{-- 📧 Mata Kuliah Input --}}
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'mk',
-            'labelString' => 'Nama Mata Kuliah',
+            'nameXString' => 'Nama Mata Kuliah',
             'modelString' => 'nama_mk',
             'iconString' => 'rectangle-stack',
             'placeholder' => 'Masukkan nama Mata Kuliah',
@@ -48,7 +48,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'Semester',
+                    'nameXString' => 'Semester',
                     'modelString' => 'semester',
                     'xOptions' => [
                         'Semester 1',
@@ -69,7 +69,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'Kategori Blok',
+                    'nameXString' => 'Kategori Blok',
                     'modelString' => 'kode_blok',
                     'xOptions' => ['Reguler', 'Kerja Praktik / Tugas Akhir'],
                     'xValues' => [1, 0],
@@ -83,7 +83,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'Wajib / Pilihan',
+                    'nameXString' => 'Wajib / Pilihan',
                     'modelString' => 'is_wajib',
                     'xOptions' => ['Wajib', 'Pilihan'],
                     'xValues' => [1, 0],
@@ -99,7 +99,7 @@
             <div class="sm:col-span-5">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'Tipe SKS',
+                    'nameXString' => 'Tipe SKS',
                     'modelString' => 'tipe_sks',
                     'xOptions' => ['Tatap Muka', 'Praktikum', 'Praktek Lapangan', 'Simulasi'],
                     'xValues' => [1, 2, 3, 4],
@@ -112,7 +112,7 @@
             <div class="sm:col-span-3">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'SKS',
+                    'nameXString' => 'SKS',
                     'modelString' => 'sks_kuliah',
                     'numberOnly' => 1,
                     'maxlength' => 1,

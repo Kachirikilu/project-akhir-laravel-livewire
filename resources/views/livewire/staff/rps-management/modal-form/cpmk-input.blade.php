@@ -15,7 +15,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'cpmk',
-                    'labelString' => 'Kode CPMK',
+                    'nameXString' => 'Kode CPMK',
                     'modelString' => 'kode_cpmk_1',
                     'iconString' => 'academic-cap',
                     'placeholder' => 'Masukkan huruf Kode CPMK',
@@ -41,7 +41,7 @@
 
         @include('livewire.global.modal-form.input-form', [
             'alpine' => 'cpmk',
-            'labelString' => 'Deskripsi',
+            'nameXString' => 'Deskripsi',
             'modelString' => 'deskripsi',
             'iconString' => 'academic-cap',
             'placeholder' => 'Masukkan deskripsi ringkas tentang CPMK...',
@@ -80,7 +80,7 @@
         
             'typeXString' => 'deskripsi',
             'typeX2String' => 'metode',
-            'typeX3String' => 'total_bobot',
+            'typeX3String' => 'bobot',
         
             'nameXString' => 'Sub-SCPMK',
             'nameSearchString' => 'scpmkNameSearch',

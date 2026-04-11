@@ -13,7 +13,7 @@
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
         // 'colorIcon' => $colorIcon,
-        'labelString' => 'Nama Jurusan',
+        'nameXString' => 'Nama Jurusan',
         'modelString' => 'nama_jr',
         // 'typeString' => 'text',
         'iconString' => 'book-open',
@@ -43,7 +43,7 @@
     {{-- 📧 Kode Jurusan Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        'labelString' => 'Kode Jurusan',
+        'nameXString' => 'Kode Jurusan',
         'modelString' => 'kode_jr',
         'iconString' => 'hashtag',
         'placeholder' => 'Masukkan 3 huruf Kode Jurusan',

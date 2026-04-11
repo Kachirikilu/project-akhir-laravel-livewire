@@ -34,9 +34,8 @@ trait WithDosenSearchFilters
         return $collection->map(fn ($d) => [
             'id' => $d->id,
             'kode' => $d->nip,
-            'nidn' => $d->nidn ?? $d->nidk ?? '---',
-            'nidk' => $d->nidk ?? '---',
-            'nidn_nidk' => $d->nidn_nidk,
+            'nidn' => $d->nidn ?? null,
+            'nidk' => $d->nidk ?? null,
             'name' => $d->name,
             'status' => $d->status,
         ])->toArray();

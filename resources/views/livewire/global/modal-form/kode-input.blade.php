@@ -1,6 +1,6 @@
 <div x-data="{ itemsAll: @entangle($kodeString ?? null).live }">
-    <label class="block text-sm font-medium">{{ $labelString ?? null }}</label>
-    <div class="relative mt-1">
+    <label class="block text-sm font-medium">{{ $nameXString ?? null }}</label>
+    <div class="relative">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <flux:icon icon="{{ $iconString ?? null }}" variant="mini" x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon" />
         </div>

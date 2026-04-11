@@ -13,7 +13,7 @@
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
         // 'colorIcon' => $colorIcon,
-        'labelString' => 'Nama Fakultas',
+        'nameXString' => 'Nama Fakultas',
         'modelString' => 'nama_fk',
         // 'typeString' => 'text',
         'iconString' => 'building-library',
@@ -24,7 +24,7 @@
     {{-- 📧 Kode Fakultas Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        'labelString' => 'Kode Fakultas',
+        'nameXString' => 'Kode Fakultas',
         'modelString' => 'kode_fk',
         'iconString' => 'hashtag',
         'placeholder' => 'Masukkan 3 huruf Kode Fakultas',

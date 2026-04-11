@@ -30,9 +30,9 @@
     syncToCpmkStore() {
         if (typeof $store.cpmk !== 'undefined') {
             let allRefs = (this.subItems || []).flatMap(item => item.ref || []);
-            
+
             $store.cpmk.ref_scpmk = Array.from(new Map(allRefs.map(r => [r.id, r])).values());
-            
+
             $store.cpmk.setCountSCPMK(this.totalSubCPMK);
             $store.cpmk.total_bobot = this.grandTotalBobot;
         }
@@ -104,15 +104,9 @@
 
 }">
 
-    <label for="{{ $modelString }}"  class="block text-sm font-semibold mb-2 text-[var(--contrast-main-text)]">
-        {{ $nameXString }}
-        @if ($isRequired ?? true)
-            <span class="text-red-500">*</span>
-        @endif
-    </label>
-
     {{-- 1. INPUT SEARCH --}}
-    @include('livewire.global.modal-form.partial.input-search')
+    @include('livewire.global.modal-form.partial.label')
+    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -123,19 +117,9 @@
             @forelse ($xResults as $x)
                 <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-                    <div class="flex flex-col mr-4">
+                    
+                    @include('livewire.global.modal-form.partial.dropdown-items')
 
-                        <span
-                            class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
-                        <div class="text-[var(--contrast-main-text)] font-medium text-xs flex items-center mt-1">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                                    {{ $x['id'] }}</span></span>
-                            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>{{ $x['kode'] }}</span>
-                            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>Bobot: {{ $x['bobot'] }}%</span>
-                        </div>
-                    </div>
                     <button type="button"
                         x-on:click="
                             if (items.includes({{ $x['id'] }})) {
@@ -153,7 +137,6 @@
                                     @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
                                     @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
                                     { 
-                                        // Kirim data lengkap untuk perhitungan
                                         ref: {{ json_encode($x['ref']) }},
                                         scpmk: [
                                             {
@@ -178,19 +161,8 @@
                             'bg-[var(--focus-color)]'"
                         class="p-1.5 rounded-md text-white transition-all shadow-sm group">
 
-                        <template x-if="items.includes({{ $x['id'] }})">
-                            <div class="relative flex items-center justify-center">
-                                <flux:icon icon="check" variant="mini" class="group-hover:hidden" />
-                                <flux:icon icon="trash" variant="mini" class="hidden group-hover:block" />
-                            </div>
-                        </template>
+                        @include('livewire.global.modal-form.partial.dropdown-select')
 
-                        {{-- State: Belum Terpilih (Tampilkan Plus) --}}
-                        <template x-if="!items.includes({{ $x['id'] }})">
-                            <div class="flex items-center justify-center">
-                                <flux:icon icon="plus" variant="mini" />
-                            </div>
-                        </template>
                     </button>
                 </div>
             @empty
@@ -204,112 +176,22 @@
     {{-- 3. AREA OPSI TERPILIH --}}
     <div
         class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
-            <div class="flex items-center gap-2">
-                <template x-if="grandTotalBobot <= 20">
-                    <flux:badge color="red" size="sm" variant="pill">
-                        Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot > 20 && grandTotalBobot < 80">
-                    <flux:badge color="orange" size="sm" variant="pill">
-                        Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot >= 80 && grandTotalBobot <= 140">
-                    <flux:badge color="green" size="sm" variant="pill">
-                        Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot > 140">
-                    <flux:badge color="blue" size="sm" variant="pill">
-                        Akumulasi Bobot: <span class="ml-2" x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <span x-show="items.length > 0"
-                    class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
-                    x-text="items.length + ' Terpilih'"></span>
-            </div>
-        </div>
+
+        @include('livewire.global.modal-form.partial.scpmk-bobot-akumulasi', [
+            'nilai1' => 5,
+            'nilai2' => 15,
+            'nilai3' => 25,
+        ])
 
         {{-- Daftar Item Berjejer ke Bawah (flex-col) --}}
         <div class="space-y-2 max-h-[625px] overflow-y-auto pr-1 scrollbar-medium">
             <template x-for="(id, index) in items" :key="id">
                 <div
                     class="flex flex-col bg-[var(--second-table-color)] border border-[var(--border-table-color)] rounded-xl shadow-sm overflow-hidden transition-all mb-3 hover:border-[var(--focus-color)]">
-
-                    {{-- Header Row (Mengikuti gaya desain baru) --}}
-                    <div
-                        class="flex items-start justify-between px-4 py-3 bg-white/40 dark:bg-black/10 transition-colors hover:bg-white/60 dark:hover:bg-black/20">
-
-                        <div class="flex items-start gap-3 flex-1">
-                            {{-- NOMOR URUT --}}
-                            <span class="text-xs font-black text-[var(--hover-focus-color)] w-4 mt-0.5"
-                                x-text="index + 1"></span>
-
-                            <div class="flex flex-col gap-1 flex-1 cursor-pointer"
-                                x-on:click="expanded.includes(index) ? expanded = expanded.filter(i => i !== index) : expanded.push(index)">
-
-                                {{-- KODE SEBAGAI BADGE DI ATAS --}}
-                                <div class="flex items-center gap-2">
-                                    <div class="flex items-center gap-1.5 mb-1.5">
-                                        <flux:icon icon="chevron-right" variant="mini"
-                                            class="transition-transform duration-200"
-                                            x-bind:class="expanded.includes(index) ? 'rotate-90 text-[var(--hover-focus-color)]' :
-                                                'text-gray-400'" />
-                                        <span
-                                            class="text-xs font-bold px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white uppercase"
-                                            x-text="itemsAll[index]?.kode"></span>
-                                    </div>
-                                    <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
-                                </div>
-
-                                {{-- NAMA UTAMA --}}
-                                <span class="text-sm mb-1 font-semibold text-[var(--contrast-main-text)] leading-tight"
-                                    x-text="itemsAll[index]?.slot1"></span>
-
-                                {{-- DETAIL ID DAN TOTAL BOBOT DI BAWAH --}}
-                                <div
-                                    class="flex items-center flex-wrap text-xs text-[var(--contrast-second-text)] gap-y-1">
-                                    <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
-                                    <span class="mx-1.5 opacity-50">|</span>
-                                    <span class="flex items-center gap-1">
-                                        Total Bobot:
-                                        <span class="font-black text-[var(--hover-focus-color)]"
-                                            x-text="(subItems[index]?.scpmk || []).reduce((t, s) => t + Number(s.bobot || 0), 0) + '%'">
-                                        </span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- ACTION BUTTONS --}}
-                        <div class="flex items-center gap-1 ml-4">
-                            <div class="flex flex-col gap-0.5">
-                                <button x-on:click="move(index, -1)" type="button" :disabled="index === 0"
-                                    class="p-0.5 hover:bg-black/5 dark:hover:bg-white/10 rounded disabled:opacity-10">
-                                    <flux:icon icon="chevron-up" variant="mini" class="size-4" />
-                                </button>
-                                <button x-on:click="move(index, 1)" type="button"
-                                    :disabled="index === items.length - 1"
-                                    class="p-0.5 hover:bg-black/5 dark:hover:bg-white/10 rounded disabled:opacity-10">
-                                    <flux:icon icon="chevron-down" variant="mini" class="size-4" />
-                                </button>
-                            </div>
-                            <button x-on:click="removeItem(index)" type="button"
-                                class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 rounded-md transition-colors ml-1">
-                                <flux:icon icon="trash" variant="mini" class="size-5" />
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Expanded Sub-CPMK Table --}}
+                    @include('livewire.global.modal-form.partial.scpmk-header')
                     @include('livewire.global.modal-form.partial.scpmk-table')
                 </div>
             </template>
-
-            {{-- totalSubCPMK --}}
 
             {{-- Empty State --}}
             <div x-show="items.length === 0" class="py-12 flex flex-col items-center justify-center opacity-40">
@@ -319,60 +201,16 @@
         </div>
 
         {{-- Footer Keseluruhan (Total Semua Sub-CPMK dari berbagai CPMK) --}}
-        <template x-if="items.length > 0">
-            <div
-                class="mt-2 px-4 py-3 bg-[var(--focus-color)]/10 border border-[var(--focus-color)]/20 rounded-lg flex justify-between items-center">
-                <span class="text-xs font-bold uppercase"
-                    x-text="
-                            grandTotalBobot <= 40 ? 'Bobot sangat kurang dari target:' : 
-                            (grandTotalBobot <= 80 ? 'Bobot masih kurang dari target standar:' : 
-                            (grandTotalBobot <= 100 ? 'Bobot ideal dan sudah memenuhi syarat:' : 
-                            (grandTotalBobot <= 140 ? 'Bobot sudah mencukupi (Maksimal):' : 
-                            'Bobot melebihi batas 140%, mohon tinjau kembali:')))
-                    "></span>
-                <template x-if="grandTotalBobot <= 40">
-                    <flux:badge color="red" size="sm" variant="pill">
-                        <span x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot <= 80 && grandTotalBobot > 40">
-                    <flux:badge color="orange" size="sm" variant="pill">
-                        <span x-text="totalSubCPMK"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot <= 140 && grandTotalBobot > 80">
-                    <flux:badge color="green" size="sm" variant="pill">
-                        <span x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-                <template x-if="grandTotalBobot > 140">
-                    <flux:badge color="blue" size="sm" variant="pill">
-                        <span x-text="grandTotalBobot"></span>%
-                    </flux:badge>
-                </template>
-            </div>
-        </template>
+        @include('livewire.global.modal-form.partial.scpmk-bobot-pesan', [
+            'nilai1' => 5,
+            'nilai2' => 15,
+            'nilai3' => 25,
+            'pNilai1' => 'Bobot Kecil:',
+            'pNilai2' => 'Bobot Sedang:',
+            'pNilai3' => 'Bobot Besar:',
+            'pNilai4' => 'Bobot Sangat:',
+        ])
 
-        <template x-if="items.length > 0">
-            <div
-                class="mt-2 px-4 py-3 bg-[var(--focus-color)]/10 border border-[var(--focus-color)]/20 rounded-lg flex justify-between items-center">
-                <span class="text-xs font-bold uppercase"
-                    x-text="
-                            totalSubCPMK >= 14 ? 'Jumlah Sub-CPMK mencapai 14:' : 
-                            'Jumlah Sub-CPMK masih kurang dari 14:'
-                    "></span>
-                <template x-if="totalSubCPMK < 14">
-                    <flux:badge color="red" size="sm" variant="pill">
-                        <span x-text="totalSubCPMK"></span>
-                    </flux:badge>
-                </template>
-                <template x-if="totalSubCPMK >= 14">
-                    <flux:badge color="green" size="sm" variant="pill">
-                        <span x-text="totalSubCPMK"></span>
-                    </flux:badge>
-                </template>
-            </div>
-        </template>
     </div>
 
 

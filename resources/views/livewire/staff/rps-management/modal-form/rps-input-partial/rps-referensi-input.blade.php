@@ -57,7 +57,7 @@
             'nameX2String' => 'Tambah Referensi Baru',
             'nameSearchString' => 'refNameSearch',
             'fetchString' => 'fetchRef',
-            'iconString' => 'document-text',
+            'iconString' => 'book-open',
         
             'parentIdString' => 'cpmk_id_array',
             'nameXParent' => 'CPMK',

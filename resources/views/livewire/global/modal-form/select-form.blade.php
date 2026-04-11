@@ -35,7 +35,7 @@
     wire:key="select-form-{{ $modelString }}">
 
     <label for="{{ $modelString }}" class="block text-sm font-medium" :class="isDisabled ? 'opacity-50' : ''">
-        {{ $labelString }}
+        {{ $nameXString }}
         @if ($isRequired ?? true)
             <span class="text-red-500" x-show="!isDisabled">*</span>
         @endif

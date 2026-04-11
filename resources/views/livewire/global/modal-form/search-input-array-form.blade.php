@@ -43,17 +43,9 @@
     }
 }">
 
-    <label for="{{ $modelString }}" class="block text-sm font-medium mb-2">
-        {{ $nameX2String ?? $nameXString }}
-        @if ($isRequired ?? true)
-            <span class="text-red-500">*</span>
-        @endif
-    </label>
-
     {{-- 1. INPUT SEARCH --}}
-    @include('livewire.global.modal-form.partial.input-search')
-
-
+    @include('livewire.global.modal-form.partial.label')
+    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -66,24 +58,9 @@
             @forelse ($xResults as $x)
                 <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-                    <div class="flex flex-col mr-4">
-                        <span
-                            class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
-                        <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
-                            <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
-                                    {{ $x['id'] }}</span></span>
-                            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>{{ $x['kode'] }}</span>
-                            @if ($typeX2String ?? null)
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX2String] }}</span>
-                            @endif
-                            @if ($typeX3String ?? null)
-                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX3String] }}</span>
-                            @endif
-                        </div>
-                    </div>
+                    
+                    @include('livewire.global.modal-form.partial.dropdown-items')
+
                     <button type="button"
                         @click="
                         if (items.includes({{ $x['id'] }})) {
@@ -107,16 +84,9 @@
                             'bg-[var(--focus-color)] text-white'"
                         class="p-1.5 rounded-md transition-all group">
 
-                        <template x-if="items.includes({{ $x['id'] }})">
-                            <div class="relative">
-                                <flux:icon icon="check" variant="mini" class="group-hover:hidden" />
-                                <flux:icon icon="trash" variant="mini" class="hidden group-hover:block" />
-                            </div>
-                        </template>
+              
+                        @include('livewire.global.modal-form.partial.dropdown-select')
 
-                        <template x-if="!items.includes({{ $x['id'] }})">
-                            <flux:icon icon="plus" variant="mini" />
-                        </template>
                     </button>
                 </div>
             @empty
@@ -189,8 +159,7 @@
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <a :href="itemsAll[index]?.link" target="_blank"
                                         class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-bold">
-                                        <flux:icon.link variant="micro" /> <span
-                                            x-text="itemsAll[index]?.link"></span>
+                                        <flux:icon.link variant="micro" /> <span x-text="itemsAll[index]?.link"></span>
                                     </a>
                                 @endif
                             </div>
@@ -198,25 +167,8 @@
                     </div>
 
                     {{-- ACTION BUTTONS --}}
-                    <div class="flex items-center gap-1 ml-2">
-                        <div class="flex flex-col gap-0.5">
-                            <button @click="move(index, -1)" type="button"
-                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="index === 0">
-                                <flux:icon icon="chevron-up" variant="mini" class="size-4" />
-                            </button>
-                            <button @click="move(index, 1)" type="button"
-                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="index === items.length - 1">
-                                <flux:icon icon="chevron-down" variant="mini" class="size-4" />
-                            </button>
-                        </div>
+                    @include('livewire.global.modal-form.partial.action-buttons')
 
-                        <button @click="removeItem(index)" type="button"
-                            class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
-                            <flux:icon icon="trash" variant="mini" class="size-5" />
-                        </button>
-                    </div>
                 </div>
             </template>
 

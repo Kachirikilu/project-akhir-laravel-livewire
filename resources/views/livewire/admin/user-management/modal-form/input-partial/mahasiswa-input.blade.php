@@ -13,7 +13,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Full Name',
+        'nameXString' => 'Full Name',
         'modelString' => 'name',
         'iconString' => 'user-circle',
         'placeholder' => 'Masukkan Nama Lengkap',
@@ -23,7 +23,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Mahasiswa (NIM)',
+        'nameXString' => 'Nomor Induk Mahasiswa (NIM)',
         'modelString' => 'nim',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -35,7 +35,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Tahun Angkatan',
+        'nameXString' => 'Tahun Angkatan',
         'modelString' => 'angkatan',
         'numberOnly' => 1,
         'maxlength' => 4,
@@ -71,7 +71,7 @@
     {{-- 📧 Status Input --}}
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
-        'labelString' => 'Status',
+        'nameXString' => 'Status',
         'modelString' => 'status',
         'xOptions' => [
             'Aktif', // Hijau (Aktif Kuliah)

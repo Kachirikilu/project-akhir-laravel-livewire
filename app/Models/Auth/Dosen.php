@@ -43,14 +43,14 @@ class Dosen extends Model
         return $this->belongsTo(Prodi::class, 'pr_id');
     }
 
-    protected function nidnNidk(): Attribute
-    {
-        return Attribute::get(function () {
-            $nidn = $this->nidn ?? '---';
-            $nidk = $this->nidk ?? '---';
-            return "NIDN: {$nidn} / NIDK: {$nidk}";
-        });
-    }
+    // protected function nidnNidk(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         $nidn = $this->nidn ?? '---';
+    //         $nidk = $this->nidk ?? '---';
+    //         return "NIDN: {$nidn} / NIDK: {$nidk}";
+    //     });
+    // }
 
     protected static function booted()
     {

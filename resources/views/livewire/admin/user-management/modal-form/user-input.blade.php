@@ -15,7 +15,7 @@
         @include('livewire.global.modal-form.input-form', [
             // 'colorIcon' => $colorIcon,
             'alpine' => 'user',
-            'labelString' => 'Email',
+            'nameXString' => 'Email',
             'modelString' => 'email',
             'typeString' => 'email',
             'iconString' => 'envelope',
@@ -28,7 +28,7 @@
             @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'alpine' => 'user',
-                'labelString' => 'Password',
+                'nameXString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'iconString' => 'lock-closed',
@@ -40,7 +40,7 @@
             @include('livewire.global.modal-form.input-form', [
                 // 'colorIcon' => $colorIcon,
                 'alpine' => 'user',
-                'labelString' => 'Password',
+                'nameXString' => 'Password',
                 'modelString' => 'password',
                 'typeString' => 'password',
                 'iconString' => 'lock-closed',

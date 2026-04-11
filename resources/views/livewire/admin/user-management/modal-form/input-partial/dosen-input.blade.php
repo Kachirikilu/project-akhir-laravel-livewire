@@ -13,7 +13,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Full Name',
+        'nameXString' => 'Full Name',
         'modelString' => 'name',
         'iconString' => 'user-circle',
         'placeholder' => 'Masukkan Nama Lengkap',
@@ -23,7 +23,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Pegawai (NIP)',
+        'nameXString' => 'Nomor Induk Pegawai (NIP)',
         'modelString' => 'nip',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -34,7 +34,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Dosen Nasional (NIDN)',
+        'nameXString' => 'Nomor Induk Dosen Nasional (NIDN)',
         'modelString' => 'nidn',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -46,7 +46,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Dosen Khusus (NIDK)',
+        'nameXString' => 'Nomor Induk Dosen Khusus (NIDK)',
         'modelString' => 'nidk',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -82,7 +82,7 @@
     {{-- 📧 Status Input --}}
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
-        'labelString' => 'Status',
+        'nameXString' => 'Status',
         'modelString' => 'status',
         'xOptions' => [
             'Aktif', // Hijau (Produktif)

@@ -9,9 +9,7 @@
 
     <div class="relative space-y-4">
 
-
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addRPS, editRPS'])
-
 
         @include('livewire.global.modal-form.search-input-cpmk-form', [
             'alpine' => 'rps',
@@ -24,7 +22,7 @@
             'subItemsString' => 'cpmk_sub_items_array',
         
             'typeXString' => 'deskripsi',
-            'typeX2String' => 'total_bobot',
+            'typeX3String' => 'total_bobot',
         
             'nameXString' => 'Capaian Pembelajaran Mata Kuliah (CPMK)',
             'nameSearchString' => 'cpmkNameSearch',

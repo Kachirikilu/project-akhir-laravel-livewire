@@ -22,8 +22,9 @@
             'itemsAllString' => 'dosen_items_array',
         
             'typeXString' => 'name',
-            'typeX2String' => 'nidn_nidk',
-            'typeX3String' => 'status',
+            'typeX2String' => 'nidn',
+            'typeX3String' => 'nidk',
+            'typeX4String' => 'status',
         
             'nameXString' => 'Dosen Pengajar',
             'nameSearchString' => 'dosenNameSearch',

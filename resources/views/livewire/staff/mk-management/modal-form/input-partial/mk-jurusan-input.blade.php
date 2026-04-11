@@ -5,7 +5,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
-                    'labelString' => 'Kode Mata Kuliah',
+                    'nameXString' => 'Kode Mata Kuliah',
                     'kodeString' => 'jr_items',
                     'placeholder' => '---',
                     'iconString' => 'book-open'
@@ -19,7 +19,7 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'mk',
-                    'labelString' => 'Urutan Mata Kuliah',
+                    'nameXString' => 'Urutan Mata Kuliah',
                     'modelString' => 'digit_mk',
                     'numberOnly' => 1,
                     'maxlength' => 2,

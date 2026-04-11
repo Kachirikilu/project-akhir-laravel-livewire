@@ -126,61 +126,9 @@
 
 
 
-
-    <label for="{{ $modelString }}" class="block text-sm font-medium mb-2">
-        {{ $nameXString }} 
-        @if ($isRequired ?? true)
-            <span class="text-red-500">*</span>
-        @endif
-    </label>
-
     {{-- 1. INPUT SEARCH --}}
-    <div class="relative">
-
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            @if ($wireLoadingParent ?? null)
-                <div wire:loading wire:target="{{ $wireLoadingParent }}">
-                    <svg class="animate-spin h-4 w-4 text-[var(--focus-color)]" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                </div>
-            @endif
-            <div @if ($wireLoadingParent ?? null) wire:loading.remove wire:target="{{ $wireLoadingParent }}" @endif>
-                <flux:icon icon="{{ $iconString }}" variant="mini"
-                    x-bind:class="isParentReady ? $store.{{ $alpine ?? 'config' }}?.colorIcon : 'text-gray-400'" />
-            </div>
-        </div>
-
-        <input x-model="search" autocomplete="off" type="text"
-            @if ($wireLoadingParent ?? null) wire:loading.attr="disabled"
-             wire:target="{{ $wireLoadingParent }}" @endif
-            :disabled="!isParentReady" @focus="open = true; if(search === '') $wire.{{ $fetchString }}('', 'array');"
-            @input.debounce.300ms="
-                open = true; 
-                if(search === '') { 
-                    $wire.{{ $fetchString }}('', 'array'); 
-                } else {
-                    $wire.{{ $fetchString }}(search, 'array');
-                }
-            "
-            @click.outside="open = false"
-            :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' :
-                'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
-            :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
-                'bg-[var(--second-table-color)]'"
-            class="border-[var(--border-table-color)] text-[var(--contrast-main-text)] w-full border rounded-lg pl-10 py-2 focus:ring-2 focus:ring-[var(--focus-color)] transition-all">
-
-        @include('livewire.global.search-and-filters.partial.reset-button', [
-            'xShow' => 'search',
-            'xClick' => "search = ''",
-        ])
-    </div>
-
+    @include('livewire.global.modal-form.partial.label')
+    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -193,21 +141,27 @@
             @forelse ($xResults as $x)
                 <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
                     class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
+
                     <div class="flex flex-col mr-4">
-                        <span
-                            class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
+                        <span class="text-sm font-medium text-[var(--contrast-main-text)]">{{ $x[$typeXString] }}</span>
                         <div class="text-[var(--contrast-main-text) font-medium text-xs flex items-center mt-1">
                             <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
                                     {{ $x['id'] }}</span></span>
                             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                            <span>{{ $x['kode'] }}</span>
-                            @if ($typeX2String ?? null)
+                            <span>NIP: {{ $x['kode'] }}</span>
+                            @if (filled($x[$typeX2String] ?? null))
                                 <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX2String] }}</span>
+                                <span>NIDN: {{ $x[$typeX2String] }}</span>
                             @endif
-                            @if ($typeX3String ?? null)
+
+                            @if (filled($x[$typeX3String] ?? null))
                                 <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-                                <span>{{ $x[$typeX3String] }}</span>
+                                <span>NIDK: {{ $x[$typeX3String] }}</span>
+                            @endif
+
+                            @if (filled($x[$typeX4String] ?? null))
+                                <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+                                <span>Status: {{ $x[$typeX4String] }}</span>
                             @endif
                         </div>
                     </div>
@@ -233,16 +187,7 @@
                             'bg-[var(--focus-color)] text-white'"
                         class="p-1.5 rounded-md transition-all group">
 
-                        <template x-if="items.includes({{ $x['id'] }})">
-                            <div class="relative">
-                                <flux:icon icon="check" variant="mini" class="group-hover:hidden" />
-                                <flux:icon icon="trash" variant="mini" class="hidden group-hover:block" />
-                            </div>
-                        </template>
-
-                        <template x-if="!items.includes({{ $x['id'] }})">
-                            <flux:icon icon="plus" variant="mini" />
-                        </template>
+                        @include('livewire.global.modal-form.partial.dropdown-select')
                     </button>
                 </div>
             @empty
@@ -266,7 +211,7 @@
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30">
-          <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
                 <span x-show="items.length > 0"
@@ -277,9 +222,10 @@
 
         <div class="space-y-3">
             <template x-for="(id, index) in items" :key="id + '-' + (itemsAll[index]?.is_ketua ? 'ketua' : 'anggota')">
-                <div :class="itemsAll[index]?.is_ketua ? 'border-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' : 'border-[var(--border-table-color)]'"
+                <div :class="itemsAll[index]?.is_ketua ? 'border-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' :
+                    'border-[var(--border-table-color)]'"
                     class="relative flex flex-col md:flex-row md:items-center justify-between bg-[var(--second-table-color)] border px-4 py-3 rounded-lg shadow-sm gap-4 transition-all">
-                    
+
                     <div class="flex items-start gap-3 flex-1">
                         <button type="button" @click="setKetuaById(id)"
                             :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
@@ -288,55 +234,56 @@
                         </button>
 
                         <div class="flex flex-col flex-1">
-                               <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
+                            <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
                                 <span
-                                    class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
-                                    >Ketua</span>
+                                    class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white">Ketua</span>
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
-                            <span class="text-sm font-bold text-[var(--contrast-main-text)]" x-text="itemsAll[index]?.slot1"></span>
-                            <span class="text-xs text-gray-500" x-text="itemsAll[index]?.kode + ' | ' + itemsAll[index]?.slot2"></span>
+                            <span class="text-sm font-bold text-[var(--contrast-main-text)]"
+                                x-text="itemsAll[index]?.slot1"></span>
+                            <span class="text-xs text-gray-500"
+                                x-text="itemsAll[index]?.kode + ' | ' + itemsAll[index]?.slot2"></span>
                         </div>
                     </div>
 
                     {{-- PEMILIH PERAN --}}
                     <div class="flex items-center gap-2">
-                        <select x-model="itemsAll[index].peran" 
+                        <select x-model="itemsAll[index].peran"
                             class="text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
                             <option value="Koordinator">Koordinator</option>
                             <option value="Pengajar">Pengajar</option>
                             <option value="Asisten">Asisten</option>
                         </select>
 
-                         {{-- ACTION BUTTONS --}}
-                    <div class="flex items-center gap-1 ml-2">
-                        <div class="flex flex-col gap-0.5">
-                            <button @click="move(index, -1)" type="button"
-                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="(hasKetua ? index === 1 : index === 0) || index === 0"> 
-                                <flux:icon icon="chevron-up" variant="mini" class="size-4" />
-                            </button>
-                            <button @click="move(index, 1)" type="button"
-                                class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                :disabled="index === items.length - 1 || index == 0">
-                                <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                        {{-- ACTION BUTTONS --}}
+                        <div class="flex items-center gap-1 ml-2">
+                            <div class="flex flex-col gap-0.5">
+                                <button @click="move(index, -1)" type="button"
+                                    class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                    :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
+                                    <flux:icon icon="chevron-up" variant="mini" class="size-4" />
+                                </button>
+                                <button @click="move(index, 1)" type="button"
+                                    class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                    :disabled="index === items.length - 1 || index == 0">
+                                    <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                                </button>
+                            </div>
+
+                            <button @click="removeItem(index)" type="button"
+                                class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
+                                <flux:icon icon="trash" variant="mini" class="size-5" />
                             </button>
                         </div>
-
-                        <button @click="removeItem(index)" type="button"
-                            class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
-                            <flux:icon icon="trash" variant="mini" class="size-5" />
-                        </button>
-                    </div>
                     </div>
                 </div>
             </template>
         </div>
-                    {{-- Empty State --}}
-            <div x-show="items.length === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
-                <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
-                <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
-            </div>
+        {{-- Empty State --}}
+        <div x-show="items.length === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
+            <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
+            <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
+        </div>
     </div>
 
     @error($idString)

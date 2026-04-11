@@ -9,13 +9,7 @@
         }
     " wire:key="input-form-{{ $modelString }}">
     
-    @if (isset($noLabel) == 0)
-        <label for="{{ $modelString }}" class="block text-sm font-medium">{{ $labelString }}
-            @if ($isRequired ?? true)
-                <span class="text-red-500">*</span>
-            @endif
-        </label>
-    @endif
+    @include('livewire.global.modal-form.partial.label')
 
     <div class="relative mt-1">
         {{-- Icon Samping Kiri --}}

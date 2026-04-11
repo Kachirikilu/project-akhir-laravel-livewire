@@ -13,7 +13,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Full Name',
+        'nameXString' => 'Full Name',
         'modelString' => 'name',
         'iconString' => 'user-circle',
         'placeholder' => 'Masukkan Nama Lengkap',
@@ -23,7 +23,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Pegawai (NIP)',
+        'nameXString' => 'Nomor Induk Pegawai (NIP)',
         'modelString' => 'nip',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -34,7 +34,7 @@
     @include('livewire.global.modal-form.input-form', [
         // 'colorIcon' => $colorIcon,
         'alpine' => 'user',
-        'labelString' => 'Nomor Induk Tenaga Kerja (NITK)',
+        'nameXString' => 'Nomor Induk Tenaga Kerja (NITK)',
         'modelString' => 'nitk',
         'numberOnly' => 1,
         'maxlength' => 20,
@@ -68,7 +68,7 @@
     {{-- 📧 Status Input --}}
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
-        'labelString' => 'Status',
+        'nameXString' => 'Status',
         'modelString' => 'status',
         'xOptions' => [
             'Aktif', // Hijau (Produktif)
