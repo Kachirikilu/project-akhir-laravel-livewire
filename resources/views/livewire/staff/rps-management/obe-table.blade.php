@@ -197,7 +197,7 @@
                         @endif
                     </button>
 
-                    @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                    @include('livewire.staff.rps-management.modal-form.obe-menu', [
                         'x' => $x,
                         'typeXString' => $switchTable,
                         'nameXString' => $xNameString,
@@ -235,7 +235,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                        @include('livewire.staff.rps-management.modal-form.obe-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -265,7 +265,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                        @include('livewire.staff.rps-management.modal-form.obe-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -288,7 +288,7 @@
                             @endif
                         </button>
 
-                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                        @include('livewire.staff.rps-management.modal-form.obe-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -367,7 +367,7 @@
                             @endswitch
                         </button>
 
-                        @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                        @include('livewire.staff.rps-management.modal-form.obe-menu', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString,
@@ -395,7 +395,7 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.rps-management.modal-form.rps-menu', [
+                    @include('livewire.staff.rps-management.modal-form.obe-menu', [
                         'x' => $x,
                         'typeXString' => $switchTable,
                         'nameXString' => $xNameString,

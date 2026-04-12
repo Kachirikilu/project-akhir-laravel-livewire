@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data.window="$store.user.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data-user.window="$store.user.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
@@ -42,7 +42,7 @@
             <form
                 @if ($roleType == 'file') wire:submit.prevent="saveAllRows"
                 @else
-                    x-on:submit.prevent="$wire.{{ $isEditing ? 'updateUser' : 'saveUser' }}($store.user)" @endif
+                    x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)" @endif
                 enctype="multipart/form-data" id="userForm">
 
                 <template x-if="$store.user?.typeModal == 'file'" x-cloak>

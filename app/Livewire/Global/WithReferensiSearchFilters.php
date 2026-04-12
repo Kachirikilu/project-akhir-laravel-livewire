@@ -203,6 +203,7 @@ trait WithReferensiSearchFilters
 
         $this->resetErrorBag(['ref_id', 'refNameSearch']);
     }
+    
     public function selectRefArray($id)
     {
         $data = $this->refQuery()->find($id);

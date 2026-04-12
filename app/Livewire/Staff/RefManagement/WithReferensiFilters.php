@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\RPSManagement;
+namespace App\Livewire\Staff\RefManagement;
 
 use App\Models\Akademik\Referensi;
 use Livewire\WithPagination;

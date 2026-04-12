@@ -98,9 +98,9 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = forceDelete;
         },
 
-        resetSelect() {
-            this.strata = "";
-        },
+        // resetSelect() {
+        //     this.strata = "";
+        // },
         
         reset() {
             this.typeModal = "",

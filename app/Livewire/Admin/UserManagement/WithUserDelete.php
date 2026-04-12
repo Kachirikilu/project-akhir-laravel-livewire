@@ -58,7 +58,7 @@ trait WithUserDelete
                 $user->delete();
             }
 
-            $this->dispatch('refresh-data'); 
+            $this->dispatch('refresh-data-user'); 
             $this->showUserDelete = false;
             $this->toast(message: $this->userEmailToDelete, type: $type, isAkun: true);
             $this->cleanupDeleteStateUser();
@@ -68,7 +68,7 @@ trait WithUserDelete
             }
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->showUserDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
@@ -84,11 +84,11 @@ trait WithUserDelete
             $user = User::withTrashed()->findOrFail($id);
             $user->restore();
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->toast(message: $user->email, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }

@@ -17,6 +17,8 @@ trait WithRPSModal
 
     public $isEditingRPS = false;
 
+    public $showEditRPS = false;
+
     public $showRPSModal = false;
 
     public $mk_id_2;
@@ -26,12 +28,16 @@ trait WithRPSModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $this->resetInputRPS();
+
+        if ($this->showEditRPS == true) {
+            $this->resetInputRPS();
+        }
 
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingRPS = false;
         $this->showRPSModal = true;
+        $this->showEditRPS = false;
 
         $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
@@ -52,12 +58,14 @@ trait WithRPSModal
 
         $this->selected_id_rps = $id;
         $this->isEditingRPS = true;
+        $this->showEditRPS = true;
 
         try {
             // 1. Load data RPS dengan relasi yang sangat lengkap
             $rps = RPS::with([
                 'mk_rel',
                 'dosens',
+                'cpmks.scpmks',
                 'cpmks.scpmks.refs', // Penting untuk mapping Sub-CPMK
                 'cpmks.refs',        // Referensi Utama CPMK
                 'cpmks.cpls',        // CPL dari CPMK
@@ -68,7 +76,7 @@ trait WithRPSModal
             $this->mkNameSearch = $rps->mk_rel?->mk;
             $this->mk_id = $rps->mk_id;
             $this->mk_id_2 = $rps->mk_id;
-            $this->mk_items = $this->itemsMK($rps->mk_rel);
+            // $this->mk_items = $this->itemsMK($rps->mk_rel);
 
             // 2. Fill Data Dosen
             $this->dosen_id_array = $rps->dosens->pluck('id')->toArray();
@@ -165,7 +173,7 @@ trait WithRPSModal
                         $query->where('id', '!=', $this->selected_id_rps);
                     }
                     if ($query->exists()) {
-                        $fail("RPS untuk Mata Kuliah ini pada tahun akademik $value sudah ada.");
+                        $fail("RPS untuk Mata Kuliah ini pada tahun akademik $value sudah ada!");
                     }
                 },
             ],
@@ -184,11 +192,11 @@ trait WithRPSModal
                 }
                 if ($value == 0) {
                     if ($totalSubCPMK < 14) {
-                        $fail('Jumlah Sub-CPMK kurang dari 14.');
+                        $fail('Jumlah Sub-CPMK kurang dari 14!');
                     }
                     $rounded = round($totalBobot, 2);
                     if ($rounded < 80 || $rounded > 140) {
-                        $fail("Total bobot harus 80% - 140% (Saat ini: $rounded%).");
+                        $fail("Total bobot harus 80% - 140% (Saat ini: $rounded%)!");
                     }
                 }
             }],
@@ -208,7 +216,7 @@ trait WithRPSModal
                     });
 
                     if (! $hasKetua) {
-                        $fail('Harus ada minimal satu dosen yang dipilih sebagai Ketua Tim.');
+                        $fail('Harus ada minimal satu dosen yang dipilih sebagai Ketua Tim|');
                     }
                 },
             ],
@@ -340,7 +348,10 @@ trait WithRPSModal
             $namaMK = $this->mk_items['name'];
             $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})");
             $this->resetInputRPS();
-            $this->dispatch('refresh-data');
+            if (! empty($this->cpmk_rps_id)) {
+                $this->loadCPMKRPSPagination();
+            }
+            $this->dispatch('refresh-data-rps');
             $this->showRPSModal = false;
 
         } catch (ValidationException $e) {
@@ -348,7 +359,7 @@ trait WithRPSModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-rps');
             $this->showRPSModal = false;
         }
     }
@@ -362,7 +373,7 @@ trait WithRPSModal
         if ((empty($data['mk_id']) && $this->mk_id !== $this->mk_id_2) ||
             ($this->mk_id == $this->mk_id_2) || ($this->mk_id !== $this->mk_id_2)) {
             $data['mk_id'] = $this->mk_id;
-        } 
+        }
 
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
@@ -378,15 +389,20 @@ trait WithRPSModal
                 $rps = RPS::findOrFail($this->selected_id_rps);
 
                 // 1. Update Data Utama
-                $rps->update([
+                $updateData = [
                     'deskripsi' => $validated['deskripsi'],
                     'mk_id' => $validated['mk_id'],
                     'akademik' => $validated['akademik'],
                     'tahun_awal' => $validated['akademik_1'],
                     'tahun_akhir' => $validated['akademik_2'],
                     'is_draf' => $validated['is_draf'],
-                    // 'isi_rps_json' => json_encode($validated['cpmk_sub_items_array']),
-                ]);
+                ];
+
+                if ($validated['is_draf'] == 0) {
+                    $updateData['revisi'] = now();
+                }
+
+                $rps->update($updateData);
 
                 // 2. Sync Dosen dengan Pivot Data
                 $syncDosen = [];
@@ -423,15 +439,21 @@ trait WithRPSModal
             });
 
             $this->toast(message: 'RPS Berhasil diperbarui', type: 'update');
+            if (! empty($this->cpmk_rps_id)) {
+                $this->loadCPMKRPSPagination();
+            }
             $this->showRPSModal = false;
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-rps');
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal memperbarui: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            if (! empty($this->cpmk_rps_id)) {
+                $this->loadCPMKRPSPagination();
+            }
+            $this->dispatch('refresh-data-rps');
             $this->showRPSModal = false;
         }
     }
@@ -456,7 +478,7 @@ trait WithRPSModal
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi RPS wajib diisi!',
-            'deskripsi.max' => 'Deskripsi RPS tidak boleh lebih dari 1000 karakter!',
+            'deskripsi.max' => 'Deskripsi CPMK terlalu panjang (Maksimal 1000 karakter)!',
             'is_draf.required' => 'Status RPS wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
 
@@ -464,6 +486,9 @@ trait WithRPSModal
             'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk RPS ini!',
             'cpmk_id_array.array' => 'Format data CPMK tidak valid!',
             'cpmk_id_array.min' => 'Minimal harus ada satu CPMK yang dipilih!',
+
+            'cpl_id_array.array' => 'Format data CPL tidak valid!',
+            'ref_id_array.array' => 'Format data Referensi tidak valid!',
 
             // Dosen Pengampu
             'dosen_id_array.required' => 'Dosen pengampu wajib dipilih!',
@@ -476,7 +501,6 @@ trait WithRPSModal
 
             // Form Mata Kuliah (Legacy/Template)
             'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
-            'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'semester.required' => 'Semester wajib diisi!',
             'semester.integer' => 'Semester harus berupa angka!',
             'semester.min' => 'Semester minimal adalah 1!',
@@ -497,7 +521,6 @@ trait WithRPSModal
     {
         $this->cpmkNameSearch = '';
         $this->cplNameSearch = '';
-        $this->refNameSearch = '';
         $this->refNameSearch = '';
 
         // ambil id untuk simpan ke rps_pivot_cpmk

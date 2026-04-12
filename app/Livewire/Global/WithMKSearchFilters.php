@@ -32,7 +32,7 @@ trait WithMKSearchFilters
             'mk' => $mk->mk,
             'semester' => $mk->semester,
             'sks' => $mk->sks,
-            'tipe_sks_text' => $mk->tipe_sks_text,
+            'sks_text' => $mk->sks_text,
             'wajib_text' => $mk->wajib_text,
             'level_mk' => $mk->level_mk 
         ])->toArray();
@@ -170,13 +170,19 @@ trait WithMKSearchFilters
     public function fetchMK($query = '', $mode = 'single')
     {
         $this->modeMK = $mode;
-        if (empty($query) || $this->mk_id) {
-            $this->mkResults = $this->getMKbyUser();
+
+        if ($this->mk_id && empty($this->mk_items)) {
+            $mk = MataKuliah::find($this->mk_id);
+            if ($mk) {
+                $this->mk_items = $this->itemsMK($mk);
+            }
         }
 
-        return;
+        if (empty($query) || $this->mk_id) {
+            $this->mkResults = $this->getMKbyUser();
+            return;
+        }
     }
-
 
     public function selectMK($id, $mkName)
     {

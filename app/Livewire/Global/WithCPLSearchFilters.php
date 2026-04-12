@@ -177,7 +177,6 @@ trait WithCPLSearchFilters
         return;
     }
 
-
     public function selectCPL($id, $cplName)
     {
         $this->cpl_id = $id;

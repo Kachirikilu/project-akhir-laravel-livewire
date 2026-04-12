@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\RPSManagement;
+namespace App\Livewire\Staff\CPMKManagement;
 
 use App\Models\Akademik\SubCPMK;
 use Livewire\WithPagination;

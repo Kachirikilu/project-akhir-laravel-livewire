@@ -55,8 +55,9 @@ trait WithDosenSearchFilters
             'id' => $d->id,
             'kode' => $d->nip,
             'slot1' => $d->name,
-            'slot2' => $d->nidn_nidk,
-            'slot3' => $d->status,
+            'slot2' => $d->nidn,
+            'slot3' => $d->nidk,
+            'slot4' => $d->status,
             'peran' => $d->pivot->peran ?? 'Pengajar',
             'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
         ];
@@ -207,6 +208,7 @@ trait WithDosenSearchFilters
 
         $this->resetErrorBag(['dosen_id', 'dosenNameSearch']);
     }
+    
     public function selectDosenArray($id)
     {
         $data = $this->dosenQuery()->find($id);

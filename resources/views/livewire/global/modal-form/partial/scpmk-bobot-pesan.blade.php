@@ -15,7 +15,7 @@
         </template>
         <template x-if="grandTotalBobot > {{ $nilai1 }} && grandTotalBobot <= {{ $nilai2 }}">
             <flux:badge color="orange" size="sm" variant="pill">
-                <span x-text="totalSubCPMK"></span>%
+                <span x-text="grandTotalBobot"></span>%
             </flux:badge>
         </template>
         <template x-if="grandTotalBobot > {{ $nilai2 }} && grandTotalBobot <= {{ $nilai3 }}">

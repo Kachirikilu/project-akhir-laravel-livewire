@@ -19,6 +19,11 @@
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
                 saveMK, updateMK, destroyMK, restoreMK,
+                saveRPS, updateRPS, destroyRPS, restoreRPS,
+                saveCPMK, updateCPMK, destroyCPMK, restoreCPMK,
+                saveSCPMK, updateSCPMK, destroySCPMK, restoreSCPMK,
+                saveCPL, updateCPL, destroyCPL, restoreCPL,
+                saveRef, updateRef, destroyRef, restoreRef,
                 search,
                 selectPrForFilter, resetPrFilter,
                 selectJrForFilter, resetJrFilter,
@@ -28,8 +33,9 @@
                 selectCPMKForFilter, resetCPMKFilter,
                 selectSCPMKForFilter, resetSCPMKFilter,
                 selectCPLForFilter, resetCPLFilter,
+                selectDosenForFilter, resetDosenFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
-                sortBy, perPage, gotoPage, previousPage, nextPage"
+                sortBy, perPage, gotoPage, previousPage, nextPage, page"
                 class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">
                 {{ $slot }}
             </tbody>

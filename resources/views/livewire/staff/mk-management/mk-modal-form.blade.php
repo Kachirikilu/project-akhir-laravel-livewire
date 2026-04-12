@@ -1,4 +1,4 @@
-<flux:modal name="mk-modal" wire:model="showMKModal" x-data  @refresh-data.window="$store.mk.reset()" x-bind:flyout="$store.mk.isEdit == 1"
+<flux:modal name="mk-modal" wire:model="showMKModal" x-data  @refresh-data-mk.window="$store.mk.reset()" x-bind:flyout="$store.mk.isEdit == 1"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
@@ -49,7 +49,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $mkType --}}
-            <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateMK' : 'saveMK' }}($store.mk)"
+            <form x-on:submit.prevent="$wire.{{ $isEditingMK ? 'updateMK' : 'saveMK' }}($store.mk)"
                 enctype="multipart/form-data" id="mkForm">
 
                 @include('livewire.staff.mk-management.modal-form.mk-input')

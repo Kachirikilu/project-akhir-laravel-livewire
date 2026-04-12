@@ -57,7 +57,7 @@ trait WithMKDelete
             });
 
             $this->cleanupDeleteState();
-            $this->dispatch('refresh-data'); 
+            $this->dispatch('refresh-data-mk'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
@@ -79,7 +79,7 @@ trait WithMKDelete
             $mk->restore();
 
             $this->js("Flux.toast('Mata Kuliah {$mk->mk} berhasil dipulihkan!')");
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
 
         } catch (\Exception $e) {
             $this->js("Flux.toast({ variant: 'danger', text: 'Gagal memulihkan Mata Kuliah!' })");

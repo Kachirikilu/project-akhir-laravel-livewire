@@ -1,9 +1,8 @@
-<flux:modal name="rps-modal" wire:model="showRPSModal" x-data @refresh-data.window="$store.rps.reset()"
-   class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-
+<div>
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveRPS, updateRPS">
-        <div class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
+        <div
+            class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
         </div>
@@ -17,7 +16,8 @@
             <h3 class="text-xl font-semibold">
 
                 <flux:badge icon="clipboard-document-list" color="emerald" size="lg">
-                    <span x-text="$store.rps?.isEdit ? 'Edit OBE - Rencana Pembelajaran Semester' : 'Tambah OBE - Rencana Pembelajaran Semester'"></span>
+                    <span
+                        x-text="$store.rps?.isEdit ? 'Edit OBE - Rencana Pembelajaran Semester' : 'Tambah OBE - Rencana Pembelajaran Semester'"></span>
                 </flux:badge>
 
             </h3>
@@ -45,4 +45,4 @@
             </form>
         </div>
     </div>
-</flux:modal>
+</div>

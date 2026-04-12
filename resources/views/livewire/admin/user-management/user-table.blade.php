@@ -50,7 +50,8 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="{{ $filterUser == 'mahasiswa' ? 1 : ($filterUser == 'admin' ? 2 : 3) }}" class="{{ $headSubKolom }}">
+            <th colspan="{{ $filterUser == 'mahasiswa' ? 1 : ($filterUser == 'admin' ? 2 : 3) }}"
+                class="{{ $headSubKolom }}">
                 Identitas (ID)
             </th>
 
@@ -99,12 +100,20 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'prodi',
                 'headString' => 'Program Studi',
-                'rowSpan' => 2
+                'rowSpan' => 2,
             ])
             <th rowspan="2" class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'created_at',
+                'headString' => 'Created At',
+                'rowSpan' => 2,
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'updated_at',
+                'headString' => 'Updated At',
+                'rowSpan' => 2,
+            ])
 
         </tr>
 
@@ -152,8 +161,7 @@
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $mainKolom }} text-center">
-                {{ $user->id }}</td>
+            <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
             {{-- Role --}}
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
@@ -179,7 +187,7 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna'
+                        'nameXString' => 'Pengguna',
                     ])
 
                 </flux:dropdown>
@@ -258,14 +266,14 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna'
+                        'nameXString' => 'Pengguna',
                     ])
 
                 </flux:dropdown>
             </td>
 
             <td class="{{ $secondKolom }} min-w-48">
-                {{ $detail->pr_rel->prodi ?? '-' }}</td>
+                {{ $user->prodi ?? '-' }} ({{ $user->kode_pr ?? '---' }})</td>
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
@@ -275,7 +283,7 @@
 
                     @include('livewire.admin.user-management.modal-form.user-menu', [
                         'x' => $user,
-                        'nameXString' => 'Pengguna'
+                        'nameXString' => 'Pengguna',
                     ])
 
                 </flux:dropdown>
@@ -306,4 +314,4 @@
             ])
         </x-slot:footer>
 
-    </x-admin.global.table.main-layout-table>
+        </x-admin.global.table.main-layout-table>

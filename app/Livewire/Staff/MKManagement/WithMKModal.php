@@ -12,9 +12,11 @@ trait WithMKModal
 {
     use HasToast;
 
-    public $selected_id;
+    public $selected_id_mk;
 
-    public $isEditing = false;
+    public $isEditingMK = false;
+
+    public $showEditMK = false;
 
     public $showMKModal = false;
 
@@ -23,13 +25,17 @@ trait WithMKModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        $this->resetInputMK();
+        
+        if ($this->showEditMK == true) {
+            $this->resetInputMK();
+        }
 
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditing = false;
+        $this->isEditingMK = false;
         $this->mkType = $tingkatan;
         $this->showMKModal = true;
+        $this->showEditMK = false;
 
         if ($tingkatan == 1 || $tingkatan == 4) {
             $this->updatedPrNameSearch($this->prNameSearch);
@@ -45,15 +51,15 @@ trait WithMKModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-
         
         $this->resetInputMK();
         $this->resetValidation();
         $this->resetErrorBag();
         
-        $this->selected_id = $id;
+        $this->selected_id_mk = $id;
         $this->mkType = $tingkatan;
-        $this->isEditing = true;
+        $this->isEditingMK = true;
+        $this->showEditMK = true;
 
         $this->prResults = [];
 
@@ -73,23 +79,18 @@ trait WithMKModal
             if ($firstProdi) {
                 $this->jr_id = $firstProdi->jr_id;
                 $this->jrNameSearch = $firstProdi->jurusanJr;
-                $this->jurusan_kode = $firstProdi->kode;
 
                 $this->fk_id = $firstProdi->fk_id;
                 $this->fkNameSearch = $firstProdi->fakultasFk;
-                $this->fakultas_kode = $firstProdi->kode;
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->pr_id = $firstProdi->id;
                 }
                 if ($tingkatan == 1) {
                     $this->prNameSearch = $firstProdi->prodi;
-                    $this->pr_items = $this->itemsPr($firstProdi);
                     $this->fetchPr($this->prNameSearch);
                 }
             }
-
-            
 
             if ($tingkatan == 4) {
                 $this->updatedPrNameSearch($this->prNameSearch);
@@ -111,7 +112,7 @@ trait WithMKModal
         }
     }
 
-    private function inputModalMK($isEditing, $data)
+    private function inputModalMK($isEditingMK, $data)
     {
         // $tingkatanMap = [
         //     'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
@@ -126,7 +127,7 @@ trait WithMKModal
             'digit_semester' => 'required|string|size:2',
             'digit_mk' => [
                 'required', 'string', 'size:2',
-                function ($attribute, $value, $fail) use ($targetProdiIds, $isEditing) {
+                function ($attribute, $value, $fail) use ($targetProdiIds, $isEditingMK) {
                     if (empty($value) || empty($targetProdiIds)) {
                         return;
                     }
@@ -141,8 +142,8 @@ trait WithMKModal
                             ->where('prodi_pivot_mk.pr_id', $pId)
                             ->where('mata_kuliahs.digit_mk', $value);
 
-                        if ($isEditing) {
-                            $query->where('mata_kuliahs.id', '!=', $this->selected_id);
+                        if ($isEditingMK) {
+                            $query->where('mata_kuliahs.id', '!=', $this->selected_id_mk);
                         }
 
                         if ($query->exists()) {
@@ -237,7 +238,7 @@ trait WithMKModal
             });
 
             $this->resetInputMK();
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->showMKModal = false;
             $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']));
 
@@ -246,7 +247,7 @@ trait WithMKModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->showMKModal = false;
         }
     }
@@ -269,7 +270,7 @@ trait WithMKModal
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
             DB::transaction(function () use ($validated, $tingkatan, $data) {
-                $mk = MataKuliah::findOrFail($this->selected_id);
+                $mk = MataKuliah::findOrFail($this->selected_id_mk);
 
                 // 3. UPDATE DATA UTAMA
                 $mk->update([
@@ -301,7 +302,7 @@ trait WithMKModal
                 $mk->prodis()->sync($syncData);
             });
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->showMKModal = false;
             $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']), type: 'update');
 
@@ -310,7 +311,7 @@ trait WithMKModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->showMKModal = false;
         }
     }

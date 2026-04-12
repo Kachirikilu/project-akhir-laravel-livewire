@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\RPSManagement;
+namespace App\Livewire\Staff\CPLManagement;
 
 use App\Models\Akademik\CPL;
 use Livewire\WithPagination;

@@ -1,5 +1,12 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("rps", {
+
+        isFlyout: false,
+
+        setFlyout(val) {
+            this.isFlyout = !!val;
+        },
+
         typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
@@ -90,7 +97,6 @@ document.addEventListener("alpine:init", () => {
         },
 
         setValueRPS(
-            kode,
             kodeBlok,
             deskripsi,
             idMK,
@@ -156,7 +162,6 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = 0,
             this.colorIcon = "",
 
-            this.typeModal = "";
             this.deskripsi = "";
 
             this.mk_id = "";

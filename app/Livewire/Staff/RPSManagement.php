@@ -15,19 +15,19 @@ use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
-use App\Livewire\Staff\RPSManagement\WithCPMKFilters;
-use App\Livewire\Staff\RPSManagement\WithSubCPMKFilters;
-use App\Livewire\Staff\RPSManagement\WithCPLFilters;
-use App\Livewire\Staff\RPSManagement\WithReferensiFilters;
+use App\Livewire\Staff\CPMKManagement\WithCPMKFilters;
+use App\Livewire\Staff\CPMKManagement\WithSubCPMKFilters;
+use App\Livewire\Staff\CPLManagement\WithCPLFilters;
+use App\Livewire\Staff\RefManagement\WithReferensiFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
-use App\Livewire\Staff\RPSManagement\WithCPMKModal;
+use App\Livewire\Staff\CPMKManagement\WithCPMKModal;
 
 
-use App\Models\Akademik\Rps;
-use App\Models\Akademik\Cpmk;
-use App\Models\Akademik\Cpl;
+use App\Models\Akademik\RPS;
+use App\Models\Akademik\CPMK;
+use App\Models\Akademik\CPL;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -381,6 +381,8 @@ class RPSManagement extends Component
             'totalSCPMK' => $baseDataSCPMK->count(),
             'totalCPL' => $baseDataCPL->count(),
             'totalRef' => $baseDataRef->count(),
+            
+            'rps_modal_paginator' => $this->rps_modal_paginator,
 
             'stats' => $stats,
         ]));

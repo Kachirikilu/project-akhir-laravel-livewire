@@ -22,11 +22,11 @@ trait WithUserModal
 
     public $showUserModal = false;
 
-    public $isEditing = false;
+    public $isEditingUser = false;
 
     public $roleType;
 
-    public $user_id;
+    public $selected_id_user;
 
     public $pr_id_2;
 
@@ -50,7 +50,7 @@ trait WithUserModal
         }
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditing = false;
+        $this->isEditingUser = false;
         $this->roleType = $role;
         $this->showUserModal = true;
         $this->updatedPrNameSearch($this->prNameSearch);
@@ -67,13 +67,14 @@ trait WithUserModal
 
         $this->resetErrorBag();
         $this->showUserModal = true;
-        $this->isEditing = true;
+        $this->isEditingUser = true;
 
         try {
             $user = User::with(['admin', 'dosen', 'mahasiswa'])->findOrFail($id);
-            $this->user_id = $user->id;
+            $this->selected_id_user = $user->id;
             $this->pr_id = $user->pr_id;
             $this->pr_id_2 = $user->pr_id;
+            $this->prNameSearch = $user->prodi;
 
             $this->getPrbyUser();
             $this->fetchPr($this->prNameSearch);
@@ -84,15 +85,15 @@ trait WithUserModal
         }
     }
 
-    private function inputModalUser($isEditing, $data)
+    private function inputModalUser($isEditingUser, $data)
     {
         $rules = [
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users', 'email')->ignore($this->user_id),
+                Rule::unique('users', 'email')->ignore($this->selected_id_user),
             ],
-            'password' => $isEditing ? 'nullable|min:8' : 'required|min:8',
+            'password' => $isEditingUser ? 'nullable|min:8' : 'required|min:8',
             'name' => 'required|string|max:255',
         ];
 
@@ -270,8 +271,8 @@ trait WithUserModal
 
     private function uniqueRule(string $table, string $column)
     {
-        return $this->user_id
-            ? Rule::unique($table, $column)->ignore($this->user_id, 'user_id')
+        return $this->selected_id_user
+            ? Rule::unique($table, $column)->ignore($this->selected_id_user, 'user_id')
             : Rule::unique($table, $column);
     }
 
@@ -344,7 +345,7 @@ trait WithUserModal
             });
 
             $this->resetInputUser();
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
             $this->toast(message: ucfirst($this->roleType), isAkun: true);
 
@@ -353,7 +354,7 @@ trait WithUserModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
         }
     }
@@ -376,7 +377,7 @@ trait WithUserModal
 
             DB::transaction(function () use ($validated) {
 
-                $user = User::findOrFail($this->user_id);
+                $user = User::findOrFail($this->selected_id_user);
                 $user->update(['email' => $validated['email']]);
 
                 if ($validated['password']) {
@@ -429,11 +430,11 @@ trait WithUserModal
                 }
             });
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
             $this->toast(message: ucfirst($this->roleType), type: 'update', isAkun: true);
 
-            if (Auth::id() === $this->user_id) {
+            if (Auth::id() === $this->selected_id_user) {
                 $this->dispatch('profile-updated');
             }
 
@@ -442,7 +443,7 @@ trait WithUserModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-user');
             $this->showUserDelete = false;
         }
     }
@@ -483,7 +484,7 @@ trait WithUserModal
         )
     {
         $fields = [
-            'user_id',
+            'selected_id_user',
             // 'email', 'password', 'name', 'nip', 'nitk',
             // 'nidn', 'nidk', 'nim', 'angkatan',
             'roleType',

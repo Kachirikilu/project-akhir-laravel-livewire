@@ -38,63 +38,19 @@ trait WithCPMKSearchFilters
     private function mapCPMK($collection)
     {
         return $collection->map(function ($c) {
-            $cpmkRefIds = $c->refs->pluck('id')->toArray();
+            $allScpmkRefIds = $c->scpmks->flatMap(fn ($s) => $s->refs->pluck('id'))->unique()->toArray();
+            $cpmkUniqueRefs = $c->refs->filter(fn ($r) => ! in_array($r->id, $allScpmkRefIds));
 
             return [
                 'id' => $c->id,
                 'kode' => $c->kode,
                 'deskripsi' => $c->deskripsi,
-
-                'scpmk' => $c->scpmks->map(function ($s) use ($cpmkRefIds) {
-                    return [
-                        'id' => $s->id,
-                        'kode' => $s->kode,
-                        'deskripsi' => $s->deskripsi,
-                        'materi' => $s->materi,
-                        'metodologi' => $s->metodologi,
-                        'indikator' => $s->indikator,
-                        'metode' => $s->metode,
-                        'bobot' => $s->bobot ?? 0,
-                        'tugas' => $s->tugas,
-                        'w_tugas' => $s->w_tugas,
-                        'w_mandiri' => $s->w_mandiri,
-                        'ref' => $s->refs
-                            ->filter(fn ($sr) => ! in_array($sr->id, $cpmkRefIds))
-                            ->map(fn ($sr) => [
-                                'id' => $sr->id,
-                                'kode' => $sr->kode,
-                                'judul' => $sr->judul,
-                                'penulis' => $sr->penulis,
-                                'penerbit' => $sr->penerbit,
-                                'tahun' => $sr->tahun,
-                                'link' => $sr->link,
-
-                            ]),
-                    ];
-                })->toArray(),
-
-                // Referensi Utama dari CPMK
-                'ref' => $c->refs->map(fn ($r) => [
-                    'id' => $r->id,
-                    'kode' => $r->kode,
-                    'judul' => $r->judul,
-                    'penulis' => $r->penulis,
-                    'penerbit' => $r->penerbit,
-                    'tahun' => $r->tahun,
-                    'link' => $r->link,
-                ]),
-
-                // CPL diambil dari relasi cpls() yang ada di Model CPMK
-                'cpl' => $c->cpls->map(fn ($cpl) => [
-                    'id' => $cpl->id,
-                    'kode' => $cpl->kode,
-                    'deskripsi' => $cpl->deskripsi,
-                ]),
-
+                'scpmk' => $this->mapSCPMK($c->scpmks),
+                'ref' => $this->mapRef($cpmkUniqueRefs),
+                'cpl' => $this->mapCPL($c->cpls),
                 'total_bobot' => $c->scpmks->sum('bobot'),
             ];
         })->toArray();
-
     }
 
     private function cpmkQuery()
@@ -107,12 +63,26 @@ trait WithCPMKSearchFilters
         if (! $c) {
             return null;
         }
+
         return [
             'id' => $c->id,
             'kode' => $c->kode,
             'slot1' => $c->deskripsi,
             'slot2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
         ];
+    }
+
+    private function pushToCPMKItems($mappedResults)
+    {
+        $mappedData = $mappedResults[0] ?? null;
+
+        if ($mappedData) {
+            $this->cpmk_sub_items_array[] = [
+                'scpmk' => $mappedData['scpmk'] ?? [],
+                'ref' => $mappedData['ref'] ?? [],
+                'cpl' => $mappedData['cpl'] ?? [],
+            ];
+        }
     }
 
     public function inputCPMKFilter()
@@ -122,7 +92,7 @@ trait WithCPMKSearchFilters
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
             $this->cpmkSearchResults = $this->mapCPMK(
-                  $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
+                $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpmk_name) {
             $this->cpmkSearchResults = $this->getCPMKbyUser();
@@ -166,8 +136,8 @@ trait WithCPMKSearchFilters
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($c) use ($value, $normalizedValue) {
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($c->kode));
-                
-                return strtolower($c->deskripsi) === strtolower($value) 
+
+                return strtolower($c->deskripsi) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
 
@@ -176,12 +146,23 @@ trait WithCPMKSearchFilters
                     $this->cpmkNameSearch = $exactMatch->deskripsi;
                     $this->cpmk_id = $exactMatch->id;
                     $this->cpmk_items = $this->itemsCPMK($exactMatch);
+                    $mappedResults = $this->mapCPMK(collect([$exactMatch]));
+                    $mappedData = $mappedResults[0] ?? null;
+                    if ($mappedData) {
+                        $this->cpmk_sub_items_array[] = [
+                            'scpmk' => $mappedData['scpmk'] ?? [],
+                            'ref' => $mappedData['ref'] ?? [],
+                            'cpl' => $mappedData['cpl'] ?? [],
+                        ];
+                    }
                     $this->cpmkResults = [];
                 } else {
                     $this->cpmkNameSearch = '';
                     $this->cpmk_id_array[] = $exactMatch->id;
                     $this->cpmk_items_array[] = $this->itemsCPMK($exactMatch);
                 }
+                $mappedResults = $this->mapCPMK(collect([$exactMatch]));
+                $this->pushToCPMKItems($mappedResults);
                 $this->cpmkResults = $this->getCPMKbyUser();
             }
         } else {
@@ -247,6 +228,8 @@ trait WithCPMKSearchFilters
         $data = $this->cpmkQuery()->find($id);
         if ($data) {
             $this->cpmk_items = $this->itemsCPMK($data);
+            $mappedResults = $this->mapCPMK(collect([$data]));
+            $this->pushToCPMKItems($mappedResults);
         }
 
         if (method_exists($this, 'fetchCPMK')) {
@@ -263,8 +246,8 @@ trait WithCPMKSearchFilters
             $this->cpmk_id_array[] = $id;
             $this->cpmk_items_array[] = $this->itemsCPMK($data);
 
-            $mappedData = $this->mapCPMK(collect([$data]));
-            $this->cpmk_sub_items_array[] = $mappedData[0];
+            $mappedResults = $this->mapCPMK(collect([$data]));
+            $this->pushToCPMKItems($mappedResults);
         }
     }
 

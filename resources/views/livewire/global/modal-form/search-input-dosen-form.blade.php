@@ -28,7 +28,7 @@
         return this.parentSelectedId != null && this.parentSelectedId != '';
     },
 
-    addItem(id, kode, slot1, slot2, slot3) {
+    addItem(id, kode, slot1, slot2, slot3, slot4) {
         let normalizedId = Number(id);
 
         if (!this.items.map(i => Number(i)).includes(normalizedId)) {
@@ -45,6 +45,7 @@
                 slot1: slot1,
                 slot2: slot2,
                 slot3: slot3,
+                slot4: slot4,
                 peran: isFirst ? 'Koordinator' : 'Pengajar',
                 is_ketua: isFirst
             });
@@ -179,7 +180,8 @@
                                 '{{ $x['kode'] }}', 
                                 '{{ $x[$typeXString] }}', 
                                 @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
-                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset
+                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
+                                @isset($typeX4String) '{{ $x[$typeX4String] ?? '' }}' @else null @endisset
                             );
                         }
                         "
@@ -234,22 +236,53 @@
                         </button>
 
                         <div class="flex flex-col flex-1">
+                            {{-- Label Ketua --}}
                             <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
                                 <span
                                     class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white">Ketua</span>
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
+
+                            {{-- Nama Utama --}}
                             <span class="text-sm font-bold text-[var(--contrast-main-text)]"
                                 x-text="itemsAll[index]?.slot1"></span>
-                            <span class="text-xs text-gray-500"
-                                x-text="itemsAll[index]?.kode + ' | ' + itemsAll[index]?.slot2"></span>
+
+                            {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
+                            <div class="mt-1 flex items-center flex-wrap text-xs text-gray-500 gap-y-1">
+                                {{-- NIP --}}
+                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]" x-text="'NIP: ' + itemsAll[index]?.kode"></span>
+
+                                {{-- NIDN --}}
+                                <template x-if="itemsAll[index]?.slot2">
+                                    <div class="flex items-center">
+                                        <span class="mx-1.5 opacity-50">|</span>
+                                        <span x-text="'NIDN: ' + itemsAll[index]?.slot2"></span>
+                                    </div>
+                                </template>
+
+                                {{-- NIDK --}}
+                                <template x-if="itemsAll[index]?.slot3">
+                                    <div class="flex items-center">
+                                        <span class="mx-1.5 opacity-50">|</span>
+                                        <span x-text="'NIDK: ' + itemsAll[index]?.slot3"></span>
+                                    </div>
+                                </template>
+
+                                {{-- Slot 4 / Link jika ada --}}
+                                <template x-if="itemsAll[index]?.slot4">
+                                    <div class="flex items-center">
+                                        <span class="mx-1.5 opacity-50">|</span>
+                                        <span x-text="'Status: ' + itemsAll[index]?.slot4"></span>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
 
                     {{-- PEMILIH PERAN --}}
                     <div class="flex items-center gap-2">
                         <select x-model="itemsAll[index].peran"
-                            class="text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
+                            class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
                             <option value="Koordinator">Koordinator</option>
                             <option value="Pengajar">Pengajar</option>
                             <option value="Asisten">Asisten</option>

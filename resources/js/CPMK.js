@@ -27,37 +27,68 @@ document.addEventListener("alpine:init", () => {
         count_scpmk: 0,
         total_bobot: 0,
 
-        init() {
-            Alpine.effect(() => {
-                this.kode_cpmk = (this.kode_cpmk_1 + this.kode_cpmk_2).trim();
-            })
-        },
-
         ref_scpmk: [],
 
-        // Di dalam Alpine.store('rps')
-        update(allSubItems) {
-            if (!allSubItems || allSubItems.length === 0) {
-                this.ref_scpmk = [];
-                return;
+        // update(allSubItems) {
+        //     if (!allSubItems || allSubItems.length === 0) {
+        //         this.ref_scpmk = [];
+        //         return;
+        //     }
+
+        //     this.ref_scpmk = [];
+
+        //     allSubItems.forEach(item => {
+        //         if (item.scpmk) {
+        //             let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
+        //             const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
+        //             this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
+        //         }
+        //     });
+        // },
+
+    update(allSubItems) {
+    if (!allSubItems || allSubItems.length === 0) {
+        this.ref_scpmk = [];
+        return;
+    }
+
+    // Ambil semua scpmk dari semua item, lalu ambil semua ref dari setiap scpmk tersebut
+    let allRefs = allSubItems.flatMap(item => {
+        const scpmkList = item.scpmk || [];
+        return scpmkList.flatMap(sub => sub.ref || []);
+    });
+
+    // Hilangkan duplikat berdasarkan ID buku
+    this.ref_scpmk = Array.from(new Map(allRefs.map(r => [r.id, r])).values());
+},
+
+        setValueCPMK(kode, deskripsi) {
+            this.kode_cpmk = kode;
+            this.deskripsi = deskripsi;
+
+            if (kode) {
+                const huruf = kode.match(/[a-zA-Z]+/g);
+                this.kode_cpmk_1 = huruf ? huruf[0] : '';
+                const angka = kode.match(/\d+/g);
+                this.kode_cpmk_2 = angka ? angka[0] : '';
+            } else {
+                this.kode_cpmk_1 = '';
+                this.kode_cpmk_2 = '';
             }
-
-            this.ref_scpmk = [];
-
-            allSubItems.forEach(item => {
-                if (item.scpmk) {
-                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
-                    const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
-                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
-                }
-            });
         },
 
-    // setValueCPMK(k1, k2, ...) {
-    //     this.kode_cpmk_1 = k1;
-    //     this.kode_cpmk_2 = k2;
-    //     // ... sisanya
-    // }
+        reset() {
+            this.typeModal = "",
+            this.typeModal_delete = "",
+            this.isEdit = 0,
+            this.isForceDelete = 0,
+            this.colorIcon = "",
+
+            this.deskripsi = "";
+            this.kode_cpmk = "";
+            this.kode_cpmk_1 = "";
+            this.kode_cpmk_2 = "";
+        },
 
 
 
@@ -117,7 +148,7 @@ document.addEventListener("alpine:init", () => {
             countScpmk,
             totalBobot
         ) {
-            this.kode = kode;
+            t_cpmk = kode;
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
 
@@ -155,12 +186,12 @@ document.addEventListener("alpine:init", () => {
             forceDelete
         ) {
             this.cpmk_delete = namaProdi;
-            this.kode_cpmk_delete = kodeMkDelete;
+            t_cpmk_cpmk_delete = kodeMkDelete;
             this.isForceDelete = forceDelete;
         },
 
         // resetSelect() {
-        //     this.kode_blok = "";
+        //     t_cpmk_blok = "";
         //     this.semester = "";
         //     this.tipe_sks = ""; 
         //     this.is_wajib = "";
@@ -176,7 +207,7 @@ document.addEventListener("alpine:init", () => {
             this.typeModal = "";
             this.deskripsi = "";
 
-            this.kode = "";
+            this._cpmk = "";
 
             this.mk_id = "";
             this.nama_mk_search = "";

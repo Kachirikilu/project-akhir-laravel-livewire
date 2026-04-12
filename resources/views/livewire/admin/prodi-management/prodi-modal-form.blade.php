@@ -1,4 +1,4 @@
-<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data.window="$store.prodi.reset()"
+<flux:modal name="prodi-modal" wire:model="showProdiModal" x-data @refresh-data-pr.window="$store.prodi.reset()"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
@@ -44,7 +44,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
             {{-- Gunakan satu method general, lalu filter di Backend berdasarkan $prodiType --}}
-            <form x-on:submit.prevent="$wire.{{ $isEditing ? 'updateProdi' : 'saveProdi' }}($store.prodi)"
+            <form x-on:submit.prevent="$wire.{{ $isEditingPr ? 'updateProdi' : 'saveProdi' }}($store.prodi)"
                 enctype="multipart/form-data" id="prodiForm">
 
                 <template x-if="$store.prodi?.typeModal == 'prodi'" x-cloak>

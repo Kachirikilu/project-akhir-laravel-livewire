@@ -26,7 +26,7 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                    $store.prodi?.resetSelect();
+                    $store.prodi?.reset();
 
                     const type = '{{ $typeXString }}';
 
@@ -54,11 +54,11 @@
                         $flux.modal('prodi-modal').show();
                 "
                 wire:click="{{ $editCall }}"
-                class="!text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
+                class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span class="cursor-pointer">Edit Data</span>
+                    <span>Edit Data</span>
                     <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
                         class="animate-spin h-4 w-4" />
                 </div>
@@ -80,11 +80,11 @@
                         $flux.modal('prodi-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
-                class="!text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
+                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span class="cursor-pointer">Hapus {{ $nameXString ?? 'Data' }}</span>
+                    <span>Hapus {{ $nameXString ?? 'Data' }}</span>
                     <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
                         class="animate-spin h-4 w-4" />
                 </div>
@@ -94,11 +94,11 @@
             {{-- Tombol Restore --}}
             <flux:menu.item
                 wire:click="{{ $restoreCall }}"
-                class="!text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
+                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span class="cursor-pointer">Restore {{ $nameXString ?? 'Data' }}</span>
+                    <span>Restore {{ $nameXString ?? 'Data' }}</span>
                     <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
                         class="animate-spin h-4 w-4" />
                 </div>
@@ -120,11 +120,11 @@
                         $flux.modal('prodi-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
-                class="!text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
+                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30 transition-colors">
                 <flux:icon name="trash" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
-                    <span class="cursor-pointer">Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
+                    <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
                     <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
                         class="animate-spin h-4 w-4" />
                 </div>

@@ -101,13 +101,13 @@ trait WithProdiDelete
                 $data->delete();
             }
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiDelete = false;
             $this->toast(message: $this->prodiNamaToDelete, type: $type);
             $this->cleanupDeleteStateProdi();
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
@@ -124,12 +124,12 @@ trait WithProdiDelete
             $message = $this->getFormattedName($prodi);
             $prodi->restore();
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiDelete = false;
             $this->toast(message: $message, type: 'recycle');
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }

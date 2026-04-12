@@ -26,7 +26,7 @@
         isDisabled = @js($isDisabled);
 
         const rawVal = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
-        if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
+        if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
             value = '';
         } else {
             value = getLabel(rawVal);

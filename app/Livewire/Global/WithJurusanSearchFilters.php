@@ -172,7 +172,6 @@ trait WithJurusanSearchFilters
     {
         if (empty($query) || $this->jr_id) {
             $this->jrResults = $this->getJrbyUser();
-
             return;
         }
     }

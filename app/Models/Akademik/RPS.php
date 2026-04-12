@@ -68,6 +68,25 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->mk);
     }
 
+    protected function wajib(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->wajib);
+    }
+
+    protected function wajibText(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->wajib_text);
+    }
+
+    protected function sks(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->sks);
+    }
+    protected function sksText(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->sks_text);
+    }
+
     protected function levelMk(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->level_mk);

@@ -15,11 +15,11 @@ trait WithProdiModal
 {
     use HasToast;
     
-    public $selected_id;
+    public $selected_id_pr;
 
     public $showProdiModal = false;
 
-    public $isEditing = false;
+    public $isEditingPr = false;
 
     public $prodiType;
 
@@ -43,7 +43,7 @@ trait WithProdiModal
 
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditing = false;
+        $this->isEditingPr = false;
         $this->prodiType = $prodi;
         $this->showProdiModal = true;
         if ($prodi === 'prodi') {
@@ -59,19 +59,19 @@ trait WithProdiModal
             return; 
         }
 
-        $this->selected_id = $id;
+        $this->selected_id_pr = $id;
         $this->prodiType = $type;
-        $this->isEditing = true;
+        $this->isEditingPr = true;
 
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->jr_id = $this->fk_id = $this->selected_id = null;
+        $this->jr_id = $this->fk_id = $this->selected_id_pr = null;
 
         try {
             if ($type === 'prodi') {
                 $prodi = Prodi::with('jr_rel')->findOrFail($id);
-                $this->selected_id = $prodi->id;
+                $this->selected_id_pr = $prodi->id;
                 $this->jr_id = $prodi->jr_id ?? null;
                 $this->jr_id_2 = $prodi->jr_id ?? null;
 
@@ -88,7 +88,7 @@ trait WithProdiModal
 
             } elseif ($type === 'jurusan') {
                 $jurusan = Jurusan::with('fk_rel')->findOrFail($id);
-                $this->selected_id = $jurusan->id;
+                $this->selected_id_pr = $jurusan->id;
 
                 $this->fk_id = $jurusan->fk_id;
                 $this->fk_id_2 = $jurusan->fk_id;
@@ -105,7 +105,7 @@ trait WithProdiModal
 
             } elseif ($type === 'fakultas') {
                 $fakultas = Fakultas::findOrFail($id);
-                $this->selected_id = $fakultas->id;
+                $this->selected_id_pr = $fakultas->id;
             }
 
             $this->showProdiModal = true;
@@ -115,7 +115,7 @@ trait WithProdiModal
         }
     }
 
-    private function inputModalProdi($isEditing, $data)
+    private function inputModalProdi($isEditingPr, $data)
     {
         $prodis = [];
 
@@ -139,7 +139,7 @@ trait WithProdiModal
             $prodis = [
                 'nama_pr' => [
                     'required', 'string', 'max:255',
-                    $this->uniqueRule('prodis', 'nama_pr', $isEditing ? $this->selected_id : null),
+                    $this->uniqueRule('prodis', 'nama_pr', $isEditingPr ? $this->selected_id_pr : null),
                 ],
                 'kode_pr' => [
                     'nullable', 'string', 'min:3', 'max:3',
@@ -185,11 +185,11 @@ trait WithProdiModal
             $prodis = [
                 'nama_jr' => [
                     'required', 'string', 'max:255',
-                    $this->uniqueRule('jurusans', 'nama_jr', $isEditing ? $this->selected_id : null),
+                    $this->uniqueRule('jurusans', 'nama_jr', $isEditingPr ? $this->selected_id_pr : null),
                 ],
                 'kode_jr' => [
                     'nullable', 'string', 'min:3', 'max:3',
-                    $this->uniqueRule('jurusans', 'kode_jr', $isEditing ? $this->selected_id : null),
+                    $this->uniqueRule('jurusans', 'kode_jr', $isEditingPr ? $this->selected_id_pr : null),
 
                     function ($attribute, $value, $fail) use ($data) {
                         if (empty($value)) {
@@ -206,7 +206,7 @@ trait WithProdiModal
                         $otherJr = DB::table('jurusans')
                             ->where('kode_jr', $value)
                             ->where('fk_id', '!=', $data['fk_id'])
-                            ->where('id', '!=', $this->selected_id)
+                            ->where('id', '!=', $this->selected_id_pr)
                             ->exists();
 
                         // 3. Gagal jika dipakai Prodi yang berasal dari Jurusan di luar Fakultas ini
@@ -232,7 +232,7 @@ trait WithProdiModal
             $prodis = [
                 'nama_fk' => [
                     'required', 'string', 'max:255',
-                    $this->uniqueRule('fakultas', 'nama_fk', $isEditing ? $this->selected_id : null),
+                    $this->uniqueRule('fakultas', 'nama_fk', $isEditingPr ? $this->selected_id_pr : null),
                 ],
                 'kode_fk' => [
                     'required', 'string', 'min:3', 'max:3',
@@ -242,14 +242,14 @@ trait WithProdiModal
                         }
 
                         // 1. Cek tabel Fakultas lain (Standard Unique)
-                        $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $this->selected_id)->exists();
+                        $otherFk = DB::table('fakultas')->where('kode_fk', $value)->where('id', '!=', $this->selected_id_pr)->exists();
                         // 2. Gagal jika dipakai oleh Jurusan yang bukan milik Fakultas ini
-                        $otherJr = DB::table('jurusans')->where('kode_jr', $value)->where('fk_id', '!=', $this->selected_id)->exists();
+                        $otherJr = DB::table('jurusans')->where('kode_jr', $value)->where('fk_id', '!=', $this->selected_id_pr)->exists();
                         // 3. Gagal jika dipakai oleh Prodi yang bukan milik Fakultas ini
                         $otherPr = DB::table('prodis')
                             ->join('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
                             ->where('prodis.kode_pr', $value)
-                            ->where('jurusans.fk_id', '!=', $this->selected_id)
+                            ->where('jurusans.fk_id', '!=', $this->selected_id_pr)
                             ->exists();
 
                         if ($otherFk || $otherJr || $otherPr) {
@@ -351,7 +351,7 @@ trait WithProdiModal
             });
 
             $this->resetInputProdi();            
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
             $this->toast(message: $message);
 
@@ -360,7 +360,7 @@ trait WithProdiModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
         }
     }
@@ -392,7 +392,7 @@ trait WithProdiModal
                 if ($this->prodiType === 'prodi') {
                     $strata = $this->formatStrata($validated['strata']);
                     $message = "Program Studi " .  $strata . ' ' . $validated['nama_pr'];
-                    Prodi::findOrFail($this->selected_id)->update([
+                    Prodi::findOrFail($this->selected_id_pr)->update([
                         'nama_pr' => $validated['nama_pr'],
                         'strata' => $validated['strata'],
                         'jr_id' => $validated['jr_id'],
@@ -400,14 +400,14 @@ trait WithProdiModal
                     ]);
                 } elseif ($this->prodiType === 'jurusan') {
                     $message = "Jurusan " . $validated['nama_jr'];
-                    Jurusan::findOrFail($this->selected_id)->update([
+                    Jurusan::findOrFail($this->selected_id_pr)->update([
                         'nama_jr' => $validated['nama_jr'],
                         'fk_id' => $validated['fk_id'],
                         'kode_jr' => $validated['kode_jr'],
                     ]);
                 } elseif ($this->prodiType === 'fakultas') {
                     $message = "Fakultas " . $validated['nama_fk'];
-                    Fakultas::findOrFail($this->selected_id)->update([
+                    Fakultas::findOrFail($this->selected_id_pr)->update([
                         'nama_fk' => $validated['nama_fk'],
                         'kode_fk' => $validated['kode_fk'],
                     ]);
@@ -415,7 +415,7 @@ trait WithProdiModal
             });
 
             $this->resetInputProdi();            
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
             $this->toast(message: $message, type: 'update');
 
@@ -424,7 +424,7 @@ trait WithProdiModal
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-pr');
             $this->showProdiDelete = false;
         }
     }
@@ -481,7 +481,7 @@ trait WithProdiModal
         //     ]);
         // }
 
-        $this->selected_id = null;
+        $this->selected_id_pr = null;
         $this->reset($fields);
         $this->resetErrorBag();
     }

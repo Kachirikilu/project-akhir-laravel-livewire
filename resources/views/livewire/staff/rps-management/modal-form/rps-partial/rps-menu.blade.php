@@ -1,36 +1,10 @@
-@if (Auth::user()?->admin || Auth::user()?->dosen)
-    <flux:menu
-        class="!bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-
-        @php
-            $isTrashed = $x->trashed();
-
-            $typeUpper = strtoupper($typeXString);
-            $editCall = "edit{$typeUpper}($x->id)";
-            $deleteCall = "delete{$typeUpper}($x->id, " . ($isTrashed ? 'true' : 'false') . ')';
-            $restoreCall = "restore{$typeUpper}($x->id)";
-
-            $typeX2String = $typeXString;
-            if ($typeX2String == 'scpmk') {
-                $typeX2String = 'Sub-CPMK';
-            } elseif ($typeX2String == 'ref') {
-                $typeX2String = 'Referensi';
-            }
-        @endphp
-
-        @include('livewire.global.table.text-copy', [
-            'xType' => $x->kode,
-            'typeXString' => 'Kode ' . $typeX2String,
-        ])
-
-        <flux:menu.separator />
-
-        <div>
+<div>
     @if (!$isTrashed)
         {{-- Tombol Edit --}}
         <flux:menu.item
             @click="
                 $store.rps?.reset();
+                $store.rps?.setFlyout(false);
 
                 $store.rps?.setEdit(1);
 
@@ -87,7 +61,3 @@
     @endif
 
 </div>
-
-
-    </flux:menu>
-@endif

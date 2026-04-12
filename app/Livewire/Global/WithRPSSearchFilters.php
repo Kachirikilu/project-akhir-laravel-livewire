@@ -27,16 +27,30 @@ trait WithRPSSearchFilters
 
     private function mapRPS($collection)
     {
-        return $collection->map(fn ($m) => [
-            'id' => $m->id,
-            'mk_id' => $m->mk_id,
-            'kode' => $m->kode,
-            'rps' => $m->rps,
-            'mk' => $m->mk,
-            'akademik' => $m->akademik,
-            'draf_text' => $m->draf_text,
-            'revisi' => $m->revisi,
-            'wajib_text' => $m->wajib_text,
+        if ($collection instanceof \Illuminate\Pagination\AbstractPaginator) {
+            $collection = $collection->getCollection();
+        }
+
+        return $collection->map(fn ($r) => [
+            'id' => $r->id,
+            'mk_id' => $r->mk_id,
+            'kode_mk' => $r->kode_mk,
+            'kode_blok' => $r->kode_blok,
+            'kode' => $r->kode,
+            'rps' => $r->rps,
+            'mk' => $r->mk,
+            'deskripsi' => $r->deskripsi,
+            'akademik' => $r->akademik,
+            'draf' => $r->draf,
+            'draf_text' => $r->draf_text,
+            'revisi' => $r->revisi,
+            'count_cpmk' => $r->count_cpmk,
+            'count_scpmk' => $r->count_scpmk,
+            'wajib' => $r->wajib,
+            'wajib_text' => $r->wajib_text,
+            'sks' => $r->sks,
+            'sks_text' => $r->sks_text,
+            'total_bobot' => $r->total_bobot,
         ])->toArray();
     }
 
@@ -199,6 +213,8 @@ trait WithRPSSearchFilters
 
         $this->resetErrorBag(['rps_id', 'rpsNameSearch']);
     }
+
+    
     public function selectRPSArray($id)
     {
         $data = $this->rpsQuery()->find($id);

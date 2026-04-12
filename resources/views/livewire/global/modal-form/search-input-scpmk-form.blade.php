@@ -13,25 +13,23 @@
     },
 
     init() {
-        // 1. Pastikan inisialisasi array dasar
         if (!Array.isArray(this.items)) this.items = [];
         if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
         if (!Array.isArray(this.subItems)) this.subItems = [];
 
         this.$nextTick(() => {
-            this.syncToCpmkStore();
+            this.syncToScpmkStore();
         });
 
         this.$watch('subItems', (value) => {
-            this.syncToCpmkStore();
+            this.syncToScpmkStore();
         });
     },
 
-    syncToCpmkStore() {
-        if (typeof $store.cpmk !== 'undefined') {
-            let allRefs = (this.subItems || []).flatMap(item => item.ref || []);
 
-            $store.cpmk.ref_scpmk = Array.from(new Map(allRefs.map(r => [r.id, r])).values());
+    syncToScpmkStore() {
+        if (typeof $store.cpmk !== 'undefined') {
+            $store.cpmk.update(this.subItems);
 
             $store.cpmk.setCountSCPMK(this.totalSubCPMK);
             $store.cpmk.total_bobot = this.grandTotalBobot;
@@ -67,7 +65,7 @@
             });
 
             this.subItems.push(subData);
-            this.syncToCpmkStore();
+            this.syncToScpmkStore();
         }
     },
 
@@ -77,7 +75,7 @@
         this.subItems.splice(index, 1);
 
         if (this.expanded === index) this.expanded = null;
-        this.syncToCpmkStore();
+        this.syncToScpmkStore();
     },
 
     move(index, direction) {
@@ -92,7 +90,7 @@
         if (this.expanded === index) this.expanded = to;
         else if (this.expanded === to) this.expanded = index;
 
-        this.syncToCpmkStore();
+        this.syncToScpmkStore();
     },
 
 
@@ -137,7 +135,6 @@
                                     @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
                                     @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
                                     { 
-                                        ref: {{ json_encode($x['ref']) }},
                                         scpmk: [
                                             {
                                                 id: {{ $x['id'] }},
@@ -150,9 +147,11 @@
                                                 bobot: {{ $x['bobot'] }},
                                                 w_tugas: '{{ $x['w_tugas'] }}',
                                                 w_mandiri: '{{ $x['w_mandiri'] }}',
-                                                tugas: '{{ $x['deskripsi'] }}' // Sesuaikan jika ada field tugas khusus
+                                                tugas: '{{ $x['deskripsi'] }}',
+                                                ref: {{ json_encode($x['ref']) }},
                                             }
                                         ]
+                                        {{-- ref: {{ json_encode($x['ref']) }} --}}
                                     }
                                 );
                             }

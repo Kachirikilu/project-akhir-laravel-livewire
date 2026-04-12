@@ -58,6 +58,7 @@ trait WithProdiSearchFilters
         if (! $p) {
             return null;
         }
+
         return [
             'id' => $p->id,
             'kode' => $p->kode,
@@ -108,7 +109,7 @@ trait WithProdiSearchFilters
     {
         $this->pr_id = null;
         $this->pr_items = null;
-        
+
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
 
         $input = str($value)->lower()->trim();
@@ -116,9 +117,9 @@ trait WithProdiSearchFilters
         // Jika input kosong, kembalikan ke daftar default yang sudah difilter
         if (empty($input->toString())) {
             $this->prResults = $this->getPrbyUser();
+
             return;
         }
-
 
         $query = $this->prQuery()->select('prodis.*');
 
@@ -212,7 +213,7 @@ trait WithProdiSearchFilters
 
         if (! $prodiId) {
             $defaultProdis = $query
-                ->orderBy('nama_prodi', 'asc')
+                ->orderBy('nama_pr', 'asc')
                 ->limit(12)
                 ->get();
 
@@ -256,8 +257,17 @@ trait WithProdiSearchFilters
     public function fetchPr($query = '', $mode = 'single')
     {
         $this->modePr = $mode;
+
+        if ($this->pr_id && empty($this->pr_items)) {
+            $prodi = Prodi::find($this->pr_id);
+            if ($prodi) {
+                $this->pr_items = $this->itemsPr($prodi);
+            }
+        }
+
         if (empty($query) || $this->pr_id) {
             $this->prResults = $this->getPrbyUser();
+
             return;
         }
     }

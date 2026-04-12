@@ -62,7 +62,6 @@
                                 x-text="index + 1"></span>
 
                             <div class="flex flex-col gap-1 flex-1">
-                                {{-- KODE CPL --}}
                                 <div class="flex items-center gap-2">
                                     <span
                                         class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded bg-[var(--focus-color)] text-white"
@@ -80,7 +79,6 @@
                 </div>
             </div>
         </div>
-
 
         @include('livewire.global.modal-form.search-input-array-form', [
             'alpine' => 'rps',

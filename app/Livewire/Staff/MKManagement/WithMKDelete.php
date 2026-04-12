@@ -69,14 +69,14 @@ trait WithMKDelete
             $this->toast(message: 'Mata Kuliah ' . $this->mkNamaToDelete, type: $type);
 
             $this->cleanupDeleteStateMK();
-            $this->dispatch('refresh-data'); 
+            $this->dispatch('refresh-data-mk'); 
             
             if (method_exists($this, 'resetPage')) {
                 $this->resetPage();
             }
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->showMKDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
@@ -94,11 +94,11 @@ trait WithMKDelete
             $mk = MataKuliah::withTrashed()->findOrFail($id);
             $mk->restore();
 
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->toast(message: 'Mata Kuliah '. $mk->mk, type: 'recycle', isAkun: true);
 
         } catch (\Exception $e) {
-            $this->dispatch('refresh-data');
+            $this->dispatch('refresh-data-mk');
             $this->toast(text: $e->getMessage(), variant: 'danger');
         }
     }

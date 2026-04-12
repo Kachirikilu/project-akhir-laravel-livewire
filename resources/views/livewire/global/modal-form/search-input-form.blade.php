@@ -113,13 +113,12 @@
                 "
                 class="px-4 py-2 cursor-pointer transition-colors duration-200
                 bg-[var(--main-pop-up-color)] border-[var(--focus-color)]
-                hover:bg-[var(--hover-pop-up-color)] hover:text-[var(--main-text)]
+                hover:bg-[var(--hover-pop-up-color)]
                 {{-- border-b last:border-none  --}}
                 text-sm">
 
                 <div class="flex justify-between items-center">
-                                        @include('livewire.global.modal-form.partial.dropdown-items')
-
+                    @include('livewire.global.modal-form.partial.dropdown-items')
                     <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
                         {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
                     </span>

@@ -17,7 +17,7 @@ class MataKuliah extends Model
         'nama_mk', 'semester', 'sks_kuliah', 'tipe_sks',
         'is_wajib', 'bahan_kajian', 'deskripsi',
     ];
-    protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'tipe_sks_text'];
+    protected $appends = ['kode', 'kode_blok', 'mk', 'sks_tm', 'sks_pr', 'sks_pl', 'sks_sm', 'sks_text'];
     protected $casts = [
         'created_at' => 'date',
         'updated_at' => 'date',
@@ -176,7 +176,7 @@ class MataKuliah extends Model
         return Attribute::get(fn () => $this->tipe_sks == 4 ? $this->sks_kuliah : null);
     }
 
-    protected function tipeSksText(): Attribute
+    protected function sksText(): Attribute
     {
         return Attribute::get(function () {
             return match ((int) $this->tipe_sks) {

@@ -203,7 +203,6 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
-
             return $profile?->pr_rel->prodi;
         });
     }
@@ -212,7 +211,6 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
-
             return $profile?->pr_rel->kode;
         });
     }
@@ -220,16 +218,16 @@ class User extends Authenticatable
     protected function jrId(): Attribute
     {
         return Attribute::get(function () {
-            $prodi = $this->admin?->pr_rel ?? $this->dosen?->pr_rel ?? $this->mahasiswa?->pr_rel;
-            return $prodi?->jr_id;
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+            return $profile?->pr_rel->jr_id;
         });
     }
 
     protected function fkId(): Attribute
     {
         return Attribute::get(function () {
-            $prodi = $this->admin?->pr_rel ?? $this->dosen?->pr_rel ?? $this->mahasiswa?->pr_rel;
-            return $prodi?->jr_rel?->fk_id;
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+            return $profile?->pr_rel->jr_rel->fk_id;
         });
     }
     /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas 

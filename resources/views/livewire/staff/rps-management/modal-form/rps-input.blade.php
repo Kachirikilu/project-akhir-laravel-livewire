@@ -194,10 +194,10 @@
 
     </div>
 
-    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-cpmk-input')
-    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-cpl-input')
-    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-referensi-input')
-    @include('livewire.staff.rps-management.modal-form.rps-input-partial.rps-dosen-input')
+    @include('livewire.staff.rps-management.modal-form.rps-partial.rps-cpmk-input')
+    @include('livewire.staff.rps-management.modal-form.rps-partial.rps-cpl-input')
+    @include('livewire.staff.rps-management.modal-form.rps-partial.rps-referensi-input')
+    @include('livewire.staff.rps-management.modal-form.rps-partial.rps-dosen-input')
 
     {{-- <div x-data x-init="$watch('$store.rps.mk_id', value => console.log('mk_id: ', value))"></div>
     <div x-data x-init="$watch('$store.rps.mk_items', value => console.log('mk_items: ', value))"></div> --}}

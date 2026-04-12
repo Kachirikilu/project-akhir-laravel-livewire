@@ -17,6 +17,7 @@
                     @click="
                         $store.rps?.setType();
                         $store.rps?.setEdit(0);
+                        $store.rps?.setFlyout(false);
                         $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
                         $flux.modal('rps-modal').show();
                         $wire.addRPS();

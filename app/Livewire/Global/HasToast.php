@@ -11,10 +11,19 @@ trait HasToast
         string $type = 'save',
         string $variant = 'success',
         ?string $heading = null,
-        int $duration = 12000,
+        int $duration = null,
         bool $clearable = true,
         bool $isAkun = false
     ) {
+        if ($duration == null) {
+            if ($variant == 'danger') {
+                $duration = 12000;
+            } elseif ($variant == 'warning') {
+                $duration = 6000;
+            } else {
+                $duration = 4000;
+            }
+        }
         // Normalisasi variant ke standar Flux (danger)
         $finalVariant = ($variant === 'error' || $variant === 'danger') ? 'danger' : $variant;
 

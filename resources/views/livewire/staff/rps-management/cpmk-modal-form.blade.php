@@ -1,4 +1,4 @@
-<flux:modal name="cpmk-modal" wire:model="showCPMKModal" x-data @refresh-data.window="$store.cpmk.reset()"
+<flux:modal name="cpmk-modal" wire:model="showCPMKModal" x-data @refresh-data-cpmk.window="$store.cpmk.reset()"
    class="md:w-[90vw] max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
