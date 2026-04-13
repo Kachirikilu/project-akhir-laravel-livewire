@@ -10,15 +10,15 @@ trait WithCPLSearchFilters
 {
     use WithPagination;
 
-    public $cplSearchQuery = '';
+    public $cplSearchQuery;
     public $cplSearchResults = [];
-    public $modeCPL = '';
-    public $cpl_id;
-    public $cpl_name = '';
-    public $cpl_items;
-    public $cplNameSearch = '';
+    public $modeCPL = [];
+    public $cpl_id = [];
+    public $cpl_name = [];
+    public $cpl_items = [];
+    public $cplNameSearch = [];
     public $cplResults = [];
-    public $selectedCPLId = null;
+    public $selectedCPLId = [];
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $cpl_id_array = [];
@@ -28,6 +28,12 @@ trait WithCPLSearchFilters
     /**
      * Helper untuk mapping hasil agar seragam
      */
+
+    private function getCplState($key, $property, $default = null)
+    {
+        return $this->{$property}[$key] ?? $default;
+    }
+    
     private function mapCPL($collection)
     {
         return $collection->map(fn ($c) => [
@@ -90,17 +96,17 @@ trait WithCPLSearchFilters
         }
     }
 
-    public function updatedCPLNameSearch($value)
+    public function updatedCPLNameSearch($value, $key = 'default')
     {
-        $this->cpl_id = null;
-        $this->cpl_items = null;
-        $this->resetErrorBag(['cpl_id', 'cplNameSearch']);
+        $this->cpl_id[$key] = null;
+        $this->cpl_items[$key] = null;
+        $this->resetErrorBag(['cpl_id.'.$key, 'cplNameSearch.'.$key]);
 
         $query = $this->cplQuery();
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchCPL($value)->limit(12)->get();
-            $this->cplResults = $this->mapCPL($results);
+            $this->cplResults[$key] = $this->mapCPL($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($cpl) use ($value, $normalizedValue) {
@@ -111,28 +117,74 @@ trait WithCPLSearchFilters
             });
 
             if ($exactMatch) {
-                if ($this->modeCPL == 'single') {
-                    $this->cplNameSearch = $exactMatch->deskripsi;
-                    $this->cpl_id = $exactMatch->id;
-                    $this->cpl_items = $this->itemsCPL($exactMatch);
-                    $this->cplResults = [];
+                $currentMode = $this->modeCPL[$key] ?? 'array';
+                if ($currentMode == 'single') {
+                    $this->cplNameSearch[$key] = $exactMatch->deskripsi;
+                    $this->cpl_id[$key] = $exactMatch->id;
+                    $this->cpl_items[$key] = $this->itemsCPL($exactMatch);
+                    $this->cplResults[$key] = [];
                 } else {
-                    $this->cplNameSearch = '';
-                    $this->cpl_id_array[] = $exactMatch->id;
-                    $this->cpl_items_array[] = $this->itemsCPL($exactMatch);
+                    $this->cplNameSearch[$key] = '';
+                    if (! isset($this->cpl_id_array[$key])) {
+                        $this->cpl_id_array[$key] = [];
+                    }
+                    if (! isset($this->cpl_items_array[$key])) {
+                        $this->cpl_items_array[$key] = [];
+                    }
+                    if (! in_array($exactMatch->id, $this->cpl_id_array[$key])) {
+                        $this->cpl_id_array[$key][] = $exactMatch->id;
+                        $this->cpl_items_array[$key][] = $this->itemsCPL($exactMatch);
+                    }
                 }
-                $this->cplResults = $this->getCPLbyUser();
+                $this->cplResults[$key] = $this->getCPLbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->cplResults = $this->getCPLbyUser();
+                $this->cplResults[$key] = $this->getCPLbyUser();
             } else {
-                $this->cplResults = $this->mapCPL(
+                $this->cplResults[$key] = $this->mapCPL(
                     $query->orderBy('cpls.deskripsi')->limit(12)->get()
                 );
             }
         }
     }
+
+
+    // public function updatedCPLNameSearch($value, $key = 'default')
+    // {
+    //     // Pastikan index tersedia
+    //     $this->cpl_id[$key] = null;
+    //     $this->cpl_items[$key] = null;
+    //     $this->resetErrorBag(['cpl_id.' . $key, 'cplNameSearch.' . $key]);
+
+    //     $query = $this->cplQuery();
+
+    //     if (trim(strlen($value)) > 0) {
+    //         $results = $query->searchCPL($value)->limit(12)->get();
+    //         $this->cplResults[$key] = $this->mapCPL($results);
+
+    //         // Cek Exact Match (Opsional)
+    //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
+    //         $exactMatch = $results->first(function ($cpl) use ($value, $normalizedValue) {
+    //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($cpl->kode));
+    //             return strtolower($cpl->deskripsi) === strtolower($value) 
+    //                 || $normalizedMkKode === $normalizedValue;
+    //         });
+
+    //         if ($exactMatch) {
+    //             $currentMode = $this->modeCPL[$key] ?? 'array';
+    //             if ($currentMode == 'single') {
+    //                 $this->selectCPL($exactMatch->id, $exactMatch->deskripsi, $key);
+    //             } else {
+    //                 $this->selectCPLArray($exactMatch->id, $key);
+    //                 $this->cplNameSearch[$key] = ''; // Kosongkan search setelah add
+    //             }
+    //             $this->cplResults[$key] = $this->getCPLbyUser();
+    //         }
+    //     } else {
+    //         $this->cplResults[$key] = $this->getCPLbyUser();
+    //     }
+    // }
 
     public function getCPLbyUser()
     {
@@ -167,54 +219,66 @@ trait WithCPLSearchFilters
         return $this->mapCPL($mainResults);
     }
 
-    public function fetchCPL($query = '', $mode = 'single')
+    public function fetchCPL($query = '', $mode = 'single', $key = 'default')
     {
-        $this->modeCPL = $mode;
-        if (empty($query) || $this->cpl_id) {
-            $this->cplResults = $this->getCPLbyUser();
+        $this->modeCPL[$key] = $mode;
+        if (empty($query) || (! empty($this->cpl_id[$key]) || ! empty($this->cpl_id_array[$key]))) {
+            $this->cplResults[$key] = $this->getCPLbyUser();
         }
 
         return;
     }
 
-    public function selectCPL($id, $cplName)
+
+    public function selectCPL($id, $cplName, $key = 'default')
     {
-        $this->cpl_id = $id;
-        $this->cplNameSearch = $cplName;
-        $this->cplResults = $this->getCPLbyUser();
+        $this->cpl_id[$key] = $id;
+        $this->cplNameSearch[$key] = $cplName;
+        $this->cplResults[$key] = $this->getCPLbyUser();
 
         $data = $this->cplQuery()->find($id);
         if ($data) {
-            $this->cpl_items = $this->itemsCPL($data);
+            $this->cpl_items[$key] = $this->itemsCPL($data);
         }
 
         if (method_exists($this, 'fetchCPL')) {
-            $this->fetchCPL('');
+            $this->fetchCPL('', $this->modeCPL[$key] ?? 'single', $key);
         }
 
-        $this->resetErrorBag(['cpl_id', 'cplNameSearch']);
+        $this->resetErrorBag(['cpl_id.'.$key, 'cplNameSearch.'.$key]);
     }
-    public function selectCPLArray($id)
+    // public function selectCPLArray($id, $key = 'default')
+    // {
+    //     $data = $this->cplQuery()->find($id);
+    //     if ($data && ! in_array($id, $this->cpl_id_array)) {
+    //         $this->cpl_id_array[$key][] = $id;
+    //         $this->cpl_name_array[$key][] = $data->deskripsi;
+    //         $this->cpl_items_array[$key][] = $data->kode;
+    //     }
+    // }
+    public function selectCPLArray($id, $key = 'default')
     {
         $data = $this->cplQuery()->find($id);
-        if ($data && ! in_array($id, $this->cpl_id_array)) {
-            $this->cpl_id_array[] = $id;
-            $this->cpl_name_array[] = $data->deskripsi;
-            $this->cpl_items_array[] = $data->kode;
+        if ($data) {
+            if (!isset($this->cpl_id_array[$key])) $this->cpl_id_array[$key] = [];
+            if (!in_array($id, $this->cpl_id_array[$key])) {
+                $this->cpl_id_array[$key][] = $id;
+                $this->cpl_items_array[$key][] = $this->itemsCPL($data);
+            }
         }
     }
 
-    public function resetCPLInput()
+    public function resetCPLInput($key = 'default')
     {
         $this->reset(['cpl_id', 'cpl_items', 'cplNameSearch']);
-        $this->cplResults = $this->getCPLbyUser();
+        $this->cplResults[$key] = $this->getCPLbyUser();
     }
 
-    public function resetCPLArray()
+    public function resetCPLArray($key = 'default')
     {
-        $this->cpl_id_array = [];
-        $this->cpl_name_array = [];
-        $this->cpl_items_array = [];
-        $this->cplNameSearch = '';
+        $this->cpl_id_array[$key] = [];
+        $this->cpl_name_array[$key] = [];
+        $this->cpl_items_array[$key] = [];
+        $this->cplNameSearch[$key] = '';
     }
 }

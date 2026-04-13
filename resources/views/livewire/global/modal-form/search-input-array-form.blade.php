@@ -1,9 +1,9 @@
-<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}" x-data="{
+<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,
     itemsAll: @entangle($itemsAllString).live,
-    parentSelectedId: @entangle($parentIdString ?? null).live,
+    parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
 
     init() {
         if (!Array.isArray(this.items)) this.items = [];

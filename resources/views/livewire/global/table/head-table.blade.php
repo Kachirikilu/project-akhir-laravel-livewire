@@ -39,7 +39,7 @@
                     !(
                         sortField === '{{ $sortFieldString }}' || clicked)
             }"
-            class="transition-colors duration-200">
+            class="{{ $isCenter ?? false ? 'ml-3' : '' }} transition-colors duration-200">
             {{ $headString ?? $sortFieldString }}
         </span>
 

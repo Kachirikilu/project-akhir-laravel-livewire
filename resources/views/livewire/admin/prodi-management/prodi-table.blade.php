@@ -56,8 +56,8 @@
             @endif
             <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At'])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At'])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'isCenter' => 1])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'isCenter' => 1])
 
         </tr>
     </x-slot:header>
@@ -166,8 +166,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48">{{ $x->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48">{{ $x->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>

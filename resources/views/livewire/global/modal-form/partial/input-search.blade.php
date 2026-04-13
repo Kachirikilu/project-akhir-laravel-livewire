@@ -20,8 +20,8 @@
 
     <input x-model="search" autocomplete="off" type="text" :disabled="!isParentReady"
         id="{{ $modelString }}"
-        @focus="open = true; $wire.{{ $fetchString }}(search, '{{ $typeInput }}');"
-        @input.debounce.300ms="open = true; $wire.{{ $fetchString }}(search, '{{ $typeInput }}');" @click.outside="open = false"
+        @focus="open = true; $wire.{{ $fetchString }}(search, '{{ $typeInput }}', '{{ $key ?? 'default' }}');"
+        @input.debounce.300ms="open = true; $wire.{{ $fetchString }}(search, '{{ $typeInput }}', '{{ $key ?? 'default' }}');" @click.outside="open = false"
         :placeholder="isParentReady ? 'Cari dan tambahkan {{ $nameXString }}...' : 'Pilih {{ $nameXParent ?? 'Induk' }} terlebih dahulu...'"
         :class="!isParentReady ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-neutral-800' :
             'bg-[var(--second-table-color)]'"

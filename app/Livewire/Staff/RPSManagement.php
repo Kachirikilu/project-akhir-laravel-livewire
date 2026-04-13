@@ -105,7 +105,7 @@ class RPSManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'mk', 4 => 'count-cpmk', 5 => 'count-scpmk', 6 => 'total_bobot', 7 => 'revisi', 8 => 'is_draf', 9 => 'revisi', 10 => 'created_at', 11 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'mk', 5 => 'sks', 6 => 'is_wajib', 7 => 'count-cpmk', 8 => 'count-scpmk', 9 => 'total_bobot', 10 => 'is_draf', 11 => 'revisi', 12 => 'created_at', 13 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'metodologi', 6 => 'indikator', 7 => 'metode', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
@@ -381,7 +381,7 @@ class RPSManagement extends Component
             'totalSCPMK' => $baseDataSCPMK->count(),
             'totalCPL' => $baseDataCPL->count(),
             'totalRef' => $baseDataRef->count(),
-            
+
             'rps_modal_paginator' => $this->rps_modal_paginator,
 
             'stats' => $stats,

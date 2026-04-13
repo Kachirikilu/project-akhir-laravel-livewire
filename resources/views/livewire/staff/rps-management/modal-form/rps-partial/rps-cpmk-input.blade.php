@@ -3,6 +3,9 @@
     {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
     bg-[var(--main-table-color)] border-[var(--border-table-color)]
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+
+    @include('livewire.staff.rps-management.obe-toolbar', ["typeXString" => 'cpmk', 'isFlyout' => true])
+
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Pilih Capaian Pembelajaran Mata Kuliah</h4>

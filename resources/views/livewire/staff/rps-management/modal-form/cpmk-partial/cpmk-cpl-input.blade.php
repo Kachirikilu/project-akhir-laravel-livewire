@@ -14,17 +14,18 @@
 
         @include('livewire.global.modal-form.search-input-array-form', [
             'alpine' => 'cpmk',
-            'xResults' => $cplResults,
+            'xResults' => $cplResults['cpmk'] ?? [],
             'selectX' => 'selectRefArray',
-            'modelString' => 'nama_cpl_search',
+            'modelString' => 'nama_cpl_search_cpmk',
+            'key' => 'cpmk',
         
-            'idString' => 'cpl_id_array',
-            'itemsAllString' => 'cpl_items_array',
+            'idString' => 'cpl_id_array.cpmk',
+            'itemsAllString' => 'cpl_items_array.cpmk',
         
             'typeXString' => 'deskripsi',
         
             'nameXString' => 'Capaian Pembelajaran Lulusan',
-            'nameSearchString' => 'cplNameSearch',
+            'nameSearchString' => 'cplNameSearch.cpmk',
             'fetchString' => 'fetchCPL',
             'iconString' => 'document-text',
             'wireLoading' => 'fetchCPL',

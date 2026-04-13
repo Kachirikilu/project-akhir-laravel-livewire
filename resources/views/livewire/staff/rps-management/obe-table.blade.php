@@ -27,53 +27,51 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'id',
                 'isCenter' => 1,
+                'rowSpan' => 2,
             ])
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode',
                 'isMain' => 1,
                 'isCenter' => 1,
+                'rowSpan' => 2,
             ])
 
+
             @if ($switchTable === 'rps')
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'mk',
-                    'headString' => 'Mata Kuliah',
-                ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'akademik',
                     'headString' => 'Tahun Akademik',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_cpmk',
-                    'headString' => 'CPMK',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'count_scpmk',
-                    'headString' => 'Sub-CPMK',
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'total_bobot',
-                    'headString' => 'Total Bobot',
-                    'isCenter' => 1,
-                ])
+
+                <th colspan="3" class="{{ $headSubKolom }}">
+                    Mata Kuliah
+                </th>
+                <th colspan="3" class="{{ $headSubKolom }}">
+                    Capaian Pebelajaran Mata Kuliah
+                </th>
+
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'is_draf',
                     'headString' => 'Status',
                     'isMain' => 1,
+                    'rowSpan' => 2,
                 ])
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'revisi',
                     'headString' => 'Tanggal Revisi',
+                    'rowSpan' => 2,
                 ])
             @endif
 
             @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'deskripsi'])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'deskripsi',
+                    'rowSpan' => 2,
+                ])
             @endif
 
             @if ($switchTable === 'cpmk')
@@ -81,64 +79,150 @@
                     'sortFieldString' => 'count_scpmk',
                     'headString' => 'Sub-CPMK',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'total_bobot',
                     'headString' => 'Total Bobot',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
             @endif
             @if ($switchTable === 'scpmk')
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'materi'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'metodologi'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'indikator'])
+                <th colspan="4" class="{{ $headSubKolom }}">
+                    Pembelajaran
+                </th>
+                <th colspan="4" class="{{ $headSubKolom }}">
+                    Tugas
+                </th>
+            @endif
+            @if ($switchTable === 'ref')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'judul',
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'penulis',
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'penerbit',
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'tahun',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'link',
+                    'rowSpan' => 2,
+                ])
+            @endif
+
+            <th rowspan="2" class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'created_at',
+                'headString' => 'Created At',
+                'isCenter' => 1,
+                'rowSpan' => 2,
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'updated_at',
+                'headString' => 'Updated At',
+                'isCenter' => 1,
+                'rowSpan' => 2,
+            ])
+
+        </tr>
+
+        <tr class="bg-gray-50">
+            @if ($switchTable === 'rps')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mk',
+                    'headString' => 'Nama Mata Kuliah',
+                    'isBorderL' => 1,
+                ])
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'sks',
+                    'headString' => 'SKS',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'is_wajib',
+                    'headString' => 'Wajib',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                ])
+
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_cpmk',
+                    'headString' => 'CPMK',
+                    'isCenter' => 1,
+                    'isBorderL' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'count_scpmk',
+                    'headString' => 'Sub-CPMK',
+                    'isCenter' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'total_bobot',
+                    'headString' => 'Total Bobot',
+                    'isCenter' => 1,
+                    'isBorderR' => 1,
+                ])
+            @endif
+
+            @if ($switchTable === 'scpmk')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'materi',
+                    'rowSpan' => 2,
+                    'isBorderL' => 1,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'metodologi',
+                    'rowSpan' => 2,
+                ])
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'indikator',
+                    'rowSpan' => 2,
+                ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'metode',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'bobot',
                     'isMain' => 1,
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'tugas',
                     'headString' => 'Deskripsi Tugas',
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'w_tugas',
                     'headString' => 'Waktu Tugas',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'w_mandiri',
                     'headString' => 'Waktu Mandiri',
                     'isCenter' => 1,
+                    'rowSpan' => 2,
                 ])
             @endif
-            @if ($switchTable === 'ref')
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'judul'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'penulis'])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'penerbit'])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'tahun',
-                    'isMain' => 1,
-                    'isCenter' => 1,
-                ])
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'link'])
-            @endif
-
-            <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
-
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'created_at',
-                'headString' => 'Created At',
-            ])
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'updated_at',
-                'headString' => 'Updated At',
-            ])
-
         </tr>
     </x-slot:header>
 
@@ -209,9 +293,32 @@
 
 
             @if ($switchTable === 'rps')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->mk ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->akademik ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->count_cpmk . ' CPMK' ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48 border-l">{{ $x->mk ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-24 text-center">{{ $x->sks ?? '-' }} SKS</td>
+                <td class="{{ $mainKolom }} text-center border-r">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @if ($x->wajib)
+                                <flux:badge icon="check" color="green" size="sm" inset="top bottom">
+                                    {{ $x->wajib_text }}
+                                </flux:badge>
+                            @else
+                                <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">
+                                    {{ $x->wajib_text }}
+                                </flux:badge>
+                            @endif
+                        </button>
+                        @include('livewire.staff.rps-management.modal-form.obe-menu', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+                </td>
+
+                <td class="{{ $secondKolom }} min-w-32 text-center border-l">{{ $x->count_cpmk . ' CPMK' ?? '-' }}
+                </td>
                 <td class="{{ $secondKolom }} min-w-48 text-center">
 
                     <flux:dropdown>
@@ -242,7 +349,7 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }} text-center">
+                <td class="{{ $secondKolom }} text-center border-r">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -308,7 +415,7 @@
             @endif
 
             @if ($switchTable === 'scpmk')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48 border-l">{{ $x->materi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
 
@@ -322,7 +429,8 @@
                                 @break
 
                                 @case('Praktik')
-                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik</flux:badge>
+                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
+                                    </flux:badge>
                                 @break
 
                                 @case('Tugas')
@@ -332,7 +440,8 @@
 
                                 @case('UTS')
                                 @case('UAS')
-                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">
+                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm"
+                                        variant="pill">
                                         {{ $x->metode }}</flux:badge>
                                 @break
 
@@ -386,7 +495,16 @@
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->penulis ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->penerbit ?? '-' }}</td>
                 <td class="{{ $mainKolom }} text-center">{{ $x->tahun ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->link ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-48">
+                    @if ($x->link)
+                        <a href="{{ $x->link }}" target="_blank"
+                            class="flex items-center gap-1 hover:underline text-xs font-bold text-blue-600 dark:text-blue-400">
+                            <flux:icon.link variant="micro" /> <span>{{ $x->link ?? '-' }}</span>
+                        </a>
+                    @endif
+                    </template>
+
+                </td>
             @endif
 
             <td class="{{ $mainKolom }} text-center">
@@ -405,13 +523,13 @@
             </td>
 
 
-            <td class="{{ $secondKolom }} min-w-48">{{ $x->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48">{{ $x->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'rps' => 12,
+                    'rps' => 14,
                     'cpmk' => 6,
                     'scpmk' => 14,
                     'cpl' => 6,

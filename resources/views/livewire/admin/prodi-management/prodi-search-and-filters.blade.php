@@ -126,10 +126,10 @@
                 'xSearchQueryString' => 'fkSearchQuery',
                 'selectedXId' => $selectedFkId,
                 'selectedXName' => $fk_name,
-                'resetXFilter' => 'resetFakultasFilter()',
+                'resetXFilter' => 'resetFkFilter()',
                 'xSearchQuery' => $fkSearchQuery,
                 'xSearchResults' => $fkSearchResults,
-                'selectXForFilterString' => 'selectFakultasForFilter',
+                'selectXForFilterString' => 'selectFkForFilter',
                 'typeXString' => 'fakultas',
                 'unfoundString' => 'Tidak ada Fakultas ditemukan!',
             ])

@@ -108,11 +108,13 @@
                 'sortFieldString' => 'created_at',
                 'headString' => 'Created At',
                 'rowSpan' => 2,
+                'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
                 'headString' => 'Updated At',
                 'rowSpan' => 2,
+                'isCenter' => 1,
             ])
 
         </tr>
@@ -289,8 +291,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48">{{ $user->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48">{{ $user->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $user->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $user->updated_day ?? '-' }}</td>
         </tr>
 
         @empty

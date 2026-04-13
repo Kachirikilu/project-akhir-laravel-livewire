@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\RPSManagement;
 
 use App\Models\Akademik\RPS;
+use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
@@ -43,6 +44,11 @@ trait WithRPSFilters
         }
         if (! empty($this->selectedMKId)) {
             $queryRPS->where('rps.mk_id', $this->selectedMKId);
+        }
+        if (! empty($this->selectedDosenId)) {
+            $queryRPS->whereHas('dosens', function ($q) {
+                $q->where('dosens.id', $this->selectedDosenId);
+            });
         }
 
         return $queryRPS;
@@ -146,6 +152,20 @@ trait WithRPSFilters
             'kode' => $this->applyRPSKodeSort($queryRPS),
 
             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
+
+            'is_wajib' => $queryRPS->orderBy(
+                MataKuliah::select('is_wajib')
+                    ->whereColumn('mata_kuliahs.id', 'rps.mk_id')
+                    ->limit(1),
+                $this->sortDirection
+            ),
+
+            'sks' => $queryRPS->orderBy(
+                MataKuliah::select('sks_kuliah')
+                    ->whereColumn('mata_kuliahs.id', 'rps.mk_id')
+                    ->limit(1),
+                $this->sortDirection
+            ),
 
             'count_cpmk' => $queryRPS->orderBy(
                 DB::table('rps_pivot_cpmk')

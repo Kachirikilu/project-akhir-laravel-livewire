@@ -1,5 +1,5 @@
 <div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
-    @include('livewire.staff.rps-management.obe-toolbar')
+    @include('livewire.staff.rps-management.obe-toolbar', ["typeXString" => 'all', 'isFlyout' => false])
     @include('livewire.staff.rps-management.obe-switch-table')
     @include('livewire.staff.rps-management.obe-search-and-filters')
 
@@ -27,6 +27,6 @@
     </div>
 
     @include('livewire.staff.rps-management.rps-flyout')
-    @include('livewire.staff.rps-management.cpmk-modal-form')
+    @include('livewire.staff.rps-management.cpmk-flyout')
     {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>

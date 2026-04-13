@@ -1,5 +1,12 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("cpmk", {
+
+        isFlyout: false,
+
+        setFlyout(val) {
+            this.isFlyout = !!val;
+        },
+
         typeModal: "",
         typeModal_delete: "",
         isEdit: 0,

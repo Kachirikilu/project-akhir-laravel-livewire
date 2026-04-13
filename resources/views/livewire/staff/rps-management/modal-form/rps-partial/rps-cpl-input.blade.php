@@ -82,18 +82,19 @@
 
         @include('livewire.global.modal-form.search-input-array-form', [
             'alpine' => 'rps',
-            'xResults' => $cplResults,
+            'xResults' => $cplResults['rps'] ?? [],
             'selectX' => 'selectRefArray',
-            'modelString' => 'nama_cpl_search',
+            'modelString' => 'nama_cpl_search_rps',
+            'key' => 'rps',
         
-            'idString' => 'cpl_id_array',
-            'itemsAllString' => 'cpl_items_array',
+            'idString' => 'cpl_id_array.rps',
+            'itemsAllString' => 'cpl_items_array.rps',
         
             'typeXString' => 'deskripsi',
         
             'nameXString' => 'Capaian Pembelajaran Lulusan',
             'nameX2String' => 'Tambah CPL Baru',
-            'nameSearchString' => 'cplNameSearch',
+            'nameSearchString' => 'cplNameSearch.rps',
             'fetchString' => 'fetchCPL',
             'iconString' => 'document-text',
 

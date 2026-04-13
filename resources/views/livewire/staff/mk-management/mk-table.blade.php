@@ -76,8 +76,8 @@
 
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2, 'isCenter' => 1])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2, 'isCenter' => 1])
         </tr>
 
         {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
@@ -244,10 +244,10 @@
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($mk->wajib)
-                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">Wajib
+                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">{{ $mk->wajib_text }}
                             </flux:badge>
                         @else
-                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">Pilihan
+                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">{{ $mk->wajib_text }}
                             </flux:badge>
                         @endif
                     </button>
@@ -280,8 +280,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48">{{ $mk->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48">{{ $mk->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $mk->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
