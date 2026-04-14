@@ -18,7 +18,7 @@
                         'nameXString' => 'Kode CPMK',
                         'modelString' => 'kode_cpmk_1',
                         'iconString' => 'academic-cap',
-                        'placeholder' => 'Masukkan huruf Kode CPMK',
+                        'placeholder' => 'Masukkan huruf Kode CPMK...',
                         'isKode' => 4,
                         'isFocusSelect' => 1,
                     ])
@@ -41,32 +41,26 @@
             @enderror
         </div>
 
-        @include('livewire.global.modal-form.input-form', [
-            'alpine' => 'cpmk',
-            'nameXString' => 'Deskripsi',
-            'modelString' => 'deskripsi',
-            'iconString' => 'academic-cap',
-            'placeholder' => 'Masukkan deskripsi ringkas tentang CPMK...',
-            'message' => $errors->first('deskripsi'),
-        ])
-
-
-
     </div>
+
+    @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-cpl-input')
 
     @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-scpmk-input')
 
     <template x-if="$store.cpmk?.isEdit == 1">
-        @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-rps-list')
+        @include('livewire.staff.rps-management.modal-form.partial.rps-list', [
+            'rps_items_list' => $cpmk_rps_items_list,
+            'rps_modal_paginator' => $cpmk_rps_modal_paginator,
+            'nameXString' => 'CPMK'
+        ])
     </template>
 
-    @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-cpl-input')
     @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-referensi-input')
 
-    <div x-data x-init="$watch('$store.cpmk.kode_cpmk', value => console.log('kode_cpmk: ', value))"></div>
+    {{-- <div x-data x-init="$watch('$store.cpmk.kode_cpmk', value => console.log('kode_cpmk: ', value))"></div>
     <div x-data x-init="$watch('$store.cpmk.kode_cpmk_1', value => console.log('kode_cpmk_1: ', value))"></div>
     <div x-data x-init="$watch('$store.cpmk.kode_cpmk_2', value => console.log('kode_cpmk_2: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpmk.deskripsi', value => console.log('deskripsi: ', value))"></div>
+    <div x-data x-init="$watch('$store.cpmk.deskripsi', value => console.log('deskripsi: ', value))"></div> --}}
     {{-- <div x-data x-init="$watch('$store.cpmk.mk_items', value => console.log('mk_items: ', value))"></div> --}}
 
 </div>

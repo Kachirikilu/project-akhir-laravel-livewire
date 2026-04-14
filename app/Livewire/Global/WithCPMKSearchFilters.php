@@ -35,6 +35,8 @@ trait WithCPMKSearchFilters
 
     public $cpmk_sub_items_array = [];
 
+    // public $deskripsi_cpmk;
+
     private function mapCPMK($collection)
     {
         return $collection->map(function ($c) {
@@ -44,7 +46,7 @@ trait WithCPMKSearchFilters
             return [
                 'id' => $c->id,
                 'kode' => $c->kode,
-                'deskripsi' => $c->deskripsi,
+                'deskripsi' => $c->deskripsi_cpl,
                 'scpmk' => $this->mapSCPMK($c->scpmks),
                 'ref' => $this->mapRef($cpmkUniqueRefs),
                 'cpl' => $this->mapCPL($c->cpls),
@@ -67,7 +69,7 @@ trait WithCPMKSearchFilters
         return [
             'id' => $c->id,
             'kode' => $c->kode,
-            'slot1' => $c->deskripsi,
+            'slot1' => $c->deskripsi_cpl,
             'slot2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
         ];
     }
@@ -113,8 +115,8 @@ trait WithCPMKSearchFilters
 
         if ($data) {
             $this->selectedCPMKId = $id;
-            $this->cpmk_name = $data->deskripsi;
-            $this->cpmkSearchQuery = $data->deskripsi;
+            $this->cpmk_name = $data->deskripsi_cpl;
+            $this->cpmkSearchQuery = $data->deskripsi_cpl;
             $this->cpmk_items = $this->itemsCPMK($data);
             $this->cpmkSearchResults = [];
             $this->resetPage();
@@ -138,12 +140,13 @@ trait WithCPMKSearchFilters
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($c->kode));
 
                 return strtolower($c->deskripsi) === strtolower($value)
+                    || strtolower($c->deskripsi_cpl) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
 
             if ($exactMatch) {
                 if ($this->modeCPMK == 'single') {
-                    $this->cpmkNameSearch = $exactMatch->deskripsi;
+                    $this->cpmkNameSearch = $exactMatch->deskripsi_cpl;
                     $this->cpmk_id = $exactMatch->id;
                     $this->cpmk_items = $this->itemsCPMK($exactMatch);
                     $mappedResults = $this->mapCPMK(collect([$exactMatch]));
@@ -170,7 +173,7 @@ trait WithCPMKSearchFilters
                 $this->cpmkResults = $this->getCPMKbyUser();
             } else {
                 $this->cpmkResults = $this->mapCPMK(
-                    $query->orderBy('cpmks.deskripsi')->limit(12)->get()
+                    $query->orderBy('cpmks.id')->limit(12)->get()
                 );
             }
         }

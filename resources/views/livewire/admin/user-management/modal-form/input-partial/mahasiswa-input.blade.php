@@ -40,7 +40,7 @@
         'numberOnly' => 1,
         'maxlength' => 4,
         'iconString' => 'calendar-days',
-        'placeholder' => 'Masukkan Tahun Angkatan',
+        'placeholder' => 'Masukkan Tahun Angkatan (Contoh: 2022)',
         'message' => $errors->first('angkatan')
     ])
 

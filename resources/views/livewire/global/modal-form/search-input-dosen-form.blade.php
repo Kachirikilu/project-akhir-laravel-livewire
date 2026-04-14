@@ -1,4 +1,4 @@
-<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}" x-data="{
+<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString),
@@ -211,6 +211,10 @@
         </div>
     </div>
 
+    @error($idString)
+        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+    @enderror
+
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30">
         <div class="flex items-center justify-between mb-4">
@@ -319,7 +323,4 @@
         </div>
     </div>
 
-    @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-    @enderror
 </div>

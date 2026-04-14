@@ -24,23 +24,37 @@ return new class extends Migration
 
         Schema::create('cpmks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_cpmk');
-            $table->text('deskripsi');
+            $table->string('kode_cpmk')->unique();
+            $table->string('deskripsi')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
 
         Schema::create('sub_cpmks', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_scpmk');
+            $table->string('kode_scpmk')->unique();
             $table->text('deskripsi');
             $table->text('materi');
             $table->text('metodologi');
             $table->text('indikator');
             $table->enum('metode', [
-                'Teori', 'Praktik', 'Tugas', 'UTS', 'UAS',
-                'Hasil Projek', 'Kerja Praktek', 'Skripsi',
-                'Aktivitas Partisipasif', 'Mandiri'
+                // --- Evaluasi OBE/Projek (Tatap Muka/Tugas) ---
+                'Teori',
+                'Aktivitas Partisipasif',
+                'Tugas',
+                'Mandiri',
+
+                // --- Evaluasi Formal (Umum) ---
+                'UTS', 'UAS', 'Kuis',
+                'Laporan Akhir',
+                'Hasil Projek',
+
+                // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
+                'Skripsi',
+                'Kerja Praktek',
+                'Responsi',
+                'Logbook',
+                'Portofolio',
             ])->default('Teori');
             $table->text('deskripsi_tugas')->nullable();
             $table->integer('waktu_tugas')->default(60);
@@ -52,16 +66,16 @@ return new class extends Migration
 
         Schema::create('cpls', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_cpl');
-            $table->text('deskripsi');
+            $table->string('kode_cpl')->unique();
+            $table->string('deskripsi')->unique();
             $table->softDeletes();
             $table->timestamps();
         });
 
         Schema::create('referensis', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_ref');
-            $table->string('judul');
+            $table->string('kode_ref')->unique();
+            $table->string('judul')->unique();
             $table->string('penulis');
             $table->string('penerbit');
             $table->year('tahun');

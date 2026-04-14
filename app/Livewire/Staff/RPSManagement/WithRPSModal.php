@@ -23,7 +23,7 @@ trait WithRPSModal
 
     public $mk_id_2;
 
-    public function addRPS()
+    public function addRPS($key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -39,14 +39,23 @@ trait WithRPSModal
         $this->showRPSModal = true;
         $this->showEditRPS = false;
 
+        $this->cplNameSearch['rps'] = '';
+        $this->refNameSearch['rps'] = '';
+
+        $this->cpl_id_array[$key] = [];
+        $this->cpl_items_array[$key] = [];
+
+        $this->ref_id_array[$key] = [];
+        $this->ref_items_array[$key] = [];
+
         $this->updatedMKNameSearch($this->mkNameSearch);
         $this->updatedCPMKNameSearch($this->cpmkNameSearch);
-        $this->updatedCPLNameSearch($this->cplNameSearch);
-        $this->updatedRefNameSearch($this->refNameSearch);
-        $this->updatedDosenNameSearch($this->refNameSearch);
+        $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+        $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
+        $this->updatedDosenNameSearch($this->dosenNameSearch);
     }
 
-    public function editRPS($id)
+    public function editRPS($id, $key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -98,21 +107,33 @@ trait WithRPSModal
             // $this->is_draf = ($totalSubCPMK < 14) ? 1 : (int) $rps->is_draf;
 
             // 2. Fill Data CPL & Referensi Tambahan (Manual)
-            $this->cpl_id_array = $rps->cpls->pluck('id')->toArray();
-            $this->cpl_items_array = $rps->cpls->map(function ($c) {
-                return $this->itemsCPL($c);
-            })->toArray();
+            $this->cpl_id_array = array_merge(
+                ['rps' => []],
+                [$key => $rps->cpls->pluck('id')->toArray()]
+            );
+            $this->cpl_items_array = array_merge(
+                ['rps' => []],
+                [$key => $rps->cpls->map(function ($c) {
+                    return $this->itemsCPL($c);
+                })->toArray()]
+            );
 
-            $this->ref_id_array = $rps->refs->pluck('id')->toArray();
-            $this->ref_items_array = $rps->refs->map(function ($r) {
-                return $this->itemsRef($r);
-            })->toArray();
+            $this->ref_id_array = array_merge(
+                ['rps' => []],
+                [$key => $rps->refs->pluck('id')->toArray()]
+            );
+            $this->ref_items_array = array_merge(
+                ['rps' => []],
+                [$key => $rps->refs->map(function ($c) {
+                    return $this->itemsRef($c);
+                })->toArray()]
+            );
 
             $this->fetchMK($this->mkNameSearch);
             $this->updatedCPMKNameSearch($this->cpmkNameSearch);
-            $this->updatedCPLNameSearch($this->cplNameSearch);
-            $this->updatedRefNameSearch($this->refNameSearch);
-            $this->updatedDosenNameSearch($this->refNameSearch);
+            $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+            $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
+            $this->updatedDosenNameSearch($this->dosenNameSearch);
 
             $this->showRPSModal = true;
 
@@ -128,6 +149,12 @@ trait WithRPSModal
     private function inputModalRPS($isEditingRPS, $data)
     {
         // 1. Ambil data dari CPMK terpilih
+        $inputDeskripsi = trim($data['deskripsi'] ?? '');
+        if (! str_ends_with($inputDeskripsi, '.')) {
+            $inputDeskripsi .= '.';
+        }
+        $data['deskripsi'] = $inputDeskripsi;
+
         $cplFromCpmk = [];
         $refFromCpmkScpmk = [];
 
@@ -182,7 +209,7 @@ trait WithRPSModal
             'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data) {
                 $totalSubCPMK = 0;
                 $totalBobot = 0;
-                if (! empty($data['cpmk_sub_items_array'])) {
+                if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
                     foreach ($data['cpmk_sub_items_array'] as $group) {
                         foreach ($group['scpmk'] ?? [] as $scpmk) {
                             $totalSubCPMK++;
@@ -190,17 +217,115 @@ trait WithRPSModal
                         }
                     }
                 }
+
+                if (($totalSubCPMK < 14 || $totalSubCPMK > 16) && $data['is_draf'] == 0) {
+                    $fail('Jumlah Sub-CPMK harus antara 14 dan 16 pertemuan!');
+                }
+
                 if ($value == 0) {
-                    if ($totalSubCPMK < 14) {
-                        $fail('Jumlah Sub-CPMK kurang dari 14!');
-                    }
                     $rounded = round($totalBobot, 2);
-                    if ($rounded < 80 || $rounded > 140) {
-                        $fail("Total bobot harus 80% - 140% (Saat ini: $rounded%)!");
+                    if (($rounded < 80 || $rounded > 140) && $data['is_draf'] == 0) {
+                        $fail("Total bobot harus 80-140% (Saat ini: $rounded%)!");
                     }
                 }
             }],
-            'cpmk_id_array' => 'required|array|min:1',
+            'cpmk_id_array' => [
+                'required',
+                'array',
+                'min:1',
+                function ($attribute, $value, $fail) use ($data) {
+                    $totalSubCPMK = 0;
+                    $hasUTS = false;
+                    $hasUAS = false;
+
+                    if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
+                        foreach ($data['cpmk_sub_items_array'] as $group) {
+                            foreach ($group['scpmk'] ?? [] as $scpmk) {
+                                $totalSubCPMK++;
+                                $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
+
+                                if ($method === 'UTS') {
+                                    $hasUTS = true;
+                                }
+
+                                if (in_array($method, ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
+                                    $hasUAS = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($totalSubCPMK < 14 && $data['is_draf'] == 0) {
+                        $fail('Sub-CPMK minimal 14 pertemuan!');
+                        return;
+                    }
+
+                    $max = 14;
+                    if ($hasUTS && $hasUAS) {
+                        $max = 16;
+                    } elseif ($hasUTS || $hasUAS) {
+                        $max = 15;
+                    }
+
+                    if ($totalSubCPMK > $max && $data['is_draf'] == 0) {
+                        if ($max === 14) {
+                            $fail('Karena tidak ada UTS/UAS, Sub-CPMK hanya boleh 14 pertemuan!');
+                        } elseif ($max === 15) {
+                            $fail('Karena hanya ada satu dari UTS atau UAS (Laporan Akhir/Hasil Projek), Sub-CPMK hanya boleh 15 pertemuan!');
+                        } else {
+                            $fail('Karena ada UTS dan UAS (atau pengganti UAS), Sub-CPMK hanya boleh 16 pertemuan!');
+                        }
+                    }
+                },
+            ],
+            // 'cpmk_sub_items_array' => [
+            //     'required',
+            //     'array',
+            //     function ($attribute, $value, $fail) {
+            //         $totalSubCPMK = 0;
+            //         $hasUTS = false;
+            //         $hasUAS = false;
+
+            //         if (! empty($value) && is_array($value)) {
+            //             foreach ($value as $group) {
+            //                 foreach ($group['scpmk'] ?? [] as $scpmk) {
+            //                     $totalSubCPMK++;
+            //                     $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
+
+            //                     if ($method === 'UTS') {
+            //                         $hasUTS = true;
+            //                     }
+
+            //                     if (in_array($method, ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
+            //                         $hasUAS = true;
+            //                     }
+            //                 }
+            //             }
+            //         }
+
+            //         if ($totalSubCPMK < 14) {
+            //             $fail('Sub-CPMK minimal 14 pertemuan!');
+            //             return;
+            //         }
+
+            //         $max = 14;
+            //         if ($hasUTS && $hasUAS) {
+            //             $max = 16;
+            //         } elseif ($hasUTS || $hasUAS) {
+            //             $max = 15;
+            //         }
+
+            //         if ($totalSubCPMK > $max) {
+            //             if ($max === 14) {
+            //                 $fail('Karena tidak ada UTS/UAS, Sub-CPMK hanya boleh 14 pertemuan!');
+            //             } elseif ($max === 15) {
+            //                 $fail('Karena hanya ada satu dari UTS atau UAS (Laporan Akhir/Hasil Projek), Sub-CPMK hanya boleh 15 pertemuan!');
+            //             } else {
+            //                 $fail('Karena ada UTS dan UAS (atau pengganti UAS), Sub-CPMK hanya boleh 16 pertemuan!');
+            //             }
+            //         }
+            //     },
+            // ],
             'cpl_id_array' => 'nullable|array',
             'ref_id_array' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
@@ -255,7 +380,7 @@ trait WithRPSModal
         return $validated;
     }
 
-    public function saveRPS($data)
+    public function saveRPS($data, $key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -266,8 +391,8 @@ trait WithRPSModal
         $data['is_draf'] = ($data['is_draf'] !== '') ? (int) $data['is_draf'] : 1;
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
-        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
-        $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
 
@@ -343,9 +468,9 @@ trait WithRPSModal
                 }
             });
             // 4. Feedback & Reset
-            $kodeMK = $this->mk_items['kode'];
-            $kodeRPS = $data['digit_akademik'];
-            $namaMK = $this->mk_items['name'];
+            $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
+            $kodeRPS = $data['digit_akademik'] ?? ($data['akademik_1'] ?? '');
+            $namaMK = data_get($this->mk_items, 'slot1', $this->mk_name);
             $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})");
             $this->resetInputRPS();
             if (! empty($this->cpmk_rps_id)) {
@@ -364,7 +489,7 @@ trait WithRPSModal
         }
     }
 
-    public function updateRPS($data)
+    public function updateRPS($data, $key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -379,8 +504,8 @@ trait WithRPSModal
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
         $data['dosen_items_array'] = $this->dosen_items_array ?? [];
         $data['cpmk_sub_items_array'] = $this->cpmk_sub_items_array ?? [];
-        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
-        $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
 
         try {
             $validated = $this->inputModalRPS(true, $data);
@@ -520,21 +645,19 @@ trait WithRPSModal
     private function resetInputRPS()
     {
         $this->cpmkNameSearch = '';
-        $this->cplNameSearch = '';
-        $this->refNameSearch = '';
+        $this->cplNameSearch = ['rps' => ''];
+        $this->refNameSearch = ['rps' => ''];
 
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
 
-        // ambil id untuk simpan ke rps_pivot_cpl
-        $this->cpl_id_array = [];
-        $this->cpl_items_array = [];
+        $this->cpl_id_array = ['rps' => []];
+        $this->cpl_items_array = ['rps' => []];
 
-        // ambil id untuk simpan ke rps_pivot_ref
-        $this->ref_id_array = [];
-        $this->ref_items_array = [];
+        $this->ref_id_array = ['rps' => []];
+        $this->ref_items_array = ['rps' => []];
 
         // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke rps_pivot_dosen
         $this->dosen_id_array = [];

@@ -12,19 +12,17 @@ trait WithReferensiSearchFilters
 
     public $refSearchQuery = '';
     public $refSearchResults = [];
-    public $modeRef = '';
-    public $ref_id;
-    public $ref_name = '';
-    public $ref_items;
-    public $refNameSearch = '';
+    public $modeRef = [];
+    public $ref_id = [];
+    public $ref_name = [];
+    public $ref_items = [];
+    public $refNameSearch = [];
     public $refResults = [];
-    public $selectedRefId = null;
+    public $selectedRefId = [];
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $ref_id_array = [];
-    public $ref_name_array = [];
     public $ref_items_array = [];
-    // public $ref_item_array = [];
 
     private function mapRef($collection)
     {
@@ -60,6 +58,22 @@ trait WithReferensiSearchFilters
             'slot3' => $r->penerbit,
             'link' => $r->link
         ];
+    }
+
+    public function getRefIdArrayForKey(string $key = 'default'): array
+    {
+        if (is_array($this->ref_id_array) && array_key_exists($key, $this->ref_id_array) && is_array($this->ref_id_array[$key])) {
+            return $this->ref_id_array[$key];
+        }
+        return [];
+    }
+
+    public function getRefNameSearchForKey(string $key = 'default'): string
+    {
+        if (is_array($this->refNameSearch) && array_key_exists($key, $this->refNameSearch)) {
+            return is_string($this->refNameSearch[$key]) ? $this->refNameSearch[$key] : '';
+        }
+        return '';
     }
 
     public function inputRefFilter()
@@ -98,44 +112,65 @@ trait WithReferensiSearchFilters
         }
     }
 
-    public function updatedRefNameSearch($value)
+    public function updatedRefNameSearch($value, $name = null)
     {
-        $this->ref_id = null;
-        $this->ref_items = null;
-        $this->resetErrorBag(['ref_id', 'refNameSearch']);
+        $key = 'default';
+
+        if (is_string($name) && str_contains($name, '.')) {
+            [, $key] = explode('.', $name, 2);
+        } elseif (is_string($name) && $name !== 'refNameSearch') {
+            $key = $name;
+        }
+
+        if (is_array($value)) {
+            $value = $value[$key] ?? '';
+        }
+
+        $this->ref_id[$key] = null;
+        $this->ref_items[$key] = null;
+        $this->resetErrorBag(['ref_id.'.$key, 'refNameSearch.'.$key]);
 
         $query = $this->refQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (trim(strlen((string) $value)) > 0) {
             $results = $query->searchRef($value)->limit(12)->get();
-            $this->refResults = $this->mapRef($results);
+            $this->refResults[$key] = $this->mapRef($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
-            $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
-                $normalizedRefKode = str_replace(['-', ' '], '', strtolower($r->kode));
+            $exactMatch = $results->first(function ($ref) use ($value, $normalizedValue) {
+                $normalizedRefKode = str_replace(['-', ' '], '', strtolower($ref->kode));
                 
-                return strtolower($r->judul) === strtolower($value) 
+                return strtolower($ref->judul) === strtolower($value) 
                     || $normalizedRefKode === $normalizedValue;
             });
 
             if ($exactMatch) {
-                if ($this->modeRef == 'single') {
-                    $this->refNameSearch = $exactMatch->judul;
-                    $this->ref_id = $exactMatch->id;
-                    $this->ref_items = $this->itemsRef($exactMatch);
-                    $this->refResults = [];
+                $currentMode = $this->modeRef[$key] ?? 'array';
+                if ($currentMode == 'single') {
+                    $this->refNameSearch[$key] = $exactMatch->judul;
+                    $this->ref_id[$key] = $exactMatch->id;
+                    $this->ref_items[$key] = $this->itemsRef($exactMatch);
+                    $this->refResults[$key] = [];
                 } else {
-                    $this->refNameSearch = '';
-                    $this->ref_id_array[] = $exactMatch->id;
-                    $this->ref_items_array[] = $this->itemsRef($exactMatch);
+                    $this->refNameSearch[$key] = '';
+                    if (! isset($this->ref_id_array[$key])) {
+                        $this->ref_id_array[$key] = [];
+                    }
+                    if (! isset($this->ref_items_array[$key])) {
+                        $this->ref_items_array[$key] = [];
+                    }
+                    if (! in_array($exactMatch->id, $this->ref_id_array[$key])) {
+                        $this->ref_id_array[$key][] = $exactMatch->id;
+                        $this->ref_items_array[$key][] = $this->itemsRef($exactMatch);
+                    }
                 }
-                $this->refResults = $this->getRefbyUser();
+                $this->refResults[$key] = $this->getRefbyUser();
             }
         } else {
             if (Auth::user()->pr_id) {
-                $this->refResults = $this->getRefbyUser();
+                $this->refResults[$key] = $this->getRefbyUser();
             } else {
-                $this->refResults = $this->mapRef(
+                $this->refResults[$key] = $this->mapRef(
                     $query->orderBy('referensis.judul')->limit(12)->get()
                 );
             }
@@ -175,57 +210,58 @@ trait WithReferensiSearchFilters
         return $this->mapRef($mainResults);
     }
 
-    public function fetchRef($query = '', $mode = 'single')
+
+    public function fetchRef($query = '', $mode = 'single', $key = 'default')
     {
-        $this->modeRef = $mode;
-        if (empty($query) || $this->ref_id) {
-            $this->refResults = $this->getRefbyUser();
+        $this->modeRef[$key] = $mode;
+        if (empty($query) || (! empty($this->ref_id[$key]) || ! empty($this->ref_id_array[$key]))) {
+            $this->refResults[$key] = $this->getRefbyUser();
         }
 
         return;
     }
 
-
-    public function selectRef($id, $refName)
+    public function selectRef($id, $refName, $key = 'default')
     {
-        $this->ref_id = $id;
-        $this->refNameSearch = $refName;
-        $this->refResults = $this->getRefbyUser();
+        $this->ref_id[$key] = $id;
+        $this->refNameSearch[$key] = $refName;
+        $this->refResults[$key] = $this->getRefbyUser();
 
         $data = $this->refQuery()->find($id);
         if ($data) {
-            $this->ref_items = $this->itemsRef($data);
+            $this->ref_items[$key] = $this->itemsRef($data);
         }
 
         if (method_exists($this, 'fetchRef')) {
-            $this->fetchRef('');
+            $this->fetchRef('', $this->modeRef[$key] ?? 'single', $key);
         }
 
-        $this->resetErrorBag(['ref_id', 'refNameSearch']);
+        $this->resetErrorBag(['ref_id.'.$key, 'refNameSearch.'.$key]);
     }
-    
-    public function selectRefArray($id)
+
+    public function selectRefArray($id, $key = 'default')
     {
         $data = $this->refQuery()->find($id);
-        if ($data && ! in_array($id, $this->ref_id_array)) {
-            $this->ref_id_array[] = $id;
-            $this->ref_name_array[] = $data->judul;
-            $this->ref_items_array[] = $data->kode;
+        if ($data) {
+            if (!isset($this->ref_id_array[$key])) $this->ref_id_array[$key] = [];
+            if (!in_array($id, $this->ref_id_array[$key])) {
+                $this->ref_id_array[$key][] = $id;
+                $this->ref_items_array[$key][] = $this->itemsRef($data);
+            }
         }
     }
 
-    public function resetRefInput()
+
+    public function resetRefInput($key = 'default')
     {
         $this->reset(['ref_id', 'ref_items', 'refNameSearch']);
-        $this->refResults = $this->getRefbyUser();
+        $this->refResults[$key] = $this->getRefbyUser();
     }
 
-    public function resetRefArray()
+    public function resetRefArray($key = 'default')
     {
-        $this->ref_id_array = [];
-        $this->ref_name_array = [];
-        $this->ref_items_array = [];
-        // $this->ref_item_array = [];
-        $this->refNameSearch = '';
+        $this->ref_id_array[$key] = [];
+        $this->ref_items_array[$key] = [];
+        $this->refNameSearch[$key] = '';
     }
 }

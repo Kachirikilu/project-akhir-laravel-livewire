@@ -1,8 +1,9 @@
-<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}" x-data="{
+<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}-{{ $alpine }}" x-data="{
     open: false,
-    search: @entangle($nameSearchString).live,
-    items: @entangle($idString).live,
-    itemsAll: @entangle($itemsAllString).live,
+    search: @isset($nameSearchString) @entangle($nameSearchString).live @else null @endisset,
+    items: @isset($idString) @entangle($idString).live @else [] @endisset,
+    itemsAll: @isset($itemsAllString) @entangle($itemsAllString).live @else [] @endisset,
+    hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
     parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
 
     init() {
@@ -11,7 +12,15 @@
     },
 
     get isParentReady() {
-        return this.parentSelectedId != null && this.parentSelectedId != '';
+        if (!this.hasParent) {
+            return true;
+        }
+
+        if (Array.isArray(this.parentSelectedId)) {
+            return this.parentSelectedId.length > 0;
+        }
+
+        return this.parentSelectedId != null && this.parentSelectedId !== '';
     },
 
     addItem(id, kode, slot1, slot2, slot3, link) {
@@ -45,7 +54,11 @@
 
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
-    @include('livewire.global.modal-form.partial.input-search', ['typeInput' => 'array'])
+    @include('livewire.global.modal-form.partial.input-search', [
+        'typeInput' => 'array',
+        'searchKey' => $key ?? 'default',
+        'nameSearchString' => $nameSearchString,
+    ])
 
     {{-- 2. DROPDOWN HASIL --}}
     <div x-show="open && isParentReady" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -56,39 +69,53 @@
         <div
             @if ($wireLoadingParent ?? null) wire:target="{{ $wireLoadingParent }}, {{ $wireLoading }}" wire:loading.class="opacity-60 pointer-events-none" @endif">
             @forelse ($xResults as $x)
-                <div wire:key="res-{{ $typeXString }}-{{ $x['id'] }}"
-                    class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-                    
-                    @include('livewire.global.modal-form.partial.dropdown-items')
+                @php
+                    $itemId = data_get($x, 'id');
+                    $itemKode = data_get($x, 'kode', '');
+                    $itemLabel = data_get($x, $typeXString, '');
+                    $itemLabel2 = isset($typeX2String) ? data_get($x, $typeX2String, '') : null;
+                    $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
+                    $itemLink = isset($typeLinkString) ? data_get($x, $typeLinkString, '') : null;
+                @endphp
 
-                    <button type="button"
-                        @click="
-                        if (items.includes({{ $x['id'] }})) {
-                            let index = items.indexOf({{ $x['id'] }});
-                            if (index !== -1) {
-                                items.splice(index, 1);
-                                itemsAll.splice(index, 1);
+                @if ($itemId !== null)
+                    <div wire:key="res-{{ $typeXString }}-{{ $itemId }}"
+                        class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
+                        
+                        @include('livewire.global.modal-form.partial.dropdown-items')
+
+                        <button type="button"
+                            @click="
+                            if (items.includes({{ $itemId }})) {
+                                let index = items.indexOf({{ $itemId }});
+                                if (index !== -1) {
+                                    items.splice(index, 1);
+                                    itemsAll.splice(index, 1);
+                                }
+                            } else {
+                               addItem(
+                                    {{ $itemId }}, 
+                                    '{{ $itemKode }}', 
+                                    '{{ $itemLabel }}', 
+                                    @isset($typeX2String) '{{ $itemLabel2 }}' @else null @endisset, 
+                                    @isset($typeX3String) '{{ $itemLabel3 }}' @else null @endisset,
+                                    @isset($typeLinkString) '{{ $itemLink }}' @else null @endisset,
+                                );
+                                @isset($selectX)
+                                    $wire.{{ $selectX }}({{ $itemId }}@isset($key), '{{ addslashes($key) }}'@endisset);
+                                @endisset
                             }
-                        } else {
-                           addItem(
-                                {{ $x['id'] }}, 
-                                '{{ $x['kode'] }}', 
-                                '{{ $x[$typeXString] }}', 
-                                @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
-                                @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
-                                @isset($typeLinkString) '{{ $x[$typeLinkString] ?? '' }}' @else null @endisset,
-                            );
-                        }
-                        "
-                        :class="items.includes({{ $x['id'] }}) ? 'bg-green-500 text-white hover:bg-red-500' :
-                            'bg-[var(--focus-color)] text-white'"
-                        class="p-1.5 rounded-md transition-all group">
+                            "
+                            :class="items.includes({{ $itemId }}) ? 'bg-green-500 text-white hover:bg-red-500' :
+                                'bg-[var(--focus-color)] text-white'"
+                            class="p-1.5 rounded-md transition-all group">
 
-              
-                        @include('livewire.global.modal-form.partial.dropdown-select')
+                  
+                            @include('livewire.global.modal-form.partial.dropdown-select')
 
-                    </button>
-                </div>
+                        </button>
+                    </div>
+                @endif
             @empty
                 <div class="p-4 text-center">
                     <div wire:loading @if ($wireLoading ?? null) wire:target="{{ $wireLoading }}" @endif>
@@ -108,6 +135,10 @@
         </div>
     </div>
 
+    @error($id2String ?? $idString)
+        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+    @enderror
+
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
     <div
         class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
@@ -115,9 +146,9 @@
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
-                <span x-show="items.length > 0"
+                <span x-show="(items?.length || 0) > 0"
                     class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
-                    x-text="items.length + ' Terpilih'"></span>
+                    x-text="(items?.length || 0) + ' Terpilih'"></span>
             </div>
         </div>
 
@@ -173,13 +204,10 @@
             </template>
 
             {{-- Empty State --}}
-            <div x-show="items.length === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
+            <div x-show="(items?.length || 0) === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
                 <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>
         </div>
     </div>
-    @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-    @enderror
 </div>

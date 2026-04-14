@@ -1,14 +1,19 @@
 <div class="flex flex-wrap items-center gap-2 mb-4">
-    <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Rencana Pembelajaran Semester</h2>
+    @if ($typeXString == 'all')
+        <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Rencana Pembelajaran
+            Semester
+        </h2>
+    @endif
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" 
+            <flux:button variant="primary" icon="plus"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
                 wire:target="addRPS">
                 Tambah OBE
             </flux:button>
 
-            <flux:menu class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+            <flux:menu
+                class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
                 <flux:menu.heading>Pilih OBE</flux:menu.heading>
                 <flux:menu.separator />
 
@@ -24,14 +29,14 @@
                             $wire.addRPS();
                         "
                         class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
-                        <flux:icon name="clipboard-document-list" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
+                        <flux:icon name="clipboard-document-list"
+                            class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>Rencana Pembelajaran Semester</span>
                             <flux:icon wire:loading wire:target="addRPS()" name="arrow-path"
                                 class="animate-spin h-4 w-4" />
                         </div>
                     </flux:menu.item>
-
                 @endif
 
                 @if ($typeXString == 'cpmk' || $typeXString == 'all')
@@ -49,7 +54,70 @@
                         <flux:icon name="academic-cap" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>Capaian Pembelajaran Mata Kuliah</span>
-                            <flux:icon wire:loading wire:target="addRPS()" name="arrow-path"
+                            <flux:icon wire:loading wire:target="addCPMK()" name="arrow-path"
+                                class="animate-spin h-4 w-4" />
+                        </div>
+                    </flux:menu.item>
+                @endif
+
+                @if ($typeXString == 'scpmk' || $typeXString == 'all')
+                    {{-- SCPMK --}}
+                    <flux:menu.item
+                        @click="
+                            $store.scpmk?.setType();
+                            $store.scpmk?.setEdit(0);
+                            $store.scpmk?.setFlyout({{ $isFlyout }});
+                            $store.scpmk?.setColor('text-indigo-700 dark:text-indigo-400');
+                            $flux.modal('scpmk-modal').show();
+                            $wire.addSCPMK();
+                        "
+                        class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                        <flux:icon name="academic-cap" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
+                        <div class="flex justify-between items-center w-full">
+                            <span>Sub-CPMK</span>
+                            <flux:icon wire:loading wire:target="addSCPMK()" name="arrow-path"
+                                class="animate-spin h-4 w-4" />
+                        </div>
+                    </flux:menu.item>
+                @endif
+
+                @if ($typeXString == 'cpl' || $typeXString == 'all')
+                    {{-- CPL --}}
+                    <flux:menu.item
+                        @click="
+                            $store.cpl?.setType();
+                            $store.cpl?.setEdit(0);
+                            $store.cpl?.setFlyout({{ $isFlyout }});
+                            $store.cpl?.setColor('text-red-700 dark:text-red-400');
+                            $flux.modal('cpl-modal').show();
+                            $wire.addCPL();
+                        "
+                        class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                        <flux:icon name="document-text" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
+                        <div class="flex justify-between items-center w-full">
+                            <span>Capaian Pembelajaran Lulusan</span>
+                            <flux:icon wire:loading wire:target="addCPL()" name="arrow-path"
+                                class="animate-spin h-4 w-4" />
+                        </div>
+                    </flux:menu.item>
+                @endif
+
+                @if ($typeXString == 'ref' || $typeXString == 'all')
+                    {{-- Referensi --}}
+                    <flux:menu.item
+                        @click="
+                            $store.ref?.setType();
+                            $store.ref?.setEdit(0);
+                            $store.ref?.setFlyout({{ $isFlyout }});
+                            $store.ref?.setColor('text-fuchsia-700 dark:text-fuchsia-400');
+                            $flux.modal('ref-modal').show();
+                            $wire.addRef();
+                        "
+                        class="cursor-pointer !text-fuchsia-600 dark:!text-fuchsia-400 hover:!bg-fuchsia-50 dark:hover:!bg-fuchsia-900/30">
+                        <flux:icon name="document-text" class="!text-fuchsia-600 dark:!text-fuchsia-400 mr-2 h-4 w-4" />
+                        <div class="flex justify-between items-center w-full">
+                            <span>Referensi</span>
+                            <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
                                 class="animate-spin h-4 w-4" />
                         </div>
                     </flux:menu.item>

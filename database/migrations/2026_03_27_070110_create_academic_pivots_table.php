@@ -96,6 +96,8 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('rps_pivot_ref');
+        Schema::dropIfExists('rps_pivot_cpl');
         Schema::dropIfExists('rps_pivot_dosen');
         Schema::dropIfExists('rps_pivot_cpmk');
         Schema::dropIfExists('cpmk_pivot_scpmk');
@@ -103,7 +105,6 @@ return new class extends Migration
         Schema::dropIfExists('cpmk_pivot_ref');
         Schema::dropIfExists('scpmk_pivot_ref');
         Schema::dropIfExists('prodi_pivot_cpl');
-        Schema::dropIfExists('rps_pivot_ref');
 
 
     }

@@ -7,7 +7,7 @@
         if($store.{{ $alpine ?? 'config' }}?.isEdit === 0){
             $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
         }
-    " wire:key="input-form-{{ $modelString }}">
+    " wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
     
     @include('livewire.global.modal-form.partial.label')
 
@@ -28,7 +28,7 @@
             placeholder="{{ $placeholder }}"
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
                 placeholder-[var(--contrast-third-text)]
-                w-full border rounded-lg pl-10 pr-10 px-3 py-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                w-full border rounded-lg pl-10 px-3 py-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
 
             @if ($isFocusSelect ?? null)
                 @focus="$el.select()"

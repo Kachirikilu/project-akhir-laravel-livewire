@@ -4,6 +4,7 @@
         <flux:menu.item
             @click="
                 $store.cpmk?.reset();
+                $store.cpmk?.setFlyout(false);
 
                 $store.cpmk?.setEdit(1);
 

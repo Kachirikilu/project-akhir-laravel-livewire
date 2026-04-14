@@ -22,7 +22,6 @@ trait WithDosenSearchFilters
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $dosen_id_array = [];
-    public $dosen_name_array = [];
     public $dosen_items_array = [];
 
     // Properti Dosen Pengajar
@@ -214,7 +213,6 @@ trait WithDosenSearchFilters
         $data = $this->dosenQuery()->find($id);
         if ($data && ! in_array($id, $this->dosen_id_array)) {
             $this->dosen_id_array[] = $id;
-            $this->dosen_name_array[] = $data->name;
             $this->dosen_items_array[] = $this->itemsDosen($data);
         }
     }
@@ -228,7 +226,6 @@ trait WithDosenSearchFilters
     public function resetDosenArray()
     {
         $this->dosen_id_array = [];
-        $this->dosen_name_array = [];
         $this->dosen_items_array = [];
         $this->dosenNameSearch = '';
     }

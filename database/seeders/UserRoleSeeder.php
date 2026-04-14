@@ -75,7 +75,7 @@ class UserRoleSeeder extends Seeder
             // Ambil semua ID prodi yang tersedia untuk variasi data dummy
             $prodiIds = Prodi::pluck('id')->toArray();
 
-            for ($i = 1; $i <= 2; $i++) {
+            for ($i = 1; $i <= 7; $i++) {
                 // Gunakan prodi acak dari koleksi prodi yang ada
                 $randomProdiId = $prodiIds[array_rand($prodiIds)];
 

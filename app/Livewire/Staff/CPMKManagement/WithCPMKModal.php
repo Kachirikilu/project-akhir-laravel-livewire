@@ -13,9 +13,7 @@ use Livewire\WithPagination;
 trait WithCPMKModal
 {
     use HasToast;
-
     use WithPagination;
-
 
     public $selected_id_cpmk;
 
@@ -25,17 +23,15 @@ trait WithCPMKModal
 
     public $showCPMKModal = false;
 
-    public $mk_id_2;
+    public $cpmk_rps_items_list = [];
 
-    public $rps_items_list = [];
-
-    public $rps_modal_page = 5;
+    public $cpmk_rps_modal_page = 3;
 
     public $cpmk_rps_id;
 
-    protected $rps_modal_paginator;
+    protected $cpmk_rps_modal_paginator;
 
-    public function addCPMK()
+    public function addCPMK($key = 'cpmk')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -51,12 +47,21 @@ trait WithCPMKModal
         $this->showCPMKModal = true;
         $this->showEditCPMK = false;
 
+        $this->cplNameSearch['cpmk'] = '';
+        $this->refNameSearch['cpmk'] = '';
+
+        $this->cpl_id_array[$key] = [];
+        $this->cpl_items_array[$key] = [];
+
+        $this->ref_id_array[$key] = [];
+        $this->ref_items_array[$key] = [];
+
         $this->updatedSCPMKNameSearch($this->scpmkNameSearch);
-        $this->updatedCPLNameSearch($this->cplNameSearch);
-        $this->updatedRefNameSearch($this->refNameSearch);
+        $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+        $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
     }
 
-    public function editCPMK($id)
+    public function editCPMK($id, $key = 'cpmk')
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -90,26 +95,37 @@ trait WithCPMKModal
                 return ['scpmk' => [collect($this->mapSCPMK(collect([$s])))->first()]];
             })->toArray();
 
-            $this->cpl_id_array = $cpmk->cpls->pluck('id')->toArray();
-            $this->cpl_items_array = $cpmk->cpls->map(function ($c) {
-                return $this->itemsCPL($c);
-            })->toArray();
+            $this->cpl_id_array = array_merge(
+                ['cpmk' => []],
+                [$key => $cpmk->cpls->pluck('id')->toArray()]
+            );
+            $this->cpl_items_array = array_merge(
+                ['cpmk' => []],
+                [$key => $cpmk->cpls->map(function ($c) {
+                    return $this->itemsCPL($c);
+                })->toArray()]
+            );
 
-            $this->ref_id_array = $cpmk->refs->pluck('id')->toArray();
-            $this->ref_items_array = $cpmk->refs->map(function ($r) {
-                return $this->itemsRef($r);
-            })->toArray();
+            $this->ref_id_array = array_merge(
+                ['cpmk' => []],
+                [$key => $cpmk->refs->pluck('id')->toArray()]
+            );
+            $this->ref_items_array = array_merge(
+                ['cpmk' => []],
+                [$key => $cpmk->refs->map(function ($c) {
+                    return $this->itemsRef($c);
+                })->toArray()]
+            );
 
             $this->updatedSCPMKNameSearch($this->cpmkNameSearch);
-            $this->updatedCPLNameSearch($this->cplNameSearch);
-            $this->updatedRefNameSearch($this->refNameSearch);
-
-            $this->showCPMKModal = true;
+            $this->updatedCPLNameSearch($this->getCPLNameSearchForKey($key), 'cplNameSearch.'.$key);
+            $this->updatedRefNameSearch($this->getRefNameSearchForKey($key), 'refNameSearch.'.$key);
 
             $this->cpmk_rps_id = $cpmk->id;
-            $this->rps_modal_page = 5;
-            $this->resetPage('rps_modal_page');
+            $this->resetPage('cpmk_rps_modal_page');
             $this->loadCPMKRPSPagination();
+
+            $this->showCPMKModal = true;
 
             $this->dispatch('fill-modal-cpmk', cpmk: $cpmk);
             $this->dispatch('refresh-component');
@@ -131,12 +147,12 @@ trait WithCPMKModal
             return;
         }
 
-        $rps = $cpmk->rps()->paginate(5, ['*'], 'rps_modal_page');
-        $this->rps_items_list = $this->mapRPS($rps);
-        $this->rps_modal_paginator = $rps;
+        $rps = $cpmk->rps()->paginate($this->cpmk_rps_modal_page, ['*'], 'cpmk_rps_modal_page');
+        $this->cpmk_rps_items_list = $this->mapRPS($rps);
+        $this->cpmk_rps_modal_paginator = $rps;
     }
 
-    public function updatedRpsModalPage($page)
+    public function updatedCPMKRPSModalPage($page)
     {
         $this->loadCPMKRPSPagination();
     }
@@ -159,6 +175,34 @@ trait WithCPMKModal
             $cleanRef = array_values(array_diff(array_unique($data['ref_id_array']), $refFromScpmk));
         }
 
+        $combinedCPLText = '';
+        $cplIds = $data['cpl_id_array']['cpmk'] ?? ($data['cpl_id_array'] ?? []);
+
+        if (! empty($cplIds)) {
+            $cplDescriptions = DB::table('cpls')
+                ->whereIn('id', (array) $cplIds)
+                ->orderByRaw('FIELD(id, '.implode(',', (array) $cplIds).')')
+                ->pluck('deskripsi');
+
+            foreach ($cplDescriptions as $desc) {
+                $desc = trim($desc);
+                if (! str_ends_with($desc, '.')) {
+                    $desc .= '.';
+                }
+                $combinedCPLText .= (empty($combinedCPLText) ? '' : ' ').$desc;
+            }
+        }
+
+        if  (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
+            $data['deskripsi'] = null;
+        } else {
+            $inputDeskripsi = trim($data['deskripsi'] ?? '');
+            if (! str_ends_with($inputDeskripsi, '.')) {
+                $inputDeskripsi .= '.';
+            }
+            $data['deskripsi'] = $inputDeskripsi;
+        }
+
         $rules = [
             'kode_cpmk_1' => 'required|alpha|max:10',
             'kode_cpmk_2' => 'required|numeric|min:1',
@@ -175,11 +219,11 @@ trait WithCPMKModal
                     }
 
                     if ($query->exists()) {
-                        $fail("Kode CPMK '$value' sudah digunakan di Mata Kuliah ini!");
+                        $fail("Kode CPMK '$value' sudah digunakan di CPMK lain!");
                     }
                 },
             ],
-            'deskripsi' => 'required|string|max:1000',
+            'deskripsi' => 'nullable|max:1000',
             'scpmk_id_array' => 'required|array|min:1',
             'cpl_id_array' => 'required|array|min:1',
         ];
@@ -216,25 +260,33 @@ trait WithCPMKModal
         return $validated;
     }
 
-    public function saveCPMK($data)
+    public function saveCPMK($data, $key = 'cpmk')
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
-        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
-        $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
 
         try {
             // 1. Jalankan validasi & pembersihan
             $validated = $this->inputModalCPMK(false, $data);
+
             // 2. Eksekusi Database
             DB::transaction(function () use ($validated) {
                 $cpmk = CPMK::create([
                     'kode_cpmk' => strtoupper($validated['kode_cpmk']),
                     'deskripsi' => $validated['deskripsi'],
                 ]);
+
+                if ($this->showRPSModal && $cpmk) {
+                    $this->cpmk_id_array[] = $cpmk->id;
+                    $this->cpmk_items_array[] = $this->itemsCPMK($cpmk);
+                    $mapped = $this->mapCPMK(collect([$cpmk]));
+                    $this->cpmk_sub_items_array = array_merge($this->cpmk_sub_items_array, $mapped);
+                }
 
                 // Sync Sub-CPMK (SCPMK)
                 if (! empty($validated['scpmk_id_array'])) {
@@ -264,7 +316,7 @@ trait WithCPMKModal
                 }
             });
 
-            $this->toast(message: "CPMK {$validated['kode_cpmk']} berhasil disimpan!");
+            $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']} berhasil disimpan!");
             $this->resetInputCPMK();
             $this->dispatch('refresh-data-cpmk');
             $this->showCPMKModal = false;
@@ -277,15 +329,15 @@ trait WithCPMKModal
         }
     }
 
-    public function updateCPMK($data)
+    public function updateCPMK($data, $key = 'cpmk')
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
         $data['scpmk_id_array'] = $this->scpmk_id_array ?? [];
-        $data['cpl_id_array'] = $this->cpl_id_array ?? [];
-        $data['ref_id_array'] = $this->ref_id_array ?? [];
+        $data['cpl_id_array'] = $this->getCPLIdArrayForKey($key);
+        $data['ref_id_array'] = $this->getRefIdArrayForKey($key);
 
         try {
             $validated = $this->inputModalCPMK(true, $data);
@@ -401,21 +453,18 @@ trait WithCPMKModal
     private function resetInputCPMK()
     {
         $this->scpmkNameSearch = '';
-        $this->cplNameSearch = '';
-        $this->refNameSearch = '';
+        $this->cplNameSearch = ['cpmk' => ''];
+        $this->refNameSearch = ['cpmk' => ''];
 
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
         $this->scpmk_sub_items_array = [];
 
-        $this->cpl_id_array = [];
-        $this->cpl_items_array = [];
+        $this->cpl_id_array = ['cpmk' => []];
+        $this->cpl_items_array = ['cpmk' => []];
 
-        $this->ref_id_array = [];
-        $this->ref_items_array = [];
-
-        $this->dosen_id_array = [];
-        $this->dosen_items_array = [];
+        $this->ref_id_array = ['cpmk' => []];
+        $this->ref_items_array = ['cpmk' => []];
 
         $this->resetErrorBag();
     }

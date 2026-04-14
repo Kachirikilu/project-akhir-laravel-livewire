@@ -31,8 +31,6 @@ trait WithSubCPMKSearchFilters
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $scpmk_id_array = [];
 
-    public $scpmk_name_array = [];
-
     public $scpmk_items_array = [];
 
     public $scpmk_sub_items_array = [];
@@ -241,7 +239,6 @@ trait WithSubCPMKSearchFilters
         $data = $this->scpmkQuery()->find($id);
         if ($data && ! in_array($id, $this->scpmk_id_array)) {
             $this->scpmk_id_array[] = $id;
-            $this->scpmk_name_array[] = $data->deskripsi;
             $this->scpmk_items_array[] = $this->itemsSCPMK($data);
             $mappedResults = $this->mapSCPMK(collect([$data]));
             $this->pushToSCPMKItems($mappedResults);
@@ -257,7 +254,6 @@ trait WithSubCPMKSearchFilters
     public function resetSCPMKArray()
     {
         $this->scpmk_id_array = [];
-        $this->scpmk_name_array = [];
         $this->scpmk_items_array = [];
         $this->scpmkNameSearch = '';
     }

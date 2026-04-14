@@ -1,12 +1,12 @@
 <div>
 
     {{-- Loading Overlay --}}
-    <div wire:loading wire:target="saveCPMK, updateCPMK">
+    {{-- <div wire:loading wire:target="saveCPMK, updateCPMK">
         <div class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
         </div>
-    </div>
+    </div> --}}
 
     <div class="flex flex-col h-full relative">
 
@@ -25,7 +25,7 @@
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
             <form x-on:submit.prevent="$wire.{{ $isEditingCPMK ? 'updateCPMK' : 'saveCPMK' }}($store.cpmk)"
-                enctype="multipart/form-data" id="mkForm">
+                enctype="multipart/form-data" id="cpmkForm">
 
                 @include('livewire.staff.rps-management.modal-form.cpmk-input')
 

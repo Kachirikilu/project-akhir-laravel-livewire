@@ -1,4 +1,4 @@
-<div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}" x-data="{
+<div class="relative" wire:key="search-array-associative-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,
@@ -157,6 +157,10 @@
         </div>
     </div>
 
+    @error($idString)
+        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+    @enderror
+
     {{-- 3. AREA OPSI TERPILIH --}}
     <div
         class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
@@ -204,20 +208,16 @@
                     "></span>
                 <template x-if="totalSubCPMK < 14">
                     <flux:badge color="red" size="sm" variant="pill">
-                        <span x-text="totalSubCPMK"></span>
+                        <span x-text="totalSubCPMK + ' Pertemuan'"></span>
                     </flux:badge>
                 </template>
                 <template x-if="totalSubCPMK >= 14">
                     <flux:badge color="green" size="sm" variant="pill">
-                        <span x-text="totalSubCPMK"></span>
+                        <span x-text="totalSubCPMK + ' Pertemuan'"></span>
                     </flux:badge>
                 </template>
             </div>
         </template>
     </div>
 
-
-    @error($idString)
-        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
-    @enderror
 </div>

@@ -53,6 +53,10 @@ class MataKuliahManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
+    public function loadingTable() {
+
+    }
+
     public function updatedPerPage()
     {
         $this->resetPage();

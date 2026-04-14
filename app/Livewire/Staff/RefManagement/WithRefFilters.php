@@ -5,7 +5,7 @@ namespace App\Livewire\Staff\RefManagement;
 use App\Models\Akademik\Referensi;
 use Livewire\WithPagination;
 
-trait WithReferensiFilters
+trait WithRefFilters
 {
     use WithPagination;
 

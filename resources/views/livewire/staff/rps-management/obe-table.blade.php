@@ -405,8 +405,12 @@
                 <td class="{{ $secondKolom }}">{{ $x->revisi_day ?? '-' }}</td>
             @endif
 
-            @if ($switchTable === 'cpmk' || $switchTable === 'scpmk' || $switchTable === 'cpl')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->deskripsi ?? '-' }}</td>
+            @if ($switchTable === 'cpmk')
+                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">{{ $x->deskripsi_cpl ?? '-' }}</td>
+            @endif
+
+            @if ($switchTable === 'scpmk' || $switchTable === 'cpl')
+                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">{{ $x->deskripsi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'cpmk')
@@ -501,6 +505,8 @@
                             class="flex items-center gap-1 hover:underline text-xs font-bold text-blue-600 dark:text-blue-400">
                             <flux:icon.link variant="micro" /> <span>{{ $x->link ?? '-' }}</span>
                         </a>
+                    @else
+                    -
                     @endif
                     </template>
 

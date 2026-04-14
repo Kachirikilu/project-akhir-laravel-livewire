@@ -7,7 +7,7 @@
             class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Input Rencana Pembelajaran Semester</h4>
 
-        @include('livewire.global.modal-form.input-form', [
+        @include('livewire.global.modal-form.textarea-form', [
             'alpine' => 'rps',
             'nameXString' => 'Deskripsi RPS',
             'modelString' => 'deskripsi',
@@ -121,7 +121,7 @@
         <div x-data
             x-effect="
                 {{-- Syarat: Count < 14 ATAU Bobot == 80 ATAU Bobot > 140 --}}
-                const isInvalid = $store.rps.count_scpmk < 14 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 140;
+                const isInvalid = $store.rps.count_scpmk < 14 || $store.rps.count_scpmk > 16 || $store.rps.total_bobot < 80 || $store.rps.total_bobot > 140;
                 if(isInvalid) { 
                     $store.rps.is_draf = 1; 
                 }
@@ -147,6 +147,12 @@
                             <p class="text-sm text-red-500 italic flex items-center gap-1 font-medium">
                                 <flux:icon icon="information-circle" variant="mini" class="w-4 h-4" />
                                 Sub-CPMK minimal 14 (Saat ini: <span x-text="$store.rps.count_scpmk + ' Sub-CPMK)!'"></span>
+                            </p>
+                        </template>
+                        <template x-if="$store.rps.count_scpmk > 16">
+                            <p class="text-sm text-red-500 italic flex items-center gap-1 font-medium">
+                                <flux:icon icon="information-circle" variant="mini" class="w-4 h-4" />
+                                Sub-CPMK maksimal 16 (Saat ini: <span x-text="$store.rps.count_scpmk + ' Sub-CPMK)!'"></span>
                             </p>
                         </template>
 

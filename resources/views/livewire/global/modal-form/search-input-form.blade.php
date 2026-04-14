@@ -1,4 +1,4 @@
-<div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}" x-data="{
+<div class="relative" wire:key="search-input-form-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}" x-data="{
     open: false,
     search: @entangle($nameSearchString).live,
     items: @entangle($idString).live,

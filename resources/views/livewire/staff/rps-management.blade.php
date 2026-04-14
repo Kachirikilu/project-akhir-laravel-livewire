@@ -28,5 +28,7 @@
 
     @include('livewire.staff.rps-management.rps-flyout')
     @include('livewire.staff.rps-management.cpmk-flyout')
+    @include('livewire.staff.rps-management.cpl-flyout')
+    @include('livewire.staff.rps-management.ref-flyout')
     {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>

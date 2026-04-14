@@ -73,7 +73,13 @@ trait WithCPMKFilters
 
         return match ($this->sortField) {
             'kode'   => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
-            'deskripsi' => $queryCPMK->orderBy('deskripsi', $this->sortDirection),
+            'deskripsi' => $queryCPMK->orderBy(
+                DB::table('cpls')
+                    ->selectRaw("COALESCE(cpmks.deskripsi, GROUP_CONCAT(cpls.deskripsi SEPARATOR ' '))")
+                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
+                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id'),
+                $this->sortDirection
+            ),
 
             'count_scpmk' => $queryCPMK->orderBy(
                 DB::table('cpmk_pivot_scpmk')

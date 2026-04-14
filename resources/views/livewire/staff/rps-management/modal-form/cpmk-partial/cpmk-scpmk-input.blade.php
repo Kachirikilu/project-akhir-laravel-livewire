@@ -7,31 +7,34 @@
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
         Pilih Sub Capaian Pembelajaran Mata Kuliah</h4>
 
-    <div class="relative space-y-4">
+    <div class="relative">
 
         @include('livewire.global.modal-form.loading-animation', ['wireLoading' => 'addCPMK, editCPMK'])
 
-        @include('livewire.global.modal-form.search-input-scpmk-form', [
-            'alpine' => 'cpmk',
-            'xResults' => $scpmkResults,
-            'selectX' => 'selectSCPMKArray',
-            'modelString' => 'nama_scpmk_search',
-        
-            'idString' => 'scpmk_id_array',
-            'itemsAllString' => 'scpmk_items_array',
-            'subItemsString' => 'scpmk_sub_items_array',
-        
-            'typeXString' => 'deskripsi',
-            'typeX2String' => 'metode',
-            'typeX3String' => 'bobot',
-        
-            'nameXString' => 'Sub Capaian Pempebalajaran Mata Kuliah (Sub-CPMK)',
-            'nameSearchString' => 'scpmkNameSearch',
-            'fetchString' => 'fetchSCPMK',
-            'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchSCPMK',
-        ])
+        <div class="space-y-4">
 
+            @include('livewire.global.modal-form.search-input-scpmk-form', [
+                'alpine' => 'cpmk',
+                'xResults' => $scpmkResults,
+                'selectX' => 'selectSCPMKArray',
+                'modelString' => 'nama_scpmk_search',
+            
+                'idString' => 'scpmk_id_array',
+                'itemsAllString' => 'scpmk_items_array',
+                'subItemsString' => 'scpmk_sub_items_array',
+            
+                'typeXString' => 'deskripsi',
+                'typeX2String' => 'metode',
+                'typeX3String' => 'bobot',
+            
+                'nameXString' => 'Sub Capaian Pempebalajaran Mata Kuliah (Sub-CPMK)',
+                'nameSearchString' => 'scpmkNameSearch',
+                'fetchString' => 'fetchSCPMK',
+                'iconString' => 'academic-cap',
+                'wireLoading' => 'fetchSCPMK',
+            ])
+
+        </div>
     </div>
 
 

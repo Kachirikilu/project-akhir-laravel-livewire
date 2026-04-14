@@ -3,6 +3,7 @@
 namespace App\Livewire\Global;
 
 use App\Models\Akademik\RPS;
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 
@@ -11,23 +12,31 @@ trait WithRPSSearchFilters
     use WithPagination;
 
     public $rpsSearchQuery = '';
+
     public $rpsSearchResults = [];
+
     public $modeRPS = '';
+
     public $rps_id;
+
     public $rps_name = '';
+
     public $rps_items;
+
     public $rpsNameSearch = '';
+
     public $rpsResults = [];
+
     public $selectedRPSId = null;
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $rps_id_array = [];
-    public $rps_name_array = [];
+
     public $rps_items_array = [];
 
     private function mapRPS($collection)
     {
-        if ($collection instanceof \Illuminate\Pagination\AbstractPaginator) {
+        if ($collection instanceof AbstractPaginator) {
             $collection = $collection->getCollection();
         }
 
@@ -64,6 +73,7 @@ trait WithRPSSearchFilters
         if (! $r) {
             return null;
         }
+
         return [
             'id' => $r->id,
             'kode' => $r->kode,
@@ -122,8 +132,8 @@ trait WithRPSSearchFilters
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($r) use ($value, $normalizedValue) {
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($r->kode));
-                
-                return strtolower($r->rps) === strtolower($value) 
+
+                return strtolower($r->rps) === strtolower($value)
                     || strtolower($r->mk) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
@@ -158,17 +168,18 @@ trait WithRPSSearchFilters
         $prodiId = $user->pr_id ?? null;
 
         $query = $this->rpsQuery();
-        
-        if (!$prodiId) {
+
+        if (! $prodiId) {
             $defaultRPS = $query
                 ->latest()
                 ->limit(12)
                 ->get();
+
             return $this->mapRPS($defaultRPS);
         }
 
         $mainResults = $query
-            ->whereHas('mk_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -178,7 +189,7 @@ trait WithRPSSearchFilters
             $extra = RPS::whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
-                
+
             $mainResults = $mainResults->concat($extra);
         }
 
@@ -192,9 +203,7 @@ trait WithRPSSearchFilters
             $this->rpsResults = $this->getRPSbyUser();
         }
 
-        return;
     }
-
 
     public function selectRPS($id, $rpsName)
     {
@@ -214,13 +223,11 @@ trait WithRPSSearchFilters
         $this->resetErrorBag(['rps_id', 'rpsNameSearch']);
     }
 
-    
     public function selectRPSArray($id)
     {
         $data = $this->rpsQuery()->find($id);
         if ($data && ! in_array($id, $this->rps_id_array)) {
             $this->rps_id_array[] = $id;
-            $this->rps_name_array[] = $data->rps;
             $this->rps_items_array[] = $this->itemsRPS($data);
         }
     }
@@ -234,7 +241,6 @@ trait WithRPSSearchFilters
     public function resetRPSArray()
     {
         $this->rps_id_array = [];
-        $this->rps_name_array = [];
         $this->rps_items_array = [];
         $this->rpsNameSearch = '';
     }

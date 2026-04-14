@@ -10,30 +10,29 @@ trait WithCPLSearchFilters
 {
     use WithPagination;
 
-    public $cplSearchQuery;
+    public $cplSearchQuery = '';
+
     public $cplSearchResults = [];
+
     public $modeCPL = [];
+
     public $cpl_id = [];
+
     public $cpl_name = [];
+
     public $cpl_items = [];
+
     public $cplNameSearch = [];
+
     public $cplResults = [];
+
     public $selectedCPLId = [];
 
     // Properti Array untuk Multiple Selection jika dibutuhkan
     public $cpl_id_array = [];
-    public $cpl_name_array = [];
+
     public $cpl_items_array = [];
 
-    /**
-     * Helper untuk mapping hasil agar seragam
-     */
-
-    private function getCplState($key, $property, $default = null)
-    {
-        return $this->{$property}[$key] ?? $default;
-    }
-    
     private function mapCPL($collection)
     {
         return $collection->map(fn ($c) => [
@@ -53,11 +52,30 @@ trait WithCPLSearchFilters
         if (! $c) {
             return null;
         }
+
         return [
             'id' => $c->id,
             'kode' => $c->kode,
             'slot1' => $c->deskripsi,
         ];
+    }
+
+    public function getCPLIdArrayForKey(string $key = 'default'): array
+    {
+        if (is_array($this->cpl_id_array) && array_key_exists($key, $this->cpl_id_array) && is_array($this->cpl_id_array[$key])) {
+            return $this->cpl_id_array[$key];
+        }
+
+        return [];
+    }
+
+    public function getCPLNameSearchForKey(string $key = 'default'): string
+    {
+        if (is_array($this->cplNameSearch) && array_key_exists($key, $this->cplNameSearch)) {
+            return is_string($this->cplNameSearch[$key]) ? $this->cplNameSearch[$key] : '';
+        }
+
+        return '';
     }
 
     public function inputCPLFilter()
@@ -96,24 +114,36 @@ trait WithCPLSearchFilters
         }
     }
 
-    public function updatedCPLNameSearch($value, $key = 'default')
+    public function updatedCPLNameSearch($value, $name = null)
     {
+        $key = 'default';
+
+        if (is_string($name) && str_contains($name, '.')) {
+            [, $key] = explode('.', $name, 2);
+        } elseif (is_string($name) && $name !== 'cplNameSearch') {
+            $key = $name;
+        }
+
+        if (is_array($value)) {
+            $value = $value[$key] ?? '';
+        }
+
         $this->cpl_id[$key] = null;
         $this->cpl_items[$key] = null;
         $this->resetErrorBag(['cpl_id.'.$key, 'cplNameSearch.'.$key]);
 
         $query = $this->cplQuery();
 
-        if (trim(strlen($value)) > 0) {
+        if (trim(strlen((string) $value)) > 0) {
             $results = $query->searchCPL($value)->limit(12)->get();
             $this->cplResults[$key] = $this->mapCPL($results);
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($cpl) use ($value, $normalizedValue) {
-                $normalizedMkKode = str_replace(['-', ' '], '', strtolower($cpl->kode));
-                
-                return strtolower($cpl->deskripsi) === strtolower($value) 
-                    || $normalizedMkKode === $normalizedValue;
+                $normalizedCPLKode = str_replace(['-', ' '], '', strtolower($cpl->kode));
+
+                return strtolower($cpl->deskripsi) === strtolower($value)
+                    || $normalizedCPLKode === $normalizedValue;
             });
 
             if ($exactMatch) {
@@ -143,12 +173,11 @@ trait WithCPLSearchFilters
                 $this->cplResults[$key] = $this->getCPLbyUser();
             } else {
                 $this->cplResults[$key] = $this->mapCPL(
-                    $query->orderBy('cpls.deskripsi')->limit(12)->get()
+                    $query->orderBy('cpls.id')->limit(12)->get()
                 );
             }
         }
     }
-
 
     // public function updatedCPLNameSearch($value, $key = 'default')
     // {
@@ -167,7 +196,7 @@ trait WithCPLSearchFilters
     //         $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
     //         $exactMatch = $results->first(function ($cpl) use ($value, $normalizedValue) {
     //             $normalizedMkKode = str_replace(['-', ' '], '', strtolower($cpl->kode));
-    //             return strtolower($cpl->deskripsi) === strtolower($value) 
+    //             return strtolower($cpl->deskripsi) === strtolower($value)
     //                 || $normalizedMkKode === $normalizedValue;
     //         });
 
@@ -192,17 +221,18 @@ trait WithCPLSearchFilters
         $prodiId = $user->pr_id ?? null;
 
         $query = $this->cplQuery();
-        
-        if (!$prodiId) {
+
+        if (! $prodiId) {
             $defaultCPL = $query
                 ->latest()
                 ->limit(12)
                 ->get();
+
             return $this->mapCPL($defaultCPL);
         }
 
         $mainResults = $query
-            ->whereHas('cpmks.rps.mk_rel.prodis', function($q) use ($prodiId) {
+            ->whereHas('cpmks.rps.mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
             ->limit(12)
@@ -212,7 +242,7 @@ trait WithCPLSearchFilters
             $extra = $this->cplQuery()->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();
-                
+
             $mainResults = $mainResults->concat($extra);
         }
 
@@ -226,9 +256,7 @@ trait WithCPLSearchFilters
             $this->cplResults[$key] = $this->getCPLbyUser();
         }
 
-        return;
     }
-
 
     public function selectCPL($id, $cplName, $key = 'default')
     {
@@ -239,6 +267,10 @@ trait WithCPLSearchFilters
         $data = $this->cplQuery()->find($id);
         if ($data) {
             $this->cpl_items[$key] = $this->itemsCPL($data);
+
+            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
+            //     $this->deskripsi_cpmk = $data->deskripsi;
+            // }
         }
 
         if (method_exists($this, 'fetchCPL')) {
@@ -247,24 +279,32 @@ trait WithCPLSearchFilters
 
         $this->resetErrorBag(['cpl_id.'.$key, 'cplNameSearch.'.$key]);
     }
-    // public function selectCPLArray($id, $key = 'default')
-    // {
-    //     $data = $this->cplQuery()->find($id);
-    //     if ($data && ! in_array($id, $this->cpl_id_array)) {
-    //         $this->cpl_id_array[$key][] = $id;
-    //         $this->cpl_name_array[$key][] = $data->deskripsi;
-    //         $this->cpl_items_array[$key][] = $data->kode;
-    //     }
-    // }
+
     public function selectCPLArray($id, $key = 'default')
     {
         $data = $this->cplQuery()->find($id);
         if ($data) {
-            if (!isset($this->cpl_id_array[$key])) $this->cpl_id_array[$key] = [];
-            if (!in_array($id, $this->cpl_id_array[$key])) {
+            if (! isset($this->cpl_id_array[$key])) {
+                $this->cpl_id_array[$key] = [];
+            }
+
+            if (! in_array($id, $this->cpl_id_array[$key])) {
                 $this->cpl_id_array[$key][] = $id;
                 $this->cpl_items_array[$key][] = $this->itemsCPL($data);
             }
+
+            // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
+            //     $newDesc = trim($data->deskripsi);
+            //     if (!str_ends_with($newDesc, '.')) {
+            //         $newDesc .= '.';
+            //     }
+
+            //     if (!empty($this->deskripsi_cpmk)) {
+            //         $this->deskripsi_cpmk = rtrim($this->deskripsi_cpmk) . ' ' . $newDesc;
+            //     } else {
+            //         $this->deskripsi_cpmk = $newDesc;
+            //     }
+            // }
         }
     }
 
@@ -272,13 +312,20 @@ trait WithCPLSearchFilters
     {
         $this->reset(['cpl_id', 'cpl_items', 'cplNameSearch']);
         $this->cplResults[$key] = $this->getCPLbyUser();
+
+        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
+        //     $this->deskripsi_cpmk = '';
+        // }
     }
 
     public function resetCPLArray($key = 'default')
     {
         $this->cpl_id_array[$key] = [];
-        $this->cpl_name_array[$key] = [];
         $this->cpl_items_array[$key] = [];
         $this->cplNameSearch[$key] = '';
+
+        // if (property_exists($this, 'deskripsi_cpmk') && $key == 'cpmk') {
+        //     $this->deskripsi_cpmk = '';
+        // }
     }
 }

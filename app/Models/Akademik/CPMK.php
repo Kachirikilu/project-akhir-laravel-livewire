@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class CPMK extends Model
 {
@@ -33,6 +34,27 @@ class CPMK extends Model
     {
         return Attribute::get(function () {
             return $this->scpmks->count();
+        });
+    }
+
+    protected function deskripsiCpl(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! empty($this->deskripsi)) {
+                return $this->deskripsi;
+            }
+
+            if ($this->relationLoaded('cpls') || $this->cpls()->exists()) {
+                return $this->cpls
+                    ->map(function ($cpl) {
+                        $desc = trim($cpl->deskripsi);
+
+                        return str_ends_with($desc, '.') ? $desc : $desc.'.';
+                    })
+                    ->implode(' ');
+            }
+
+            return '-';
         });
     }
 
@@ -108,6 +130,22 @@ class CPMK extends Model
             $q->where('cpmks.kode_cpmk', 'like', $searchTerm)
                 ->orWhere('cpmks.kode_cpmk', 'like', $searchClean)
                 ->orWhere('cpmks.deskripsi', 'like', $searchTerm);
+
+            $q->orWhereExists(function ($sq) use ($searchTerm) {
+                $sq->select(DB::raw(1))
+                    ->from('cpls')
+                    ->join('cpmk_pivot_cpl', 'cpls.id', '=', 'cpmk_pivot_cpl.cpl_id')
+                    ->whereColumn('cpmk_pivot_cpl.cpmk_id', 'cpmks.id')
+                    ->where(function ($sub) use ($searchTerm) {
+                        $sub->where('cpls.deskripsi', 'like', $searchTerm)
+                            ->orWhere('cpls.kode_cpl', 'like', $searchTerm);
+                    });
+            });
+
+            $q->orWhereRaw("(SELECT GROUP_CONCAT(cpls.deskripsi SEPARATOR ' ') 
+            FROM cpls 
+            INNER JOIN cpmk_pivot_cpl ON cpls.id = cpmk_pivot_cpl.cpl_id 
+            WHERE cpmk_pivot_cpl.cpmk_id = cpmks.id) LIKE ?", [$searchTerm]);
 
             if (is_numeric($search)) {
                 $q->orWhere('cpmks.id', 'like', $search);

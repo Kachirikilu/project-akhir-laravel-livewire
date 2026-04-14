@@ -77,11 +77,11 @@ document.addEventListener("alpine:init", () => {
                     this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
                 }
                 if (item.cpl) {
-                    const combinedCPL = [...this.cpl_cpmk, ...item.cpl];
+                    const combinedCPL = [...this.cpl_cpmk, ...(Array.isArray(item.cpl) ? item.cpl : [])];
                     this.cpl_cpmk = Array.from(new Map(combinedCPL.map(i => [i.id, i])).values());
                 }
                 if (item.ref) {
-                    const combinedRef = [...this.ref_cpmk, ...item.ref];
+                    const combinedRef = [...this.ref_cpmk, ...(Array.isArray(item.ref) ? item.ref : [])];
                     this.ref_cpmk = Array.from(new Map(combinedRef.map(i => [i.id, i])).values());
                 }
             });
@@ -139,12 +139,12 @@ document.addEventListener("alpine:init", () => {
         },
 
         setDeleteRPS(
-            namaProdi,
-            kodeMkDelete,
+            namaRPS,
+            kodeCPLDelete,
             forceDelete
         ) {
-            this.rps_delete = namaProdi;
-            this.kode_rps_delete = kodeMkDelete;
+            this.rps_delete = namaRPS;
+            this.kode_rps_delete = kodeCPLDelete;
             this.isForceDelete = forceDelete;
         },
 

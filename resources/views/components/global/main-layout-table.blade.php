@@ -35,7 +35,9 @@
                 selectCPLForFilter, resetCPLFilter,
                 selectDosenForFilter, resetDosenFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
-                sortBy, perPage, gotoPage, previousPage, nextPage, page"
+                page, loadingTable, sortBy
+                {{-- gotoPage, previousPage, nextPage, page --}}
+                "
                 class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">
                 {{ $slot }}
             </tbody>

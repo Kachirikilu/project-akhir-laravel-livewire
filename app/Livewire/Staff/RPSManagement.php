@@ -18,11 +18,13 @@ use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\CPMKManagement\WithCPMKFilters;
 use App\Livewire\Staff\CPMKManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\CPLManagement\WithCPLFilters;
-use App\Livewire\Staff\RefManagement\WithReferensiFilters;
+use App\Livewire\Staff\RefManagement\WithRefFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
 use App\Livewire\Staff\CPMKManagement\WithCPMKModal;
+use App\Livewire\Staff\CPLManagement\WithCPLModal;
+use App\Livewire\Staff\RefManagement\WithRefModal;
 
 
 use App\Models\Akademik\RPS;
@@ -38,7 +40,7 @@ class RPSManagement extends Component
     use WithCPMKFilters;
     use WithSubCPMKFilters;
     use WithCPLFilters;
-    use WithReferensiFilters;
+    use WithRefFilters;
     use WithDosenFilters;
 
     use WithFakultasSearchFilters;
@@ -55,6 +57,8 @@ class RPSManagement extends Component
 
     use WithRPSModal;
     use WithCPMKModal;
+    use WithCPLModal;
+    use WithRefModal;
 
     use WithPagination;
 
@@ -85,6 +89,42 @@ class RPSManagement extends Component
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
     ];
+
+    public function mount()
+    {
+        $this->cplNameSearch = [
+            'rps' => '',
+            'cpmk' => '',
+        ];
+        $this->cpl_id_array = [
+            'rps' => [],
+            'cpmk' => [],
+        ];
+        $this->cpl_items_array = [
+            'rps' => [],
+            'cpmk' => [],
+        ];
+
+        $this->refNameSearch = [
+            'rps' => '',
+            'cpmk' => '',
+        ];
+        $this->ref_id_array = [
+            'rps' => [],
+            'cpmk' => [],
+        ];
+        $this->ref_items_array = [
+            'rps' => [],
+            'cpmk' => [],
+        ];
+    }
+
+    public function loadingTable() {
+
+    }
+    public function loadingRPSList() {
+        
+    }
 
     public function updatedPerPage()
     {
@@ -382,7 +422,10 @@ class RPSManagement extends Component
             'totalCPL' => $baseDataCPL->count(),
             'totalRef' => $baseDataRef->count(),
 
-            'rps_modal_paginator' => $this->rps_modal_paginator,
+            'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
+            'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
+            'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
+
 
             'stats' => $stats,
         ]));

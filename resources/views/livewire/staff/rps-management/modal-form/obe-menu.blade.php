@@ -5,7 +5,11 @@
         @php
             $isTrashed = $x->trashed();
 
-            $typeUpper = strtoupper($typeXString);
+            if ($typeXString == 'ref') {
+                $typeUpper = 'Ref';
+            } else {
+                $typeUpper = strtoupper($typeXString);
+            }
             $editCall = "edit{$typeUpper}($x->id)";
             $deleteCall = "delete{$typeUpper}($x->id, " . ($isTrashed ? 'true' : 'false') . ')';
             $restoreCall = "restore{$typeUpper}($x->id)";
@@ -29,6 +33,10 @@
             @include('livewire.staff.rps-management.modal-form.rps-partial.rps-menu')
         @elseif ($typeXString == 'cpmk')
             @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-menu')
+        @elseif ($typeXString == 'cpl')
+            @include('livewire.staff.rps-management.modal-form.cpl-partial.cpl-menu')
+        @elseif ($typeXString == 'ref')
+            @include('livewire.staff.rps-management.modal-form.ref-partial.ref-menu')
         @endif
 
     </flux:menu>

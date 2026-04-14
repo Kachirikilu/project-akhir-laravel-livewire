@@ -73,7 +73,11 @@ class UserManagement extends Component
         // 'pr_id' => ['except' => ''],
         // 'prNameSearch' => ['except' => ''],
     ];
+    
+    public function loadingTable() {
 
+    }
+    
     public function updatedPerPage()
     {
         $this->resetPage();

@@ -41,7 +41,7 @@
     </div> --}}
     {{-- Pagination --}}
     @if ($typeXString->hasPages())
-        <div class="p-4" id="pagination-links-container" wire:target="gotoPage, previousPage, nextPage, page">
+        <div class="p-4" id="pagination-links-container" wire:target="{{ $typeXString->getPageName() }}">
             {{ $typeXString->links('vendor.pagination.tailwind') }}
         </div>
     @endif

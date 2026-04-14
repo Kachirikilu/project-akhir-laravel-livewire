@@ -2,7 +2,7 @@
     $isDisabled = $disabled ?? false;
 @endphp
 
-<div class="relative" wire:key="select-form-{{ $modelString }}" 
+<div class="relative" wire:key="select-form-{{ $modelString }}-{{ $alpine }}" 
     x-data="{
         open: false,
         options: [],
