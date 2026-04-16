@@ -323,21 +323,21 @@
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if ($x->count_scpmk >= 14)
+                            @if ($x->count_scpmk >= 14 && $x->count_scpmk <= 16)
                                 <flux:badge color="green" size="sm">
-                                    {{ $x->count_scpmk }} Pertemuan
+                                    {{ $x->count_scpmk }} Sub-CPMK
                                 </flux:badge>
                             @elseif ($x->count_scpmk >= 7 && $x->count_scpmk < 14)
                                 <flux:badge color="yellow" size="sm">
-                                    {{ $x->count_scpmk }} Pertemuan
+                                    {{ $x->count_scpmk }} Sub-CPMK
                                 </flux:badge>
                             @elseif ($x->count_scpmk >= 4 && $x->count_scpmk < 7)
                                 <flux:badge color="orange" size="sm">
-                                    {{ $x->count_scpmk }} Pertemuan
+                                    {{ $x->count_scpmk }} Sub-CPMK
                                 </flux:badge>
                             @else
                                 <flux:badge color="red" size="sm">
-                                    {{ $x->count_scpmk ?? 0 }} Pertemuan
+                                    {{ $x->count_scpmk ?? 0 }} Sub-CPMK
                                 </flux:badge>
                             @endif
                         </button>
@@ -449,8 +449,8 @@
                                         {{ $x->metode }}</flux:badge>
                                 @break
 
-                                @case('Hasil Projek')
-                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Projek
+                                @case('Hasil Proyek')
+                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
                                     </flux:badge>
                                 @break
 

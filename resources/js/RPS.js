@@ -7,7 +7,6 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
         isForceDelete: 0,
@@ -16,9 +15,6 @@ document.addEventListener("alpine:init", () => {
         rps_delete: "",
         kode_rps_delete: "",
         
-        setType(val) {
-            this.typeModal = val;
-        },
         setEdit(val) {
             this.isEdit = val;
         },
@@ -39,6 +35,9 @@ document.addEventListener("alpine:init", () => {
         is_draf: "",
 
         count_scpmk: 0,
+
+        bobot_uts: 0,
+        bobot_uas: 0,
         total_bobot: 0,
 
         setCountSCPMK(val) {
@@ -87,15 +86,6 @@ document.addEventListener("alpine:init", () => {
             });
         },
 
-
-        setTypeModal(type) {
-            this.typeModal = type;
-        },
-
-        setIsEdit(isEdit) {
-            this.isEdit = isEdit;
-        },
-
         setValueRPS(
             kodeBlok,
             deskripsi,
@@ -105,6 +95,8 @@ document.addEventListener("alpine:init", () => {
             tahunAkademik,
             isDraf,
             countScpmk,
+            bobotUTS,
+            bobotUAS,
             totalBobot
         ) {
             this.digit_akademik = kodeBlok;
@@ -135,6 +127,9 @@ document.addEventListener("alpine:init", () => {
                 this.is_draf = isDraf;
             }
             this.count_scpmk = countScpmk;
+
+            this.bobot_uts = bobotUTS;
+            this.bobot_uas = bobotUAS;
             this.total_bobot = totalBobot;
         },
 
@@ -156,7 +151,6 @@ document.addEventListener("alpine:init", () => {
         // },
         
         reset() {
-            this.typeModal = "",
             this.typeModal_delete = "",
             this.isEdit = 0,
             this.isForceDelete = 0,

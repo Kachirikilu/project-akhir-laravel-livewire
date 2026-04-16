@@ -183,11 +183,31 @@ trait WithRPSFilters
             ),
 
             'total_bobot' => $queryRPS->orderBy(
-                DB::table('rps_pivot_cpmk')
-                    ->join('cpmk_pivot_scpmk', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_scpmk.cpmk_id')
-                    ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
-                    ->selectRaw('sum(sub_cpmks.bobot)')
-                    ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
+                DB::raw('(
+                    COALESCE((
+                        SELECT SUM(sub_cpmks.bobot)
+                        FROM rps_pivot_cpmk
+                        JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                        JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                        WHERE rps_pivot_cpmk.rps_id = rps.id
+                    ), 0)
+                    + CASE WHEN EXISTS(
+                        SELECT 1
+                        FROM rps_pivot_cpmk
+                        JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                        JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                        WHERE rps_pivot_cpmk.rps_id = rps.id
+                        AND UPPER(sub_cpmks.metode) = \'UTS\'
+                    ) THEN 0 ELSE COALESCE(rps.bobot_uts, 0) END
+                    + CASE WHEN EXISTS(
+                        SELECT 1
+                        FROM rps_pivot_cpmk
+                        JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                        JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                        WHERE rps_pivot_cpmk.rps_id = rps.id
+                        AND UPPER(sub_cpmks.metode) IN (\'UAS\', \'LAPORAN AKHIR\', \'HASIL PROYEK\', \'HASIL PROJEK\')
+                    ) THEN 0 ELSE COALESCE(rps.bobot_uas, 0) END
+                )') ,
                 $this->sortDirection
             ),
 

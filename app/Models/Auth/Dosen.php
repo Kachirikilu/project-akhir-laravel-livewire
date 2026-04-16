@@ -2,8 +2,9 @@
 
 namespace App\Models\Auth;
 
-use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\RPS;
+use App\Models\Akademik\SubCPMK;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,9 +29,16 @@ class Dosen extends Model
 
     public function rps(): BelongsToMany
     {
-        return $this->belongsToMany(RPS::class, 'rps_pivot_dosen', 'rps_id', 'dosen_id')
-                    ->withPivot(['peran', 'is_ketua', 'sort_order'])
-                    ->withTimestamps();
+        return $this->belongsToMany(RPS::class, 'rps_pivot_dosen', 'dosen_id', 'rps_id')
+            ->withPivot(['peran', 'is_ketua', 'sort_order'])
+            ->withTimestamps();
+    }
+
+    public function scpmks(): BelongsToMany
+    {
+        return $this->belongsToMany(SubCPMK::class, 'dosen_pivot_scpmk', 'dosen_id', 'scpmk_id')
+            ->withPivot(['rps_id', 'sort_order'])
+            ->withTimestamps();
     }
 
     public function user(): BelongsTo

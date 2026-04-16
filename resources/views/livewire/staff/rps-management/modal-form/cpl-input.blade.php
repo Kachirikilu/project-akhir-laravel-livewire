@@ -47,12 +47,9 @@
             'nameXString' => 'Deskripsi',
             'modelString' => 'deskripsi',
             'iconString' => 'document-text',
-            'placeholder' => 'Masukkan deskripsi ringkas tentang CPL...',
+            'placeholder' => 'Masukkan deskripsi CPL...',
             'message' => $errors->first('deskripsi'),
         ])
-
-
-
     </div>
 
     <template x-if="$store.cpl?.isEdit == 1">
@@ -62,11 +59,5 @@
             'nameXString' => 'CPL',
         ])
     </template>
-
-    {{-- <div x-data x-init="$watch('$store.cpl.kode_cpl', value => console.log('kode_cpl: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpl.kode_cpl_1', value => console.log('kode_cpl_1: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpl.kode_cpl_2', value => console.log('kode_cpl_2: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpl.deskripsi', value => console.log('deskripsi: ', value))"></div> --}}
-    {{-- <div x-data x-init="$watch('$store.cpl.mk_items', value => console.log('mk_items: ', value))"></div> --}}
 
 </div>

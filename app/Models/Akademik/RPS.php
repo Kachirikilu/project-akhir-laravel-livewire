@@ -39,7 +39,7 @@ class RPS extends Model
     protected function kodeBlok(): Attribute
     {
         return Attribute::get(function () {
-            $tahunFull = (int) substr($this->akademik, 0, 4);
+            $tahunFull = (int) substr($this->akademik, 5, 8);
             $suffixTahun = match (true) {
                 $tahunFull >= 3000 => $tahunFull,
                 $tahunFull >= 2100 => substr((string) $tahunFull, -3),
@@ -82,6 +82,7 @@ class RPS extends Model
     {
         return Attribute::get(fn () => $this->mk_rel?->sks);
     }
+
     protected function sksText(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->sks_text);
@@ -128,9 +129,34 @@ class RPS extends Model
     protected function totalBobot(): Attribute
     {
         return Attribute::get(function () {
-            return $this->cpmks->sum(function ($cpmk) {
-                return $cpmk->scpmks->sum('bobot') ?? 0;
+            $totalSubCpmk = $this->cpmks->sum(function ($cpmk) {
+                return (float) ($cpmk->scpmks->sum('bobot') ?? 0);
             });
+
+            $allScpmk = $this->cpmks->flatMap->scpmks;
+
+            $hasUTS = $allScpmk->contains(function ($scpmk) {
+                $method = strtoupper($scpmk->metode ?? '');
+                $text = strtoupper($scpmk->deskripsi ?? '');
+
+                return $method === 'UTS' || str_contains($text, 'UTS');
+            });
+
+            $hasUAS = $allScpmk->contains(function ($scpmk) {
+                $method = strtoupper($scpmk->metode ?? '');
+                $text = strtoupper($scpmk->deskripsi ?? '');
+
+                return in_array($method, ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'], true)
+                    || str_contains($text, 'UAS')
+                    || str_contains($text, 'LAPORAN AKHIR')
+                    || str_contains($text, 'HASIL PROJEK')
+                    || str_contains($text, 'HASIL PROYEK');
+            });
+
+            $uts = $hasUTS ? 0 : (float) ($this->bobot_uts ?? 0);
+            $uas = $hasUAS ? 0 : (float) ($this->bobot_uas ?? 0);
+
+            return $totalSubCpmk + $uts + $uas;
         });
     }
 
@@ -154,23 +180,6 @@ class RPS extends Model
             return $this->created_at->translatedFormat('D, d M Y');
         });
     }
-
-    // protected function draf(): Attribute
-    // {
-    //     return Attribute::get(function () {
-    //         if ($this->count_scpmk < 14) {
-    //             return 1;
-    //         }
-    //         return (int) $this->is_draf;
-    //     });
-    // }
-
-    // protected function drafText(): Attribute
-    // {
-    //     return Attribute::get(function () {
-    //         return $this->draf == 1 ? 'Draf' : 'Aktif';
-    //     });
-    // }
 
     protected function updatedDay(): Attribute
     {
@@ -213,7 +222,18 @@ class RPS extends Model
             ->withTimestamps();
     }
 
-    // public function scopeSearchRPS($query, $search)
+    public function getDosensSubCpmk($subCpmkId)
+    {
+        $subCpmk = $this->subCpmks()->find($subCpmkId);
+
+        if ($subCpmk && $subCpmk->dosens->isNotEmpty()) {
+            return $subCpmk->dosens;
+        }
+
+        return $this->dosens;
+    }
+
+    // public function scopeSearchRPS2($query, $search)
     // {
     //     if (empty(trim($search))) {
     //         return $query;
@@ -224,7 +244,7 @@ class RPS extends Model
     //     $searchTerm = '%'.$search.'%';
     //     $searchLikeLower = '%'.$searchLower.'%';
 
-    //     // Logika pembersihan mkPart & yearPart (Original logic)
+    //     // Logika pembersihan MK & Year (Original)
     //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
     //     $mkPart = $search;
     //     $yearPart = null;
@@ -243,11 +263,22 @@ class RPS extends Model
 
     //     $mkPartClean = preg_replace('/[^A-Za-z0-9]/', '', $mkPart);
 
-    //     // Grouping utama menggunakan orWhere agar kriteria tidak saling mematikan
     //     return $query->where(function ($q) use ($mkPartClean, $yearPart, $search, $searchLower, $searchTerm, $searchLikeLower) {
 
-    //         // 1. PENCARIAN JUMLAH SUB-CPMK
-    //         if (preg_match('/(\d+)\s*(pertemuan|sub-?cpmk|scpmk|cpmk)/i', $search, $matches)) {
+    //         // --- 1. PENCARIAN JUMLAH CPMK (Toleran Typo/Singkat) ---
+    //         if (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $search, $matches)) {
+    //             $number = $matches[1];
+    //             $q->orWhereExists(function ($sq) use ($number) {
+    //                 $sq->select(DB::raw(1))
+    //                     ->from('rps_pivot_cpmk')
+    //                     ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id')
+    //                     ->groupBy('rps_pivot_cpmk.rps_id')
+    //                     ->havingRaw('COUNT(*) = ?', [$number]);
+    //             });
+    //         }
+
+    //         // --- 2. PENCARIAN JUMLAH SUB-CPMK (Toleran Typo/Singkat) ---
+    //         if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $matches)) {
     //             $number = $matches[1];
     //             $q->orWhereExists(function ($sq) use ($number) {
     //                 $sq->select(DB::raw(1))
@@ -259,8 +290,8 @@ class RPS extends Model
     //             });
     //         }
 
-    //         // 2. PENCARIAN TOTAL BOBOT
-    //         if (preg_match('/(\d+)\s*(%|persen|bobot|total)/i', $search, $matches)) {
+    //         // --- 4. PENCARIAN TOTAL BOBOT (Toleran Typo/Singkat) ---
+    //         if (preg_match('/(\d+)\s*(%|pers|bob|tot)/i', $search, $matches)) {
     //             $weight = $matches[1];
     //             $q->orWhereExists(function ($sq) use ($weight) {
     //                 $sq->select(DB::raw(1))
@@ -273,17 +304,17 @@ class RPS extends Model
     //             });
     //         }
 
-    //         // 3. FILTER MATA KULIAH (Relasi mk_rel)
+    //         // --- 5. FILTER MATA KULIAH ---
     //         $q->orWhereHas('mk_rel', function ($mq) use ($mkPartClean) {
     //             $mq->searchMK($mkPartClean);
     //         });
 
-    //         // 4. FILTER TAHUN AKADEMIK
+    //         // --- 6. FILTER TAHUN AKADEMIK ---
     //         if ($yearPart !== null) {
     //             $q->orWhere('akademik', 'like', '%'.$yearPart.'%');
     //         }
 
-    //         // 5. FILTER TANGGAL & ID
+    //         // --- 7. FILTER TANGGAL, ID & FALLBACK ---
     //         $q->orWhere(function ($dq) use ($searchLikeLower, $searchTerm, $search) {
     //             $dq->whereRaw("DATE_FORMAT(rps.revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
     //                 ->orWhereRaw("DATE_FORMAT(rps.revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
@@ -295,7 +326,7 @@ class RPS extends Model
     //                 ->orWhere('akademik', 'like', $searchTerm);
     //         });
 
-    //         // 6. LOGIKA STATUS
+    //         // --- 8. LOGIKA STATUS ---
     //         $statusKeywords = [
     //             'draf' => ['draf', 'draft', 'konsep', 'aseli'],
     //             'aktif' => ['aktif', 'active', 'publish', 'siap'],
@@ -308,6 +339,7 @@ class RPS extends Model
     //         }
     //     });
     // }
+
     public function scopeSearchRPS($query, $search)
     {
         if (empty(trim($search))) {
@@ -315,12 +347,11 @@ class RPS extends Model
         }
 
         $search = trim($search);
-        $searchLower = strtolower($search);
+        $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
-        $searchLikeLower = '%'.$searchLower.'%';
 
-        // Logika pembersihan MK & Year (Original)
         $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
         $mkPart = $search;
         $yearPart = null;
 
@@ -336,9 +367,40 @@ class RPS extends Model
             $yearPart = substr($yearPart, -2);
         }
 
-        $mkPartClean = preg_replace('/[^A-Za-z0-9]/', '', $mkPart);
+        return $query->where(function ($q) use ($mkPart, $yearPart, $searchLower, $search, $searchTerm) {
+            $mkPartClean = preg_replace('/[^A-Za-z0-9]/', '', $mkPart);
 
-        return $query->where(function ($q) use ($mkPartClean, $yearPart, $search, $searchLower, $searchTerm, $searchLikeLower) {
+            $q->where(function ($group) use ($mkPartClean, $yearPart, $searchTerm, $searchLower) {
+
+                // A. Filter Mata Kuliah
+                $group->whereHas('mk_rel', function ($mq) use ($mkPartClean) {
+                    $mq->searchMK($mkPartClean);
+                });
+
+                // B. Filter Tahun Akademik (Sekarang 1 digit langsung LIKE)
+                if ($yearPart !== null) {
+                    $group->where('akademik', 'like', '%'.$yearPart.'%');
+                }
+
+                // C. Filter Tanggal (Revisi, Created, Updated)
+                $group->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(rps.revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(rps.revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("DATE_FORMAT(rps.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(rps.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("DATE_FORMAT(rps.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(rps.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(rps.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+                });
+
+                // D. Fallback Umum
+                $group->orWhere('akademik', 'like', $searchTerm);
+            });
 
             // --- 1. PENCARIAN JUMLAH CPMK (Toleran Typo/Singkat) ---
             if (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $search, $matches)) {
@@ -366,42 +428,40 @@ class RPS extends Model
             }
 
             // --- 4. PENCARIAN TOTAL BOBOT (Toleran Typo/Singkat) ---
-            if (preg_match('/(\d+)\s*(%|pers|bob|tot)/i', $search, $matches)) {
+            if (preg_match('/(\d+)\s*(|%|pers|bob|tot)/i', $search, $matches)) {
                 $weight = $matches[1];
-                $q->orWhereExists(function ($sq) use ($weight) {
-                    $sq->select(DB::raw(1))
-                        ->from('rps_pivot_cpmk')
-                        ->join('cpmk_pivot_scpmk', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_scpmk.cpmk_id')
-                        ->join('sub_cpmks', 'cpmk_pivot_scpmk.scpmk_id', '=', 'sub_cpmks.id')
-                        ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id')
-                        ->groupBy('rps_pivot_cpmk.rps_id')
-                        ->havingRaw('SUM(sub_cpmks.bobot) = ?', [$weight]);
-                });
+                $q->orWhereRaw('(
+                    COALESCE((
+                        SELECT SUM(sub_cpmks.bobot)
+                        FROM rps_pivot_cpmk
+                        JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                        JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                        WHERE rps_pivot_cpmk.rps_id = rps.id
+                    ), 0)
+                    + IF(
+                        EXISTS(
+                            SELECT 1
+                            FROM rps_pivot_cpmk
+                            JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                            JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                            WHERE rps_pivot_cpmk.rps_id = rps.id
+                            AND UPPER(sub_cpmks.metode) = \'UTS\'
+                        ), 0, COALESCE(rps.bobot_uts, 0)
+                    )
+                    + IF(
+                        EXISTS(
+                            SELECT 1
+                            FROM rps_pivot_cpmk
+                            JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+                            JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+                            WHERE rps_pivot_cpmk.rps_id = rps.id
+                            AND UPPER(sub_cpmks.metode) IN (\'UAS\', \'LAPORAN AKHIR\', \'HASIL PROYEK\', \'HASIL PROJEK\')
+                        ), 0, COALESCE(rps.bobot_uas, 0)
+                    )
+                ) = ?', [$weight]);
             }
 
-            // --- 5. FILTER MATA KULIAH ---
-            $q->orWhereHas('mk_rel', function ($mq) use ($mkPartClean) {
-                $mq->searchMK($mkPartClean);
-            });
-
-            // --- 6. FILTER TAHUN AKADEMIK ---
-            if ($yearPart !== null) {
-                $q->orWhere('akademik', 'like', '%'.$yearPart.'%');
-            }
-
-            // --- 7. FILTER TANGGAL, ID & FALLBACK ---
-            $q->orWhere(function ($dq) use ($searchLikeLower, $searchTerm, $search) {
-                $dq->whereRaw("DATE_FORMAT(rps.revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(rps.revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%a, %d %b %Y')) LIKE ?", [$searchLikeLower])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%W, %d %M %Y')) LIKE ?", [$searchLikeLower])
-                    ->orWhereRaw("DATE_FORMAT(rps.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(rps.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhere('rps.id', 'like', $search)
-                    ->orWhere('akademik', 'like', $searchTerm);
-            });
-
-            // --- 8. LOGIKA STATUS ---
+            // E. Logika Status
             $statusKeywords = [
                 'draf' => ['draf', 'draft', 'konsep', 'aseli'],
                 'aktif' => ['aktif', 'active', 'publish', 'siap'],
@@ -411,6 +471,11 @@ class RPS extends Model
                 $q->orWhere('is_draf', true);
             } elseif (in_array($searchLower, $statusKeywords['aktif'])) {
                 $q->orWhere('is_draf', false);
+            }
+
+            // F. ID RPS
+            if (is_numeric($search)) {
+                $q->orWhere('rps.id', 'like', $search);
             }
         });
     }

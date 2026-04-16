@@ -9,7 +9,9 @@
             Input Capaian Pembelajaran Lulusan
         </h4>
 
-        @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
+        @if (!$this->showCPLModal)
+            @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
+        @endif
     </div>
 
 

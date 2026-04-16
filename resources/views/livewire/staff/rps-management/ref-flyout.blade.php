@@ -1,3 +1,4 @@
+@if ($this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal)
 <template x-if="$store.ref?.isFlyout == 1">
     <flux:modal name="ref-modal" wire:model="showRefModal" x-data @refresh-data-ref.window="$store.ref.reset()"
         flyout
@@ -5,6 +6,7 @@
         @include('livewire.staff.rps-management.ref-modal-form')
     </flux:modal>
 </template>
+@endif
 
 <template x-if="$store.ref?.isFlyout == 0">
     <flux:modal name="ref-modal" wire:model="showRefModal" x-data @refresh-data-ref.window="$store.ref.reset()"

@@ -82,7 +82,6 @@
     {{-- 📧 Status Input --}}
     @include('livewire.global.modal-form.select-form', [
         'alpine' => 'user',
-        'nameXString' => 'Status',
         'modelString' => 'status',
         'xOptions' => [
             'Aktif', // Hijau (Produktif)

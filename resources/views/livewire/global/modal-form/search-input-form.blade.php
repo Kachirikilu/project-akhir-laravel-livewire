@@ -45,9 +45,9 @@
                 $wire.{{ $fetchString }}(search, 'single'); 
             "
             @click.outside="open = false" @keydown.escape.window="open = false" id="{{ $modelString }}"
-            placeholder="Cari nama {{ $nameXString }}..."
+            placeholder="Cari nama {{ $nameXString ?? ucfirst($modelString) }}..."
             class="bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
-                placeholder-[var(--contrast-third-text)]
+                {{-- placeholder-[var(--contrast-third-text)] --}}
             w-full border rounded-lg pl-10 px-3 py-2 pr-10">
 
         {{-- Tombol Reset --}}

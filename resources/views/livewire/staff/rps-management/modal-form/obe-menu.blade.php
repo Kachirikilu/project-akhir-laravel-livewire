@@ -33,6 +33,8 @@
             @include('livewire.staff.rps-management.modal-form.rps-partial.rps-menu')
         @elseif ($typeXString == 'cpmk')
             @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-menu')
+        @elseif ($typeXString == 'scpmk')
+            @include('livewire.staff.rps-management.modal-form.scpmk-partial.scpmk-menu')
         @elseif ($typeXString == 'cpl')
             @include('livewire.staff.rps-management.modal-form.cpl-partial.cpl-menu')
         @elseif ($typeXString == 'ref')

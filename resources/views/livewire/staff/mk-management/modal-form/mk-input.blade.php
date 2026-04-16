@@ -48,7 +48,6 @@
             <div class="sm:col-span-2">
                 @include('livewire.global.modal-form.select-form', [
                     'alpine' => 'mk',
-                    'nameXString' => 'Semester',
                     'modelString' => 'semester',
                     'xOptions' => [
                         'Semester 1',

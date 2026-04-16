@@ -6,7 +6,6 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
         isForceDelete: 0,
@@ -15,9 +14,6 @@ document.addEventListener("alpine:init", () => {
         cpl_delete: "",
         kode_cpl_delete: "",
 
-        setType(val) {
-            this.typeModal = val;
-        },
         setEdit(val) {
             this.isEdit = val;
         },
@@ -45,14 +41,6 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        setTypeModal(type) {
-            this.typeModal = type;
-        },
-
-        setIsEdit(isEdit) {
-            this.isEdit = isEdit;
-        },
-
         setDeleteCPL(namaCPL, kodeCPLDelete, forceDelete) {
             this.cpl_delete = namaCPL;
             this.kode_cpl_delete = kodeCPLDelete;
@@ -60,13 +48,12 @@ document.addEventListener("alpine:init", () => {
         },
 
         reset() {
-            this.typeModal = "",
             this.typeModal_delete = "",
             this.isEdit = 0,
             this.isForceDelete = 0,
             this.colorIcon = "",
 
-            this.deskripsi = ""
+            this.deskripsi = "";
             this.kode_cpl = "";
             this.kode_cpl_1 = "";
             this.kode_cpl_2 = "";

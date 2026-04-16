@@ -3,28 +3,27 @@
         {{-- Tombol Edit --}}
         <flux:menu.item
             @click="
-                $store.rps?.reset();
-                $store.rps?.setFlyout(false);
+                $store.scpmk?.reset();
+                $store.scpmk?.setFlyout(false);
 
-                $store.rps?.setEdit(1);
+                $store.scpmk?.setEdit(1);
 
-                $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.scpmk?.setColor('text-indigo-700 dark:text-indigo-400');
 
-                    $store.rps?.setValueRPS(
-                        '{{ $x->kode_blok ?? '' }}',
-                        '{{ $x->deskripsi ?? '' }}',
-                        '{{ $x->mk_id ?? '' }}',
-                        '{{ $x->kode_mk ?? '' }}',
-                        '{{ $x->mk ?? '' }}',
-                        '{{ $x->akademik ?? '' }}',
-                        '{{ $x->draf ?? '' }}',
-                        '{{ $x->count_scpmk }}',
-                        '{{ $x->bobot_uts }}',
-                        '{{ $x->bobot_uas }}',
-                        '{{ $x->total_bobot }}'
-                    );
+                $store.scpmk?.setValueSCPMK(
+                    '{{ $x->kode_scpmk ?? '' }}',
+                    '{{ $x->deskripsi ?? '' }}',
+                    '{{ $x->materi ?? '' }}',
+                    '{{ $x->metodologi ?? '' }}',
+                    '{{ $x->indikator ?? '' }}',
+                    '{{ $x->metode ?? '' }}',
+                    '{{ $x->deskripsi_tugas ?? '' }}',
+                    '{{ $x->waktu_tugas ?? '' }}',
+                    '{{ $x->waktu_mandiri ?? '' }}',
+                    '{{ $x->bobot ?? '' }}',
+                );
 
-                    $flux.modal('rps-modal').show();
+                $flux.modal('scpmk-modal').show();
             "
             wire:click="{{ $editCall }}"
             class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-50 dark:hover:!bg-yellow-900/30 transition-colors">
@@ -32,8 +31,7 @@
 
             <div class="flex justify-between items-center w-full">
                 <span>Edit Data</span>
-                <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path"
-                    class="animate-spin h-4 w-4" />
+                <flux:icon wire:loading wire:target="{{ $editCall }}" name="arrow-path" class="animate-spin h-4 w-4" />
             </div>
         </flux:menu.item>
 
@@ -43,7 +41,7 @@
             @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.rps?.setDeleteProdi(
+                        $store.scpmk?.setDeleteProdi(
                             '{{ $x->mk ?? '' }}',
                             '{{ $x->kode ?? '' }}'
                         );

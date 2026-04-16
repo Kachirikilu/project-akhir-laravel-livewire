@@ -31,7 +31,7 @@ trait WithCPLModal
 
     protected $cpl_rps_modal_paginator;
 
-    public function addCPL($key = 'cpl')
+    public function addCPL()
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -49,7 +49,7 @@ trait WithCPLModal
 
     }
 
-    public function editCPL($id, $key = 'cpl')
+    public function editCPL($id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -63,6 +63,9 @@ trait WithCPLModal
         $this->isEditingCPL = true;
         $this->showEditCPL = true;
 
+        // $this->showCPLModal = true;
+        // $this->dispatch('refresh-component');
+
         try {
             // 1. Load data CPL dengan relasi yang sangat lengkap
             $cpl = CPL::with([
@@ -71,6 +74,8 @@ trait WithCPLModal
             ])->findOrFail($id);
 
             $this->cpl_rps_id = $cpl->id;
+            $this->cpl_rps_items_list = [];
+            $this->cpl_rps_modal_paginator = null;
             $this->resetPage('cpl_rps_modal_page');
             $this->loadCPLRPSPagination();
 
@@ -110,7 +115,11 @@ trait WithCPLModal
             ->distinct();
 
         $rps = $rpsQuery->orderBy('rps.id')->paginate($this->cpl_rps_modal_page, ['*'], 'cpl_rps_modal_page');
-        $this->cpl_rps_items_list = $this->mapRPS($rps);
+        $this->cpl_rps_items_list = collect($this->mapRPS($rps))
+            ->unique('id')
+            ->values()
+            ->toArray();
+
         $this->cpl_rps_modal_paginator = $rps;
     }
 
@@ -121,11 +130,10 @@ trait WithCPLModal
 
     private function inputModalCPL($isEditingCPL, $data)
     {
-        $inputDeskripsi = trim($data['deskripsi'] ?? '');
-        if (! str_ends_with($inputDeskripsi, '.')) {
-            $inputDeskripsi .= '.';
+        $data['deskripsi'] = trim($data['deskripsi'] ?? '');
+        if ($data['deskripsi'] !== '' && ! str_ends_with($data['deskripsi'], '.')) {
+            $data['deskripsi'] .= '.';
         }
-        $data['deskripsi'] = $inputDeskripsi;
 
         $rules = [
             'kode_cpl_1' => 'required|alpha|max:10',
@@ -167,33 +175,27 @@ trait WithCPLModal
 
         $validator = Validator::make($data, $rules, $this->validationMessagesCPL());
 
+        $validator->after(function ($validator) use ($data) {
+            if (empty(trim($data['kode_cpl_1'] ?? '')) && empty(trim($data['kode_cpl_2'] ?? ''))) {
+                if (! $validator->errors()->has('kode_cpl')) {
+                    $validator->errors()->add('kode_cpl', 'Kode CPL wajib diisi!');
+                }
+            } elseif ($validator->errors()->has('kode_cpl_1') || $validator->errors()->has('kode_cpl_2')) {
+                if (! $validator->errors()->has('kode_cpl')) {
+                    $combinedMessage = $validator->errors()->first('kode_cpl_1') ?: $validator->errors()->first('kode_cpl_2');
+                    $validator->errors()->add('kode_cpl', $combinedMessage);
+                }
+            }
+        });
+
         if ($validator->fails()) {
-            $errors = $validator->errors();
-            if (empty($data['kode_cpl_1']) && empty($data['kode_cpl_2'])) {
-                $this->addError('kode_cpl', 'Kode CPL wajib diisi!');
-            } elseif ($errors->has('kode_cpl_1') || $errors->has('kode_cpl_2')) {
-                $combinedMessage = $errors->first('kode_cpl_1') ?: $errors->first('kode_cpl_2');
-                $this->addError('kode_cpl', $combinedMessage);
-            }
-            foreach ($errors->toArray() as $key => $messages) {
-                if (! in_array($key, ['kode_cpl_1', 'kode_cpl_2', 'kode_cpl'])) {
-                    foreach ($messages as $message) {
-                        $this->addError($key, $message);
-                    }
-                }
-                if ($key === 'kode_cpl' && ! $this->getErrorBag()->has('kode_cpl')) {
-                    $this->addError('kode_cpl', $messages[0]);
-                }
-            }
-            throw ValidationException::withMessages($this->getErrorBag()->messages());
+            throw new ValidationException($validator);
         }
 
-        $validated = $validator->validated();
-
-        return $validated;
+        return $validator->validated();
     }
 
-    public function saveCPL($data, $key = 'cpl')
+    public function saveCPL($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -249,7 +251,7 @@ trait WithCPLModal
         }
     }
 
-    public function updateCPL($data, $key = 'cpl')
+    public function updateCPL($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -268,8 +270,20 @@ trait WithCPLModal
                 ]);
 
                 // 2. Update Tanggal Revisi pada RPS Terkait
-                if ($cpl->rps()->exists()) {
-                    $cpl->rps()
+                $rpsIds = collect();
+
+                $directRpsIds = $cpl->rps()->pluck('rps.id');
+                $rpsIds = $rpsIds->merge($directRpsIds);
+
+                $cpmkRpsIds = DB::table('rps_pivot_cpmk')
+                    ->join('cpmk_pivot_cpl', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_cpl.cpmk_id')
+                    ->where('cpmk_pivot_cpl.cpl_id', $cpl->id)
+                    ->pluck('rps_pivot_cpmk.rps_id');
+
+                $rpsIds = $rpsIds->merge($cpmkRpsIds)->unique();
+
+                if ($rpsIds->isNotEmpty()) {
+                    RPS::whereIn('id', $rpsIds)
                         ->where('is_draf', 0)
                         ->update(['revisi' => now()]);
                 }

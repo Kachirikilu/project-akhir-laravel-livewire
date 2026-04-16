@@ -59,6 +59,8 @@ trait WithRPSSearchFilters
             'wajib_text' => $r->wajib_text,
             'sks' => $r->sks,
             'sks_text' => $r->sks_text,
+            'bobot_uts' => $r->bobot_uts,
+            'bobot_uas' => $r->bobot_uas,
             'total_bobot' => $r->total_bobot,
         ])->toArray();
     }

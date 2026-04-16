@@ -27,6 +27,7 @@ trait WithDosenSearchFilters
     // Properti Dosen Pengajar
     public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
     public $peran_dosen = [];
+    public $pertemuan_dosen = [];
 
     private function mapDosen($collection)
     {

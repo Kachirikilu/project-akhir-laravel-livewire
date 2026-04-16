@@ -27,8 +27,16 @@
     </div>
 
     @include('livewire.staff.rps-management.rps-flyout')
-    @include('livewire.staff.rps-management.cpmk-flyout')
+
+
+    {{-- @if ($this->switchTable !== 'cpl' && $this->switchTable !== 'ref') --}}
+        @include('livewire.staff.rps-management.cpmk-flyout')
+        @include('livewire.staff.rps-management.scpmk-flyout')
+    {{-- @endif --}}
+    
     @include('livewire.staff.rps-management.cpl-flyout')
     @include('livewire.staff.rps-management.ref-flyout')
+
+    
     {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
 </div>

@@ -29,7 +29,7 @@
             @click.outside="open = false" @keydown.escape.window="open = false"
             class="w-full h-10 pl-10 px-4 pr-10 rounded-lg shadow-sm
             bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
-                placeholder-[var(--contrast-third-text)]
+                {{-- placeholder-[var(--contrast-third-text)] --}}
             {{-- focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400 --}}
             "
             autocomplete="off" />

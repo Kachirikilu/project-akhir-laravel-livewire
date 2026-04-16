@@ -3,9 +3,17 @@
     {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
     bg-[var(--main-table-color)] border-[var(--border-table-color)]
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
-    <h4
-        class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        Pilih Sub Capaian Pembelajaran Mata Kuliah</h4>
+
+    <div class="flex justify-between items-center border-b border-[var(--contrast-second-text)] pb-2 mb-6">
+
+        <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
+            Pilih Sub Capaian Pembelajaran Mata Kuliah</h4>
+
+        @if (!$this->showSCPMKModal)
+            @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'scpmk', 'isFlyout' => true,])
+        @endif
+
+    </div>
 
     <div class="relative">
 

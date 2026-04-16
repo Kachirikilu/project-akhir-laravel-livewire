@@ -199,7 +199,7 @@
             {{-- Empty State --}}
             <div x-show="items.length === 0" class="py-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="academic-cap" variant="outline" class="mb-2 w-8 h-8" />
-                <p class="text-xs font-medium italic">Belum ada {{ $nameXString }} yang dipilih!</p>
+                <p class="text-xs font-medium italic">Belum ada {{ $nameXString ?? ucfirst($modelString) }} yang dipilih!</p>
             </div>
         </div>
 

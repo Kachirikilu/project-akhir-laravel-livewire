@@ -18,13 +18,14 @@ use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\CPMKManagement\WithCPMKFilters;
 use App\Livewire\Staff\CPMKManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\CPLManagement\WithCPLFilters;
-use App\Livewire\Staff\RefManagement\WithRefFilters;
+use App\Livewire\Staff\ReferensiManagement\WithRefFilters;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
 use App\Livewire\Staff\CPMKManagement\WithCPMKModal;
+use App\Livewire\Staff\CPMKManagement\WithSubCPMKModal;
 use App\Livewire\Staff\CPLManagement\WithCPLModal;
-use App\Livewire\Staff\RefManagement\WithRefModal;
+use App\Livewire\Staff\ReferensiManagement\WithRefModal;
 
 
 use App\Models\Akademik\RPS;
@@ -57,6 +58,7 @@ class RPSManagement extends Component
 
     use WithRPSModal;
     use WithCPMKModal;
+    use WithSubCPMKModal;
     use WithCPLModal;
     use WithRefModal;
 
@@ -108,14 +110,17 @@ class RPSManagement extends Component
         $this->refNameSearch = [
             'rps' => '',
             'cpmk' => '',
+            'scpmk' => '',
         ];
         $this->ref_id_array = [
             'rps' => [],
             'cpmk' => [],
+            'scpmk' => [],
         ];
         $this->ref_items_array = [
             'rps' => [],
             'cpmk' => [],
+            'scpmk' => [],
         ];
     }
 
@@ -423,9 +428,9 @@ class RPSManagement extends Component
             'totalRef' => $baseDataRef->count(),
 
             'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
+            'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
             'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
             'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
-
 
             'stats' => $stats,
         ]));

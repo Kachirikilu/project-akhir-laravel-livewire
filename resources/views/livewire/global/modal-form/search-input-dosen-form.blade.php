@@ -1,129 +1,136 @@
-<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}" x-data="{
-    open: false,
-    search: @entangle($nameSearchString).live,
-    items: @entangle($idString),
-    itemsAll: @entangle($itemsAllString),
-    parentSelectedId: @entangle($parentIdString ?? null).live,
-
-    init() {
-        if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-
-        this.$watch('itemsAll', (val) => {
-            let found = false;
-            val.forEach(i => {
-                if (i.is_ketua) {
-                    if (!found) {
-                        found = true;
-                    } else {
-                        i.is_ketua = false;
+<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $alpine }}"
+    x-data="{
+        open: false,
+        search: @entangle($nameSearchString).live,
+        items: @entangle($idString),
+        itemsAll: @entangle($itemsAllString),
+        pertemuan: @entangle('pertemuan_dosen'),
+        parentSelectedId: @entangle($parentIdString ?? null).live,
+    
+        init() {
+            if (!Array.isArray(this.items)) this.items = [];
+            if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
+            if (typeof this.pertemuan !== 'object' || this.pertemuan === null) this.pertemuan = {};
+    
+            this.$watch('itemsAll', (val) => {
+                let found = false;
+                val.forEach(i => {
+                    if (i.is_ketua) {
+                        if (!found) {
+                            found = true;
+                        } else {
+                            i.is_ketua = false;
+                        }
                     }
+                });
+            });
+        },
+    
+    
+        get isParentReady() {
+            return this.parentSelectedId != null && this.parentSelectedId != '';
+        },
+    
+        addItem(id, kode, slot1, slot2, slot3, slot4) {
+            let normalizedId = Number(id);
+    
+            if (!this.items.map(i => Number(i)).includes(normalizedId)) {
+                let isFirst = this.items.length === 0;
+                this.items.push(normalizedId);
+                this.itemsAll.push({
+                    id: normalizedId,
+                    kode: kode,
+                    slot1: slot1,
+                    slot2: slot2,
+                    slot3: slot3,
+                    slot4: slot4,
+                    peran: isFirst ? 'Koordinator' : 'Pengajar',
+                    is_ketua: isFirst
+                });
+    
+                if (isFirst) {
+                    this.$nextTick(() => {
+                        this.setKetuaById(normalizedId);
+                    });
+                }
+    
+                this.pertemuan[normalizedId] = '';
+            }
+        },
+    
+        setKetuaById(id) {
+            let normalizedId = Number(id);
+    
+            if (this.items.length !== this.itemsAll.length) return;
+    
+            let currentItemsAll = JSON.parse(JSON.stringify(this.itemsAll));
+            let currentItems = [...this.items];
+    
+            // Reset semua
+            currentItemsAll.forEach(i => {
+                i.is_ketua = false;
+                if (i.peran === 'Koordinator') {
+                    i.peran = 'Pengajar';
                 }
             });
-        });
-    },
-
-
-    get isParentReady() {
-        return this.parentSelectedId != null && this.parentSelectedId != '';
-    },
-
-    addItem(id, kode, slot1, slot2, slot3, slot4) {
-        let normalizedId = Number(id);
-
-        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-
-            let isFirst = this.items.length === 0;
-
-            // Tambah ke items dulu
-            this.items.push(normalizedId);
-
-            // Tambah ke itemsAll
-            this.itemsAll.push({
-                id: normalizedId,
-                kode: kode,
-                slot1: slot1,
-                slot2: slot2,
-                slot3: slot3,
-                slot4: slot4,
-                peran: isFirst ? 'Koordinator' : 'Pengajar',
-                is_ketua: isFirst
-            });
-
-            if (isFirst) {
+    
+            let idx = currentItemsAll.findIndex(i => Number(i.id) === normalizedId);
+            if (idx === -1) return;
+    
+            currentItemsAll[idx].is_ketua = true;
+            currentItemsAll[idx].peran = 'Koordinator';
+    
+            let selectedItemAll = currentItemsAll.splice(idx, 1)[0];
+            let selectedId = currentItems.splice(idx, 1)[0];
+    
+            currentItemsAll.unshift(selectedItemAll);
+            currentItems.unshift(selectedId);
+    
+            this.itemsAll = currentItemsAll;
+            this.items = currentItems;
+        },
+    
+        removeItem(index) {
+            // 1. Ambil ID sebelum array dimodifikasi
+            let idToRemove = this.items[index];
+            let isKetua = this.itemsAll[index]?.is_ketua === true;
+    
+            // 2. Baru hapus dari array items dan itemsAll
+            this.items.splice(index, 1);
+            this.itemsAll.splice(index, 1);
+    
+            // 3. Hapus data pertemuan dari objek (agar sinkron ke Livewire)
+            if (this.pertemuan && this.pertemuan[idToRemove] !== undefined) {
+                delete this.pertemuan[idToRemove];
+            }
+    
+            // 4. Logika penentuan ketua baru jika yang dihapus adalah ketua
+            if (isKetua && this.itemsAll.length > 0) {
+                let newIndex = index;
+                if (newIndex >= this.itemsAll.length) {
+                    newIndex = this.itemsAll.length - 1;
+                }
+    
+                let newKetuaId = this.itemsAll[newIndex].id;
+    
                 this.$nextTick(() => {
-                    this.setKetuaById(normalizedId);
+                    this.setKetuaById(newKetuaId);
                 });
             }
+        },
+    
+        get hasKetua() {
+            return this.itemsAll.some(i => i.is_ketua);
+        },
+    
+        move(index, direction) {
+            let to = index + direction;
+            if (to < 0 || to >= this.items.length) return;
+            const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
+            swap(this.items, index, to);
+            swap(this.itemsAll, index, to);
         }
-    },
-
-    setKetuaById(id) {
-        let normalizedId = Number(id);
-
-        if (this.items.length !== this.itemsAll.length) return;
-
-        let currentItemsAll = JSON.parse(JSON.stringify(this.itemsAll));
-        let currentItems = [...this.items];
-
-        // Reset semua
-        currentItemsAll.forEach(i => {
-            i.is_ketua = false;
-            if (i.peran === 'Koordinator') {
-                i.peran = 'Pengajar';
-            }
-        });
-
-        let idx = currentItemsAll.findIndex(i => Number(i.id) === normalizedId);
-        if (idx === -1) return;
-
-        currentItemsAll[idx].is_ketua = true;
-        currentItemsAll[idx].peran = 'Koordinator';
-
-        let selectedItemAll = currentItemsAll.splice(idx, 1)[0];
-        let selectedId = currentItems.splice(idx, 1)[0];
-
-        currentItemsAll.unshift(selectedItemAll);
-        currentItems.unshift(selectedId);
-
-        this.itemsAll = currentItemsAll;
-        this.items = currentItems;
-    },
-
-    removeItem(index) {
-        let isKetua = this.itemsAll[index]?.is_ketua === true;
-
-        this.items.splice(index, 1);
-        this.itemsAll.splice(index, 1);
-
-        if (isKetua && this.itemsAll.length > 0) {
-
-            let newIndex = index;
-
-            if (newIndex >= this.itemsAll.length) {
-                newIndex = this.itemsAll.length - 1;
-            }
-
-            let newKetuaId = this.itemsAll[newIndex].id;
-
-            this.$nextTick(() => {
-                this.setKetuaById(newKetuaId);
-            });
-        }
-    },
-
-    get hasKetua() {
-        return this.itemsAll.some(i => i.is_ketua);
-    },
-
-    move(index, direction) {
-        let to = index + direction;
-        if (to < 0 || to >= this.items.length) return;
-        const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
-        swap(this.items, index, to);
-        swap(this.itemsAll, index, to);
-    }
-}">
+    }">
 
 
 
@@ -230,90 +237,121 @@
             <template x-for="(id, index) in items" :key="id + '-' + (itemsAll[index]?.is_ketua ? 'ketua' : 'anggota')">
                 <div :class="itemsAll[index]?.is_ketua ? 'border-[var(--focus-color)] ring-1 ring-[var(--focus-color)]' :
                     'border-[var(--border-table-color)]'"
-                    class="relative flex flex-col md:flex-row md:items-center justify-between bg-[var(--second-table-color)] border px-4 py-3 rounded-lg shadow-sm gap-4 transition-all">
+                    class="relative bg-[var(--second-table-color)] border px-4 py-3 rounded-lg shadow-sm gap-4 transition-all">
 
-                    <div class="flex items-start gap-3 flex-1">
-                        <button type="button" @click="setKetuaById(id)"
-                            :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
-                            class="mt-1 transition-colors" title="Jadikan Ketua">
-                            <flux:icon icon="star" variant="solid" class="size-5" />
-                        </button>
-
-                        <div class="flex flex-col flex-1">
-                            {{-- Label Ketua --}}
-                            <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
-                                <span
-                                    class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white">Ketua</span>
-                                <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
-                            </div>
-
-                            {{-- Nama Utama --}}
-                            <span class="text-sm font-bold text-[var(--contrast-main-text)]"
-                                x-text="itemsAll[index]?.slot1"></span>
-
-                            {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
-                            <div class="mt-1 flex items-center flex-wrap text-xs text-gray-500 gap-y-1">
-                                {{-- NIP --}}
-                                -<span class="ml-1 font-bold text-[var(--hover-focus-color)]" x-text="'NIP: ' + itemsAll[index]?.kode"></span>
-
-                                {{-- NIDN --}}
-                                <template x-if="itemsAll[index]?.slot2">
-                                    <div class="flex items-center">
-                                        <span class="mx-1.5 opacity-50">|</span>
-                                        <span x-text="'NIDN: ' + itemsAll[index]?.slot2"></span>
-                                    </div>
-                                </template>
-
-                                {{-- NIDK --}}
-                                <template x-if="itemsAll[index]?.slot3">
-                                    <div class="flex items-center">
-                                        <span class="mx-1.5 opacity-50">|</span>
-                                        <span x-text="'NIDK: ' + itemsAll[index]?.slot3"></span>
-                                    </div>
-                                </template>
-
-                                {{-- Slot 4 / Link jika ada --}}
-                                <template x-if="itemsAll[index]?.slot4">
-                                    <div class="flex items-center">
-                                        <span class="mx-1.5 opacity-50">|</span>
-                                        <span x-text="'Status: ' + itemsAll[index]?.slot4"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- PEMILIH PERAN --}}
-                    <div class="flex items-center gap-2">
-                        <select x-model="itemsAll[index].peran"
-                            class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
-                            <option value="Koordinator">Koordinator</option>
-                            <option value="Pengajar">Pengajar</option>
-                            <option value="Asisten">Asisten</option>
-                        </select>
-
-                        {{-- ACTION BUTTONS --}}
-                        <div class="flex items-center gap-1 ml-2">
-                            <div class="flex flex-col gap-0.5">
-                                <button @click="move(index, -1)" type="button"
-                                    class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                    :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
-                                    <flux:icon icon="chevron-up" variant="mini" class="size-4" />
-                                </button>
-                                <button @click="move(index, 1)" type="button"
-                                    class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
-                                    :disabled="index === items.length - 1 || index == 0">
-                                    <flux:icon icon="chevron-down" variant="mini" class="size-4" />
-                                </button>
-                            </div>
-
-                            <button @click="removeItem(index)" type="button"
-                                class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
-                                <flux:icon icon="trash" variant="mini" class="size-5" />
+                    <div class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-start gap-3 flex-1">
+                            <button type="button" @click="setKetuaById(id)"
+                                :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
+                                class="mt-1 transition-colors" title="Jadikan Ketua">
+                                <flux:icon icon="star" variant="solid" class="size-5" />
                             </button>
+
+                            <div class="flex flex-col flex-1">
+                                {{-- Label Ketua --}}
+                                <div x-show="itemsAll[index]?.is_ketua == true" class="flex items-center gap-2">
+                                    <span
+                                        class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white">Ketua</span>
+                                    <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
+                                </div>
+
+                                {{-- Nama Utama --}}
+                                <span class="text-sm font-bold text-[var(--contrast-main-text)]"
+                                    x-text="itemsAll[index]?.slot1"></span>
+
+                                {{-- Container Info (NIP, NIDN, NIDK) Sejajar --}}
+                                <div class="mt-1 flex items-center flex-wrap text-xs text-gray-500 gap-y-1">
+                                    {{-- NIP --}}
+                                    -<span class="ml-1 font-bold text-[var(--hover-focus-color)]"
+                                        x-text="'NIP: ' + itemsAll[index]?.kode"></span>
+
+                                    {{-- NIDN --}}
+                                    <template x-if="itemsAll[index]?.slot2">
+                                        <div class="flex items-center">
+                                            <span class="mx-1.5 opacity-50">|</span>
+                                            <span x-text="'NIDN: ' + itemsAll[index]?.slot2"></span>
+                                        </div>
+                                    </template>
+
+                                    {{-- NIDK --}}
+                                    <template x-if="itemsAll[index]?.slot3">
+                                        <div class="flex items-center">
+                                            <span class="mx-1.5 opacity-50">|</span>
+                                            <span x-text="'NIDK: ' + itemsAll[index]?.slot3"></span>
+                                        </div>
+                                    </template>
+
+                                    {{-- Slot 4 / Link jika ada --}}
+                                    <template x-if="itemsAll[index]?.slot4">
+                                        <div class="flex items-center">
+                                            <span class="mx-1.5 opacity-50">|</span>
+                                            <span x-text="'Status: ' + itemsAll[index]?.slot4"></span>
+                                        </div>
+                                    </template>
+                                    <div class="flex items-center">
+                                        <span class="mx-1.5 opacity-50">|</span>
+                                        <span x-text="'ID: ' + itemsAll[index]?.id"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {{-- PEMILIH PERAN --}}
+                        <div class="flex items-center gap-2">
+                            <select x-model="itemsAll[index].peran"
+                                class="cursor-pointer text-xs border rounded-md bg-[var(--main-pop-up-color)] border-[var(--border-table-color)] focus:ring-[var(--focus-color)] p-1.5">
+                                <option value="Koordinator">Koordinator</option>
+                                <option value="Pengajar">Pengajar</option>
+                                <option value="Asisten">Asisten</option>
+                            </select>
+
+                            {{-- ACTION BUTTONS --}}
+                            <div class="flex items-center gap-1 ml-2">
+                                <div class="flex flex-col gap-0.5">
+                                    <button @click="move(index, -1)" type="button"
+                                        class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
+                                        <flux:icon icon="chevron-up" variant="mini" class="size-4" />
+                                    </button>
+                                    <button @click="move(index, 1)" type="button"
+                                        class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        :disabled="index === items.length - 1 || index == 0">
+                                        <flux:icon icon="chevron-down" variant="mini" class="size-4" />
+                                    </button>
+                                </div>
+
+                                <button @click="removeItem(index)" type="button"
+                                    class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
+                                    <flux:icon icon="trash" variant="mini" class="size-5" />
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <div
+                        class="mt-3 pt-3 border-t border-gray-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center gap-3">
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold uppercase text-gray-400 mb-1 block">Tugas Pertemuan
+                                (Contoh: 1-4, 7, 9)</label>
+                            <div class="relative flex items-center">
+                                <flux:icon icon="calendar-days" variant="mini"
+                                    class="absolute left-2.5 size-4 text-gray-400" />
+                                <input type="text" x-model="pertemuan[id]"
+                                    placeholder="Kosongkan jika mengajar di semua pertemuan..."
+                                    class="w-full pl-9 pr-3 py-1.5 text-xs border rounded-lg bg-white dark:bg-neutral-900 border-[var(--border-table-color)] focus:ring-1 focus:ring-[var(--focus-color)] focus:border-[var(--focus-color)] transition-all">
+                            </div>
+
+                            {{-- Real-time Feedback Helper (Opsional) --}}
+                            <p x-show="pertemuan[id]" class="text-[10px] mt-1 text-[var(--focus-color)] italic">
+                                *Dosen akan ditugaskan ke Sub-CPMK sesuai angka di atas.
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
+
+
             </template>
         </div>
         {{-- Empty State --}}

@@ -97,14 +97,8 @@
         @include('livewire.staff.rps-management.modal-form.partial.rps-list', [
             'rps_items_list' => $ref_rps_items_list,
             'rps_modal_paginator' => $ref_rps_modal_paginator,
-            'nameXString' => 'Ref',
+            'nameXString' => 'Referensi',
         ])
     </template>
-
-    {{-- <div x-data x-init="$watch('$store.ref.kode_ref', value => console.log('kode_ref: ', value))"></div>
-    <div x-data x-init="$watch('$store.ref.kode_ref_1', value => console.log('kode_ref_1: ', value))"></div>
-    <div x-data x-init="$watch('$store.ref.kode_ref_2', value => console.log('kode_ref_2: ', value))"></div>
-    <div x-data x-init="$watch('$store.ref.judul', value => console.log('judul: ', value))"></div> --}}
-    {{-- <div x-data x-init="$watch('$store.ref.mk_items', value => console.log('mk_items: ', value))"></div> --}}
 
 </div>

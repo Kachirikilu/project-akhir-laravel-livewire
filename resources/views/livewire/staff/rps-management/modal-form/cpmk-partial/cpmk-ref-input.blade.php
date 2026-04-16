@@ -9,8 +9,10 @@
     <h4
         class="text-[var(--contrast-main-text)] text-lg font-medium">
         Referensi CPMK</h4>
-        @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
 
+        @if (!$this->showRefModal)
+            @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
+        @endif
     </div>
 
 
@@ -42,6 +44,7 @@
                 'key' => 'cpmk',
             
                 'idString' => 'ref_id_array.cpmk',
+                'id2String' => 'ref_id_array',
                 'itemsAllString' => 'ref_items_array.cpmk',
             
                 'typeXString' => 'judul',

@@ -6,7 +6,6 @@ document.addEventListener("alpine:init", () => {
             this.isFlyout = !!val;
         },
 
-        typeModal: "",
         typeModal_delete: "",
         isEdit: 0,
         isForceDelete: 0,
@@ -15,9 +14,6 @@ document.addEventListener("alpine:init", () => {
         ref_delete: "",
         kode_ref_delete: "",
 
-        setType(val) {
-            this.typeModal = val;
-        },
         setEdit(val) {
             this.isEdit = val;
         },
@@ -54,14 +50,6 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        setTypeModal(type) {
-            this.typeModal = type;
-        },
-
-        setIsEdit(isEdit) {
-            this.isEdit = isEdit;
-        },
-
         setDeleteRef(namaRef, kodeRefDelete, forceDelete) {
             this.ref_delete = namaRef;
             this.kode_ref_delete = kodeRefDelete;
@@ -69,7 +57,6 @@ document.addEventListener("alpine:init", () => {
         },
 
         reset() {
-            this.typeModal = "",
             this.typeModal_delete = "",
             this.isEdit = 0,
             this.isForceDelete = 0,

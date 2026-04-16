@@ -44,6 +44,16 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('dosen_pivot_scpmk', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('rps_id')->constrained('rps')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('dosens')->onDelete('cascade');
+            $table->foreignId('scpmk_id')->constrained('sub_cpmks')->onDelete('cascade');
+
+            $table->integer('sort_order')->default(0);
+            $table->timestamps();
+        });
+
         // CPMK - Sub-CPMK
         Schema::create('cpmk_pivot_scpmk', function (Blueprint $table) {
             $table->id();

@@ -8,8 +8,10 @@
     <h4
         class="text-[var(--contrast-main-text)] text-lg font-medium">
         Referensi RPS</h4>
-        @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
 
+        @if (!$this->showRefModal)
+            @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
+        @endif
     </div>
 
 
@@ -55,6 +57,7 @@
                 'key' => 'rps',
             
                 'idString' => 'ref_id_array.rps',
+                'id2String' => 'ref_id_array',
                 'itemsAllString' => 'ref_items_array.rps',
             
                 'typeXString' => 'judul',

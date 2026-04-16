@@ -2,6 +2,7 @@
 
 namespace App\Models\Akademik;
 
+use App\Models\Auth\Dosen;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,11 +33,11 @@ class SubCPMK extends Model
     }
     protected function wTugas(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_tugas);
+        return Attribute::get(fn () => $this->waktu_tugas ?? 'Default SKS');
     }
      protected function wMandiri(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_mandiri);
+        return Attribute::get(fn () => $this->waktu_mandiri ?? 'Default SKS');
     }
 
     protected function createdDay(): Attribute
@@ -72,6 +73,13 @@ class SubCPMK extends Model
                     ->withPivot('sort_order');
     }
 
+    public function dosens(): BelongsToMany
+    {
+        return $this->belongsToMany(Dosen::class, 'dosen_pivot_scpmk', 'scpmk_id', 'dosen_id')
+            ->withPivot(['rps_id', 'sort_order'])
+            ->withTimestamps()
+            ->orderBy('sort_order');
+    }
     
     public function scopeSearchSCPMK($query, $search)
     {

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('mk_id')->constrained('mata_kuliahs')->onDelete('cascade');
             $table->text('deskripsi');
             $table->string('akademik', 9);
+            $table->string('bobot_uts', 2)->nullable();
+            $table->string('bobot_uas', 2)->nullable();
             $table->boolean('is_draf')->default(true);
             $table->date('revisi')->nullable();
             $table->softDeletes();
@@ -47,7 +49,7 @@ return new class extends Migration
                 // --- Evaluasi Formal (Umum) ---
                 'UTS', 'UAS', 'Kuis',
                 'Laporan Akhir',
-                'Hasil Projek',
+                'Hasil Proyek',
 
                 // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
                 'Skripsi',
@@ -57,8 +59,8 @@ return new class extends Migration
                 'Portofolio',
             ])->default('Teori');
             $table->text('deskripsi_tugas')->nullable();
-            $table->integer('waktu_tugas')->default(60);
-            $table->integer('waktu_mandiri')->default(60);
+            $table->integer('waktu_tugas')->nullable();
+            $table->integer('waktu_mandiri')->nullable();
             $table->decimal('bobot', 5, 2);
             $table->softDeletes();
             $table->timestamps();

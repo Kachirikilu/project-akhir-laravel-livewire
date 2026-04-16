@@ -1,6 +1,6 @@
 <div>
     {{-- ⚠️ 1. Error Validation (Paling Atas) --}}
-    @if ($errors->any())
+    @if (($show ?? true) && $errors->any())
         <div
             class="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl shadow-sm transition-colors duration-300">
             <div class="flex items-center gap-2 mb-3">

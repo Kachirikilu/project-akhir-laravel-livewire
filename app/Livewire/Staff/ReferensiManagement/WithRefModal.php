@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\RefManagement;
+namespace App\Livewire\Staff\ReferensiManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\Referensi;
@@ -63,6 +63,9 @@ trait WithRefModal
         $this->isEditingRef = true;
         $this->showEditRef = true;
 
+        // $this->showRefModal = true;
+        // $this->dispatch('refresh-component');
+
         try {
             // 1. Load data Ref dengan relasi yang sangat lengkap
             $ref = Referensi::with([
@@ -72,11 +75,12 @@ trait WithRefModal
             ])->findOrFail($id);
 
             $this->ref_rps_id = $ref->id;
+            $this->ref_rps_items_list = [];
+            $this->ref_rps_modal_paginator = null;
             $this->resetPage('ref_rps_modal_page');
             $this->loadRefRPSPagination();
 
             $this->showRefModal = true;
-
             $this->dispatch('fill-modal-ref', ref: $ref);
             $this->dispatch('refresh-component');
 
@@ -119,7 +123,10 @@ trait WithRefModal
             ->distinct();
 
         $rps = $rpsQuery->orderBy('rps.id')->paginate($this->ref_rps_modal_page, ['*'], 'ref_rps_modal_page');
-        $this->ref_rps_items_list = $this->mapRPS($rps);
+        $this->ref_rps_items_list = collect($this->mapRPS($rps))
+            ->unique('id')
+            ->values()
+            ->toArray();
         $this->ref_rps_modal_paginator = $rps;
     }
 
@@ -195,7 +202,7 @@ trait WithRefModal
         return $validated;
     }
 
-    public function saveRef($data, $key = 'ref')
+    public function saveRef($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -240,18 +247,18 @@ trait WithRefModal
                         $this->ref_items_array['cpmk'][] = $this->itemsRef($ref);
                     }
                 }
-                // if ($this->showSCPMKModal && $ref) {
-                //     if (! isset($this->ref_id_array['scpmk']) || ! is_array($this->ref_id_array['scpmk'])) {
-                //         $this->ref_id_array['scpmk'] = [];
-                //     }
-                //     if (! isset($this->ref_items_array['scpmk']) || ! is_array($this->ref_items_array['scpmk'])) {
-                //         $this->ref_items_array['scpmk'] = [];
-                //     }
-                //     if (! in_array($ref->id, $this->ref_id_array['scpmk'])) {
-                //         $this->ref_id_array['scpmk'][] = $ref->id;
-                //         $this->ref_items_array['scpmk'][] = $this->itemsRef($ref);
-                //     }
-                // }
+                if ($this->showSCPMKModal && $ref) {
+                    if (! isset($this->ref_id_array['scpmk']) || ! is_array($this->ref_id_array['scpmk'])) {
+                        $this->ref_id_array['scpmk'] = [];
+                    }
+                    if (! isset($this->ref_items_array['scpmk']) || ! is_array($this->ref_items_array['scpmk'])) {
+                        $this->ref_items_array['scpmk'] = [];
+                    }
+                    if (! in_array($ref->id, $this->ref_id_array['scpmk'])) {
+                        $this->ref_id_array['scpmk'][] = $ref->id;
+                        $this->ref_items_array['scpmk'][] = $this->itemsRef($ref);
+                    }
+                }
             });
 
             $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']} berhasil disimpan!");
@@ -267,7 +274,7 @@ trait WithRefModal
         }
     }
 
-    public function updateRef($data, $key = 'ref')
+    public function updateRef($data)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -279,7 +286,7 @@ trait WithRefModal
             DB::transaction(function () use ($validated) {
                 $ref = Referensi::findOrFail($this->selected_id_ref);
 
-                // 1. Update Data Utama Ref
+                // 1. Update Data Utama Referensi
                 $ref->update([
                     'kode_ref' => strtoupper($validated['kode_ref']),
                     'judul' => $validated['judul'],
@@ -289,13 +296,27 @@ trait WithRefModal
                     'link' => $validated['link'],
                 ]);
 
-                // 2. Update Tanggal Revisi pada RPS Terkait
-                if ($ref->rps()->exists()) {
-                    $ref->rps()
+                // 2. Kumpulkan ID RPS dari semua kemungkinan jalur
+                $directRpsIds = $ref->rps()->pluck('rps.id');
+                $viaCpmkRpsIds = RPS::whereHas('cpmks.refs', function ($q) use ($ref) {
+                    $q->where('referensis.id', $ref->id);
+                })->pluck('id');
+                $viaSubCpmkRpsIds = RPS::whereHas('cpmks.scpmks.refs', function ($q) use ($ref) {
+                    $q->where('referensis.id', $ref->id);
+                })->pluck('id');
+
+                // 3. Gabungkan semua ID dan hapus duplikasi
+                $allRpsIds = collect($directRpsIds)
+                    ->merge($viaCpmkRpsIds)
+                    ->merge($viaSubCpmkRpsIds)
+                    ->unique();
+
+                // 4. Update Tanggal Revisi jika RPS bukan DRAF
+                if ($allRpsIds->isNotEmpty()) {
+                    RPS::whereIn('id', $allRpsIds)
                         ->where('is_draf', 0)
                         ->update(['revisi' => now()]);
                 }
-
             });
 
             $this->toast(message: 'Referensi Berhasil diperbarui', type: 'update');

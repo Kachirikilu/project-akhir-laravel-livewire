@@ -57,6 +57,8 @@ class RPSSeeder extends Seeder
                         'akademik' => $akademik,
                         'is_draf' => ($rpsCount % 4 == 0),
                         'revisi' => $waktuPalsu,
+                        'bobot_uts' => 10,
+                        'bobot_uas' => 15,
                         'created_at' => $waktuPalsu,
                         'updated_at' => $waktuPalsu,
                     ]);
@@ -65,12 +67,14 @@ class RPSSeeder extends Seeder
 
                     // attach dengan sort_order
                     foreach ($rpsCplIds as $order => $cplId) {
-                        $rps->cpls()->attach($cplId, [
-                            'sort_order' => $order,
+                        $rps->cpls()->syncWithoutDetaching([
+                            $cplId => ['sort_order' => $order],
                         ]);
                     }
 
-                    $rps->dosens()->attach($dosenId, ['peran' => 'Koordinator', 'is_ketua' => true]);
+                    $rps->dosens()->syncWithoutDetaching([
+                        $dosenId => ['peran' => 'Koordinator', 'is_ketua' => true],
+                    ]);
 
                     // --- 2. REFERENSI (Buat objeknya dulu, simpan ID-nya) ---
                     $refIds = [];
@@ -86,7 +90,7 @@ class RPSSeeder extends Seeder
                         ]);
 
                         // Opsi A: Jika tetap ingin tampil di daftar pustaka RPS (Sangat Disarankan)
-                        $rps->refs()->attach($ref->id);
+                        $rps->refs()->syncWithoutDetaching([$ref->id]);
 
                         $refIds[] = $ref->id;
                     }
@@ -118,7 +122,7 @@ class RPSSeeder extends Seeder
             // --- Evaluasi Formal (Umum) ---
             'UTS', 'UAS', 'Kuis',
             'Laporan Akhir',
-            'Hasil Projek',
+            'Hasil Proyek',
 
             // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
             'Skripsi',
@@ -139,8 +143,8 @@ class RPSSeeder extends Seeder
             ]);
 
             // 1. RPS ↔ CPMK
-            $rps->cpmks()->attach($cpmk->id, [
-                'sort_order' => $i - 1,
+            $rps->cpmks()->syncWithoutDetaching([
+                $cpmk->id => ['sort_order' => $i - 1],
             ]);
 
             // 2. CPMK ↔ CPL (fix: selalu array & ada sort_order)
@@ -151,8 +155,8 @@ class RPSSeeder extends Seeder
             $randomCpls = collect($randomCpls)->values();
 
             foreach ($randomCpls as $order => $cplId) {
-                $cpmk->cpls()->attach($cplId, [
-                    'sort_order' => $order,
+                $cpmk->cpls()->syncWithoutDetaching([
+                    $cplId => ['sort_order' => $order],
                 ]);
             }
 
@@ -164,8 +168,8 @@ class RPSSeeder extends Seeder
                 $randomRefs = collect($randomRefs)->values(); // 🔥 WAJIB
 
                 foreach ($randomRefs as $order => $refId) {
-                    $cpmk->refs()->attach($refId, [
-                        'sort_order' => $order,
+                    $cpmk->refs()->syncWithoutDetaching([
+                        $refId => ['sort_order' => $order],
                     ]);
                 }
             }
@@ -187,16 +191,15 @@ class RPSSeeder extends Seeder
                 ]);
 
                 // Sub ↔ CPMK
-                $sub->cpmks()->attach($cpmk->id, [
-                    'sort_order' => $j - 1,
+                $sub->cpmks()->syncWithoutDetaching([
+                    $cpmk->id => ['sort_order' => $j - 1],
                 ]);
 
                 // Sub ↔ Referensi
                 if (! empty($refIds)) {
-                    $sub->refs()->attach(
-                        $refIds[array_rand($refIds)],
-                        ['sort_order' => 0]
-                    );
+                    $sub->refs()->syncWithoutDetaching([
+                        $refIds[array_rand($refIds)] => ['sort_order' => 0],
+                    ]);
                 }
             }
         }
@@ -213,10 +216,10 @@ class RPSSeeder extends Seeder
             'created_at' => $waktu,
         ]);
 
-        $rps->cpmks()->attach($cpmk->id);
+        $rps->cpmks()->syncWithoutDetaching([$cpmk->id]);
 
         // Hubungkan ke CPL utama
-        $cpmk->cpls()->attach($cpl1->id);
+        $cpmk->cpls()->syncWithoutDetaching([$cpl1->id]);
 
         $kodeScpmk = 'SUB1'.$mk->id;
         $sub = SubCPMK::updateOrCreate([
@@ -231,10 +234,10 @@ class RPSSeeder extends Seeder
             'created_at' => $waktu,
         ]);
 
-        $sub->cpmks()->attach($cpmk->id);
+        $sub->cpmks()->syncWithoutDetaching([$cpmk->id]);
 
         if (! empty($refIds)) {
-            $sub->refs()->attach($refIds[0]);
+            $sub->refs()->syncWithoutDetaching([$refIds[0]]);
         }
     }
 }

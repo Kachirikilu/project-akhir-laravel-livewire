@@ -5,12 +5,12 @@
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <h4
         class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        RPS yang Terhubung di CPMK ini</h4>
+        RPS yang Terhubung di {{ $nameXString }} ini</h4>
 
     <div class="relative">
 
         @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'add' . $nameXString . ', edit' . $nameXString,
+            'wireLoading' => 'add' . ($wireLoading ?? $nameXString) . ', edit' . ($wireLoading ?? $nameXString),
         ])
 
         <div class="space-y-4">
@@ -46,6 +46,10 @@
                 {{-- WADAH LIST DENGAN SCROLL --}}
                 <div class="relative space-y-3 max-h-[450px] overflow-y-auto pr-2 scrollbar-thin">
 
+                    @php
+                        $rps_items_list = is_iterable($rps_items_list) ? $rps_items_list : [];
+                    @endphp
+
                     @if (count($rps_items_list) === 0)
                         <div
                             class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">
@@ -54,7 +58,7 @@
                         </div>
                     @else
                         @foreach ($rps_items_list as $index => $r)
-                            <div wire:key="rps-item-{{ $r['id'] }}" x-data="{ expanded: false }"
+                            <div wire:key="rps-row-{{ $r['id'] }}-{{ $nameXString }}" x-data="{ expanded: false }"
                                 wire:target="loadingRPSList"
                                 wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                                 class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden transition-all shadow-sm {{ $theme['hover-border'] }}">
@@ -179,6 +183,8 @@
                                                                 '{{ $r['akademik'] ?? '' }}',
                                                                 '{{ $r['draf'] ?? '' }}',
                                                                 '{{ $r['count_scpmk'] }}',
+                                                                '{{ $r['bobot_uts'] }}',
+                                                                '{{ $r['bobot_uas'] }}',
                                                                 '{{ $r['total_bobot'] }}'
                                                             );
                                                             $flux.modal('rps-modal').show();
@@ -206,7 +212,7 @@
                                 <div
                                     wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}">
                                     {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                        'typeXLoading' => 'loadingRPSList'
+                                        'typeXLoading' => 'loadingRPSList',
                                     ]) }}
                                 </div>
                             </div>

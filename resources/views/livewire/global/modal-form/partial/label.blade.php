@@ -1,6 +1,6 @@
 @if (isset($noLabel) == 0)
     <label for="{{ $modelString }}" class="block text-sm font-medium mb-2 text-[var(--contrast-main-text)]">
-        {{ $nameX2String ?? $nameXString }}
+        {{ $nameX2String ?? $nameXString ?? ucfirst($modelString) }}
         @if ($isRequired ?? true)
             <span class="text-red-500">*</span>
         @endif

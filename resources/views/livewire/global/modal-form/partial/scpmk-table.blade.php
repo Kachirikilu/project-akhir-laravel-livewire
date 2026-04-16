@@ -43,13 +43,13 @@
                                         <flux:badge color="emerald" size="sm" class="text-xs font-bold">Teori
                                         </flux:badge>
                                     </template>
-                                    <template x-if="['Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
+                                    <template x-if="['Praktik', 'Tugas', 'Hasil Proyek'].includes(sub.metode)">
                                         <flux:badge color="cyan" size="sm" class="text-xs font-bold"
                                             x-text="sub.metode">
                                         </flux:badge>
                                     </template>
                                     <template
-                                        x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Projek'].includes(sub.metode)">
+                                        x-if="!['UTS', 'UAS', 'Teori', 'Praktik', 'Tugas', 'Hasil Proyek'].includes(sub.metode)">
                                         <flux:badge color="zinc" size="sm" class="text-xs font-bold"
                                             x-text="sub.metode || '-'">
                                         </flux:badge>

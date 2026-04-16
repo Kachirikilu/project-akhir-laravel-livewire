@@ -44,23 +44,15 @@
     </div>
 
     @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-cpl-input')
-
     @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-scpmk-input')
+    @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-ref-input')
 
     <template x-if="$store.cpmk?.isEdit == 1">
         @include('livewire.staff.rps-management.modal-form.partial.rps-list', [
             'rps_items_list' => $cpmk_rps_items_list,
             'rps_modal_paginator' => $cpmk_rps_modal_paginator,
-            'nameXString' => 'CPMK'
+            'nameXString' => 'CPMK',
         ])
     </template>
-
-    @include('livewire.staff.rps-management.modal-form.cpmk-partial.cpmk-referensi-input')
-
-    {{-- <div x-data x-init="$watch('$store.cpmk.kode_cpmk', value => console.log('kode_cpmk: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpmk.kode_cpmk_1', value => console.log('kode_cpmk_1: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpmk.kode_cpmk_2', value => console.log('kode_cpmk_2: ', value))"></div>
-    <div x-data x-init="$watch('$store.cpmk.deskripsi', value => console.log('deskripsi: ', value))"></div> --}}
-    {{-- <div x-data x-init="$watch('$store.cpmk.mk_items', value => console.log('mk_items: ', value))"></div> --}}
 
 </div>

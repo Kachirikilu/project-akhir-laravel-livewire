@@ -9,8 +9,9 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Capaian Pembelajaran Lulusan</h4>
 
-        @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
-
+        @if (!$this->showCPLModal)
+            @include('livewire.staff.rps-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
+        @endif
     </div>
 
     <div class="relative">
@@ -95,6 +96,7 @@
                 'key' => 'rps',
             
                 'idString' => 'cpl_id_array.rps',
+                'id2String' => 'cpl_id_array',
                 'itemsAllString' => 'cpl_items_array.rps',
             
                 'typeXString' => 'deskripsi',

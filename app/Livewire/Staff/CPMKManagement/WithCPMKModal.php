@@ -4,6 +4,7 @@ namespace App\Livewire\Staff\CPMKManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPMK;
+use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -96,22 +97,22 @@ trait WithCPMKModal
             })->toArray();
 
             $this->cpl_id_array = array_merge(
-                ['cpmk' => []],
+                array_map(fn() => [], $this->cpl_id_array),
                 [$key => $cpmk->cpls->pluck('id')->toArray()]
             );
             $this->cpl_items_array = array_merge(
-                ['cpmk' => []],
+                array_map(fn() => [], $this->cpl_items_array),
                 [$key => $cpmk->cpls->map(function ($c) {
                     return $this->itemsCPL($c);
                 })->toArray()]
             );
 
             $this->ref_id_array = array_merge(
-                ['cpmk' => []],
+                array_map(fn() => [], $this->ref_id_array),
                 [$key => $cpmk->refs->pluck('id')->toArray()]
             );
             $this->ref_items_array = array_merge(
-                ['cpmk' => []],
+                array_map(fn() => [], $this->ref_items_array),
                 [$key => $cpmk->refs->map(function ($c) {
                     return $this->itemsRef($c);
                 })->toArray()]
@@ -226,6 +227,7 @@ trait WithCPMKModal
             'deskripsi' => 'nullable|max:1000',
             'scpmk_id_array' => 'required|array|min:1',
             'cpl_id_array' => 'required|array|min:1',
+            'ref_id_array' => 'nullable|array',
         ];
 
         $validator = Validator::make($data, $rules, $this->validationMessagesCPMK());
@@ -352,8 +354,10 @@ trait WithCPMKModal
                 ]);
 
                 // 2. Update Tanggal Revisi pada RPS Terkait
-                if ($cpmk->rps()->exists()) {
-                    $cpmk->rps()
+                $rpsIds = $cpmk->rps()->pluck('rps.id');
+
+                if ($rpsIds->isNotEmpty()) {
+                    RPS::whereIn('id', $rpsIds)
                         ->where('is_draf', 0)
                         ->update(['revisi' => now()]);
                 }
@@ -418,8 +422,6 @@ trait WithCPMKModal
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi CPMK wajib diisi!',
             'deskripsi.max' => 'Deskripsi CPMK terlalu panjang (Maksimal 1000 karakter)!',
-            'is_draf.required' => 'Status CPMK wajib ditentukan!',
-            'is_draf.boolean' => 'Format status draf tidak valid!',
 
             // CPMK & Relasi Data
             'scpmk_id_array.required' => 'Minimal pilih satu Sub-CPMK untuk CPMK ini!',
@@ -431,40 +433,24 @@ trait WithCPMKModal
             'cpl_id_array.min' => 'Minimal harus ada satu CPL yang dipilih!',
 
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
-
-            // Form Mata Kuliah (Legacy/Template)
-            'nama_mk.required' => 'Nama Mata Kuliah wajib diisi!',
-            'semester.required' => 'Semester wajib diisi!',
-            'semester.integer' => 'Semester harus berupa angka!',
-            'semester.min' => 'Semester minimal adalah 1!',
-            'semester.max' => 'Semester maksimal adalah 8!',
-            'digit_semester.required' => 'Digit Semester wajib diisi!',
-            'digit_semester.size' => 'Digit Semester harus tepat 2 karakter (contoh: 01)!',
-            'digit_mk.required' => 'Digit MK wajib diisi!',
-            'digit_mk.size' => 'Digit MK harus tepat 2 karakter (contoh: 07)!',
-            'sks_kuliah.required' => 'SKS Mata Kuliah wajib diisi!',
-            'sks_kuliah.integer' => 'SKS harus berupa angka!',
-            'sks_kuliah.min' => 'SKS minimal adalah 1!',
-            'tipe_sks.required' => 'Tipe SKS wajib dipilih!',
-            'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan!',
         ];
     }
 
     private function resetInputCPMK()
     {
         $this->scpmkNameSearch = '';
-        $this->cplNameSearch = ['cpmk' => ''];
-        $this->refNameSearch = ['cpmk' => ''];
-
+        $this->cplNameSearch = array_map(fn() => '', $this->cplNameSearch);
+        $this->refNameSearch = array_map(fn() => '', $this->refNameSearch);
+        
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
         $this->scpmk_sub_items_array = [];
 
-        $this->cpl_id_array = ['cpmk' => []];
-        $this->cpl_items_array = ['cpmk' => []];
+        $this->cpl_id_array = array_map(fn() => [], $this->cpl_id_array);
+        $this->cpl_items_array = array_map(fn() => [], $this->cpl_items_array);
 
-        $this->ref_id_array = ['cpmk' => []];
-        $this->ref_items_array = ['cpmk' => []];
+        $this->ref_id_array = array_map(fn() => [], $this->ref_id_array);
+        $this->ref_items_array = array_map(fn() => [], $this->ref_items_array);
 
         $this->resetErrorBag();
     }
