@@ -158,6 +158,7 @@ trait WithMKSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = $this->mkQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('nama_mk', 'asc')
                 ->limit(12 - $mainResults->count())
                 ->get();
                 

@@ -15,16 +15,22 @@
         <span>{{ $itemKode }}</span>
         @if ($typeX2String ?? null)
             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-            <span>{{ $itemLabel2 }}</span>
+            <span>
+                @if ($typeX2String == 'count_scpmk')
+                    {{ $itemLabel2 }} Pertemuan
+                @else
+                    {{ $itemLabel2 }}
+                @endif
+            </span>
         @endif
         @if ($typeX3String ?? null)
             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
             <span>
-            @if ($typeX3String == 'bobot' || $typeX3String == 'total_bobot')
-                Bobot: {{ $itemLabel3 }}%
-            @else
-                {{ $itemLabel3 }}
-            @endif
+                @if ($typeX3String == 'bobot' || $typeX3String == 'total_bobot')
+                    Bobot: {{ $itemLabel3 }}%
+                @else
+                    {{ $itemLabel3 }}
+                @endif
             </span>
         @endif
     </div>

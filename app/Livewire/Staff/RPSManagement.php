@@ -230,17 +230,16 @@ class RPSManagement extends Component
 
     public function render()
     {
+        $this->inputPrFilter();
+        // $this->inputJrFilter();
+        // $this->inputFkFilter();
         $this->inputMKFilter();
         $this->inputRPSFilter();
         $this->inputCPMKFilter();
         $this->inputSCPMKFilter();
         $this->inputCPLFilter();
-        $this->inputRefFilter();
+        // $this->inputRefFilter();
         $this->inputDosenFilter();
-
-        $this->inputPrFilter();
-        $this->inputJrFilter();
-        $this->inputFkFilter();
 
         $queryRPS = $this->inputRPSSearch();
         $baseDataRPS = $this->inputRPSSearch()
@@ -407,17 +406,9 @@ class RPSManagement extends Component
 
         // Tahun ini
         $stats['ref-year'] = $baseDataRef->where('tahun', $currentYear)->count();
-
-        // 3 Tahun Terakhir (Antara 3 tahun lalu s/d tahun lalu)
         $stats['ref-3-years'] = $baseDataRef->whereBetween('tahun', [$threeYearsAgo->year, $currentYear - 1])->count();
-
-        // 5 Tahun Terakhir (Antara 5 tahun lalu s/d 4 tahun lalu)
         $stats['ref-5-years'] = $baseDataRef->whereBetween('tahun', [$fiveYearsAgo->year, $threeYearsAgo->year - 1])->count();
-
-        // 10 Tahun Terakhir (Antara 10 tahun lalu s/d 6 tahun lalu)
         $stats['ref-10-years'] = $baseDataRef->whereBetween('tahun', [$tenYearsAgo->year, $fiveYearsAgo->year - 1])->count();
-
-        // Tambahan: Referensi Jadul (Di bawah 10 tahun)
         $stats['ref-old'] = $baseDataRef->where('tahun', '<', $tenYearsAgo->year)->count();
 
         return view('livewire.staff.rps-management', array_merge($data, [

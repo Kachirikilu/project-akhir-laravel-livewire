@@ -189,6 +189,7 @@ trait WithRPSSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = RPS::whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('id', 'desc')
                 ->limit(12 - $mainResults->count())
                 ->get();
 

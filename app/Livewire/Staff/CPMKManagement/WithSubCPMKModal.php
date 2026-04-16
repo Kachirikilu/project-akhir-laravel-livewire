@@ -244,7 +244,7 @@ trait WithSubCPMKModal
             $this->showSCPMKModal = false;
 
         } catch (ValidationException $e) {
-            $this->toast(text: 'Validasi Gagal', variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal: '.$e->getMessage(), variant: 'danger');
@@ -266,7 +266,9 @@ trait WithSubCPMKModal
         try {
             $validated = $this->inputModalSCPMK(true, $data);
 
-            DB::transaction(function () use ($validated) {
+            $updatedSCPMK = null;
+
+            DB::transaction(function () use ($validated, &$updatedSCPMK) {
                 $scpmk = SubCPMK::findOrFail($this->selected_id_scpmk);
 
                 // 1. Identifikasi kondisi metode SEBELUM update
@@ -287,6 +289,9 @@ trait WithSubCPMKModal
                     'waktu_mandiri' => $validated['waktu_mandiri'] ?: null,
                     'bobot' => (float) ($validated['bobot'] ?: 0),
                 ]);
+
+                $scpmk->refresh();
+                $updatedSCPMK = $scpmk;
 
                 // 3. Identifikasi kondisi metode SESUDAH update
                 $afterMethod = strtoupper($validated['metode']);
@@ -340,6 +345,10 @@ trait WithSubCPMKModal
                 $scpmk->refs()->sync($syncRef);
             });
 
+            if ($updatedSCPMK) {
+                $this->refreshUpdatedSCPMKInArrays($updatedSCPMK);
+            }
+
             $this->toast(message: 'Sub-CPMK Berhasil diperbarui', type: 'update');
             $this->showSCPMKModal = false;
             $this->dispatch('refresh-data-scpmk');
@@ -351,6 +360,61 @@ trait WithSubCPMKModal
             $this->toast(text: 'Gagal memperbarui: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data-scpmk');
             $this->showSCPMKModal = false;
+        }
+    }
+
+    protected function refreshUpdatedSCPMKInArrays(SubCPMK $scpmk)
+    {
+        if (method_exists($this, 'mapSCPMK')) {
+            $mappedSCPMK = collect($this->mapSCPMK(collect([$scpmk])))->first();
+        } else {
+            $mappedSCPMK = null;
+        }
+
+        if (method_exists($this, 'itemsSCPMK')) {
+            $itemSCPMK = $this->itemsSCPMK($scpmk);
+        } else {
+            $itemSCPMK = null;
+        }
+
+        if ($mappedSCPMK) {
+            foreach ($this->scpmk_sub_items_array ?? [] as $groupIndex => $group) {
+                if (! isset($group['scpmk']) || ! is_array($group['scpmk'])) {
+                    continue;
+                }
+
+                foreach ($group['scpmk'] as $subIndex => $sub) {
+                    if (isset($sub['id']) && $sub['id'] == $scpmk->id) {
+                        $this->scpmk_sub_items_array[$groupIndex]['scpmk'][$subIndex] = $mappedSCPMK;
+                    }
+                }
+            }
+
+            foreach ($this->cpmk_sub_items_array ?? [] as $groupIndex => $group) {
+                if (! isset($group['scpmk']) || ! is_array($group['scpmk'])) {
+                    continue;
+                }
+
+                foreach ($group['scpmk'] as $subIndex => $sub) {
+                    if (isset($sub['id']) && $sub['id'] == $scpmk->id) {
+                        $this->cpmk_sub_items_array[$groupIndex]['scpmk'][$subIndex] = $mappedSCPMK;
+                    }
+                }
+            }
+        }
+
+        if ($itemSCPMK) {
+            foreach ($this->scpmk_items_array ?? [] as $index => $item) {
+                if (isset($item['id']) && $item['id'] == $scpmk->id) {
+                    $this->scpmk_items_array[$index] = $itemSCPMK;
+                }
+            }
+
+            foreach ($this->cpmk_items_array ?? [] as $index => $item) {
+                if (isset($item['id']) && $item['id'] == $scpmk->id) {
+                    $this->cpmk_items_array[$index] = $itemSCPMK;
+                }
+            }
         }
     }
 

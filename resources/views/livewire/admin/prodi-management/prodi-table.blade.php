@@ -98,7 +98,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
                         'typeXString' => $switchTable,
                         'nameXString' => $xNameString,
@@ -142,7 +142,7 @@
                             @endswitch
                         </button>
 
-                        @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
+                        @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                             'x' => $x,
                             'typeXString' => $switchTable,
                             'nameXString' => $xNameString
@@ -157,7 +157,7 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.admin.prodi-management.modal-form.prodi-menu', [
+                    @include('livewire.admin.prodi-management.prodi-toolbar-table', [
                         'x' => $x,
                         'typeXString' => $switchTable,
                         'nameXString' => $xNameString

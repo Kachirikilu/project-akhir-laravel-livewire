@@ -27,7 +27,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Admin</span>
                         <flux:icon wire:loading wire:target="addUser('admin')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -46,7 +46,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Dosen</span>
                         <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -65,7 +65,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Mahasiswa</span>
                         <flux:icon wire:loading wire:target="addUser('mahasiswa')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -85,7 +85,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Input File Excel</span>
                         <flux:icon wire:loading wire:target="addUser('file')" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
             </flux:menu>

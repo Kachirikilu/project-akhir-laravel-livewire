@@ -36,12 +36,12 @@ trait WithRPSFilters
         if (! empty($this->selectedPrId)) {
             $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
         }
-        if (! empty($this->selectedJrId)) {
-            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
-        }
-        if (! empty($this->selectedFkId)) {
-            $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
-        }
+        // if (! empty($this->selectedJrId)) {
+        //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+        // }
+        // if (! empty($this->selectedFkId)) {
+        //     $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+        // }
         if (! empty($this->selectedMKId)) {
             $queryRPS->where('rps.mk_id', $this->selectedMKId);
         }
@@ -93,53 +93,6 @@ trait WithRPSFilters
         }
         $this->resetPage();
     }
-
-    // public function sortFieldOrderRPS($queryRPS)
-    // {
-    //     match ($this->switchTable) {
-    //         'rps' => match ($this->sortField) {
-    //             'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-    //                             ->orderBy('mata_kuliahs.nama_mk', $this->sortDirection),
-
-    //             'kode' => $this->applyRPSKodeSort($queryRPS),
-
-    //             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
-    //             'revisi' => $queryRPS->orderBy('revisi', $this->sortDirection),
-    //             'is_draf'        => $queryRPS->orderBy('is_draf', $this->sortDirection),
-    //             default          => $queryRPS->orderBy('rps.id', 'desc'),
-    //         },
-
-    //         'cpmk' => match ($this->sortField) {
-    //             'kode'      => $queryRPS->orderBy('kode_cpmk', $this->sortDirection),
-    //             'deskripsi' => $queryRPS->orderBy('deskripsi', $this->sortDirection),
-    //             default     => $queryRPS->orderBy('id', 'desc'),
-    //         },
-
-    //         'scpmk' => match ($this->sortField) {
-    //             'kode'      => $queryRPS->orderBy('kode_scpmk', $this->sortDirection),
-    //             'deskripsi' => $queryRPS->orderBy('deskripsi', $this->sortDirection),
-    //             'bobot'     => $queryRPS->orderBy('bobot', $this->sortDirection),
-    //             default     => $queryRPS->orderBy('id', 'desc'),
-    //         },
-
-    //         'cpl' => match ($this->sortField) {
-    //             'kode'      => $queryRPS->orderBy('kode_cpl', $this->sortDirection),
-    //             'deskripsi' => $queryRPS->orderBy('deskripsi', $this->sortDirection),
-    //             default     => $queryRPS->orderBy('id', 'desc'),
-    //         },
-
-    //         'ref' => match ($this->sortField) {
-    //             'judul'   => $queryRPS->orderBy('judul', $this->sortDirection),
-    //             'tahun'   => $queryRPS->orderBy('tahun', $this->sortDirection),
-    //             'penulis' => $queryRPS->orderBy('penulis', $this->sortDirection),
-    //             default   => $queryRPS->orderBy('id', 'desc'),
-    //         },
-
-    //         default => $queryRPS->orderBy('id', 'desc'),
-    //     };
-
-    //     return $queryRPS;
-    // }
 
     public function sortFieldOrderRPS($queryRPS)
     {

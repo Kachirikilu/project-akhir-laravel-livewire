@@ -201,6 +201,7 @@ trait WithReferensiSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = $this->refQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('id', 'desc')
                 ->limit(12 - $mainResults->count())
                 ->get();
                 

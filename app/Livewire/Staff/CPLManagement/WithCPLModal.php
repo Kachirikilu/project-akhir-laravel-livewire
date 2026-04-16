@@ -244,7 +244,7 @@ trait WithCPLModal
             $this->showCPLModal = false;
 
         } catch (ValidationException $e) {
-            $this->toast(text: 'Validasi Gagal', variant: 'danger');
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal: '.$e->getMessage(), variant: 'danger');

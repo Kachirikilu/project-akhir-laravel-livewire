@@ -171,6 +171,7 @@ trait WithDosenSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = Dosen::whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('name', 'asc')
                 ->limit(12 - $mainResults->count())
                 ->get();
                 

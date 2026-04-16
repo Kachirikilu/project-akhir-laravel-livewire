@@ -48,6 +48,8 @@ trait WithSubCPMKSearchFilters
             'tugas' => $s->tugas,
             'w_tugas' => $s->w_tugas,
             'w_mandiri' => $s->w_mandiri,
+            'waktu_tugas' => $s->waktu_tugas,
+            'waktu_mandiri' => $s->waktu_mandiri,
             'bobot' => $s->bobot ?? 0,
             'ref' => $this->mapRef($s->refs),
         ])->toArray();
@@ -165,7 +167,7 @@ trait WithSubCPMKSearchFilters
                 $this->scpmkResults = $this->getSCPMKbyUser();
             } else {
                 $this->scpmkResults = $this->mapSCPMK(
-                    $query->orderBy('sub_cpmks.deskripsi')->limit(12)->get()
+                    $query->orderBy('sub_cpmks.deskripsi', 'desc')->limit(12)->get()
                 );
             }
         }
@@ -196,6 +198,7 @@ trait WithSubCPMKSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = SubCPMK::whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('id', 'desc')
                 ->limit(12 - $mainResults->count())
                 ->get();
 

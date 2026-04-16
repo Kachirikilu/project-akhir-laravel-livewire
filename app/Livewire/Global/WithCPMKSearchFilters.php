@@ -48,6 +48,7 @@ trait WithCPMKSearchFilters
                 'kode' => $c->kode,
                 'deskripsi' => $c->deskripsi_cpl,
                 'scpmk' => $this->mapSCPMK($c->scpmks),
+                'count_scpmk' => $c->count_scpmk,
                 'ref' => $this->mapRef($cpmkUniqueRefs),
                 'cpl' => $this->mapCPL($c->cpls),
                 'total_bobot' => $c->scpmks->sum('bobot'),
@@ -70,7 +71,8 @@ trait WithCPMKSearchFilters
             'id' => $c->id,
             'kode' => $c->kode,
             'slot1' => $c->deskripsi_cpl,
-            'slot2' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
+            'slot2' => $c->count_scpmk,
+            'slot3' => $c->total_bobot ?? ($c->scpmks ? $c->scpmks->sum('bobot') : 0),
         ];
     }
 
@@ -173,7 +175,7 @@ trait WithCPMKSearchFilters
                 $this->cpmkResults = $this->getCPMKbyUser();
             } else {
                 $this->cpmkResults = $this->mapCPMK(
-                    $query->orderBy('cpmks.id')->limit(12)->get()
+                    $query->orderBy('cpmks.id', 'desc')->limit(12)->get()
                 );
             }
         }
@@ -203,7 +205,8 @@ trait WithCPMKSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = $this->cpmkQuery()->whereNotIn('id', $mainResults->pluck('id'))->with(['scpmks'])
+            $extra = $this->cpmkQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('id', 'desc')->with(['scpmks'])
                 ->limit(12 - $mainResults->count())
                 ->get();
 

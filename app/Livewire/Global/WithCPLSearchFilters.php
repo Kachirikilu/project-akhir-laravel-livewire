@@ -173,7 +173,7 @@ trait WithCPLSearchFilters
                 $this->cplResults[$key] = $this->getCPLbyUser();
             } else {
                 $this->cplResults[$key] = $this->mapCPL(
-                    $query->orderBy('cpls.id')->limit(12)->get()
+                    $query->orderBy('cpls.id', 'desc')->limit(12)->get()
                 );
             }
         }
@@ -240,6 +240,7 @@ trait WithCPLSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = $this->cplQuery()->whereNotIn('id', $mainResults->pluck('id'))
+                ->orderBy('id', 'desc')
                 ->limit(12 - $mainResults->count())
                 ->get();
 

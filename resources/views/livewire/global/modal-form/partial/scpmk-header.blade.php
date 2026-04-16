@@ -29,7 +29,18 @@
                 <span class="font-bold text-[var(--hover-focus-color)]" x-text="'ID: ' + id"></span>
                 <span class="mx-1.5 opacity-50">|</span>
                 <span class="flex items-center gap-1">
-                    Total Bobot:
+                    <span x-text="itemsAll[index]?.slot2"></span>
+                    @if ($typeX2String == 'count_scpmk')
+                         Pertemuan
+                    @endif
+                </span>
+                <span class="mx-1.5 opacity-50">|</span>
+                <span class="flex items-center gap-1">
+                    @if ($typeX3String == 'total_bobot')
+                        Total Bobot:
+                    @else
+                        Bobot:
+                    @endif
                     <span class="font-black text-[var(--hover-focus-color)]"
                         x-text="(subItems[index]?.scpmk || []).reduce((t, s) => t + Number(s.bobot || 0), 0) + '%'">
                     </span>

@@ -27,7 +27,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Program Studi</span>
                         <flux:icon wire:loading wire:target="addMK(1)" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -46,7 +46,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Jurusan</span>
                         <flux:icon wire:loading wire:target="addMK(2)" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -65,7 +65,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Fakultas</span>
                         <flux:icon wire:loading wire:target="addMK(3)" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
 
@@ -84,7 +84,7 @@
                     <div class="flex justify-between items-center w-full">
                         <span>Universitas</span>
                         <flux:icon wire:loading wire:target="addMK(4)" name="arrow-path"
-                            class="animate-spin h-4 w-4" />
+                            class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
             </flux:menu>

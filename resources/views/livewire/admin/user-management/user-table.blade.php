@@ -187,7 +187,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.user-management.modal-form.user-menu', [
+                    @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                     ])
@@ -266,7 +266,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.admin.user-management.modal-form.user-menu', [
+                    @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                     ])
@@ -283,7 +283,7 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.admin.user-management.modal-form.user-menu', [
+                    @include('livewire.admin.user-management.user-toolbar-table', [
                         'x' => $user,
                         'nameXString' => 'Pengguna',
                     ])

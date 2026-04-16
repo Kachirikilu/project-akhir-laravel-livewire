@@ -1,10 +1,10 @@
 <div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
-    @include('livewire.staff.rps-management.obe-toolbar', ["typeXString" => 'all', 'isFlyout' => false])
-    @include('livewire.staff.rps-management.obe-switch-table')
-    @include('livewire.staff.rps-management.obe-search-and-filters')
+    @include('livewire.staff.obe-management.obe-toolbar', ["typeXString" => 'all', 'isFlyout' => false])
+    @include('livewire.staff.obe-management.obe-switch-table')
+    @include('livewire.staff.obe-management.obe-search-and-filters')
 
     <div wire:loading.class="opacity-50" wire:target="switchingTable">
-        @include('livewire.staff.rps-management.obe-table', [
+        @include('livewire.staff.obe-management.obe-table', [
             'xResults' => match ($this->switchTable) {
                 'rps' => $rps,
                 'cpmk' => $cpmk,
@@ -26,17 +26,11 @@
         ])
     </div>
 
-    @include('livewire.staff.rps-management.rps-flyout')
-
-
-    {{-- @if ($this->switchTable !== 'cpl' && $this->switchTable !== 'ref') --}}
-        @include('livewire.staff.rps-management.cpmk-flyout')
-        @include('livewire.staff.rps-management.scpmk-flyout')
-    {{-- @endif --}}
+    @include('livewire.staff.obe-management.rps-management.rps-flyout')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-flyout')
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-flyout')
+    @include('livewire.staff.obe-management.cpl-management.cpl-flyout')
+    @include('livewire.staff.obe-management.ref-management.ref-flyout')
     
-    @include('livewire.staff.rps-management.cpl-flyout')
-    @include('livewire.staff.rps-management.ref-flyout')
-
-    
-    {{-- @include('livewire.staff.rps-management.rps-modal-delete') --}}
+    {{-- @include('livewire.staff.obe-management.rps-management.rps-modal-delete') --}}
 </div>

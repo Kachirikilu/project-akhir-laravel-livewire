@@ -31,7 +31,6 @@
     </div>
 
     {{-- BAGIAN SEARCH UTAMA --}}
-
     <div class="grid grid-cols-1 grid-rows-1 gap-2 items-center w-full z-20">
         <div x-show="activeTab === 'prodi'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"

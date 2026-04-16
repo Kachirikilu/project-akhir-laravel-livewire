@@ -152,7 +152,7 @@
                         @endswitch 
                     </button>
 
-                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                    @include('livewire.staff.mk-management.mk-toolbar-table', [
                         'x' => $mk,
                         'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
@@ -204,7 +204,7 @@
                         @endswitch
                     </button>
 
-                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                    @include('livewire.staff.mk-management.mk-toolbar-table', [
                         'x' => $mk,
                         'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
@@ -252,7 +252,7 @@
                         @endif
                     </button>
 
-                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                    @include('livewire.staff.mk-management.mk-toolbar-table', [
                         'x' => $mk,
                         'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
@@ -269,7 +269,7 @@
                         inset="top bottom">
                     </flux:button>
 
-                    @include('livewire.staff.mk-management.modal-form.mk-menu', [
+                    @include('livewire.staff.mk-management.mk-toolbar-table', [
                         'x' => $mk,
                         'typeXString' => $mk->level_mk,
                         'editString' => 'editMK',
