@@ -57,7 +57,7 @@
     @include('livewire.staff.obe-management.scpmk-management.modal-form.scpmk-partial.scpmk-ref-input')
 
     <template x-if="$store.scpmk?.isEdit == 1">
-        @include('livewire.staff.obe-management.partial.rps-list', [
+        @include('livewire.staff.obe-management.obe-partial.rps-list', [
             'rps_items_list' => $scpmk_rps_items_list,
             'rps_modal_paginator' => $scpmk_rps_modal_paginator,
             'nameXString' => 'Sub-CPMK',

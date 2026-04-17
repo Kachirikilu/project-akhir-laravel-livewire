@@ -21,8 +21,8 @@ trait WithMKFilters
     public function inputMKSearch()
     {
         $queryMK = MataKuliah::query()
-        ->with(['prodis', 'prodis.jr_rel', 'prodis.jr_rel.fk_rel']);
-        
+            ->with(['prodis', 'prodis.jr_rel', 'prodis.jr_rel.fk_rel']);
+
         $search = $this->search;
 
         if (! empty($search)) {
@@ -69,41 +69,40 @@ trait WithMKFilters
         $this->resetPage();
     }
 
-
-   public function sortFieldOrderMK($queryMK)
+    public function sortFieldOrderMK($queryMK)
     {
         $queryMK->select('mata_kuliahs.*');
 
         return match ($this->sortField) {
-            'mk'  => $queryMK->orderBy('nama_mk', $this->sortDirection),
-            'semester'=> $queryMK->orderBy('semester', $this->sortDirection),
-            'sks'     => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
-            'wajib'   => $queryMK->orderBy('is_wajib', $this->sortDirection),
-            
-            'sks_tm'   => $this->applyMKSksTypeSort($queryMK),
-            'sks_pr'   => $this->applyMKSksTypeSort($queryMK),
-            'sks_pl'   => $this->applyMKSksTypeSort($queryMK),
-            'sks_sm'   => $this->applyMKSksTypeSort($queryMK),
-            
-            'digit_mk'=> $queryMK->orderBy('digit_mk', $this->sortDirection),
+            'mk' => $queryMK->orderBy('nama_mk', $this->sortDirection),
+            'semester' => $queryMK->orderBy('semester', $this->sortDirection),
+            'sks' => $queryMK->orderBy('sks_kuliah', $this->sortDirection),
+            'wajib' => $queryMK->orderBy('is_wajib', $this->sortDirection),
+
+            'sks_tm' => $this->applyMKSksTypeSort($queryMK),
+            'sks_pr' => $this->applyMKSksTypeSort($queryMK),
+            'sks_pl' => $this->applyMKSksTypeSort($queryMK),
+            'sks_sm' => $this->applyMKSksTypeSort($queryMK),
+
+            'digit_mk' => $queryMK->orderBy('digit_mk', $this->sortDirection),
             'created_at' => $queryMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryMK->orderBy('updated_at', $this->sortDirection),
-            
+
             'kode' => $this->applyMKKodeSort($queryMK),
 
-            default => $queryMK->orderBy('mata_kuliahs.id', 'desc'),
+            default => $queryMK->orderBy('mata_kuliahs.id', $this->sortDirection),
         };
     }
 
     private function applyMKSksTypeSort($queryMK)
     {
         $typeMap = [
-            'sks_tm' => 1, 
-            'sks_pr' => 2, 
-            'sks_pl' => 3, 
-            'sks_sm' => 4
+            'sks_tm' => 1,
+            'sks_pr' => 2,
+            'sks_pl' => 3,
+            'sks_sm' => 4,
         ];
-        
+
         $targetType = $typeMap[$this->sortField];
 
         return $queryMK->orderByRaw("
@@ -113,23 +112,50 @@ trait WithMKFilters
 
     private function applyMKKodeSort($queryMK)
     {
-        return $queryMK->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-            ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
-            ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-            ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
-            ->groupBy('mata_kuliahs.id')
-            ->orderByRaw("
-                CONCAT(
-                    MAX(CASE 
-                        WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-                        WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
-                        ELSE 'UNI'
-                    END), 
-                    MAX(mata_kuliahs.digit_semester), 
-                    MAX(mata_kuliahs.digit_mk)
-                ) $this->sortDirection
-            ");
+        return $queryMK->orderByRaw("
+            (
+                SELECT CONCAT(
+                    MIN(
+                        CASE 
+                            WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_jr, f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 2 THEN COALESCE(j.kode_jr, f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                            WHEN mk.level_mk = 4 THEN 'UNI'
+                            ELSE mk.kode_mk
+                        END
+                    ),
+                    LPAD(mk.digit_semester, 2, '0'),
+                    LPAD(mk.digit_mk, 2, '0')
+                )
+                FROM mata_kuliahs mk
+                LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
+                LEFT JOIN prodis p ON ppm.pr_id = p.id
+                LEFT JOIN jurusans j ON p.jr_id = j.id
+                LEFT JOIN fakultas f ON j.fk_id = f.id
+                WHERE mk.id = mata_kuliahs.id
+            ) {$this->sortDirection}
+        ");
     }
+
+    // private function applyMKKodeSort($queryMK)
+    // {
+    //     return $queryMK->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
+    //         ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
+    //         ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+    //         ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
+    //         ->groupBy('mata_kuliahs.id')
+    //         ->orderByRaw("
+    //             CONCAT(
+    //                 MAX(CASE
+    //                     WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
+    //                     WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
+    //                     ELSE 'UNI'
+    //                 END),
+    //                 MAX(mata_kuliahs.digit_semester),
+    //                 MAX(mata_kuliahs.digit_mk)
+    //             ) $this->sortDirection
+    //         ");
+    // }
 }

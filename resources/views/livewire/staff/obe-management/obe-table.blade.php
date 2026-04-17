@@ -20,6 +20,11 @@
             $padingKolom;
     @endphp
 
+    @php
+        $borderRight = 'border-[var(--border-table-color)] border-r';
+        $borderLeft = 'border-[var(--border-table-color)] border-l';
+    @endphp
+
     <x-slot:header>
 
         <tr>
@@ -294,9 +299,9 @@
 
             @if ($switchTable === 'rps')
                 <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->akademik ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48 border-l">{{ $x->mk ?? '-' }}</td>
+                <td class="{{ $secondKolom }} {{ $borderLeft }} min-w-48">{{ $x->mk ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-24 text-center">{{ $x->sks ?? '-' }} SKS</td>
-                <td class="{{ $mainKolom }} text-center border-r">
+                <td class="{{ $mainKolom }} {{ $borderRight }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @if ($x->wajib)
@@ -317,7 +322,8 @@
                     </flux:dropdown>
                 </td>
 
-                <td class="{{ $secondKolom }} min-w-32 text-center border-l">{{ $x->count_cpmk . ' CPMK' ?? '-' }}
+                <td class="{{ $secondKolom }} {{ $borderLeft }} min-w-32 text-center">
+                    {{ $x->count_cpmk . ' CPMK' ?? '-' }}
                 </td>
                 <td class="{{ $secondKolom }} min-w-48 text-center">
 
@@ -349,19 +355,19 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }} text-center border-r">
+                <td class="{{ $secondKolom }} {{ $borderRight }} text-center">
 
                     <flux:dropdown>
                         <button class="cursor-pointer">
-                            @if ($x->total_bobot >= 80 && $x->total_bobot < 140)
+                            @if ($x->total_bobot >= 70 && $x->total_bobot < 200)
                                 <flux:badge icon="check-circle" color="green" size="sm">
                                     {{ $x->total_bobot }}%
                                 </flux:badge>
-                            @elseif ($x->total_bobot >= 140)
+                            @elseif ($x->total_bobot >= 200)
                                 <flux:badge icon="exclamation-triangle" color="blue" size="sm">
                                     {{ $x->total_bobot }}%
                                 </flux:badge>
-                            @elseif ($x->total_bobot > 20 && $x->total_bobot < 80)
+                            @elseif ($x->total_bobot > 20 && $x->total_bobot < 70)
                                 <flux:badge icon="clock" color="orange" size="sm">
                                     {{ $x->total_bobot }}%
                                 </flux:badge>
@@ -406,11 +412,13 @@
             @endif
 
             @if ($switchTable === 'cpmk')
-                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">{{ $x->deskripsi_cpl ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
+                    {{ $x->deskripsi_cpl ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'scpmk' || $switchTable === 'cpl')
-                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">{{ $x->deskripsi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} min-w-84 text-justify leading-relaxed [hyphens:auto]">
+                    {{ $x->deskripsi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'cpmk')
@@ -419,7 +427,7 @@
             @endif
 
             @if ($switchTable === 'scpmk')
-                <td class="{{ $secondKolom }} min-w-48 border-l">{{ $x->materi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} {{ $borderLeft }} min-w-48">{{ $x->materi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
 
@@ -506,7 +514,7 @@
                             <flux:icon.link variant="micro" /> <span>{{ $x->link ?? '-' }}</span>
                         </a>
                     @else
-                    -
+                        -
                     @endif
                     </template>
 

@@ -6,14 +6,14 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'fk_items',
+                    'kodeString' => 'jr_items',
                     'placeholder' => '---',
-                    'iconString' => 'building-library'
+                    'iconString' => 'book-open'
                 ])
             </div>
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.mk-management.modal-form.partial.digit-semester')
+                @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-digit-semester')
             </div>
 
             <div class="sm:col-span-2">
@@ -25,7 +25,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1
+                    'isFocusSelect' => 1,
                 ])
             </div>
         </div>
@@ -34,23 +34,24 @@
         @enderror
     </div>
 
-
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $fkResults,
-        'selectX' => 'selectFk',
-        'modelString' => 'nama_fk_search',
+        'xResults' => $jrResults,
+        'selectX' => 'selectJr',
+        'modelString' => 'nama_jr_search',
 
-        'idString' => 'fk_id',
-        'itemsAllString' => 'fk_items',
+        'idString' => 'jr_id',
+        'itemsAllString' => 'jr_items',
 
-        'resetXInput' => 'resetFkInput()',
-        'typeXString' => 'fakultas',
-        'nameXString' => 'Fakultas',
-        'nameSearchString' => 'fkNameSearch',
-        'fetchString' => 'fetchFk',
+        'resetXInput' => 'resetJrInput()',
+        'typeXString' => 'jurusan',
+        'typeX2String' => 'fakultas',
+        
+        'nameXString' => 'Jurusan',
+        'nameSearchString' => 'jrNameSearch',
+        'fetchString' => 'fetchJr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchFk'
+        'wireLoading' => 'fetchJr'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -71,9 +72,9 @@
         'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
     
-        'parentIdString' => 'fk_id',
-        'nameXParent' => 'Fakultas',
+        'parentIdString' => 'jr_id',
+        'nameXParent' => 'Jurusan',
         'wireLoading' => 'fetchPr',
-        'wireLoadingParent' => 'selectFk, resetFkInput, selectFkForFilter, resetFkFilter',
+        'wireLoadingParent' => 'selectJr, resetJrInput, selectJrForFilter, resetJrFilter',
     ])
 </div>

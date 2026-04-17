@@ -26,7 +26,7 @@
 
                 {{-- 1. REFERENSI UTAMA (CPMK) --}}
                 <div class="sm:col-span-2">
-                    @include('livewire.staff.obe-management.partial.referensi-list', [
+                    @include('livewire.staff.obe-management.obe-partial.referensi-list', [
                         'alpine' => 'rps',
                         'modelString' => 'ref_cpmk',
                         'targetString' => 'CPMK',
@@ -38,7 +38,7 @@
                 {{-- 2. REFERENSI PENDUKUNG (Sub-CPMK) --}}
                 <div class="sm:col-span-2">
                     <div class="sm:col-span-2">
-                        @include('livewire.staff.obe-management.partial.referensi-list', [
+                        @include('livewire.staff.obe-management.obe-partial.referensi-list', [
                             'alpine' => 'rps',
                             'modelString' => 'ref_scpmk',
                             'targetString' => 'Sub-CPMK',

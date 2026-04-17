@@ -27,7 +27,7 @@
         <form x-on:submit.prevent="$wire.{{ $isEditingCPL ? 'updateCPL' : 'saveCPL' }}($store.cpl)"
             enctype="multipart/form-data" id="cplForm">
 
-            @include('livewire.staff.obe-management.cpl-management.modal-form.cpl-input')
+            @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-input')
 
             <div
                 class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
@@ -35,7 +35,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.modal-form.rps-message-form', ['show' => $showCPLModal])
+                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showCPLModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addCPL, saveCPL, editCPL, updateCPL',
                     ])

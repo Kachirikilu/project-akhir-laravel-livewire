@@ -21,7 +21,7 @@
 
         <div class="space-y-4">
 
-            @include('livewire.staff.obe-management.partial.cpl-list')
+            @include('livewire.staff.obe-management.obe-partial.cpl-list')
 
             @include('livewire.global.modal-form.search-input-array-form', [
                 'alpine' => 'rps',

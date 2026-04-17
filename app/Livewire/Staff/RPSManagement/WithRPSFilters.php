@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Staff\RPSManagement;
 
-use App\Models\Akademik\RPS;
 use App\Models\Akademik\MataKuliah;
+use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
@@ -64,10 +64,8 @@ trait WithRPSFilters
             $queryRPS->where('is_draf', false);
         } elseif ($this->filterRPS === 'rps-draf') {
             $queryRPS->where('is_draf', true);
-        } elseif ($this->filterRPS === 'rps-5-years') {
-            $queryRPS->whereRaw('LEFT(akademik, 4) >= ?', [$fiveYearsAgoYear]);
         } elseif ($this->filterRPS === 'rps-old') {
-            $queryRPS->whereRaw('LEFT(akademik, 4) < ?', [$fiveYearsAgoYear]);
+            $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
         }
     }
 
@@ -160,7 +158,7 @@ trait WithRPSFilters
                         WHERE rps_pivot_cpmk.rps_id = rps.id
                         AND UPPER(sub_cpmks.metode) IN (\'UAS\', \'LAPORAN AKHIR\', \'HASIL PROYEK\', \'HASIL PROJEK\')
                     ) THEN 0 ELSE COALESCE(rps.bobot_uas, 0) END
-                )') ,
+                )'),
                 $this->sortDirection
             ),
 
@@ -173,29 +171,56 @@ trait WithRPSFilters
         };
     }
 
+    // private function applyRPSKodeSort($queryRPS)
+    // {
+    //     return $queryRPS->leftJoin('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
+    //         ->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
+    //         ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
+    //         ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+    //         ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
+    //         ->select('rps.*')
+    //         ->groupBy('rps.id')
+    //         ->orderBy(DB::raw("
+    //             CONCAT(
+    //                 MAX(CASE
+    //                     WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
+    //                     WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
+    //                     ELSE 'UNI'
+    //                 END),
+    //                 MAX(mata_kuliahs.digit_semester),
+    //                 MAX(mata_kuliahs.digit_mk),
+    //                 -- Menambahkan 2 digit terakhir tahun akademik (misal: 26) di akhir string sort
+    //                 RIGHT(rps.akademik, 2)
+    //             )
+    //         "), $this->sortDirection);
+    // }
     private function applyRPSKodeSort($queryRPS)
     {
-        return $queryRPS->leftJoin('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
-            ->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-            ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
-            ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-            ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
-            ->select('rps.*')
-            ->groupBy('rps.id')
-            ->orderBy(DB::raw("
-                CONCAT(
-                    MAX(CASE 
-                        WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-                        WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-                        WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
-                        ELSE 'UNI'
-                    END),
-                    MAX(mata_kuliahs.digit_semester),
-                    MAX(mata_kuliahs.digit_mk),
-                    -- Menambahkan 2 digit terakhir tahun akademik (misal: 26) di akhir string sort
-                    RIGHT(rps.akademik, 2)
-                )
-            "), $this->sortDirection);
+        return $queryRPS->orderByRaw("
+    (
+        SELECT CONCAT(
+            MIN(
+                CASE 
+                    WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_jr, f.kode_fk, 'UNI')
+                    WHEN mk.level_mk = 2 THEN COALESCE(j.kode_jr, f.kode_fk, 'UNI')
+                    WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
+                    WHEN mk.level_mk = 4 THEN 'UNI'
+                    ELSE mk.kode_mk
+                END
+            ),
+            LPAD(mk.digit_semester, 2, '0'),
+            LPAD(mk.digit_mk, 2, '0'),
+            LPAD(RIGHT(rps.akademik, 2), 2, '0')
+        )
+        FROM mata_kuliahs mk
+        LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
+        LEFT JOIN prodis p ON ppm.pr_id = p.id
+        LEFT JOIN jurusans j ON p.jr_id = j.id
+        LEFT JOIN fakultas f ON j.fk_id = f.id
+        WHERE mk.id = rps.mk_id
+    ) {$this->sortDirection}
+");
     }
 }

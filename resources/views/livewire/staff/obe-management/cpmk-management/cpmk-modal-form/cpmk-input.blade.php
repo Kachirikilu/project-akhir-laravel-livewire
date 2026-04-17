@@ -43,12 +43,12 @@
 
     </div>
 
-    @include('livewire.staff.obe-management.cpmk-management.modal-form.cpmk-partial.cpmk-cpl-input')
-    @include('livewire.staff.obe-management.cpmk-management.modal-form.cpmk-partial.cpmk-scpmk-input')
-    @include('livewire.staff.obe-management.cpmk-management.modal-form.cpmk-partial.cpmk-ref-input')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-partial.cpmk-cpl-input')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-partial.cpmk-scpmk-input')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-partial.cpmk-ref-input')
 
     <template x-if="$store.cpmk?.isEdit == 1">
-        @include('livewire.staff.obe-management.partial.rps-list', [
+        @include('livewire.staff.obe-management.obe-partial.rps-list', [
             'rps_items_list' => $cpmk_rps_items_list,
             'rps_modal_paginator' => $cpmk_rps_modal_paginator,
             'nameXString' => 'CPMK',

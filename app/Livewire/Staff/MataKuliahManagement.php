@@ -115,11 +115,11 @@ class MataKuliahManagement extends Component
 
         try {
             // 2. Inisialisasi Base Query (Pencarian Utama)
-            $baseQuery = $this->inputMKSearch()
+            $queryMK = $this->inputMKSearch()
                 ->when($this->showDeleted, fn ($q) => $q->onlyTrashed());
 
-            // 3. Ambil Data Mentah untuk Statistik (Gunakan clone agar tidak merusak baseQuery)
-            $baseData = $baseQuery->clone()
+            // 3. Ambil Data Mentah untuk Statistik (Gunakan clone agar tidak merusak queryMK)
+            $baseMK = $queryMK->clone()
                 ->get([
                     'mata_kuliahs.id',
                     'mata_kuliahs.tipe_sks',
@@ -129,11 +129,11 @@ class MataKuliahManagement extends Component
                 ->unique('id');
 
             // --- Perhitungan Statistik Statistik ---
-            $totalSemuaMK = $baseData->count();
-            $totalTatapMuka = $baseData->where('tipe_sks', 1)->count();
-            $totalPraktikum = $baseData->where('tipe_sks', 2)->count();
-            $totalPraktekLapangan = $baseData->where('tipe_sks', 3)->count();
-            $totalSimulasi = $baseData->where('tipe_sks', 4)->count();
+            $totalSemuaMK = $baseMK->count();
+            $totalTatapMuka = $baseMK->where('tipe_sks', 1)->count();
+            $totalPraktikum = $baseMK->where('tipe_sks', 2)->count();
+            $totalPraktekLapangan = $baseMK->where('tipe_sks', 3)->count();
+            $totalSimulasi = $baseMK->where('tipe_sks', 4)->count();
 
             // 4. Filter berdasarkan Tab (Switch Table)
             $mapTipe = [
@@ -147,8 +147,8 @@ class MataKuliahManagement extends Component
 
             // Filter data untuk counter Opsi (Wajib, Pilihan, Uni) berdasarkan tab aktif
             $currentTabData = $currentTabTipe
-                ? $baseData->where('tipe_sks', $currentTabTipe)
-                : $baseData;
+                ? $baseMK->where('tipe_sks', $currentTabTipe)
+                : $baseMK;
 
             $totalAllOpsi = $currentTabData->count();
             $totalWajib = $currentTabData->where('is_wajib', true)->count();
@@ -156,7 +156,7 @@ class MataKuliahManagement extends Component
             $totalUni = $currentTabData->where('level_mk', 4)->count();
 
             // 5. Query Final untuk Tabel (Pagination)
-            $queryMK = $baseQuery->clone();
+            $queryMK = $queryMK->clone();
 
             if ($currentTabTipe) {
                 $queryMK->where('tipe_sks', $currentTabTipe);
@@ -179,7 +179,7 @@ class MataKuliahManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-            session()->flash('error', 'Terjadi kesalahan database: '.$e->getMessage());
+            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
 
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),

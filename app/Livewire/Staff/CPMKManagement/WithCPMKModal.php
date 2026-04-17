@@ -344,7 +344,59 @@ trait WithCPMKModal
         try {
             $validated = $this->inputModalCPMK(true, $data);
 
-            DB::transaction(function () use ($validated) {
+            $cpmk = CPMK::with(['rps.cpmks.scpmks'])->findOrFail($this->selected_id_cpmk);
+            $selectedScpmkIds = array_values(array_unique($validated['scpmk_id_array'] ?? []));
+            $selectedScpmks = SubCPMK::whereIn('id', $selectedScpmkIds)->get();
+            $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
+
+            $invalidRps = $cpmk->rps->first(function ($rps) use ($cpmk, $selectedScpmks, $uauFields) {
+                if ($rps->is_draf != 0) {
+                    return false;
+                }
+
+                $allScpmks = collect();
+                foreach ($rps->cpmks as $rpsCpmk) {
+                    if ($rpsCpmk->id === $cpmk->id) {
+                        $allScpmks = $allScpmks->concat($selectedScpmks);
+                    } else {
+                        $allScpmks = $allScpmks->concat($rpsCpmk->scpmks);
+                    }
+                }
+
+                $hasUTS = $allScpmks->contains(function ($item) {
+                    $method = strtoupper($item->metode ?? '');
+                    $text = strtoupper($item->deskripsi ?? '');
+
+                    return $method === 'UTS' || str_contains($text, 'UTS');
+                });
+
+                $hasUAS = $allScpmks->contains(function ($item) use ($uauFields) {
+                    $method = strtoupper($item->metode ?? '');
+                    $text = strtoupper($item->deskripsi ?? '');
+
+                    return in_array($method, $uauFields, true)
+                        || str_contains($text, 'UAS')
+                        || str_contains($text, 'LAPORAN AKHIR')
+                        || str_contains($text, 'HASIL PROYEK')
+                        || str_contains($text, 'HASIL PROJEK');
+                });
+
+                $baseTotal = $allScpmks->sum(function ($item) {
+                    return (float) ($item->bobot ?? 0);
+                });
+                $uts = $hasUTS ? 0 : 15;
+                $uas = $hasUAS ? 0 : 20;
+                $adjustedTotal = $baseTotal + $uts + $uas;
+
+                return $adjustedTotal < 70 || $adjustedTotal > 200;
+            });
+
+            if ($invalidRps) {
+                $this->addError('scpmk_id_array', 'Bobot tidak valid: total bobot RPS terkait harus berada di antara 70 dan 200 setelah perubahan CPMK!');
+                throw ValidationException::withMessages($this->getErrorBag()->messages());
+            }
+
+            DB::transaction(function () use ($validated, $selectedScpmks, $uauFields) {
                 $cpmk = CPMK::findOrFail($this->selected_id_cpmk);
 
                 // 1. Update Data Utama CPMK
@@ -353,22 +405,69 @@ trait WithCPMKModal
                     'deskripsi' => $validated['deskripsi'],
                 ]);
 
-                // 2. Update Tanggal Revisi pada RPS Terkait
-                $rpsIds = $cpmk->rps()->pluck('rps.id');
-
-                if ($rpsIds->isNotEmpty()) {
-                    RPS::whereIn('id', $rpsIds)
-                        ->where('is_draf', 0)
-                        ->update(['revisi' => now()]);
-                }
-
-                // 3. Sync Sub-CPMK (SCPMK) ke Pivot
+                // 2. Sync Sub-CPMK (SCPMK) ke Pivot
                 $syncScpmk = [];
                 foreach ($validated['scpmk_id_array'] as $index => $id) {
                     $syncScpmk[(int) $id] = ['sort_order' => $index];
                 }
                 // Pastikan nama relasi di model CPMK adalah scpmks()
                 $cpmk->scpmks()->sync($syncScpmk);
+
+                // 3. Update bobot UTS/UAS dan revisi RPS terkait
+                $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
+                foreach ($cpmk->rps as $rps) {
+                    $allScpmks = collect();
+                    foreach ($rps->cpmks as $rpsCpmk) {
+                        if ($rpsCpmk->id === $cpmk->id) {
+                            $allScpmks = $allScpmks->concat($selectedScpmks);
+                        } else {
+                            $allScpmks = $allScpmks->concat($rpsCpmk->scpmks);
+                        }
+                    }
+
+                    $hasUTS = $allScpmks->contains(function ($item) {
+                        $method = strtoupper($item->metode ?? '');
+                        $text = strtoupper($item->deskripsi ?? '');
+
+                        return $method === 'UTS' || str_contains($text, 'UTS');
+                    });
+
+                    $hasUAS = $allScpmks->contains(function ($item) use ($uauFields) {
+                        $method = strtoupper($item->metode ?? '');
+                        $text = strtoupper($item->deskripsi ?? '');
+
+                        return in_array($method, $uauFields, true)
+                            || str_contains($text, 'UAS')
+                            || str_contains($text, 'LAPORAN AKHIR')
+                            || str_contains($text, 'HASIL PROYEK')
+                            || str_contains($text, 'HASIL PROJEK');
+                    });
+
+                    $updateData = [];
+                    if ($hasUTS) {
+                        if ($rps->bobot_uts !== null) {
+                            $updateData['bobot_uts'] = null;
+                        }
+                    } elseif ($rps->bobot_uts !== 15) {
+                        $updateData['bobot_uts'] = 15;
+                    }
+
+                    if ($hasUAS) {
+                        if ($rps->bobot_uas !== null) {
+                            $updateData['bobot_uas'] = null;
+                        }
+                    } elseif ($rps->bobot_uas !== 20) {
+                        $updateData['bobot_uas'] = 20;
+                    }
+
+                    if ($rps->is_draf == 0) {
+                        $updateData['revisi'] = now();
+                    }
+
+                    if (! empty($updateData)) {
+                        $rps->update($updateData);
+                    }
+                }
 
                 // 4. Sync CPL (Manual/Tambahan)
                 $syncCpl = [];

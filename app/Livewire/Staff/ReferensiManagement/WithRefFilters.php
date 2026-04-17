@@ -76,21 +76,18 @@ trait WithRefFilters
         return $queryRef;
     }
 
-    public function buttonRefFilter($queryRef, $currentYear, $threeYearsAgo, $fiveYearsAgo, $tenYearsAgo)
+    public function buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo, $fiveYearsAgo, $tenYearsAgo)
     {
         if ($this->filterRef === 'ref-year') {
             $queryRef->where('tahun', $currentYear);
-        } elseif ($this->filterRef === 'ref-3-years') {
-            $queryRef->where('tahun', '>=', $threeYearsAgo)
-                    ->where('tahun', '<', $currentYear);
-        } elseif ($this->filterRef === 'ref-5-years') {
-            $queryRef->where('tahun', '>=', $fiveYearsAgo)
-                    ->where('tahun', '<', $threeYearsAgo);
-        } elseif ($this->filterRef === 'ref-10-years') {
-            $queryRef->where('tahun', '>=', $tenYearsAgo)
-                    ->where('tahun', '<', $fiveYearsAgo);
+        } elseif ($this->filterRef === 'ref-2-3-years') {
+            $queryRef->whereBetween('tahun', [$currentYear - 3, $currentYear - 2]);
+        } elseif ($this->filterRef === 'ref-4-5-years') {
+            $queryRef->whereBetween('tahun', [$currentYear - 5, $currentYear - 4]);
+        } elseif ($this->filterRef === 'ref-6-10-years') {
+            $queryRef->whereBetween('tahun', [$currentYear - 10, $currentYear - 6]);
         } elseif ($this->filterRef === 'ref-old') {
-            $queryRef->where('tahun', '<', $tenYearsAgo);
+            $queryRef->where('tahun', '<', $currentYear - 10);
         }
     }
 

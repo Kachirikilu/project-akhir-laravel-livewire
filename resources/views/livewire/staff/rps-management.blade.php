@@ -27,6 +27,8 @@
     </div>
 
     @include('livewire.staff.obe-management.rps-management.rps-flyout')
+    @include('livewire.staff.obe-management.rps-management.rps-show-modal')
+    
     @include('livewire.staff.obe-management.cpmk-management.cpmk-flyout')
     @include('livewire.staff.obe-management.scpmk-management.scpmk-flyout')
     @include('livewire.staff.obe-management.cpl-management.cpl-flyout')

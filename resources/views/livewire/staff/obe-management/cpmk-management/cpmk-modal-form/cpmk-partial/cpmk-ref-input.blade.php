@@ -26,7 +26,7 @@
 
                 {{-- 1. REFERENSI PENDUKUNG (Sub-CPMK) --}}
                 <div class="sm:col-span-2">
-                    @include('livewire.staff.obe-management.partial.referensi-list', [
+                    @include('livewire.staff.obe-management.obe-partial.referensi-list', [
                         'alpine' => 'cpmk',
                         'modelString' => 'ref_scpmk',
                         'targetString' => 'Sub-CPMK',

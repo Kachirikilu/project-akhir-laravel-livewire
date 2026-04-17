@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-use App\Livewire\Staff\RPSManagement\WithPertemuan;
-
-
 trait WithRPSModal
 {
     use HasToast;
-    use WithPertemuan;
+    use WithRPSPertemuan;
+    use WithRPSShow;
 
     public $selected_id_rps;
 
@@ -24,6 +22,10 @@ trait WithRPSModal
     public $showEditRPS = false;
 
     public $showRPSModal = false;
+
+    public $detailRPSModal = false;
+
+    public $detailRPSData = [];
 
     public $mk_id_2;
 
@@ -79,11 +81,11 @@ trait WithRPSModal
                 'mk_rel',
                 'dosens',
                 'cpmks.scpmks',
-                'cpmks.scpmks.refs', // Penting untuk mapping Sub-CPMK
-                'cpmks.refs',        // Referensi Utama CPMK
-                'cpmks.cpls',        // CPL dari CPMK
-                'cpls',              // CPL manual di tingkat RPS
-                'refs',              // Referensi manual di tingkat RPS
+                'cpmks.scpmks.refs',
+                'cpmks.refs',
+                'cpmks.cpls',
+                'cpls',
+                'refs',
             ])->findOrFail($id);
 
             $this->mkNameSearch = $rps->mk_rel?->mk;
@@ -114,22 +116,22 @@ trait WithRPSModal
 
             // 2. Fill Data CPL & Referensi Tambahan (Manual)
             $this->cpl_id_array = array_merge(
-                array_map(fn() => [], $this->cpl_id_array),
+                array_map(fn () => [], $this->cpl_id_array),
                 [$key => $rps->cpls->pluck('id')->toArray()]
             );
             $this->cpl_items_array = array_merge(
-                array_map(fn() => [], $this->cpl_items_array),
+                array_map(fn () => [], $this->cpl_items_array),
                 [$key => $rps->cpls->map(function ($c) {
                     return $this->itemsCPL($c);
                 })->toArray()]
             );
 
             $this->ref_id_array = array_merge(
-                array_map(fn() => [], $this->ref_id_array),
+                array_map(fn () => [], $this->ref_id_array),
                 [$key => $rps->refs->pluck('id')->toArray()]
             );
             $this->ref_items_array = array_merge(
-                array_map(fn() => [], $this->ref_items_array),
+                array_map(fn () => [], $this->ref_items_array),
                 [$key => $rps->refs->map(function ($c) {
                     return $this->itemsRef($c);
                 })->toArray()]
@@ -144,6 +146,58 @@ trait WithRPSModal
             $this->showRPSModal = true;
 
             // Dispatch ke AlpineJS
+            $this->dispatch('fill-modal-rps', rps: $rps);
+            $this->dispatch('refresh-component');
+
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
+    }
+
+    public function showRPS($id, $showMode = false)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        $this->selected_id_rps = $id;
+
+        try {
+            // 1. Load data RPS dengan relasi yang sangat lengkap
+            $rps = RPS::with([
+                'mk_rel.prodis.jr_rel.fk_rel',
+                'dosens',
+                'cpmks.scpmks.dosens',
+                'cpmks.scpmks.refs',
+                'cpmks.refs',
+                'cpmks.cpls',
+                'cpls',
+                'refs',
+            ])->findOrFail($id);
+
+            // dd([
+            //     // 'id' => $rps->id,
+            //     // 'deskripsi' => $rps->deskripsi,
+            //     // 'mk' => $rps->mk,
+            //     // 'sks' => $rps->sks,
+            //     // 'wajib' => $rps->wajib,
+            //     // 'wajib_text' => $rps->wajib_text,
+            //     // 'akademik' => $rps->akademik,
+            //     // 'bobot_uts' => $rps->bobot_uts,
+            //     // 'bobot_uas' => $rps->bobot_uas,
+            //     // 'total_bobot' => $rps->total_bobot,
+            //     // 'draf' => $rps->draf,
+            //     // 'draf_text' => $rps->draf_text,
+            //     // 'revisi' => $rps->revisi,
+            //     'cpmks' => $this->mapCPMK($rps->cpmks),
+            //     // 'cpls' => $this->mapCPL($rps->cpls),
+            //     // 'refs' => $this->mapRef($rps->refs),
+            //     // 'dosens' => $this->mapDosen($rps->dosens),
+            // ]);
+
+            $this->detailRPSData = $this->formatRPSDetailForShow($rps);
+            $this->detailRPSModal = true;
+
             $this->dispatch('fill-modal-rps', rps: $rps);
             $this->dispatch('refresh-component');
 
@@ -227,7 +281,7 @@ trait WithRPSModal
             'akademik_2' => 'required|integer|min:1971',
             'bobot_uts' => ['nullable', 'integer', 'min:0', 'max:100'],
             'bobot_uas' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data, $bobotUTS, $bobotUAS) {
+            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data) {
                 $totalSubCPMK = 0;
                 $totalBobot = 0;
                 if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
@@ -245,8 +299,8 @@ trait WithRPSModal
 
                 if ($value == 0) {
                     $rounded = round($totalBobot, 2);
-                    if (($rounded < 80 || $rounded > 140) && $data['is_draf'] == 0) {
-                        $fail("Total bobot harus 80-140% (Saat ini: $rounded%)!");
+                    if (($rounded < 70 || $rounded > 200) && $data['is_draf'] == 0) {
+                        $fail("Total bobot harus 70-200% (Saat ini: $rounded%)!");
                     }
                 }
             }],
@@ -278,6 +332,7 @@ trait WithRPSModal
 
                     if ($totalSubCPMK < 14 && $data['is_draf'] == 0) {
                         $fail('Sub-CPMK minimal 14 pertemuan!');
+
                         return;
                     }
 
@@ -299,10 +354,12 @@ trait WithRPSModal
                     if (! $hasUTS && ! $hasUAS) {
                         if ($bobotUTS === null || $bobotUTS === '') {
                             $fail('Bobot UTS wajib diisi untuk mode tanpa UTS/UAS!');
+
                             return;
                         }
                         if ($bobotUAS === null || $bobotUAS === '') {
                             $fail('Bobot UAS wajib diisi untuk mode tanpa UTS/UAS!');
+
                             return;
                         }
                     }
@@ -326,13 +383,10 @@ trait WithRPSModal
                 'required',
                 'array',
                 'min:1',
-                function ($attribute, $value, $fail) {
-                    // Cek apakah ada minimal satu Dosen yang 'is_ketua' bernilai true
+                function ($attribute, $value, $fail, $data) {
                     $hasKetua = collect($value)->contains(function ($item) {
-                        // Pastikan mengecek nilai boolean atau truthy dari is_ketua
-                        return isset($item['is_ketua']) && ($item['is_ketua'] === true || $item['is_ketua'] === 1 || $item['is_ketua'] === 'true');
+                        return isset($item['is_ketua']) && ($item['is_ketua'] === 1 || $item['is_ketua'] === '1' || $item['is_ketua'] === true);
                     });
-
                     if (! $hasKetua) {
                         $fail('Harus ada minimal satu Dosen yang dipilih sebagai Ketua Tim!');
                     }
@@ -640,7 +694,7 @@ trait WithRPSModal
             'dosen_items_array.*.peran.required' => 'Peran Dosen (Koordinator/Pengajar/Asisten) wajib dipilih!',
             'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
             'dosen_id_array.required' => 'Dosen pengampu wajib diisi!',
-            
+
             'bobot_uts.integer' => 'Bobot UTS harus berupa angka bulat!',
             'bobot_uts.min' => 'Bobot UTS minimal 0!',
             'bobot_uts.max' => 'Bobot UTS maksimal 100!',
@@ -653,20 +707,19 @@ trait WithRPSModal
     private function resetInputRPS()
     {
         $this->cpmkNameSearch = '';
-        $this->cplNameSearch = array_map(fn() => '', $this->cplNameSearch);
-        $this->refNameSearch = array_map(fn() => '', $this->refNameSearch);
-
+        $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
+        $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
 
         // ambil id untuk simpan ke rps_pivot_cpmk
         $this->cpmk_id_array = [];
         $this->cpmk_items_array = [];
         $this->cpmk_sub_items_array = [];
 
-        $this->cpl_id_array = array_map(fn() => [], $this->cpl_id_array);
-        $this->cpl_items_array = array_map(fn() => [], $this->cpl_items_array);
+        $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
+        $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
-        $this->ref_id_array = array_map(fn() => [], $this->ref_id_array);
-        $this->ref_items_array = array_map(fn() => [], $this->ref_items_array);
+        $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
+        $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
 
         // ambil id, dosen_items_array.peran, dosen_items_array.is_ketua untuk simpan ke rps_pivot_dosen
         $this->dosen_id_array = [];

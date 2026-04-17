@@ -2,36 +2,29 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Global\WithJurusanSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-
-use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
-use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
-
-use App\Livewire\Admin\ProdiManagement\WithProdiModal;
+use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
-
-use App\Models\ProgramStudi\Prodi;
-use App\Models\ProgramStudi\Jurusan;
+use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
+use App\Livewire\Admin\ProdiManagement\WithProdiModal;
+use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
 use App\Models\ProgramStudi\Fakultas;
-
+use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Prodi;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class ProgramStudiManagement extends Component
 {
-    use WithJurusanSearchFilters;
-    use WithFakultasSearchFilters;
-
-    use WithProdiFilters;
-    use WithJurusanFilters;
     use WithFakultasFilters;
-    
-    use WithProdiModal;
-    use WithProdiDelete;
-
+    use WithFakultasSearchFilters;
+    use WithJurusanFilters;
+    use WithJurusanSearchFilters;
     use WithPagination;
+    use WithProdiDelete;
+    use WithProdiFilters;
+    use WithProdiModal;
 
     public $showModal = false;
 
@@ -56,12 +49,10 @@ class ProgramStudiManagement extends Component
         'filterPr' => ['except' => ''],
         'switchTable' => ['except' => 'prodi'],
         'sortField' => ['except' => 'kode'],
-        'sortDirection' => ['except' => 'asc']
+        'sortDirection' => ['except' => 'asc'],
     ];
 
-    public function loadingTable() {
-
-    }
+    public function loadingTable() {}
 
     public function updatedPerPage()
     {
@@ -109,7 +100,6 @@ class ProgramStudiManagement extends Component
         $this->resetPage();
     }
 
-
     public function buttonStrataFilter($queryPr)
     {
         if (in_array($this->filterPr, ['sarjana', 'magister', 'doktor'])) {
@@ -126,50 +116,65 @@ class ProgramStudiManagement extends Component
         $queryJurusan = $this->inputJurusanSearch();
         $queryFakultas = $this->inputFkSearch();
 
-        $queryPr = clone $queryProdi;
-        $queryJr = clone $queryJurusan;
-        $queryFk = clone $queryFakultas;
+        try {
 
-        $this->buttonStrataFilter($queryPr);
+            $queryPr = clone $queryProdi;
+            $queryJr = clone $queryJurusan;
+            $queryFk = clone $queryFakultas;
 
-        $prodis = collect();
-        $jurusans = collect();
-        $fakultas = collect();
+            $this->buttonStrataFilter($queryPr);
 
-        if ($this->showDeleted) {
-            $queryProdi->onlyTrashed();
-            $queryJurusan->onlyTrashed();
-            $queryFakultas->onlyTrashed();
+            $prodis = collect();
+            $jurusans = collect();
+            $fakultas = collect();
 
-            $queryPr->onlyTrashed();
-            $queryJr->onlyTrashed();
-            $queryFk->onlyTrashed();
+            if ($this->showDeleted) {
+                $queryProdi->onlyTrashed();
+                $queryJurusan->onlyTrashed();
+                $queryFakultas->onlyTrashed();
+
+                $queryPr->onlyTrashed();
+                $queryJr->onlyTrashed();
+                $queryFk->onlyTrashed();
+            }
+
+            if ($this->switchTable === 'prodi') {
+                $prodis = $queryPr->paginate($this->perPage);
+            } elseif ($this->switchTable === 'jurusan') {
+                $jurusans = $queryJr->paginate($this->perPage);
+            } elseif ($this->switchTable === 'fakultas') {
+                $fakultas = $queryFk->paginate($this->perPage);
+            }
+
+            return view('livewire.admin.prodi-management', [
+                'prodis' => $prodis,
+                'jurusans' => $jurusans,
+                'fakultas' => $fakultas,
+                'totalProdis' => (clone $queryProdi)->count(),
+                'totalSarjanas' => (clone $queryProdi)->where('strata', 'Sarjana')->count(),
+                'totalMagisters' => (clone $queryProdi)->where('strata', 'Magister')->count(),
+                'totalDoktors' => (clone $queryProdi)->where('strata', 'Doktor')->count(),
+                'totalJurusan' => (clone $queryJurusan)->count(),
+                'totalFakultas' => (clone $queryFakultas)->count(),
+            ]);
+
+        } catch (QueryException $e) {
+
+            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+
+            return view('livewire.admin.prodi-management', [
+                'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),
+                'jurusans' => Jurusan::whereRaw('1=0')->paginate($this->perPage),
+                'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
+
+                'totalProdis' => 0,
+                'totalSarjanas' => 0,
+                'totalMagisters' => 0,
+                'totalDoktors' => 0,
+
+                'totalJurusan' => 0,
+                'totalFakultas' => 0,
+            ]);
         }
-
-        if ($this->switchTable === 'prodi') {
-            $prodis = $queryPr->paginate($this->perPage);
-        } elseif ($this->switchTable === 'jurusan') {
-            $jurusans = $queryJr->paginate($this->perPage);
-        } elseif ($this->switchTable === 'fakultas') {
-            $fakultas = $queryFk->paginate($this->perPage);
-        }
-
-        return view('livewire.admin.prodi-management', [
-            'prodis' => $prodis,
-            'jurusans' => $jurusans,
-            'fakultas' => $fakultas,
-            // 'totalProdis' => Prodi::count(),
-            // 'totalSarjanas' => Prodi::where('strata', 'Sarjana')->count(),
-            // 'totalMagisters' => Prodi::where('strata', 'Magister')->count(),
-            // 'totalDoktors' => Prodi::where('strata', 'Doktor')->count(),
-            // 'totalJurusan' => Jurusan::count(),
-            // 'totalFakultas' => Fakultas::count()
-            'totalProdis' => (clone $queryProdi)->count(),
-            'totalSarjanas' => (clone $queryProdi)->where('strata', 'Sarjana')->count(),
-            'totalMagisters' => (clone $queryProdi)->where('strata', 'Magister')->count(),
-            'totalDoktors' => (clone $queryProdi)->where('strata', 'Doktor')->count(),
-            'totalJurusan' => (clone $queryJurusan)->count(),
-            'totalFakultas' => (clone $queryFakultas)->count()
-        ]);
     }
 }

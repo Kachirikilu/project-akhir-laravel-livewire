@@ -2,41 +2,31 @@
 
 namespace App\Livewire\Admin;
 
-use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
-use App\Livewire\Global\WithFakultasSearchFilters;
-
-use App\Livewire\Admin\UserManagement\WithUserFilters;
-use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
-use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
-
-use App\Livewire\Admin\UserManagement\WithUserExcel;
-use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
 use App\Livewire\Admin\UserManagement\WithUserDelete;
-
+use App\Livewire\Admin\UserManagement\WithUserExcel;
+use App\Livewire\Admin\UserManagement\WithUserFilters;
+use App\Livewire\Admin\UserManagement\WithUserModal;
+use App\Livewire\Global\WithFakultasSearchFilters;
+use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\Auth\User;
-use App\Models\Auth\Admin;
-use App\Models\Auth\Dosen;
-use App\Models\Auth\Mahasiswa;
-
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class UserManagement extends Component
 {
-    use WithProdiSearchFilters;
-    use WithJurusanSearchFilters;
-    use WithFakultasSearchFilters;
-
-    use WithUserFilters;
-    use WithJurusanFilters;
     use WithFakultasFilters;
-
-    use WithUserExcel;
-    use WithUserDelete;
-    use WithUserModal;
+    use WithFakultasSearchFilters;
+    use WithJurusanFilters;
+    use WithJurusanSearchFilters;
     use WithPagination;
+    use WithProdiSearchFilters;
+    use WithUserDelete;
+    use WithUserExcel;
+    use WithUserFilters;
+    use WithUserModal;
 
     public $showModal = false;
 
@@ -58,7 +48,7 @@ class UserManagement extends Component
         'perPage' => ['except' => 8],
         'filter' => ['except' => ''],
         'sortField' => ['except' => 'name'],
-        'sortDirection' => ['except' => 'asc']
+        'sortDirection' => ['except' => 'asc'],
 
         // 'pr_name' => ['except' => ''],
         // 'roleType' => ['except' => ''],
@@ -73,11 +63,9 @@ class UserManagement extends Component
         // 'pr_id' => ['except' => ''],
         // 'prNameSearch' => ['except' => ''],
     ];
-    
-    public function loadingTable() {
 
-    }
-    
+    public function loadingTable() {}
+
     public function updatedPerPage()
     {
         $this->resetPage();
@@ -124,28 +112,40 @@ class UserManagement extends Component
         $this->inputJrFilter();
         $this->inputFkFilter();
 
-        $this->syncSortField($this->filterUser, $this->sortField);
+        try {
 
-        $queryUser = $this->inputUserSearch();
+            $this->syncSortField($this->filterUser, $this->sortField);
 
-        $query = clone $queryUser;
-        $this->buttonRoleFilter($query);
+            $queryUser = $this->inputUserSearch();
 
-        if ($this->showDeleted) {
-            $query->onlyTrashed();
-            $queryUser->onlyTrashed();
+            $query = clone $queryUser;
+            $this->buttonRoleFilter($query);
+
+            if ($this->showDeleted) {
+                $query->onlyTrashed();
+                $queryUser->onlyTrashed();
+            }
+
+            return view('livewire.admin.user-management', [
+                'users' => $query->paginate($this->perPage),
+                'totalUsers' => (clone $queryUser)->count(),
+                'totalAdmins' => (clone $queryUser)->whereHas('admin')->count(),
+                'totalDosens' => (clone $queryUser)->whereHas('dosen')->count(),
+                'totalMahasiswas' => (clone $queryUser)->whereHas('mahasiswa')->count(),
+            ]);
+
+        } catch (QueryException $e) {
+
+            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+
+            return view('livewire.admin.user-management', [
+                'users' => User::whereRaw('1=0')->paginate($this->perPage),
+
+                'totalUsers' => 0,
+                'totalAdmins' => 0,
+                'totalDosens' => 0,
+                'totalMahasiswas' => 0,
+            ]);
         }
-
-        return view('livewire.admin.user-management', [
-            'users' => $query->paginate($this->perPage),
-            // 'totalUsers' => User::count(),
-            // 'totalAdmins' => Admin::count(),
-            // 'totalDosens' => Dosen::count(),
-            // 'totalMahasiswas' => Mahasiswa::count(),
-            'totalUsers' => (clone $queryUser)->count(),
-            'totalAdmins' => (clone $queryUser)->whereHas('admin')->count(),
-            'totalDosens' => (clone $queryUser)->whereHas('dosen')->count(),
-            'totalMahasiswas' => (clone $queryUser)->whereHas('mahasiswa')->count(),
-        ]);
     }
 }

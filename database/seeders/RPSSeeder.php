@@ -16,228 +16,323 @@ class RPSSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::transaction(function () {
+        // =========================
+        // 1. MASTER CPL (LEBIH BANYAK & VARIATIF)
+        // =========================
+        $cpls = [];
 
-            // --- 1. MASTER CPL ---
-            $cpls = [];
-            for ($i = 1; $i <= 24; $i++) {
-                $kodeCpl = sprintf('CPL%02d', $i);
-                $deskripsi = "Capaian pembelajaran lulusan ke-$i: mahasiswa mampu mengaplikasikan kompetensi akademik dan profesional secara efektif.";
+        $cplTemplates = [
+            'Mampu menerapkan konsep dasar ilmu %s dalam penyelesaian masalah rekayasa',
+            'Mampu merancang sistem %s yang efektif dan efisien',
+            'Mampu menganalisis permasalahan %s secara kritis dan sistematis',
+            'Mampu mengembangkan solusi inovatif berbasis %s',
+            'Mampu bekerja dalam tim multidisiplin pada bidang %s',
+            'Mampu berkomunikasi secara profesional dalam konteks %s',
+            'Mampu memanfaatkan teknologi terkini dalam bidang %s',
+            'Mampu mengevaluasi kinerja sistem %s secara terukur',
+            'Mampu mengimplementasikan metode %s dalam skala industri',
+            'Mampu mengoptimalkan performa sistem %s berbasis data',
+        ];
 
-                $cpls[] = CPL::updateOrCreate([
-                    'kode_cpl' => $kodeCpl,
-                ], [
-                    'deskripsi' => $deskripsi,
-                ]);
+        $bidangs = [
+            'teknik elektro',
+            'sistem tenaga',
+            'elektronika',
+            'telekomunikasi',
+            'informatika',
+            'embedded system',
+            'jaringan komputer',
+            'kendali otomatis',
+        ];
+
+        // generate kombinasi lebih besar
+        $kombinasi = [];
+
+        foreach ($cplTemplates as $template) {
+            foreach ($bidangs as $bidang) {
+                $kombinasi[] = sprintf($template, $bidang);
             }
+        }
 
-            $mks = MataKuliah::take(9)->get();
-            $dosenId = Dosen::first()->id ?? 1;
-            $tahunAkademik = ['2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026'];
-            $rpsCount = 0;
+        shuffle($kombinasi);
 
-            foreach ($mks as $index => $mk) {
-                for ($copy = 0; $copy < 2; $copy++) {
-                    if ($rpsCount >= 15) {
-                        break 2;
-                    }
+        // 🔥 BUKAN 24 LAGI, tapi minimal 64 CPL
+        $totalCPL = min(80, count($kombinasi));
 
-                    $waktuPalsu = match (true) {
-                        $index < 3 => now()->subYears(3),
-                        $index < 6 => now()->subYears(2),
-                        default => now(),
-                    };
+        for ($i = 1; $i <= $totalCPL; $i++) {
+            $cpls[] = CPL::updateOrCreate([
+                'kode_cpl' => sprintf('CPL%02d', $i),
+            ], [
+                'deskripsi' => $kombinasi[$i - 1],
+            ]);
+        }
 
-                    $akademikIndex = ($index * 2 + $copy) % count($tahunAkademik);
-                    $akademik = $tahunAkademik[$akademikIndex];
+        // =========================
+        // DATA AWAL
+        // =========================
+        $mks = MataKuliah::take(32)->get();
+
+        $tahunAkademik = [
+            '2011/2012', '2012/2013', '2013/2014',
+            '2014/2015', '2015/2016', '2016/2017',
+            '2017/2018', '2018/2019', '2019/2020',
+            '2020/2021', '2021/2022', '2022/2023',
+            '2023/2024', '2024/2025', '2025/2026',
+        ];
+
+        $targetRps = 20000;
+        $batchSize = 256;
+
+        $rpsCreated = 0;
+
+        // 🔥 pindahkan ke luar closure (INI PENTING)
+        $cplUsage = [];
+
+        while ($rpsCreated < $targetRps) {
+
+            DB::transaction(function () use (
+                &$rpsCreated,
+                $batchSize,
+                $targetRps,
+                $mks,
+                $cpls,
+                $tahunAkademik,
+                &$cplUsag
+            ) {
+
+                $limit = min($batchSize, $targetRps - $rpsCreated);
+
+                for ($i = 0; $i < $limit; $i++) {
+
+                    $mk = $mks->random();
+                    $waktu = now()->subYears(rand(0, 3));
 
                     $rps = RPS::create([
                         'mk_id' => $mk->id,
-                        'deskripsi' => 'Mata kuliah '.$mk->nama_mk.' ('.$mk->kode_mk.') - RPS ke '.($copy + 1).' menjelaskan analisis teoritis dan implementasi praktis Teknik Elektro.',
-                        'akademik' => $akademik,
-                        'is_draf' => ($rpsCount % 4 == 0),
-                        'revisi' => $waktuPalsu,
-                        'bobot_uts' => 10,
-                        'bobot_uas' => 15,
-                        'created_at' => $waktuPalsu,
-                        'updated_at' => $waktuPalsu,
+                        'deskripsi' => "RPS {$mk->nama_mk}",
+                        'akademik' => $tahunAkademik[array_rand($tahunAkademik)],
+                        'is_draf' => rand(0, 1),
+                        'revisi' => $waktu,
                     ]);
 
-                    $rpsCplIds = collect($cpls)->pluck('id')->random(rand(1, count($cpls)));
+                    // =========================
+                    // RPS ↔ CPL (1–5 MERATA)
+                    // =========================
+                    $selectedCpls = collect($cpls)
+                        ->sortBy(fn ($cpl) => $cplUsage[$cpl->id] ?? 0)
+                        ->take(rand(1, 5));
 
-                    // attach dengan sort_order
-                    foreach ($rpsCplIds as $order => $cplId) {
-                        $rps->cpls()->syncWithoutDetaching([
-                            $cplId => ['sort_order' => $order],
+                    foreach ($selectedCpls->values() as $idx => $cpl) {
+                        $rps->cpls()->attach($cpl->id, [
+                            'sort_order' => $idx,
                         ]);
+
+                        $cplUsage[$cpl->id] = ($cplUsage[$cpl->id] ?? 0) + 1;
                     }
 
-                    $rps->dosens()->syncWithoutDetaching([
-                        $dosenId => ['peran' => 'Koordinator', 'is_ketua' => true],
-                    ]);
-
-                    // --- 2. REFERENSI (Buat objeknya dulu, simpan ID-nya) ---
+                    // =========================
+                    // REFERENSI (3–6)
+                    // =========================
                     $refIds = [];
-                    for ($r = 1; $r <= 2; $r++) {
+
+                    $penerbits = [
+                        'IEEE Press', 'Springer', 'Elsevier',
+                        'McGraw-Hill', 'Pearson', 'UNSRI Press',
+                    ];
+
+                    $penulisList = [
+                        'J. Smith', 'A. Kumar', 'Budi Santoso',
+                        'Siti Rahma', 'Michael Johnson', 'Ahmad Fauzi',
+                    ];
+
+                    $jumlahRef = rand(3, 6);
+
+                    for ($r = 1; $r <= $jumlahRef; $r++) {
+
                         $ref = Referensi::create([
-                            'kode_ref' => 'REF'.$mk->id.$rpsCount.$r,
-                            'judul' => "Buku Ajar {$mk->nama_mk} Vol. {$r} (RPS {$rpsCount})",
-                            'penulis' => 'Dosen Teknik UNSRI',
-                            'tahun' => rand(2020, 2026),
-                            'penerbit' => 'UNSRI Press',
-                            'link' => 'https://sisfotenika.unsri.ac.id',
-                            'created_at' => $waktuPalsu,
+                            'kode_ref' => strtoupper(str()->random(6)).rand(10, 9999999),
+                            'judul' => "Studi {$mk->nama_mk} dan Aplikasinya",
+                            'penulis' => $penulisList[array_rand($penulisList)],
+                            'tahun' => rand(2000, 2026),
+                            'penerbit' => $penerbits[array_rand($penerbits)],
                         ]);
 
-                        // Opsi A: Jika tetap ingin tampil di daftar pustaka RPS (Sangat Disarankan)
-                        $rps->refs()->syncWithoutDetaching([$ref->id]);
-
+                        $rps->refs()->attach($ref->id);
                         $refIds[] = $ref->id;
                     }
 
-                    // --- 3. ISI KONTEN ---
-                    // Teruskan $refIds ke fungsi helper
-                    if ($index % 2 == 0) {
-                        $this->seedCompleteContent($rps, $cpls, $mk, $waktuPalsu, $refIds);
-                    } else {
-                        $this->seedPartialContent($rps, $cpls[0], $mk, $waktuPalsu, $refIds);
-                    }
+                    // =========================
+                    // ISI RPS
+                    // =========================
+                    $this->seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds);
 
-                    $rpsCount++;
+                    $rpsCreated++;
                 }
-            }
-        });
-    }
+            });
 
-    private function seedCompleteContent($rps, $cpls, $mk, $waktu, $refIds)
-    {
-        $metodeOptions =
-        [
-            // --- Evaluasi OBE/Projek (Tatap Muka/Tugas) ---
-            'Teori',
-            'Aktivitas Partisipasif',
-            'Tugas',
-            'Mandiri',
-
-            // --- Evaluasi Formal (Umum) ---
-            'UTS', 'UAS', 'Kuis',
-            'Laporan Akhir',
-            'Hasil Proyek',
-
-            // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
-            'Skripsi',
-            'Kerja Praktek',
-            'Responsi',
-            'Logbook',
-            'Portofolio',
-        ];
-
-        for ($i = 1; $i <= 3; $i++) {
-
-            $kodeCpmk = "CPMK{$mk->id}{$i}";
-            $cpmk = CPMK::updateOrCreate([
-                'kode_cpmk' => $kodeCpmk,
-            ], [
-                'deskripsi' => 'Mahasiswa mampu menguasai kompetensi tingkat '.($i == 1 ? 'Dasar' : ($i == 2 ? 'Menengah' : 'Lanjut'))." pada mata kuliah {$mk->nama_mk}.",
-                'created_at' => $waktu,
-            ]);
-
-            // 1. RPS ↔ CPMK
-            $rps->cpmks()->syncWithoutDetaching([
-                $cpmk->id => ['sort_order' => $i - 1],
-            ]);
-
-            // 2. CPMK ↔ CPL (fix: selalu array & ada sort_order)
-            $randomCpls = collect($cpls)
-                ->pluck('id')
-                ->random(rand(1, 2));
-
-            $randomCpls = collect($randomCpls)->values();
-
-            foreach ($randomCpls as $order => $cplId) {
-                $cpmk->cpls()->syncWithoutDetaching([
-                    $cplId => ['sort_order' => $order],
-                ]);
-            }
-
-            // 3. CPMK ↔ Referensi (FIX BUG UTAMA 🔥)
-            if (! empty($refIds)) {
-                $randomRefs = collect($refIds)
-                    ->random(rand(1, count($refIds)));
-
-                $randomRefs = collect($randomRefs)->values(); // 🔥 WAJIB
-
-                foreach ($randomRefs as $order => $refId) {
-                    $cpmk->refs()->syncWithoutDetaching([
-                        $refId => ['sort_order' => $order],
-                    ]);
-                }
-            }
-
-            // 4. SUB-CPMK
-            for ($j = 1; $j <= 2; $j++) {
-
-                $kodeScpmk = "SUBMK{$mk->id}{$i}{$j}";
-                $sub = SubCPMK::updateOrCreate([
-                    'kode_scpmk' => $kodeScpmk,
-                ], [
-                    'deskripsi' => 'Mampu menjelaskan dan menerapkan konsep materi bagian '.$i.'.'.$j,
-                    'materi' => 'Topik Bahasan ke-'.$i.'.'.$j,
-                    'metodologi' => 'Problem Based Learning',
-                    'indikator' => 'Ketepatan dan penguasaan materi',
-                    'metode' => $metodeOptions[array_rand($metodeOptions)],
-                    'bobot' => rand(2, 15),
-                    'created_at' => $waktu,
-                ]);
-
-                // Sub ↔ CPMK
-                $sub->cpmks()->syncWithoutDetaching([
-                    $cpmk->id => ['sort_order' => $j - 1],
-                ]);
-
-                // Sub ↔ Referensi
-                if (! empty($refIds)) {
-                    $sub->refs()->syncWithoutDetaching([
-                        $refIds[array_rand($refIds)] => ['sort_order' => 0],
-                    ]);
-                }
-            }
+            // jeda kecil
+            usleep(200000);
         }
     }
 
-    private function seedPartialContent($rps, $cpl1, $mk, $waktu, $refIds)
+    private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
     {
-        // Versi simpel: 1 CPMK, 1 CPL, 1 Sub-CPMK
-        $kodeCpmk = 'CPMK'.$mk->id;
-        $cpmk = CPMK::updateOrCreate([
-            'kode_cpmk' => $kodeCpmk,
-        ], [
-            'deskripsi' => 'Memahami prinsip dasar dan fondasi utama dari '.$mk->nama_mk,
-            'created_at' => $waktu,
-        ]);
+        $letters = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, rand($prefixMin, $prefixMax)));
 
-        $rps->cpmks()->syncWithoutDetaching([$cpmk->id]);
+        $min = pow(10, $numMin - 1);
+        $max = pow(10, $numMax) - 1;
 
-        // Hubungkan ke CPL utama
-        $cpmk->cpls()->syncWithoutDetaching([$cpl1->id]);
+        $numbers = rand($min, $max);
 
-        $kodeScpmk = 'SUB1'.$mk->id;
-        $sub = SubCPMK::updateOrCreate([
-            'kode_scpmk' => $kodeScpmk,
-        ], [
-            'deskripsi' => 'Mendeskripsikan ruang lingkup mata kuliah secara umum',
-            'materi' => 'Pendahuluan dan Kontrak Perkuliahan',
-            'metodologi' => 'Discovery Learning',
-            'indikator' => 'Keaktifan mahasiswa',
-            'metode' => 'Teori',
-            'bobot' => 10.00,
-            'created_at' => $waktu,
-        ]);
+        return $letters.$numbers;
+    }
 
-        $sub->cpmks()->syncWithoutDetaching([$cpmk->id]);
+    private function generateUniqueKode($model, $column)
+    {
+        do {
+            $kode = $this->generateKode();
+        } while ($model::where($column, $kode)->exists());
 
-        if (! empty($refIds)) {
-            $sub->refs()->syncWithoutDetaching([$refIds[0]]);
+        return $kode;
+    }
+
+    private function seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds)
+    {
+        // =========================
+        // CPMK (2–4)
+        // =========================
+        $jumlahCpmk = rand(2, 4);
+        $cpmks = [];
+
+        for ($i = 1; $i <= $jumlahCpmk; $i++) {
+
+            // 🔥 RANDOM: sebagian CPMK tanpa deskripsi
+            $deskripsi = rand(0, 1)
+                ? "Kemampuan ke-$i {$mk->nama_mk}"
+                : null;
+
+            $cpmk = CPMK::create([
+                'kode_cpmk' => $this->generateUniqueKode(CPMK::class, 'kode_cpmk'),
+                'deskripsi' => $deskripsi,
+                'created_at' => $waktu,
+            ]);
+
+            $rps->cpmks()->attach($cpmk->id, ['sort_order' => $i]);
+
+            // CPL 1–2
+            $randomCpls = collect($cpls)->pluck('id')->random(rand(1, 2));
+
+            foreach (collect($randomCpls)->values() as $idx => $cplId) {
+                $cpmk->cpls()->attach($cplId, ['sort_order' => $idx]);
+            }
+
+            $cpmks[] = $cpmk;
+        }
+
+        // =========================
+        // TIPE 14 / 15 / 16
+        // =========================
+        $tipe = collect([14, 15, 16])->random();
+
+        $subs = [];
+        $totalBobot = 0;
+
+        for ($i = 1; $i <= $tipe; $i++) {
+
+            $isUTS = ($tipe >= 15 && $i == 8);
+            $isUAS = ($tipe == 16 && $i == 16);
+
+            $metode = $isUTS ? 'UTS' : ($isUAS ? 'UAS' : 'Teori');
+            $bobot = ($isUTS || $isUAS) ? 0 : rand(3, 10);
+
+            $sub = SubCPMK::create([
+                'kode_scpmk' => $this->generateUniqueKode(SubCPMK::class, 'kode_scpmk'),
+                'deskripsi' => "Pertemuan $i",
+                'materi' => "Materi $i",
+                'metodologi' => 'Problem Based Learning',
+                'indikator' => 'Pemahaman',
+                'metode' => $metode,
+                'bobot' => $bobot,
+                'created_at' => $waktu,
+            ]);
+
+            $sub->cpmks()->attach(
+                collect($cpmks)->random()->id,
+                ['sort_order' => $i]
+            );
+
+            $subs[] = $sub;
+            $totalBobot += $bobot;
+        }
+
+        // =========================
+        // UTS / UAS
+        // =========================
+        if ($tipe == 14) {
+            $rps->bobot_uts = rand(10, 30);
+            $rps->bobot_uas = rand(10, 30);
+        } elseif ($tipe == 15) {
+            if (rand(0, 1)) {
+                $rps->bobot_uts = rand(10, 30);
+                $rps->bobot_uas = null;
+            } else {
+                $rps->bobot_uts = null;
+                $rps->bobot_uas = rand(10, 30);
+            }
+        } else {
+            $rps->bobot_uts = null;
+            $rps->bobot_uas = null;
+        }
+
+        $totalBobot += ($rps->bobot_uts ?? 0);
+        $totalBobot += ($rps->bobot_uas ?? 0);
+
+        // =========================
+        // VALIDASI
+        // =========================
+        if ($totalBobot < 70 || $totalBobot > 200) {
+
+            foreach ($subs as $sub) {
+                $sub->delete();
+            }
+            foreach ($cpmks as $cpmk) {
+                $cpmk->delete();
+            }
+
+            return $this->seedRealisticRPS($rps, $cpls, $mk, $waktu, $refIds);
+        }
+
+        $rps->save();
+
+        // =========================
+        // DOSEN
+        // =========================
+        $dosens = Dosen::inRandomOrder()->take(rand(1, 2))->get();
+
+        foreach ($dosens as $i => $dsn) {
+            $rps->dosens()->attach($dsn->id, [
+                'peran' => $i == 0 ? 'Koordinator' : 'Pengajar',
+                'is_ketua' => $i == 0,
+            ]);
+        }
+
+        // =========================
+        // DOSEN ↔ SCPMK
+        // =========================
+        if ($dosens->count() == 2 && rand(0, 1)) {
+
+            foreach ($subs as $i => $sub) {
+
+                $dsn = $i < 8 ? $dosens[0] : $dosens[1];
+
+                DB::table('dosen_pivot_scpmk')->insert([
+                    'rps_id' => $rps->id,
+                    'dosen_id' => $dsn->id,
+                    'scpmk_id' => $sub->id,
+                    'sort_order' => $i + 1,
+                    'created_at' => now(),
+                ]);
+            }
         }
     }
 }

@@ -46,11 +46,11 @@
                 enctype="multipart/form-data" id="userForm">
 
                 <template x-if="$store.user?.typeModal == 'file'" x-cloak>
-                    @include('livewire.admin.user-management.modal-form.excel-input')
+                    @include('livewire.admin.user-management.user-modal-form.excel-input')
                 </template>
 
                 <template x-if="$store.user?.typeModal !== 'file'" x-cloak>
-                    @include('livewire.admin.user-management.modal-form.user-input')
+                    @include('livewire.admin.user-management.user-modal-form.user-input')
                 </template>
 
                 {{-- 3. Footer/Tombol --}}
@@ -61,7 +61,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        @include('livewire.admin.user-management.modal-form.user-message-form')
+                        @include('livewire.admin.user-management.user-modal-form.user-message-form')
 
                         @include('livewire.global.modal-form.button-form', [
                             'xType' => $roleType,

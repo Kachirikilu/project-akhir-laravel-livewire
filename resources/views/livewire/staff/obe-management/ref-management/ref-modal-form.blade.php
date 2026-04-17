@@ -26,7 +26,7 @@
         <form x-on:submit.prevent="$wire.{{ $isEditingRef ? 'updateRef' : 'saveRef' }}($store.ref)"
             enctype="multipart/form-data" id="refForm">
 
-            @include('livewire.staff.obe-management.ref-management.modal-form.ref-input')
+            @include('livewire.staff.obe-management.ref-management.ref-modal-form.ref-input')
 
             <div
                 class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
@@ -34,7 +34,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.modal-form.rps-message-form', ['show' => $showRefModal])
+                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showRefModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addRef, saveRef, editRef, updateRef',
                     ])

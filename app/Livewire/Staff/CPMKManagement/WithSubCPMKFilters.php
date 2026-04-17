@@ -53,9 +53,7 @@ trait WithSubCPMKFilters
             $querySCPMK->where('created_at', '>=', $sixMonthsAgo);
         } elseif ($this->filterSCPMK === 'scpmk-year') {
             $querySCPMK->whereYear('created_at', $currentYear);
-        } elseif ($this->filterSCPMK === 'scpmk-5-years') {
-            $querySCPMK->where('created_at', '>=', $fiveYearsAgo);
-        } elseif ($this->filterSCPMK === 'scpmk-old') { 
+        } elseif ($this->filterSCPMK === 'scpmk-old') {
             $querySCPMK->where('created_at', '<', $fiveYearsAgo);
         }
     }

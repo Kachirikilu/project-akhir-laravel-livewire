@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Jurusan;
 use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\MataKuliah;
@@ -15,111 +14,129 @@ class MataKuliahSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            // --- 1. MATA KULIAH UNIVERSITAS (TINGKATAN 4) ---
-            // Digunakan oleh SEMUA prodi yang ada
-            $mkUni = [
-                ['nama' => 'Pendidikan Agama', 'digit' => '01'],
-                ['nama' => 'Kewarganegaraan', 'digit' => '02'],
-            ];
-
             $allProdiIds = Prodi::pluck('id')->toArray();
+            $digitCounter = 1;
 
-            foreach ($mkUni as $item) {
+            // =========================
+            // HELPER DIGIT SEMESTER
+            // =========================
+            $generateDigitSemester = function ($semester, $isTA = false) {
+                $group = ceil($semester / 2);
+
+                if ($isTA) {
+                    return $group . '0';
+                }
+
+                $parity = $semester % 2 === 0 ? 2 : 1;
+
+                return $group . $parity;
+            };
+
+            // =========================
+            // 1. UNIVERSITAS (8 MK)
+            // =========================
+            for ($i = 1; $i <= 8; $i++) {
+
+                $semester = rand(1, 2);
+
                 $mk = MataKuliah::create([
                     'level_mk' => 4,
-                    'nama_mk' => $item['nama'],
-                    'kode_mk' => null, // Sesuai request
-                    'digit_semester' => '10',
-                    'digit_mk' => $item['digit'],
-                    'semester' => 1,
-                    'sks_kuliah' => 2,
-                    'tipe_sks' => 1, // Tatap Muka
+                    'nama_mk' => "MK Universitas $i",
+                    'kode_mk' => null,
+                    'digit_semester' => $generateDigitSemester($semester),
+                    'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
+                    'semester' => $semester,
+                    'sks_kuliah' => rand(2, 3),
+                    'tipe_sks' => 1,
                     'is_wajib' => true,
+                    'deskripsi' => "Deskripsi MK Universitas $i",
+                    'bahan_kajian' => "Bahan kajian $i",
                 ]);
+
                 $mk->prodis()->attach($allProdiIds);
             }
 
-            // --- 2. MATA KULIAH FAKULTAS (TINGKATAN 3) ---
-            
-            // Fakultas Teknik (TEK)
-            $mkTeknik = [
-                ['nama' => 'Matematika Teknik', 'digit' => '11', 'tipe' => 1],
-                ['nama' => 'Fisika Teknik', 'digit' => '12', 'tipe' => 2], // Praktikum
-            ];
-            $prodiTeknikIds = Prodi::whereHas('jr_rel.fk_rel', fn($q) => $q->where('kode_fk', 'TEK'))->pluck('id');
-            
-            foreach ($mkTeknik as $item) {
+            // =========================
+            // 2. FAKULTAS (16 MK)
+            // =========================
+            $prodiTeknikIds = Prodi::pluck('id');
+
+            for ($i = 1; $i <= 16; $i++) {
+
+                $semester = rand(2, 4);
+
                 $mk = MataKuliah::create([
                     'level_mk' => 3,
-                    'nama_mk' => $item['nama'],
-                    'digit_semester' => '11',
-                    'digit_mk' => $item['digit'],
-                    'semester' => 1,
-                    'sks_kuliah' => 3,
-                    'tipe_sks' => $item['tipe'],
+                    'nama_mk' => "MK Fakultas $i",
+                    'digit_semester' => $generateDigitSemester($semester),
+                    'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
+                    'semester' => $semester,
+                    'sks_kuliah' => rand(2, 3),
+                    'tipe_sks' => rand(1, 2),
                     'is_wajib' => true,
+                    'deskripsi' => "Deskripsi MK Fakultas $i",
+                    'bahan_kajian' => "Bahan kajian $i",
                 ]);
+
                 $mk->prodis()->attach($prodiTeknikIds);
             }
 
-            // Fakultas Ilmu Komputer (FIK)
-            $mkFasilkom = [
-                ['nama' => 'Dasar Pemrograman', 'digit' => '21', 'tipe' => 2], // Praktikum
-                ['nama' => 'Logika Informatika', 'digit' => '22', 'tipe' => 1],
-            ];
-            $prodiFikIds = Prodi::whereHas('jr_rel.fk_rel', fn($q) => $q->where('kode_fk', 'FIK'))->pluck('id');
+            // =========================
+            // 3. JURUSAN (20 MK)
+            // =========================
+            $jurusan = Jurusan::first();
 
-            foreach ($mkFasilkom as $item) {
-                $mk = MataKuliah::create([
-                    'level_mk' => 3,
-                    'nama_mk' => $item['nama'],
-                    'digit_semester' => '11',
-                    'digit_mk' => $item['digit'],
-                    'semester' => 1,
-                    'sks_kuliah' => 3,
-                    'tipe_sks' => $item['tipe'],
-                    'is_wajib' => true,
-                ]);
-                $mk->prodis()->attach($prodiFikIds);
+            if ($jurusan) {
+
+                for ($i = 1; $i <= 20; $i++) {
+
+                    $semester = rand(3, 6);
+
+                    $mk = MataKuliah::create([
+                        'level_mk' => 2,
+                        'nama_mk' => "MK Jurusan $i",
+                        'digit_semester' => $generateDigitSemester($semester),
+                        'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
+                        'semester' => $semester,
+                        'sks_kuliah' => rand(2, 4),
+                        'tipe_sks' => rand(1, 2),
+                        'is_wajib' => rand(0, 1),
+                        'deskripsi' => "Deskripsi MK Jurusan $i",
+                        'bahan_kajian' => "Bahan kajian $i",
+                    ]);
+
+                    $mk->prodis()->attach($jurusan->prodis->pluck('id'));
+                }
             }
 
-            // --- 3. MATA KULIAH JURUSAN (TINGKATAN 2) ---
-            // Contoh: Teknik Elektro
-            $jurusanElektro = Jurusan::where('kode_jr', 'TKE')->first();
-            if ($jurusanElektro) {
-                $mk = MataKuliah::create([
-                    'level_mk' => 2,
-                    'nama_mk' => 'Rangkaian Listrik',
-                    'digit_semester' => '21',
-                    'digit_mk' => '05',
-                    'semester' => 2,
-                    'tipe_sks' => 1,
-                ]);
-                $mk->prodis()->attach($jurusanElektro->prodis->pluck('id'));
-            }
+            // =========================
+            // 4. PRODI (20 MK)
+            // =========================
+            $prodi = Prodi::first();
 
-            // --- 4. MATA KULIAH PRODI (TINGKATAN 1) ---
-            // Contoh: S1 Teknik Elektro
-            $prodiS1Elektro = Prodi::where('nama_pr', 'Teknik Elektro')->where('strata', 'Sarjana')->first();
-            if ($prodiS1Elektro) {
-                // Contoh Tipe 3 (Praktek Lapangan) & Tipe 4 (Simulasi)
-                MataKuliah::create([
-                    'level_mk' => 1,
-                    'nama_mk' => 'Kerja Praktek',
-                    'digit_semester' => '60',
-                    'digit_mk' => '99',
-                    'semester' => 6,
-                    'tipe_sks' => 3, // Praktek Lapangan
-                ])->prodis()->attach($prodiS1Elektro->id);
+            if ($prodi) {
 
-                MataKuliah::create([
-                    'level_mk' => 1,
-                    'nama_mk' => 'Pemodelan Sistem',
-                    'digit_semester' => '50',
-                    'digit_mk' => '08',
-                    'semester' => 5,
-                    'tipe_sks' => 4, // Simulasi
-                ])->prodis()->attach($prodiS1Elektro->id);
+                for ($i = 1; $i <= 20; $i++) {
+
+                    $semester = rand(5, 8);
+
+                    $isTA = $i % 5 === 0; // tiap 5 MK = TA/KP
+
+                    $mk = MataKuliah::create([
+                        'level_mk' => 1,
+                        'nama_mk' => $isTA ? "Tugas Akhir / KP $i" : "MK Prodi $i",
+                        'digit_semester' => $generateDigitSemester($semester, $isTA),
+                        'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
+                        'semester' => $semester,
+                        'sks_kuliah' => rand(2, 4),
+                        'tipe_sks' => rand(1, 4),
+                        'is_wajib' => rand(0, 1),
+                        'deskripsi' => "Deskripsi MK Prodi $i",
+                        'bahan_kajian' => "Bahan kajian $i",
+                    ]);
+
+                    $mk->prodis()->attach($prodi->id);
+                }
             }
         });
     }

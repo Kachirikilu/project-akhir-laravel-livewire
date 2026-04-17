@@ -77,7 +77,7 @@ return new class extends Migration
         Schema::create('referensis', function (Blueprint $table) {
             $table->id();
             $table->string('kode_ref')->unique();
-            $table->string('judul')->unique();
+            $table->string('judul');
             $table->string('penulis');
             $table->string('penerbit');
             $table->year('tahun');

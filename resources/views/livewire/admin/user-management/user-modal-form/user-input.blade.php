@@ -50,12 +50,12 @@
 
 
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-        @include('livewire.admin.user-management.modal-form.input-partial.admin-input')
+        @include('livewire.admin.user-management.user-modal-form.user-input-partial.admin-input')
     </template>
     <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-        @include('livewire.admin.user-management.modal-form.input-partial.dosen-input')
+        @include('livewire.admin.user-management.user-modal-form.user-input-partial.dosen-input')
     </template>
     <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-        @include('livewire.admin.user-management.modal-form.input-partial.mahasiswa-input')
+        @include('livewire.admin.user-management.user-modal-form.user-input-partial.mahasiswa-input')
     </template>
 </div>

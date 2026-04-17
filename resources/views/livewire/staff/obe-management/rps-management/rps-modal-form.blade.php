@@ -27,7 +27,7 @@
         <form x-on:submit.prevent="$wire.{{ $isEditingRPS ? 'updateRPS' : 'saveRPS' }}($store.rps)"
             enctype="multipart/form-data" id="rpsForm">
 
-            @include('livewire.staff.obe-management.rps-management.modal-form.rps-input')
+            @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-input')
 
             <div
                 class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
@@ -35,7 +35,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.modal-form.rps-message-form', ['show' => $showRPSModal])
+                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showRPSModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addRPS, saveRPS, editRPS, updateRPS',
                     ])

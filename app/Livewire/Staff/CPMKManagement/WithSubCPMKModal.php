@@ -266,6 +266,57 @@ trait WithSubCPMKModal
         try {
             $validated = $this->inputModalSCPMK(true, $data);
 
+            $scpmk = SubCPMK::findOrFail($this->selected_id_scpmk);
+            $relatedRps = RPS::whereHas('cpmks.scpmks', function ($query) use ($scpmk) {
+                $query->where('sub_cpmks.id', $scpmk->id);
+            })->get();
+
+            $beforeMethod = strtoupper($scpmk->metode);
+            $afterMethod = strtoupper($validated['metode']);
+
+            $invalidRps = $relatedRps->first(function ($rps) use ($scpmk, $validated) {
+                if ($rps->is_draf != 0) {
+                    return false;
+                }
+
+                $otherScpmks = $rps->cpmks->flatMap->scpmks->filter(function ($item) use ($scpmk) {
+                    return $item->id !== $scpmk->id;
+                });
+
+                $hasUTS = $otherScpmks->contains(function ($item) {
+                    $method = strtoupper($item->metode ?? '');
+                    $text = strtoupper($item->deskripsi ?? '');
+
+                    return $method === 'UTS' || str_contains($text, 'UTS');
+                });
+
+                $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
+                $hasUAS = $otherScpmks->contains(function ($item) use ($uauFields) {
+                    $method = strtoupper($item->metode ?? '');
+                    $text = strtoupper($item->deskripsi ?? '');
+
+                    return in_array($method, $uauFields, true)
+                        || str_contains($text, 'UAS')
+                        || str_contains($text, 'LAPORAN AKHIR')
+                        || str_contains($text, 'HASIL PROYEK')
+                        || str_contains($text, 'HASIL PROJEK');
+                });
+
+                $baseTotal = $otherScpmks->sum('bobot');
+                $uts = $hasUTS ? 0 : (float) ($rps->bobot_uts ?? 0);
+                $uas = $hasUAS ? 0 : (float) ($rps->bobot_uas ?? 0);
+                $adjustedTotal = $baseTotal + (float) $validated['bobot'] + $uts + $uas;
+
+                return $adjustedTotal < 70 || $adjustedTotal > 200;
+            });
+            if ($invalidRps) {
+                $this->addError('bobot', 'Bobot tidak valid: total bobot RPS terkait harus berada di antara 70 dan 200 setelah perubahan bobot Sub-CPMK!');
+            }
+
+            if ($this->getErrorBag()->any()) {
+                throw ValidationException::withMessages($this->getErrorBag()->messages());
+            }
+
             $updatedSCPMK = null;
 
             DB::transaction(function () use ($validated, &$updatedSCPMK) {

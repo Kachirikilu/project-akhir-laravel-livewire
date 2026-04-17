@@ -5,7 +5,7 @@ namespace App\Livewire\Staff\RPSManagement;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 
-trait WithPertemuan
+trait WithRPSPertemuan
 {
     private function parsePertemuanDosen(array $pertemuanDosen, array $selectedDosenIds, array $cpmkSubItems): array
     {

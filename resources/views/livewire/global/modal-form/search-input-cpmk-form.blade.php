@@ -216,8 +216,8 @@
     class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
     @include('livewire.global.modal-form.partial.scpmk-bobot-akumulasi', [
         'nilai1' => 20,
-        'nilai2' => 80,
-        'nilai3' => 140,
+        'nilai2' => 70,
+        'nilai3' => 200,
     ])
 
     {{-- Daftar Item Berjejer ke Bawah (flex-col) --}}
@@ -240,12 +240,12 @@
     {{-- Footer Keseluruhan (Total Semua Sub-CPMK dari berbagai CPMK) --}}
     @include('livewire.global.modal-form.partial.scpmk-bobot-pesan', [
         'nilai1' => 20,
-        'nilai2' => 80,
-        'nilai3' => 140,
+        'nilai2' => 70,
+        'nilai3' => 200,
         'pNilai1' => 'Bobot sangat kurang dari target:',
         'pNilai2' => 'Bobot masih kurang dari target standar:',
         'pNilai3' => 'Bobot sudah mencukupi (Maksimal):',
-        'pNilai4' => 'Bobot melebihi batas 140%, mohon tinjau kembali:',
+        'pNilai4' => 'Bobot melebihi batas 200%, mohon tinjau kembali:',
     ])
 
 

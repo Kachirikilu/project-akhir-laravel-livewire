@@ -12,7 +12,7 @@
             </div>
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.mk-management.modal-form.partial.digit-semester')
+                @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-digit-semester')
             </div>
 
             <div class="sm:col-span-2">

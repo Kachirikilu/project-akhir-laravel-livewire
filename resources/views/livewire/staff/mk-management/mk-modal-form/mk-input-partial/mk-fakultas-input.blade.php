@@ -6,14 +6,14 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'pr_items',
+                    'kodeString' => 'fk_items',
                     'placeholder' => '---',
-                    'iconString' => 'academic-cap'
+                    'iconString' => 'building-library'
                 ])
             </div>
 
             <div class="sm:col-span-2">
-                @include('livewire.staff.mk-management.modal-form.partial.digit-semester')
+                @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-digit-semester')
             </div>
 
             <div class="sm:col-span-2">
@@ -34,16 +34,34 @@
         @enderror
     </div>
 
+
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
+        'xResults' => $fkResults,
+        'selectX' => 'selectFk',
+        'modelString' => 'nama_fk_search',
+
+        'idString' => 'fk_id',
+        'itemsAllString' => 'fk_items',
+
+        'resetXInput' => 'resetFkInput()',
+        'typeXString' => 'fakultas',
+        'nameXString' => 'Fakultas',
+        'nameSearchString' => 'fkNameSearch',
+        'fetchString' => 'fetchFk',
+        'iconString' => 'academic-cap',
+        'wireLoading' => 'fetchFk'
+    ])
+
+    @include('livewire.global.modal-form.search-input-array-form', [
+        'alpine' => 'mk',
         'xResults' => $prResults,
-        'selectX' => 'selectPr',
+        'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
 
-        'idString' => 'pr_id',
-        'itemsAllString' => 'pr_items',
+        'idString' => 'pr_id_array',
+        'itemsAllString' => 'pr_items_array',
 
-        'resetXInput' => 'resetPrInput()',
         'typeXString' => 'prodi',
         'typeX2String' => 'jurusan',
         'typeX3String' => 'fakultas',
@@ -52,21 +70,10 @@
         'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr'
+    
+        'parentIdString' => 'fk_id',
+        'nameXParent' => 'Fakultas',
+        'wireLoading' => 'fetchPr',
+        'wireLoadingParent' => 'selectFk, resetFkInput, selectFkForFilter, resetFkFilter',
     ])
-
-
-    {{-- <div x-data x-init="$watch('$store.mk.nama_mk', value => console.log('nama_mk: ', value))"></div>
-
-    <div x-data x-init="$watch('$store.mk.pr_id', value => console.log('pr_id: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.prodi_kode', value => console.log('kode_pr: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.prodi_kode', value => console.log('prodi_kode: ', value))"></div>
-
-    <div x-data x-init="$watch('$store.mk.digit_semester', value => console.log('digit_semester: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.digit_mk', value => console.log('digit_mk: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.semester', value => console.log('semester: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.kode_blok', value => console.log('kode_blok: ', value))"></div>
-
-    <div x-data x-init="$watch('$store.mk.tipe_sks', value => console.log('tipe_sks: ', value))"></div>
-    <div x-data x-init="$watch('$store.mk.sks_kuliah', value => console.log('sks_kuliah: ', value))"></div> --}}
 </div>

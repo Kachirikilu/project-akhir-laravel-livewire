@@ -70,8 +70,6 @@ trait WithCPLFilters
         } elseif ($this->filterCPL === 'cpl-year') {
             $queryCPL->whereYear('created_at', $currentYear);
         } elseif ($this->filterCPL === 'cpl-5-years') {
-            $queryCPL->where('created_at', '<=', $fiveYearsAgo);
-        } elseif ($this->filterCPL === 'cpl-old') {
             $queryCPL->where('created_at', '<', $fiveYearsAgo);
         }
     }

@@ -56,8 +56,6 @@ trait WithCPMKFilters
             $queryCPMK->where('created_at', '>=', $sixMonthsAgo);
         } elseif ($this->filterCPMK === 'cpmk-year') {
             $queryCPMK->whereYear('created_at', $currentYear);
-        } elseif ($this->filterCPMK === 'cpmk-5-years') {
-            $queryCPMK->where('created_at', '>=', $fiveYearsAgo);
         } elseif ($this->filterCPMK === 'cpmk-old') {
             $queryCPMK->where('created_at', '<', $fiveYearsAgo);
         }

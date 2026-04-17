@@ -53,7 +53,7 @@
     </div>
 
     <template x-if="$store.cpl?.isEdit == 1">
-        @include('livewire.staff.obe-management.partial.rps-list', [
+        @include('livewire.staff.obe-management.obe-partial.rps-list', [
             'rps_items_list' => $cpl_rps_items_list,
             'rps_modal_paginator' => $cpl_rps_modal_paginator,
             'nameXString' => 'CPL',

@@ -10,6 +10,7 @@
             } else {
                 $typeUpper = strtoupper($typeXString);
             }
+            $showCall = "show{$typeUpper}($x->id)";
             $editCall = "edit{$typeUpper}($x->id)";
             $deleteCall = "delete{$typeUpper}($x->id, " . ($isTrashed ? 'true' : 'false') . ')';
             $restoreCall = "restore{$typeUpper}($x->id)";

@@ -48,15 +48,15 @@
                 enctype="multipart/form-data" id="prodiForm">
 
                 <template x-if="$store.prodi?.typeModal == 'prodi'" x-cloak>
-                    @include('livewire.admin.prodi-management.modal-form.prodi-input')
+                    @include('livewire.admin.prodi-management.prodi-modal-form.prodi-input')
                 </template>
 
                 <template x-if="$store.prodi?.typeModal == 'jurusan'" x-cloak>
-                    @include('livewire.admin.prodi-management.modal-form.jurusan-input')
+                    @include('livewire.admin.prodi-management.prodi-modal-form.jurusan-input')
                 </template>
 
                 <template x-if="$store.prodi?.typeModal == 'fakultas'" x-cloak>
-                    @include('livewire.admin.prodi-management.modal-form.fakultas-input')
+                    @include('livewire.admin.prodi-management.prodi-modal-form.fakultas-input')
                 </template>
 
                 {{-- 3. Footer / Button Action --}}
@@ -67,7 +67,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        @include('livewire.admin.prodi-management.modal-form.prodi-message-form')
+                        @include('livewire.admin.prodi-management.prodi-modal-form.prodi-message-form')
                         @include('livewire.global.modal-form.button-form', [
                             'xType' => $prodiType,
                             'targetX' => 'addProdi, saveProdi, editProdi, updateProdi',

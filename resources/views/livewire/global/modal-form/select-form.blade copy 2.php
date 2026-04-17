@@ -8,29 +8,61 @@
     open: false,
     options: [],
     values: [],
-    {{-- Tambahkan state isDisabled di Alpine --}}
     isDisabled: @js($isDisabled),
 
     getLabel(val) {
         if (val === '' || val === null || val === undefined) return '';
-        const index = this.values.findIndex(item => String(item) === String(val));
-        return index !== -1 ? this.options[index] : val;
+        const index = this.values.indexOf(Number(val));
+        if (index !== -1) {
+            return this.options[index];
+        }
+
+        if (typeof val === 'string' && this.options.includes(val)) {
+            return val;
+        }
+
+        return '';
     },
+
+    updateMkDigitSemester() {
+        if (!this.$store?.mk) return;
+
+        const sem = parseInt(this.$store.mk.semester);
+        const blok = parseInt(this.$store.mk.kode_blok);
+
+        if (!sem) {
+            this.$store.mk.digit_semester = '';
+            return;
+        }
+
+        if (blok === 0) {
+            this.$store.mk.digit_semester = Math.ceil(sem / 2).toString() + '0';
+            return;
+        }
+
+        const tahun = Math.ceil(sem / 2);
+        const tipe = sem % 2 !== 0 ? '1' : '2';
+        this.$store.mk.digit_semester = tahun.toString() + tipe;
+    },
+
     value: ''
 }"
     x-init="value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }})"
     x-effect="
         options = @js($xOptions);
         values = @js($xValues ?? $xOptions);
-        
-        {{-- Pantau perubahan props disabled secara reaktif --}}
         isDisabled = @js($isDisabled);
 
         const rawVal = $store.{{ $alpine ?? 'config' }}?.{{ $modelString }};
-        if ($store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
+
+        if ((rawVal === null || rawVal === undefined || rawVal === '') && $store.{{ $alpine ?? 'config' }}?.isEdit === 0) {
             value = '';
         } else {
             value = getLabel(rawVal);
+        }
+
+        if ('{{ $alpine }}' === 'mk' && ['semester','kode_blok'].includes('{{ $modelString }}')) {
+            this.updateMkDigitSemester();
         }
     "
     wire:key="select-form-{{ $modelString }}">
@@ -80,15 +112,18 @@
             @php
                 $label = is_array($option) ? $option['label'] ?? '-' : $option;
                 $valueOption = is_array($option) ? $option['value'] ?? $label : $option;
-                $selectedValue = isset($xValues[$i]) ? $xValues[$i] : $valueOption;
             @endphp
 
             <div wire:key="option-{{ $i }}"
                 @click="
-                    value = '{{ $label }}'; 
-                    $store.{{ $alpine ?? 'config' }}['{{ $modelString }}'] = {{ is_numeric($selectedValue) ? $selectedValue : "'{$selectedValue}'" }};
-                    open = false
-                "
+            const selectedValue = {{ is_numeric($valueOption) ? $valueOption : "'$valueOption'" }};
+            value = getLabel(selectedValue);
+            $store.{{ $alpine ?? 'config' }}['{{ $modelString }}'] = selectedValue;
+            if ('{{ $alpine }}' === 'mk' && ['semester','kode_blok'].includes('{{ $modelString }}')) {
+                this.updateMkDigitSemester();
+            }
+            open = false
+        "
                 class="px-4 py-2 cursor-pointer">
 
                 <div class="flex justify-between items-center my-1">

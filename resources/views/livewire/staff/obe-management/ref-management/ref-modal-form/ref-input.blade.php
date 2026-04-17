@@ -94,7 +94,7 @@
     </div>
 
     <template x-if="$store.ref?.isEdit == 1">
-        @include('livewire.staff.obe-management.partial.rps-list', [
+        @include('livewire.staff.obe-management.obe-partial.rps-list', [
             'rps_items_list' => $ref_rps_items_list,
             'rps_modal_paginator' => $ref_rps_modal_paginator,
             'nameXString' => 'Referensi',

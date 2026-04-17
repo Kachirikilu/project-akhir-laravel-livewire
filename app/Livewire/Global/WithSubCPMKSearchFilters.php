@@ -52,6 +52,7 @@ trait WithSubCPMKSearchFilters
             'waktu_mandiri' => $s->waktu_mandiri,
             'bobot' => $s->bobot ?? 0,
             'ref' => $this->mapRef($s->refs),
+            'dosen' => $this->mapDosen($s->dosens)
         ])->toArray();
     }
 

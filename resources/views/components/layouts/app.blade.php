@@ -1,7 +1,8 @@
 <x-layouts.app.sidebar :title="$title ?? null">
     <flux:main>
         {{ $slot }}
-        <flux:toast />
-        @fluxScripts
     </flux:main>
+
+    <flux:toast />
+    @fluxScripts
 </x-layouts.app.sidebar>
