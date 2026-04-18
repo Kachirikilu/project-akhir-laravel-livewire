@@ -86,10 +86,15 @@
                     'isCenter' => 1,
                     'rowSpan' => 2,
                 ])
-                @include('livewire.global.table.head-table', [
+                @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'total_bobot',
                     'headString' => 'Total Bobot',
-                    'isCenter' => 1,
+                    'modelString' => 'searchBobotCPMK',
+                    'resetXFilter' => 'resetInputBobotCPMK()',
+                    'maxlength' => 2,
+                    'floatOnly' => 1,
+                    'wInput' => 15,
+                    'placeholder' => 'Bobot',
                     'rowSpan' => 2,
                 ])
             @endif
@@ -177,11 +182,15 @@
                     'headString' => 'Sub-CPMK',
                     'isCenter' => 1,
                 ])
-                @include('livewire.global.table.head-table', [
+                @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'total_bobot',
                     'headString' => 'Total Bobot',
-                    'isCenter' => 1,
-                    'isBorderR' => 1,
+                    'modelString' => 'searchBobotRPS',
+                    'resetXFilter' => 'resetInputBobotRPS()',
+                    'maxlength' => 3,
+                    'floatOnly' => 1,
+                    'wInput' => 15,
+                    'placeholder' => 'Bobot',
                 ])
             @endif
 
@@ -204,8 +213,21 @@
                     'isCenter' => 1,
                     'rowSpan' => 2,
                 ])
-                @include('livewire.global.table.head-table', [
+                {{-- @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'bobot',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ]) --}}
+                @include('livewire.global.search-and-filters.table-search', [
+                    'sortFieldString' => 'bobot',
+                    'headString' => 'Bobot',
+                    'modelString' => 'searchBobotSCPMK',
+                    'resetXFilter' => 'resetInputBobotSCPMK()',
+                    'maxlength' => 2,
+                    'floatOnly' => 1,
+                    'wInput' => 15,
+                    'placeholder' => 'Bobot',
                     'isMain' => 1,
                     'isCenter' => 1,
                     'rowSpan' => 2,
@@ -544,7 +566,7 @@
             <tr>
                 <td colspan="{{ match ($switchTable) {
                     'rps' => 14,
-                    'cpmk' => 6,
+                    'cpmk' => 8,
                     'scpmk' => 14,
                     'cpl' => 6,
                     'ref' => 10,

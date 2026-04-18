@@ -158,7 +158,7 @@ trait WithSubCPMKModal
             'deskripsi_tugas' => 'nullable|max:1000',
             'waktu_tugas' => 'nullable|integer|min:60',
             'waktu_mandiri' => 'nullable|integer|min:60',
-            'bobot' => 'required|numeric|min:0.5',
+            'bobot' => 'required|numeric|min:0.5|max:100',
             'ref_id_array' => 'required|array|min:1',
         ];
 
@@ -512,6 +512,7 @@ trait WithSubCPMKModal
             'bobot.required' => 'Bobot penilaian wajib diisi!',
             'bobot.numeric' => 'Bobot harus berupa angka desimal!',
             'bobot.min' => 'Bobot minimal bernilai 0.5!',
+            'bobot.max' => 'Bobot minimal bernilai 100!',
 
             'ref_id_array.required' => 'Minimal pilih satu Referensi untuk Sub-CPMK ini!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',

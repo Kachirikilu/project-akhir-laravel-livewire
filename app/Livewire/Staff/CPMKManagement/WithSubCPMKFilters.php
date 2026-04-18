@@ -4,7 +4,6 @@ namespace App\Livewire\Staff\CPMKManagement;
 
 use App\Models\Akademik\SubCPMK;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\DB;
 
 trait WithSubCPMKFilters
 {
@@ -12,37 +11,57 @@ trait WithSubCPMKFilters
 
     public $filterSCPMK = '';
 
+    public $searchBobotSCPMK = '';
+
+    public function updatingSearchBobotSCPMK()
+    {
+        $this->resetPage();
+    }
+
+    public function resetInputBobotSCPMK()
+    {
+        $this->reset('searchBobotSCPMK');
+        $this->resetPage();
+    }
+
     public function inputSCPMKSearch()
     {
-        $querySCPMK = SubCPMK::query()->with(['cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
-        $search = $this->search;
+        if ($this->switchTable === 'scpmk') {
 
-        if (! empty($search)) {
-            $querySCPMK->searchSCPMK($search);
-        }
+            $querySCPMK = SubCPMK::query()->with(['cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
+            $search = $this->search;
 
-        if (! empty($this->selectedPrId)) {
-            $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
-        }
-        // if (! empty($this->selectedJrId)) {
-        //     $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
-        // }
-        // if (! empty($this->selectedFkId)) {
-        //     $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
-        // }
-        // if (! empty($this->selectedMKId)) {
-        //     $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
-        // }
-        if (! empty($this->selectedRPSId)) {
-            $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
-        }
-        if (! empty($this->selectedCPMKId)) {
-            $querySCPMK->whereHas('cpmks', fn ($q) => $q->where('cpmks.id', $this->selectedCPMKId));
-        }
-        
+            if (! empty($search)) {
+                $querySCPMK->searchSCPMK($search);
+            }
 
-        $this->sortFieldOrderSCPMK($querySCPMK);
-        return $querySCPMK;
+            if (! empty($this->searchBobotSCPMK)) {
+                $querySCPMK->searchSCPMK($this->searchBobotSCPMK, true);
+            }
+
+            if (! empty($this->selectedPrId)) {
+                $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+            }
+            // if (! empty($this->selectedJrId)) {
+            //     $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+            // }
+            // if (! empty($this->selectedFkId)) {
+            //     $querySCPMK->whereHas('cpmks.rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            // }
+            // if (! empty($this->selectedMKId)) {
+            //     $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
+            // }
+            if (! empty($this->selectedRPSId)) {
+                $querySCPMK->whereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+            }
+            if (! empty($this->selectedCPMKId)) {
+                $querySCPMK->whereHas('cpmks', fn ($q) => $q->where('cpmks.id', $this->selectedCPMKId));
+            }
+
+            $this->sortFieldOrderSCPMK($querySCPMK);
+
+            return $querySCPMK;
+        }
     }
 
     public function buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
@@ -53,7 +72,7 @@ trait WithSubCPMKFilters
             $querySCPMK->where('created_at', '>=', $sixMonthsAgo);
         } elseif ($this->filterSCPMK === 'scpmk-year') {
             $querySCPMK->whereYear('created_at', $currentYear);
-        } elseif ($this->filterSCPMK === 'scpmk-old') {
+        } elseif ($this->filterSCPMK === 'scpmk-older-5') {
             $querySCPMK->where('created_at', '<', $fiveYearsAgo);
         }
     }
@@ -69,8 +88,8 @@ trait WithSubCPMKFilters
         $querySCPMK->select('sub_cpmks.*');
 
         return match ($this->sortField) {
-            'kode'   => $querySCPMK->orderBy('kode_scpmk', $this->sortDirection),
-            
+            'kode' => $querySCPMK->orderBy('kode_scpmk', $this->sortDirection),
+
             'deskripsi' => $querySCPMK->orderBy('deskripsi', $this->sortDirection),
             'metodologi' => $querySCPMK->orderBy('metodologi', $this->sortDirection),
             'indikator' => $querySCPMK->orderBy('indikator', $this->sortDirection),
@@ -82,7 +101,7 @@ trait WithSubCPMKFilters
 
             'created_at' => $querySCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $querySCPMK->orderBy('updated_at', $this->sortDirection),
-            
+
             default => $querySCPMK->orderBy('id', $this->sortDirection),
         };
 

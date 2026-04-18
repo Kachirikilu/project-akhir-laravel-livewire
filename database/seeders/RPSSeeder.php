@@ -80,7 +80,7 @@ class RPSSeeder extends Seeder
             '2023/2024', '2024/2025', '2025/2026',
         ];
 
-        $targetRps = 20000;
+        $targetRps = 32;
         $batchSize = 256;
 
         $rpsCreated = 0;
@@ -243,7 +243,7 @@ class RPSSeeder extends Seeder
             $isUAS = ($tipe == 16 && $i == 16);
 
             $metode = $isUTS ? 'UTS' : ($isUAS ? 'UAS' : 'Teori');
-            $bobot = ($isUTS || $isUAS) ? 0 : rand(3, 10);
+            $bobot = rand(3, 10);
 
             $sub = SubCPMK::create([
                 'kode_scpmk' => $this->generateUniqueKode(SubCPMK::class, 'kode_scpmk'),
@@ -263,6 +263,16 @@ class RPSSeeder extends Seeder
 
             $subs[] = $sub;
             $totalBobot += $bobot;
+        }
+
+        // =========================
+        // SUB-CPMK ↔ REFERENSI (MINIMAL 1)
+        // =========================
+        foreach ($subs as $sub) {
+            $selectedRefs = collect($refIds)->random(min(rand(1, 3), count($refIds)));
+            foreach ($selectedRefs as $refId) {
+                $sub->refs()->attach($refId);
+            }
         }
 
         // =========================

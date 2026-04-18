@@ -4,7 +4,7 @@
     @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => $filterByFunc,
                 'xFilter' => $filterString,
-                'tabFilter' => $totalTab,
+                'tabFilter' => $totalTab ?? null,
                 'tabString' => '',
                 'tabNameString' => 'Semua ' . ucfirst($typeXString)
             ])
@@ -13,8 +13,8 @@
     @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => $filterByFunc,
                 'xFilter' => $filterString,
-                'tabFilter' => $totalTab1,
-                'tabString' => $tab1String,
+                'tabFilter' => $totalTab1 ?? null,
+                'tabString' => $tab1String ?? null,
                 'tabNameString' => $tab1Name ?? ucfirst($tab1String)
             ])
 
@@ -22,8 +22,8 @@
     @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => $filterByFunc,
                 'xFilter' => $filterString,
-                'tabFilter' => $totalTab2,
-                'tabString' => $tab2String,
+                'tabFilter' => $totalTab2 ?? null,
+                'tabString' => $tab2String ?? null,
                 'tabNameString' => $tab2Name ?? ucfirst($tab2String)
             ])
 

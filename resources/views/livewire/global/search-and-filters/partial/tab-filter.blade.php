@@ -13,7 +13,9 @@
     <div class="flex items-center">
         <i class="fas fa-users mr-2"></i>
         {{ $tabNameString }}
-        <span class="ml-1">({{ $tabFilter }})</span>
+        @if (!is_null($tabFilter))
+            <span class="ml-1">({{ $tabFilter }})</span>
+        @endif
     </div>
 
     {{-- Garis Indikator Bawah --}}

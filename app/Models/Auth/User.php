@@ -43,6 +43,7 @@ class User extends Authenticatable
         'identity3',
         'status',
     ];
+
     protected $casts = [
         'created_at' => 'date',
         'updated_at' => 'date',
@@ -75,16 +76,22 @@ class User extends Authenticatable
 
     public function scopeInLocationUser($query, $type, $id)
     {
-        if (!$id) return $query;
+        if (! $id) {
+            return $query;
+        }
 
         return $query->where(function ($q) use ($type, $id) {
             $roles = ['admin', 'dosen', 'mahasiswa'];
             foreach ($roles as $role) {
-                $q->orWhereHas($role . ($type !== 'prodi' ? '.pr_rel' : ''), function ($r) use ($type, $id) {
-                    if ($type === 'prodi') $r->where('pr_id', $id);
-                    if ($type === 'jurusan') $r->where('jr_id', $id);
+                $q->orWhereHas($role.($type !== 'prodi' ? '.pr_rel' : ''), function ($r) use ($type, $id) {
+                    if ($type === 'prodi') {
+                        $r->where('pr_id', $id);
+                    }
+                    if ($type === 'jurusan') {
+                        $r->where('jr_id', $id);
+                    }
                     if ($type === 'fakultas') {
-                        $r->whereHas('jr_rel', fn($j) => $j->where('fk_id', $id));
+                        $r->whereHas('jr_rel', fn ($j) => $j->where('fk_id', $id));
                     }
                 });
             }
@@ -103,41 +110,45 @@ class User extends Authenticatable
             ->implode('');
     }
 
-
-    /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
+    // / Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
     public function admin(): HasOne
     {
         return $this->hasOne(Admin::class);
     }
+
     public function dosen(): HasOne
     {
         return $this->hasOne(Dosen::class);
     }
+
     public function mahasiswa(): HasOne
     {
         return $this->hasOne(Mahasiswa::class);
     }
-    /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
+    // / Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
 
-    /// ... /// ... /// ...
+    // / ... /// ... /// ...
 
-    /// Attribute Utama User /// Attribute Utama User /// Attribute Utama User 
+    // / Attribute Utama User /// Attribute Utama User /// Attribute Utama User
     protected function name(): Attribute
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->name ?? $this->email;
         });
     }
+
     public function role(): Attribute
     {
         return Attribute::get(fn () => match (true) {
-            $this->admin()->exists()     => 'Admin',
-            $this->dosen()->exists()     => 'Dosen',
+            $this->admin()->exists() => 'Admin',
+            $this->dosen()->exists() => 'Dosen',
             $this->mahasiswa()->exists() => 'Mahasiswa',
-            default                      => 'User',
+            default => 'User',
         });
     }
+
     protected function identity1(): Attribute
     {
         return Attribute::get(function () {
@@ -154,6 +165,7 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
+
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
@@ -168,6 +180,7 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
+
     protected function identity3(): Attribute
     {
         return Attribute::get(function () {
@@ -176,25 +189,25 @@ class User extends Authenticatable
             return $value ?: null;
         });
     }
+
     protected function status(): Attribute
     {
-        return Attribute::get(fn () => 
-            $this->admin?->status ?? 
-            $this->dosen?->status ?? 
-            $this->mahasiswa?->status ?? 
+        return Attribute::get(fn () => $this->admin?->status ??
+            $this->dosen?->status ??
+            $this->mahasiswa?->status ??
             'Tidak Ada'
         );
     }
-    /// Attribute Utama User /// Attribute Utama User /// Attribute Utama User 
+    // / Attribute Utama User /// Attribute Utama User /// Attribute Utama User
 
-    /// ... /// ... /// ...
+    // / ... /// ... /// ...
 
-    /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas 
+    // / Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas
     protected function prId(): Attribute
     {
         return Attribute::get(function () {
-            return $this->admin?->pr_id 
-                ?? $this->dosen?->pr_id 
+            return $this->admin?->pr_id
+                ?? $this->dosen?->pr_id
                 ?? $this->mahasiswa?->pr_id;
         });
     }
@@ -203,6 +216,7 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->pr_rel->prodi;
         });
     }
@@ -211,6 +225,7 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->pr_rel->kode;
         });
     }
@@ -219,6 +234,7 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->pr_rel->jr_id;
         });
     }
@@ -227,29 +243,33 @@ class User extends Authenticatable
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
             return $profile?->pr_rel->jr_rel->fk_id;
         });
     }
-    /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas 
+    // / Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas
 
-    /// ... /// ... /// ...
+    // / ... /// ... /// ...
 
-    /// Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
+    // / Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
     protected function profilePhotoUrl(): Attribute
     {
         return Attribute::get(function (): string {
             if ($this->profile_photo_path) {
                 return Storage::disk('public')->url($this->profile_photo_path);
             }
+
             return $this->defaultProfilePhotoUrl();
         });
     }
+
     protected function defaultProfilePhotoUrl(): string
     {
         $name = trim(collect(explode(' ', $this->name))->map(fn ($segment) => mb_substr($segment, 0, 1))->join(' '));
 
         return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=0080FF';
     }
+
     protected static function booted()
     {
         static::deleting(function ($user) {
@@ -265,25 +285,27 @@ class User extends Authenticatable
             if (! $this->created_at) {
                 return null;
             }
+
             return $this->created_at->translatedFormat('D, d M Y');
         });
     }
+
     protected function updatedDay(): Attribute
     {
         return Attribute::get(function () {
             if (! $this->updated_at) {
                 return null;
             }
+
             return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
-    /// Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
+    // / Attribute Pendamping /// Attribute Pendamping /// Attribute Pendamping
 
-    /// ... /// ... /// ...
+    // / ... /// ... /// ...
 
-
-    /// Search User /// Search User /// Search User
-    public function scopeSearchUser($query, $search)
+    // / Search User /// Search User /// Search User
+    public function scopeSearchUser($query, $search, $withTahun = false)
     {
         if (empty(trim($search))) {
             return $query;
@@ -293,65 +315,73 @@ class User extends Authenticatable
         $searchLower = '%'.strtolower($search).'%';
         $searchTerm = '%'.$search.'%';
 
-        return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
-            // 1. Search di Tabel Users Utama
-            $q->where('email', 'like', $searchTerm);
+        return $query->where(function ($q) use ($search, $searchTerm, $searchLower, $withTahun) {
 
-            if (is_numeric($search)) {
-                $q->orWhere('users.id', $search);
-            }
+            if ($withTahun == false) {
+                // 1. Search di Tabel Users Utama
+                $q->where('email', 'like', $searchTerm);
 
-                 $q->orWhere(function($dq) use ($searchLower, $searchTerm) {
-                    $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a %d %b %Y')) LIKE ?", ['%' . $searchLower . '%'])
-                    ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
-                });
-
-            // 2. Definisi Role dan Field Spesifiknya
-            $roleConfigs = [
-                'admin' => ['name', 'nip', 'nitk', 'status'],
-                'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
-                'mahasiswa' => ['name', 'nim', 'angkatan', 'status'],
-            ];
-
-            foreach ($roleConfigs as $role => $fields) {
-                // Pencarian berdasarkan identitas role (NIP, Nama, dll)
-                $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
-                    $r->where(function ($sub) use ($searchTerm, $fields) {
-                        foreach ($fields as $field) {
-                            $sub->orWhere($field, 'like', $searchTerm);
-                        }
-                    });
-                });
-
-                // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
-                $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
-                    $p->where('nama_pr', 'like', $searchTerm)
-                        ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
-                            $j->where('nama_jr', 'like', $searchTerm)
-                                ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
-                                ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
-                                    $f->where('nama_fk', 'like', $searchTerm)
-                                        ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
-                                });
-                        });
-                });
-
-                // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
-                if (str_contains($searchLower, $role)) {
-                    $q->orWhereHas($role);
+                if (is_numeric($search)) {
+                    $q->orWhere('users.id', $search);
                 }
+
+                $q->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+                    $dq->whereRaw("DATE_FORMAT(users.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(users.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.created_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("DATE_FORMAT(users.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("DATE_FORMAT(users.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%a %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+                        ->orWhereRaw("LOWER(DATE_FORMAT(users.updated_at, '%W %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+                });
+
+                // 2. Definisi Role dan Field Spesifiknya
+                $roleConfigs = [
+                    'admin' => ['name', 'nip', 'nitk', 'status'],
+                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
+                    'mahasiswa' => ['name', 'nim', 'angkatan', 'status'],
+                ];
+
+                foreach ($roleConfigs as $role => $fields) {
+                    // Pencarian berdasarkan identitas role (NIP, Nama, dll)
+                    $q->orWhereHas($role, function ($r) use ($searchTerm, $fields) {
+                        $r->where(function ($sub) use ($searchTerm, $fields) {
+                            foreach ($fields as $field) {
+                                $sub->orWhere($field, 'like', $searchTerm);
+                            }
+                        });
+                    });
+
+                    // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
+                    $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
+                        $p->where('nama_pr', 'like', $searchTerm)
+                            ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
+                                $j->where('nama_jr', 'like', $searchTerm)
+                                    ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+                                    ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
+                                        $f->where('nama_fk', 'like', $searchTerm)
+                                            ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+                                    });
+                            });
+                    });
+
+                    // Pencarian Berdasarkan Nama Role Langsung (ketik 'admin', 'dosen', dsb)
+                    if (str_contains($searchLower, $role)) {
+                        $q->orWhereHas($role);
+                    }
+
+                }
+
+            } else {
+                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', "%{$this->searchAngkatan}%")
+                );
             }
         });
     }
-    /// Search User /// Search User /// Search User
+    // / Search User /// Search User /// Search User
 }

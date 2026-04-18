@@ -107,38 +107,105 @@ class ProgramStudiManagement extends Component
         }
     }
 
+    // public function render()
+    // {
+    //     $this->inputJrFilter();
+    //     $this->inputFkFilter();
+
+    //     $queryProdi = $this->inputProdiSearch();
+    //     $queryJurusan = $this->inputJurusanSearch();
+    //     $queryFakultas = $this->inputFkSearch();
+
+    //     try {
+
+    //         $queryPr = clone $queryProdi;
+    //         $queryJr = clone $queryJurusan;
+    //         $queryFk = clone $queryFakultas;
+
+    //         $prodis = collect();
+    //         $jurusans = collect();
+    //         $fakultas = collect();
+
+    //         if ($this->showDeleted) {
+    //             $queryProdi->onlyTrashed();
+    //             $queryJurusan->onlyTrashed();
+    //             $queryFakultas->onlyTrashed();
+
+    //             $queryPr->onlyTrashed();
+    //             $queryJr->onlyTrashed();
+    //             $queryFk->onlyTrashed();
+    //         }
+
+    //         if ($this->switchTable === 'prodi') {
+    //             $this->buttonStrataFilter($queryPr);
+    //             $prodis = $queryPr->paginate($this->perPage);
+    //         } elseif ($this->switchTable === 'jurusan') {
+    //             $jurusans = $queryJr->paginate($this->perPage);
+    //         } elseif ($this->switchTable === 'fakultas') {
+    //             $fakultas = $queryFk->paginate($this->perPage);
+    //         }
+
+    //         return view('livewire.admin.prodi-management', [
+    //             'prodis' => $prodis,
+    //             'jurusans' => $jurusans,
+    //             'fakultas' => $fakultas,
+    //             'totalProdis' => Prodi::count(),
+    //             'totalSarjanas' => Prodi::where('strata', 'Sarjana')->count(),
+    //             'totalMagisters' => Prodi::where('strata', 'Magister')->count(),
+    //             'totalDoktors' => Prodi::where('strata', 'Doktor')->count(),
+    //             'totalJurusan' => Jurusan::count(),
+    //             'totalFakultas' => Fakultas::count(),
+    //         ]);
+
+    //     } catch (QueryException $e) {
+
+    //         $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+
+    //         return view('livewire.admin.prodi-management', [
+    //             'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),
+    //             'jurusans' => Jurusan::whereRaw('1=0')->paginate($this->perPage),
+    //             'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
+
+    //             'totalProdis' => 0,
+    //             'totalSarjanas' => 0,
+    //             'totalMagisters' => 0,
+    //             'totalDoktors' => 0,
+
+    //             'totalJurusan' => 0,
+    //             'totalFakultas' => 0,
+    //         ]);
+    //     }
+    // }
+
     public function render()
     {
         $this->inputJrFilter();
         $this->inputFkFilter();
 
-        $queryProdi = $this->inputProdiSearch();
-        $queryJurusan = $this->inputJurusanSearch();
-        $queryFakultas = $this->inputFkSearch();
+        $queryPr = $this->inputProdiSearch();
+        $queryJr = $this->inputJurusanSearch();
+        $queryFk = $this->inputFkSearch();
 
         try {
-
-            $queryPr = clone $queryProdi;
-            $queryJr = clone $queryJurusan;
-            $queryFk = clone $queryFakultas;
-
-            $this->buttonStrataFilter($queryPr);
 
             $prodis = collect();
             $jurusans = collect();
             $fakultas = collect();
 
+            // =========================
+            // SOFT DELETE
+            // =========================
             if ($this->showDeleted) {
-                $queryProdi->onlyTrashed();
-                $queryJurusan->onlyTrashed();
-                $queryFakultas->onlyTrashed();
-
                 $queryPr->onlyTrashed();
                 $queryJr->onlyTrashed();
                 $queryFk->onlyTrashed();
             }
 
+            // =========================
+            // PAGINATION
+            // =========================
             if ($this->switchTable === 'prodi') {
+                $this->buttonStrataFilter($queryPr);
                 $prodis = $queryPr->paginate($this->perPage);
             } elseif ($this->switchTable === 'jurusan') {
                 $jurusans = $queryJr->paginate($this->perPage);
@@ -146,16 +213,32 @@ class ProgramStudiManagement extends Component
                 $fakultas = $queryFk->paginate($this->perPage);
             }
 
+            // =========================
+            // COUNT (ISOLATED QUERY)
+            // =========================
+            $countPr = Prodi::query();
+            $countJr = Jurusan::query();
+            $countFk = Fakultas::query();
+
+            if ($this->showDeleted) {
+                $countPr->onlyTrashed();
+                $countJr->onlyTrashed();
+                $countFk->onlyTrashed();
+            }
+
             return view('livewire.admin.prodi-management', [
                 'prodis' => $prodis,
                 'jurusans' => $jurusans,
                 'fakultas' => $fakultas,
-                'totalProdis' => (clone $queryProdi)->count(),
-                'totalSarjanas' => (clone $queryProdi)->where('strata', 'Sarjana')->count(),
-                'totalMagisters' => (clone $queryProdi)->where('strata', 'Magister')->count(),
-                'totalDoktors' => (clone $queryProdi)->where('strata', 'Doktor')->count(),
-                'totalJurusan' => (clone $queryJurusan)->count(),
-                'totalFakultas' => (clone $queryFakultas)->count(),
+
+                // 🔥 FIX DI SINI
+                'totalProdis' => $countPr->count(),
+                'totalSarjanas' => (clone $countPr)->where('strata', 'Sarjana')->count(),
+                'totalMagisters' => (clone $countPr)->where('strata', 'Magister')->count(),
+                'totalDoktors' => (clone $countPr)->where('strata', 'Doktor')->count(),
+
+                'totalJurusan' => (clone $countJr)->count(),
+                'totalFakultas' => (clone $countFk)->count(),
             ]);
 
         } catch (QueryException $e) {
@@ -171,7 +254,6 @@ class ProgramStudiManagement extends Component
                 'totalSarjanas' => 0,
                 'totalMagisters' => 0,
                 'totalDoktors' => 0,
-
                 'totalJurusan' => 0,
                 'totalFakultas' => 0,
             ]);

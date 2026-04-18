@@ -117,21 +117,28 @@ class UserManagement extends Component
             $this->syncSortField($this->filterUser, $this->sortField);
 
             $queryUser = $this->inputUserSearch();
+            $this->buttonRoleFilter($queryUser);
 
-            $query = clone $queryUser;
-            $this->buttonRoleFilter($query);
+            // =========================
+            // BASE COUNT QUERY
+            // =========================
+            $countUser = User::query();
 
             if ($this->showDeleted) {
-                $query->onlyTrashed();
                 $queryUser->onlyTrashed();
+                $countUser->onlyTrashed();
             }
 
             return view('livewire.admin.user-management', [
-                'users' => $query->paginate($this->perPage),
-                'totalUsers' => (clone $queryUser)->count(),
-                'totalAdmins' => (clone $queryUser)->whereHas('admin')->count(),
-                'totalDosens' => (clone $queryUser)->whereHas('dosen')->count(),
-                'totalMahasiswas' => (clone $queryUser)->whereHas('mahasiswa')->count(),
+                'users' => $queryUser->paginate($this->perPage),
+
+                // =========================
+                // COUNT (ISOLATED)
+                // =========================
+                'totalUsers' => (clone $countUser)->count(),
+                'totalAdmins' => (clone $countUser)->whereHas('admin')->count(),
+                'totalDosens' => (clone $countUser)->whereHas('dosen')->count(),
+                'totalMahasiswas' => (clone $countUser)->whereHas('mahasiswa')->count(),
             ]);
 
         } catch (QueryException $e) {

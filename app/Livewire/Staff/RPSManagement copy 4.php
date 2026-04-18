@@ -28,6 +28,7 @@ use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -215,123 +216,6 @@ class RPSManagement extends Component
         }
     }
 
-    // public function render()
-    // {
-    //     // =========================
-    //     // FILTER INPUT
-    //     // =========================
-    //     $this->inputPrFilter();
-    //     $this->inputMKFilter();
-    //     $this->inputRPSFilter();
-    //     $this->inputCPMKFilter();
-    //     $this->inputSCPMKFilter();
-    //     $this->inputCPLFilter();
-    //     $this->inputDosenFilter();
-
-    //     try {
-
-    //         // =========================
-    //         // QUERY BASE
-    //         // =========================
-    //         $queryRPS = $this->inputRPSSearch();
-    //         $queryCPMK = $this->inputCPMKSearch();
-    //         $querySCPMK = $this->inputSCPMKSearch();
-    //         $queryCPL = $this->inputCPLSearch();
-    //         $queryRef = $this->inputRefSearch();
-
-    //         if ($this->showDeleted) {
-    //             $queryRPS->onlyTrashed();
-    //             $queryCPMK->onlyTrashed();
-    //             $querySCPMK->onlyTrashed();
-    //             $queryCPL->onlyTrashed();
-    //             $queryRef->onlyTrashed();
-    //         }
-
-    //         // =========================
-    //         // TIME SETUP
-    //         // =========================
-    //         $now = now();
-    //         $sixMonthsAgo = now()->subMonths(6);
-    //         $currentYear = now()->year;
-    //         $threeYearsAgo = now()->subYears(3);
-    //         $fiveYearsAgo = now()->subYears(5);
-    //         $tenYearsAgo = now()->subYears(10);
-
-    //         // =========================
-    //         // PAGINATION
-    //         // =========================
-    //         $data = [
-    //             'rps' => collect(),
-    //             'cpmk' => collect(),
-    //             'scpmk' => collect(),
-    //             'cpl' => collect(),
-    //             'ref' => collect(),
-    //         ];
-
-    //         switch ($this->switchTable) {
-    //             case 'rps':
-    //                 $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
-    //                 $data['rps'] = $queryRPS->paginate($this->perPage);
-
-    //                 break;
-    //             case 'cpmk':
-    //                 $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-    //                 $data['cpmk'] = $queryCPMK->paginate($this->perPage);
-    //                 break;
-    //             case 'scpmk':
-    //                 $this->buttonSCPMKFilter($querySCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-    //                 $data['scpmk'] = $querySCPMK->paginate($this->perPage);
-    //                 break;
-    //             case 'cpl':
-    //                 $this->buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
-    //                 $data['cpl'] = $queryCPL->paginate($this->perPage);
-    //                 break;
-    //             case 'ref':
-    //                 $this->buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo->year, $fiveYearsAgo->year, $tenYearsAgo->year);
-    //                 $data['ref'] = $queryRef->paginate($this->perPage);
-    //                 break;
-    //         }
-
-    //         // =========================
-    //         // TOTAL (NO GET)
-    //         // =========================
-    //         return view('livewire.staff.rps-management', array_merge($data, [
-    //             'totalRPS' => RPS::count(),
-    //             'totalCPMK' => CPMK::count(),
-    //             'totalSCPMK' => SubCPMK::count(),
-    //             'totalCPL' => CPL::count(),
-    //             'totalRef' => Referensi::count(),
-    //             'totalPiv' => 0,
-    //             'cpmk_rps_modal_paginator' => $this->cpmk_rps_modal_paginator,
-    //             'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
-    //             'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
-    //             'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
-    //         ]));
-    //     } catch (QueryException $e) {
-
-    //         $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
-
-    //         return view('livewire.staff.rps-management', array_merge([
-    //             'rps' => RPS::whereRaw('1=0')->paginate($this->perPage),
-    //             'cpmk' => CPMK::whereRaw('1=0')->paginate($this->perPage),
-    //             'scpmk' => SubCPMK::whereRaw('1=0')->paginate($this->perPage),
-    //             'cpl' => CPL::whereRaw('1=0')->paginate($this->perPage),
-    //             'ref' => Referensi::whereRaw('1=0')->paginate($this->perPage),
-    //         ], [
-    //             'totalRPS' => 0,
-    //             'totalCPMK' => 0,
-    //             'totalSCPMK' => 0,
-    //             'totalCPL' => 0,
-    //             'totalRef' => 0,
-    //             'totalPiv' => 0,
-    //             'cpmk_rps_modal_paginator' => collect(),
-    //             'scpmk_rps_modal_paginator' => collect(),
-    //             'cpl_rps_modal_paginator' => collect(),
-    //             'ref_rps_modal_paginator' => collect(),
-    //         ]));
-    //     }
-    // }
-
     public function render()
     {
         // =========================
@@ -356,24 +240,12 @@ class RPSManagement extends Component
             $queryCPL = $this->inputCPLSearch();
             $queryRef = $this->inputRefSearch();
 
-            $countRPS = RPS::query();
-            $countCPMK = CPMK::query();
-            $countSCPMK = SubCPMK::query();
-            $countCPL = CPL::query();
-            $countRef = Referensi::query();
-
             if ($this->showDeleted) {
                 $queryRPS->onlyTrashed();
                 $queryCPMK->onlyTrashed();
                 $querySCPMK->onlyTrashed();
                 $queryCPL->onlyTrashed();
                 $queryRef->onlyTrashed();
-
-                $countRPS->onlyTrashed();
-                $countCPMK->onlyTrashed();
-                $countSCPMK->onlyTrashed();
-                $countCPL->onlyTrashed();
-                $countRef->onlyTrashed();
             }
 
             // =========================
@@ -401,6 +273,7 @@ class RPSManagement extends Component
                 case 'rps':
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
                     $data['rps'] = $queryRPS->paginate($this->perPage);
+
                     break;
                 case 'cpmk':
                     $this->buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo);
@@ -420,120 +293,130 @@ class RPSManagement extends Component
                     break;
             }
 
-            $stats = [
+            // $stats = [
 
-                // =========================
-                // RPS
-                // =========================
-                'rps-akademik' => (clone $countRPS)
-                    ->where('akademik', 'like', "%$currentYear%")
-                    ->count(),
+            //     // =========================
+            //     // RPS
+            //     // =========================
+            //     'rps-akademik' => $queryRPS
+            //         ->where('akademik', 'like', "%$currentYear%")
+            //         ->count(),
 
-                'rps-rev-new' => (clone $countRPS)
-                    ->whereYear('revisi', $currentYear)
-                    ->count(),
+            //     'rps-rev-new' => $queryRPS
+            //         ->whereYear('revisi', $currentYear)
+            //         ->count(),
 
-                // 'rps-aktif'
-                // 'rps-aktif' => (clone $countRPS)
-                //     ->where('is_draf', false)
-                //     ->count(),
+            //     'rps-aktif' => $queryRPS
+            //         ->where('is_draf', false)
+            //         ->count(),
 
-                // 'rps-draf' => (clone $countRPS)
-                //     ->where('is_draf', true)
-                //     ->count(),
+            //     'rps-draf' => $queryRPS
+            //         ->where('is_draf', true)
+            //         ->count(),
 
-                // 'rps-older-5' => (clone $countRPS)
-                //     ->whereRaw('CAST(SUBSTRING(akademik,1,4) AS UNSIGNED) < ?', [$fiveYearsAgo->year])
-                //     ->count(),
+            //     'rps-older-5' => $queryRPS
+            //         ->whereRaw('CAST(SUBSTRING(akademik,1,4) AS UNSIGNED) < ?', [$fiveYearsAgo->year])
+            //         ->count(),
 
-                // =========================
-                // CPMK
-                // =========================
-                'cpmk-month' => (clone $countCPMK)
-                    ->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $currentYear)
-                    ->count(),
+            //     // =========================
+            //     // CPMK
+            //     // =========================
+            //     'cpmk-month' => $queryCPMK
+            //         ->whereMonth('created_at', $now->month)
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'cpmk-6-months' => (clone $countCPMK)
-                //     ->where('created_at', '>=', $sixMonthsAgo)
-                //     ->count(),
+            //     'cpmk-6-months' => $queryCPMK
+            //         ->where('created_at', '>=', $sixMonthsAgo)
+            //         ->count(),
 
-                // 'cpmk-year' => (clone $countCPMK)
-                //     ->whereYear('created_at', $currentYear)
-                //     ->count(),
+            //     'cpmk-year' => $queryCPMK
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'cpmk-older-5' => (clone $countCPMK)
-                //     ->where('created_at', '<', $fiveYearsAgo)
-                //     ->count(),
+            //     'cpmk-older-5' => $queryCPMK
+            //         ->where('created_at', '<', $fiveYearsAgo)
+            //         ->count(),
 
-                // =========================
-                // SCPMK
-                // =========================
-                'scpmk-month' => (clone $countSCPMK)
-                    ->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $currentYear)
-                    ->count(),
+            //     // =========================
+            //     // SCPMK
+            //     // =========================
+            //     'scpmk-month' => $querySCPMK
+            //         ->whereMonth('created_at', $now->month)
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'scpmk-6-months' => (clone $countSCPMK)
-                //     ->where('created_at', '>=', $sixMonthsAgo)
-                //     ->count(),
+            //     'scpmk-6-months' => $querySCPMK
+            //         ->where('created_at', '>=', $sixMonthsAgo)
+            //         ->count(),
 
-                // 'scpmk-year' => (clone $countSCPMK)
-                //     ->whereYear('created_at', $currentYear)
-                //     ->count(),
+            //     'scpmk-year' => $querySCPMK
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'scpmk-older-5' => (clone $countSCPMK)
-                //     ->where('created_at', '<', $fiveYearsAgo)
-                //     ->count(),
+            //     'scpmk-older-5' => $querySCPMK
+            //         ->where('created_at', '<', $fiveYearsAgo)
+            //         ->count(),
 
-                // =========================
-                // CPL
-                // =========================
-                'cpl-month' => (clone $countCPL)
-                    ->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $currentYear)
-                    ->count(),
+            //     // =========================
+            //     // CPL
+            //     // =========================
+            //     'cpl-month' => $queryCPL
+            //         ->whereMonth('created_at', $now->month)
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'cpl-6-months' => (clone $countCPL)
-                //     ->where('created_at', '>=', $sixMonthsAgo)
-                //     ->count(),
+            //     'cpl-6-months' => $queryCPL
+            //         ->where('created_at', '>=', $sixMonthsAgo)
+            //         ->count(),
 
-                // 'cpl-year' => (clone $countCPL)
-                //     ->whereYear('created_at', $currentYear)
-                //     ->count(),
+            //     'cpl-year' => $queryCPL
+            //         ->whereYear('created_at', $currentYear)
+            //         ->count(),
 
-                // 'cpl-older-5' => (clone $countCPL)
-                //     ->where('created_at', '<', $fiveYearsAgo)
-                //     ->count(),
+            //     'cpl-older-5' => $queryCPL
+            //         ->where('created_at', '<', $fiveYearsAgo)
+            //         ->count(),
 
-                // =========================
-                // REFERENSI
-                // =========================
-                'ref-year' => (clone $countRef)
-                    ->where('tahun', $currentYear)
-                    ->count(),
+            //     // =========================
+            //     // REFERENSI
+            //     // =========================
+            //     'ref-year' => $queryRef
+            //         ->where('tahun', $currentYear)
+            //         ->count(),
 
-                // 'ref-2-3-years' => (clone $countRef)
-                //     ->whereBetween('tahun', [$currentYear - 3, $currentYear - 2])
-                //     ->count(),
+            //     'ref-2-3-years' => $queryRef
+            //         ->whereBetween('tahun', [$currentYear - 3, $currentYear - 2])
+            //         ->count(),
 
-                // 'ref-4-5-years' => (clone $countRef)
-                //     ->whereBetween('tahun', [$currentYear - 5, $currentYear - 4])
-                //     ->count(),
+            //     'ref-4-5-years' => $queryRef
+            //         ->whereBetween('tahun', [$currentYear - 5, $currentYear - 4])
+            //         ->count(),
 
-                // 'ref-6-10-years' => (clone $countRef)
-                //     ->whereBetween('tahun', [$currentYear - 10, $currentYear - 6])
-                //     ->count(),
+            //     'ref-6-10-years' => $queryRef
+            //         ->whereBetween('tahun', [$currentYear - 10, $currentYear - 6])
+            //         ->count(),
 
-                // 'ref-older-10' => (clone $countRef)
-                //     ->where('tahun', '<', $currentYear - 10)
-                //     ->count(),
-            ];
+            //     'ref-older-10' => $queryRef
+            //         ->where('tahun', '<', $currentYear - 10)
+            //         ->count(),
+            // ];
 
             // =========================
             // TOTAL (NO GET)
             // =========================
             return view('livewire.staff.rps-management', array_merge($data, [
+
+                // 'totalRPS' => $queryRPS->count(),
+                // 'totalCPMK' => $queryCPMK->count(),
+                // 'totalSCPMK' => $querySCPMK->count(),
+                // 'totalCPL' => $queryCPL->count(),
+                // 'totalRef' => $queryRef->count(),
+                // 'totalRPS' => Cache::remember('count_rps', 60, fn () => (clone $queryRPS)->count()),
+                // 'totalCPMK' => Cache::remember('count_cpmk', 60, fn () => (clone $queryCPMK)->count()),
+                // 'totalSCPMK' => Cache::remember('count_scpmk', 60, fn () => (clone $querySCPMK)->count()),
+                // 'totalCPL' => Cache::remember('count_cpl', 60, fn () => (clone $queryCPL)->count()),
+                // 'totalRef' => Cache::remember('count_ref', 60, fn () => (clone $queryRef)->count()),
                 'totalRPS' => RPS::count(),
                 'totalCPMK' => CPMK::count(),
                 'totalSCPMK' => SubCPMK::count(),
@@ -550,7 +433,35 @@ class RPSManagement extends Component
                 'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
 
-                'stats' => $stats
+                // 'stats' => $stats
+                'stats' => [
+                    'rps-akademik' => 0,
+                    'rps-rev-new' => 0,
+                    'rps-aktif' => 0,
+                    'rps-draf' => 0,
+                    'rps-older-5' => 0,
+
+                    'cpmk-month' => 0,
+                    'cpmk-6-months' => 0,
+                    'cpmk-year' => 0,
+                    'cpmk-older-5' => 0,
+
+                    'scpmk-month' => 0,
+                    'scpmk-6-months' => 0,
+                    'scpmk-year' => 0,
+                    'scpmk-older-5' => 0,
+
+                    'cpl-month' => 0,
+                    'cpl-6-months' => 0,
+                    'cpl-year' => 0,
+                    'cpl-older-5' => 0,
+
+                    'ref-year' => 0,
+                    'ref-2-3-years' => 0,
+                    'ref-4-5-years' => 0,
+                    'ref-6-10-years' => 0,
+                    'ref-older-10' => 0,
+                ],
             ]));
         } catch (QueryException $e) {
 
@@ -579,30 +490,30 @@ class RPSManagement extends Component
                 'stats' => [
                     'rps-akademik' => 0,
                     'rps-rev-new' => 0,
-                    // 'rps-aktif' => 0,
-                    // 'rps-draf' => 0,
-                    // 'rps-older-5' => 0,
+                    'rps-aktif' => 0,
+                    'rps-draf' => 0,
+                    'rps-older-5' => 0,
 
                     'cpmk-month' => 0,
-                    // 'cpmk-6-months' => 0,
-                    // 'cpmk-year' => 0,
-                    // 'cpmk-older-5' => 0,
+                    'cpmk-6-months' => 0,
+                    'cpmk-year' => 0,
+                    'cpmk-older-5' => 0,
 
                     'scpmk-month' => 0,
-                    // 'scpmk-6-months' => 0,
-                    // 'scpmk-year' => 0,
-                    // 'scpmk-older-5' => 0,
+                    'scpmk-6-months' => 0,
+                    'scpmk-year' => 0,
+                    'scpmk-older-5' => 0,
 
                     'cpl-month' => 0,
-                    // 'cpl-6-months' => 0,
-                    // 'cpl-year' => 0,
-                    // 'cpl-older-5' => 0,
+                    'cpl-6-months' => 0,
+                    'cpl-year' => 0,
+                    'cpl-older-5' => 0,
 
                     'ref-year' => 0,
-                    // 'ref-2-3-years' => 0,
-                    // 'ref-4-5-years' => 0,
-                    // 'ref-6-10-years' => 0,
-                    // 'ref-older-10' => 0,
+                    'ref-2-3-years' => 0,
+                    'ref-4-5-years' => 0,
+                    'ref-6-10-years' => 0,
+                    'ref-older-10' => 0,
                 ],
             ]));
         }

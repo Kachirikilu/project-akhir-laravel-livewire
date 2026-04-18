@@ -3,12 +3,10 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Models\Auth\User;
-
 // use App\Models\ProgramStudi\Prodi;
 // use App\Models\ProgramStudi\Jurusan;
 // use App\Models\ProgramStudi\Fakultas;
 
-use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 trait WithUserFilters
@@ -31,6 +29,12 @@ trait WithUserFilters
         $this->resetPage();
     }
 
+    public function resetInputAngkatan()
+    {
+        $this->reset('searchAngkatan');
+        $this->resetPage();
+    }
+
     public function inputUserSearch()
     {
         $queryUser = User::query()
@@ -41,11 +45,15 @@ trait WithUserFilters
         if (! empty($search)) {
             $queryUser->searchUser($search);
         }
-            
+
+        if (! empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
+            $queryUser->searchUser($search, true);
+        }
+
         if ($this->selectedPrId) {
             $queryUser->inLocationUser('prodi', $this->selectedPrId);
         }
-        
+
         if ($this->selectedJrId) {
             $queryUser->inLocationUser('jurusan', $this->selectedJrId);
         }
@@ -76,20 +84,8 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function resetInputAngkatan()
-    {
-        $this->reset('searchAngkatan');
-        $this->resetPage();
-    }
-
     public function sortFieldOrderUser($queryUser)
     {
-        if (!empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
-            $queryUser->whereHas('mahasiswa', fn($q) => 
-                $q->where('angkatan', 'like', "%{$this->searchAngkatan}%")
-            );
-        }
-
         $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'angkatan'];
 
         if (in_array($this->sortField, $profileFields)) {
@@ -97,6 +93,7 @@ trait WithUserFilters
         }
 
         $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
+
         return $queryUser->orderBy($field, $this->sortDirection);
     }
 
@@ -108,26 +105,26 @@ trait WithUserFilters
             ->select('users.*');
 
         $orderByRaw = match ($this->sortField) {
-            'role' => "CASE 
+            'role' => 'CASE 
                         WHEN admins.id IS NOT NULL THEN 1
                         WHEN dosens.id IS NOT NULL THEN 2
                         WHEN mahasiswas.id IS NOT NULL THEN 3
                         ELSE 4
-                    END",
-            
-            'name'      => "COALESCE(admins.name, dosens.name, mahasiswas.name)",
-            'identity1' => "COALESCE(admins.nip, dosens.nip, mahasiswas.nim)",
-            'identity2' => "COALESCE(admins.nitk, dosens.nidn)",
-            'identity3' => "dosens.nidk",
-            'status'    => "COALESCE(admins.status, dosens.status, mahasiswas.status)",
-            
-            'prodi'     => $this->joinProdiAndGetSortSql($queryUser),
-            
-            'angkatan' => "mahasiswas.angkatan",
-            'created_at' => "users.created_at",
-            'updated_at' => "users.updated_at",
-            
-            default => "users.id"
+                    END',
+
+            'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+            'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
+            'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
+            'identity3' => 'dosens.nidk',
+            'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
+
+            'prodi' => $this->joinProdiAndGetSortSql($queryUser),
+
+            'angkatan' => 'mahasiswas.angkatan',
+            'created_at' => 'users.created_at',
+            'updated_at' => 'users.updated_at',
+
+            default => 'users.id'
         };
 
         return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
@@ -139,6 +136,6 @@ trait WithUserFilters
             ->leftJoin('prodis as dosen_prodis', 'dosens.pr_id', '=', 'dosen_prodis.id')
             ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.pr_id', '=', 'mahasiswa_prodis.id');
 
-        return "COALESCE(admin_prodis.nama_pr, dosen_prodis.nama_pr, mahasiswa_prodis.nama_pr)";
+        return 'COALESCE(admin_prodis.nama_pr, dosen_prodis.nama_pr, mahasiswa_prodis.nama_pr)';
     }
 }

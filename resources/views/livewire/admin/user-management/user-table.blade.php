@@ -57,39 +57,16 @@
 
             {{-- Angkatan - Autocomplete Input --}}
             @if ($filterUser == 'mahasiswa')
-                <th rowspan="2" class="{{ $headKolom }} text-center relative">
-                    <div class="flex flex-col gap-1 items-center">
-
-                        @include('livewire.global.table.head-table', [
-                            'sortFieldString' => 'angkatan',
-                            'headString' => 'Angkatan',
-                            'withTh' => 0,
-                        ])
-
-                        <div x-data="{ value: @entangle('searchAngkatan') }" class="sm:col-span-4 relative w-fit">
-                            <div class="relative">
-
-                                <input x-model="value" wire:model.live.debounce.300ms="searchAngkatan"
-                                    list="list-angkatan" type="text" inputmode="numeric" pattern="[0-9]*"
-                                    maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,4)"
-                                    placeholder="Tahun"
-                                    class="mt-1 text-[10px] w-13 border-gray-300 dark:border-neutral-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 shadow-sm block">
-
-                                {{-- Tombol Reset --}}
-                                @include('livewire.global.search-and-filters.partial.reset-button', [
-                                    'xShow' => 'value',
-                                    'xClick' => "value = ''",
-                                    'xWire' => 'resetInputAngkatan()',
-                                    'xSize' => 3,
-                                    'xPr' => 1,
-                                ])
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                </th>
+                @include('livewire.global.search-and-filters.table-search', [
+                    'sortFieldString' => 'angkatan',
+                    'headString' => 'Angkatan',
+                    'modelString' => 'searchAngkatan',
+                    'resetXFilter' => 'resetInputAngkatan()',
+                    'numberOnly' => 1,
+                    'maxlength' => 4,
+                    'placeholder' => 'Tahun',
+                    'rowSpan' => 2,
+                ])
             @endif
 
             @include('livewire.global.table.head-table', [

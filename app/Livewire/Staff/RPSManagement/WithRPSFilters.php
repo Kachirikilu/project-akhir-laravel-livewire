@@ -15,56 +15,76 @@ trait WithRPSFilters
 
     public $filterRPS = '';
 
+    public $searchBobotRPS = '';
+
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
+    public function updatingSearchBobotRPS()
+    {
+        $this->resetPage();
+    }
+
+    public function resetInputBobotRPS()
+    {
+        $this->reset('searchBobotRPS');
+        $this->resetPage();
+    }
+
     public function inputRPSSearch()
     {
-        $queryRPS = RPS::query()
-            ->with(['mk_rel.prodis', 'mk_rel.prodis.jr_rel', 'mk_rel.prodis.jr_rel.fk_rel']);
+        if ($this->switchTable === 'rps') {
 
-        $search = $this->search;
+            $queryRPS = RPS::query()
+                ->with(['mk_rel.prodis', 'mk_rel.prodis.jr_rel', 'mk_rel.prodis.jr_rel.fk_rel']);
 
-        if (! empty($search)) {
-            $queryRPS->searchRPS($search);
+            $search = $this->search;
+
+            if (! empty($search)) {
+                $queryRPS->searchRPS($search);
+            }
+
+            if (! empty($this->searchBobotRPS)) {
+                $queryRPS->searchRPS($this->searchBobotRPS, true);
+            }
+
+            $this->sortFieldOrderRPS($queryRPS);
+
+            if (! empty($this->selectedPrId)) {
+                $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+            }
+            // if (! empty($this->selectedJrId)) {
+            //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+            // }
+            // if (! empty($this->selectedFkId)) {
+            //     $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            // }
+            if (! empty($this->selectedMKId)) {
+                $queryRPS->where('rps.mk_id', $this->selectedMKId);
+            }
+            if (! empty($this->selectedDosenId)) {
+                $queryRPS->whereHas('dosens', function ($q) {
+                    $q->where('dosens.id', $this->selectedDosenId);
+                });
+            }
+
+            return $queryRPS;
         }
-
-        $this->sortFieldOrderRPS($queryRPS);
-
-        if (! empty($this->selectedPrId)) {
-            $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
-        }
-        // if (! empty($this->selectedJrId)) {
-        //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
-        // }
-        // if (! empty($this->selectedFkId)) {
-        //     $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
-        // }
-        if (! empty($this->selectedMKId)) {
-            $queryRPS->where('rps.mk_id', $this->selectedMKId);
-        }
-        if (! empty($this->selectedDosenId)) {
-            $queryRPS->whereHas('dosens', function ($q) {
-                $q->where('dosens.id', $this->selectedDosenId);
-            });
-        }
-
-        return $queryRPS;
     }
 
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {
         if ($this->filterRPS === 'rps-akademik') {
             $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
-        } elseif ($this->filterRPS === 'rps-ref-new') {
+        } elseif ($this->filterRPS === 'rps-rev-new') {
             $queryRPS->whereYear('revisi', $currentYear);
         } elseif ($this->filterRPS === 'rps-aktif') {
             $queryRPS->where('is_draf', false);
         } elseif ($this->filterRPS === 'rps-draf') {
             $queryRPS->where('is_draf', true);
-        } elseif ($this->filterRPS === 'rps-old') {
+        } elseif ($this->filterRPS === 'rps-older-5') {
             $queryRPS->whereRaw('RIGHT(akademik, 4) < ?', [$fiveYearsAgoYear]);
         }
     }

@@ -47,7 +47,7 @@
                     'modelString' => 'bobot',
                     'iconString' => 'variable',
                     'floatOnly' => 1,
-                    'maxlength' => 5,
+                    'maxlength' => 2,
                     'placeholder' => 'Masukkan Bobot Sub-CPMK...',
                     'message' => $errors->first('bobot'),
                 ])

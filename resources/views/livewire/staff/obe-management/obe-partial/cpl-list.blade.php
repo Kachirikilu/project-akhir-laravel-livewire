@@ -50,6 +50,9 @@
                             <span
                                 class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded bg-[var(--focus-color)] text-white"
                                 x-text="cpl.kode"></span>
+                                <span
+                                class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded bg-[var(--focus-color)] text-white"
+                                x-text="'ID'+cpl.id"></span>
                             <div class="h-px flex-1 bg-gray-200 dark:bg-neutral-800 opacity-50"></div>
                         </div>
 

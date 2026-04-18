@@ -80,8 +80,8 @@
                 <div x-on:click="expanded = !expanded"
                     class="p-3 cursor-pointer flex items-center gap-3 border-l-4 {{ $theme['hover-bg'] }} {{ $theme['border-l'] }}">
 
-                    <div class="size-7 flex-none flex items-center justify-center rounded-md font-bold text-xs {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }}"
-                        x-text="'ID' + ref.id"></div>
+                    <span x-text="'ID' + ref.id"
+                        class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }}"></span>
 
                     <div class="flex-grow min-w-0">
                         <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200" x-text="ref.judul"></p>

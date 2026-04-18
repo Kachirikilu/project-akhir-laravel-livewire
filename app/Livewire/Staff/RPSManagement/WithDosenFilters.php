@@ -11,20 +11,24 @@ trait WithDosenFilters
 
     public function inputDosenSearch()
     {
-        $query = Dosen::query();
-        $search = '%' . trim($this->search) . '%';
+        if ($this->switchTable === 'dosen') {
 
-        if (!empty($this->search)) {
-            $query->where('name', 'like', $search)
-                  ->orWhere('nip', 'like', $search)
-                  ->orWhere('nidn', 'like', $search)
-                  ->orWhere('dosens.id', 'like', $search);
+            $query = Dosen::query();
+            $search = '%'.trim($this->search).'%';
+
+            if (! empty($this->search)) {
+                $query->where('name', 'like', $search)
+                    ->orWhere('nip', 'like', $search)
+                    ->orWhere('nidn', 'like', $search)
+                    ->orWhere('dosens.id', 'like', $search);
+            }
+
+            $this->sortFieldOrderDosen($query);
+
+            return $query;
         }
-
-        $this->sortFieldOrderDosen($query);
-        return $query;
     }
-    
+
     public function sortFieldOrderDosen($query)
     {
         $query->select('dosens.*');

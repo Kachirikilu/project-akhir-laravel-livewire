@@ -12,51 +12,69 @@ trait WithCPMKFilters
 
     public $filterCPMK = '';
 
-    public function inputCPMKSearch()
+    public $searchBobotCPMK = '';
+
+    public function updatingSearchBobotCPMK()
     {
-        $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
-        $search = $this->search;
-
-        if (! empty($search)) {
-            $queryCPMK->searchCPMK($search);
-        }
-
-        if (! empty($this->selectedPrId)) {
-            $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
-        }
-        // if (! empty($this->selectedJrId)) {
-        //     $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
-        // }
-        // if (! empty($this->selectedFkId)) {
-        //     $queryCPMK->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
-        // }
-        // if (! empty($this->selectedMKId)) {
-        //     $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
-        // }
-        if (! empty($this->selectedRPSId)) {
-            $queryCPMK->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
-        }
-        if (! empty($this->selectedCPLId)) {
-            $queryCPMK->whereHas('cpls', fn ($q) => $q->where('cpls.id', $this->selectedCPLId));
-        }
-
-
-        $this->sortFieldOrderCPMK($queryCPMK);
-        return $queryCPMK;
+        $this->resetPage();
     }
 
+    public function resetInputBobotCPMK()
+    {
+        $this->reset('searchBobotCPMK');
+        $this->resetPage();
+    }
+
+    public function inputCPMKSearch()
+    {
+        if ($this->switchTable === 'cpmk') {
+            $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
+            $search = $this->search;
+
+            if (! empty($search)) {
+                $queryCPMK->searchCPMK($search);
+            }
+
+            if (! empty($this->searchBobotCPMK)) {
+                $queryCPMK->searchCPMK($this->searchBobotCPMK, true);
+            }
+
+            if (! empty($this->selectedPrId)) {
+                $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+            }
+            // if (! empty($this->selectedJrId)) {
+            //     $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+            // }
+            // if (! empty($this->selectedFkId)) {
+            //     $queryCPMK->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            // }
+            // if (! empty($this->selectedMKId)) {
+            //     $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
+            // }
+            if (! empty($this->selectedRPSId)) {
+                $queryCPMK->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+            }
+            if (! empty($this->selectedCPLId)) {
+                $queryCPMK->whereHas('cpls', fn ($q) => $q->where('cpls.id', $this->selectedCPLId));
+            }
+
+            $this->sortFieldOrderCPMK($queryCPMK);
+
+            return $queryCPMK;
+        }
+    }
 
     public function buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
     {
         // dd($this->filterCPMK);
         if ($this->filterCPMK === 'cpmk-month') {
             $queryCPMK->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $currentYear);
+                ->whereYear('created_at', $currentYear);
         } elseif ($this->filterCPMK === 'cpmk-6-months') {
             $queryCPMK->where('created_at', '>=', $sixMonthsAgo);
         } elseif ($this->filterCPMK === 'cpmk-year') {
             $queryCPMK->whereYear('created_at', $currentYear);
-        } elseif ($this->filterCPMK === 'cpmk-old') {
+        } elseif ($this->filterCPMK === 'cpmk-older-5') {
             $queryCPMK->where('created_at', '<', $fiveYearsAgo);
         }
     }
@@ -71,9 +89,8 @@ trait WithCPMKFilters
     {
         $queryCPMK->select('cpmks.*');
 
-
         return match ($this->sortField) {
-            'kode'   => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
+            'kode' => $queryCPMK->orderBy('kode_cpmk', $this->sortDirection),
             'deskripsi' => $queryCPMK->orderBy(
                 DB::table('cpls')
                     ->selectRaw("COALESCE(cpmks.deskripsi, GROUP_CONCAT(cpls.deskripsi SEPARATOR ' '))")
@@ -99,7 +116,7 @@ trait WithCPMKFilters
 
             'created_at' => $queryCPMK->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryCPMK->orderBy('updated_at', $this->sortDirection),
-            
+
             default => $queryCPMK->orderBy('id', $this->sortDirection),
         };
 

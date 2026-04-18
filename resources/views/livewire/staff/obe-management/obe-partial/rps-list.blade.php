@@ -66,11 +66,14 @@
                                 {{-- Header Ringkas (Clickable) --}}
                                 <div x-on:click="expanded = !expanded"
                                     class="p-3 cursor-pointer flex items-center gap-3 border-l-4 {{ $theme['hover-bg'] }} {{ $theme['border-l'] }}">
-
+                                    {{-- 
                                     <div
                                         class="size-8 flex-none flex items-center justify-center rounded-md font-bold text-xs {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }}">
                                         ID{{ $r['id'] }}
-                                    </div>
+                                    </div> --}}
+
+                                    <span
+                                        class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }}">ID{{ $r['id'] }}</span>
 
                                     <div class="flex-grow min-w-0">
                                         <div class="flex items-center gap-4">

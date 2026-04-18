@@ -35,6 +35,8 @@
                 selectCPLForFilter, resetCPLFilter,
                 selectDosenForFilter, resetDosenFilter,
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
+                searchBobotRPS, resetInputBobotRPS,
+                searchBobotCPMK, resetInputBobotCPMK,
                 page, loadingTable, sortBy
                 {{-- gotoPage, previousPage, nextPage, page --}}
                 "

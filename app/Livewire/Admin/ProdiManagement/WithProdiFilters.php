@@ -20,25 +20,27 @@ trait WithProdiFilters
 
     public function inputProdiSearch()
     {
-        $queryPr = Prodi::query()->with(['jr_rel', 'jr_rel.fk_rel']);
-        $search = $this->search;
+        if ($this->switchTable == 'prodi') {
+            $queryPr = Prodi::query()->with(['jr_rel', 'jr_rel.fk_rel']);
+            $search = $this->search;
 
-        if (! empty($search)) {
-            $queryPr->searchProdi($search)->get();
+            if (! empty($search)) {
+                $queryPr->searchProdi($search)->get();
+            }
+
+            if (! empty($this->selectedJrId)) {
+                $queryPr->where('jr_id', $this->selectedJrId);
+            }
+            if (! empty($this->selectedFkId)) {
+                $queryPr->whereHas('jr_rel', function ($q) {
+                    $q->where('fk_id', $this->selectedFkId);
+                });
+            }
+
+            $this->sortFieldOrderProdi($queryPr);
+
+            return $queryPr;
         }
-
-        if (! empty($this->selectedJrId)) {
-            $queryPr->where('jr_id', $this->selectedJrId);
-        }
-        if (! empty($this->selectedFkId)) {
-            $queryPr->whereHas('jr_rel', function ($q) {
-                $q->where('fk_id', $this->selectedFkId);
-            });
-        }
-
-        $this->sortFieldOrderProdi($queryPr);
-
-        return $queryPr;
     }
 
     public function filterByStrata($strata)
@@ -66,19 +68,19 @@ trait WithProdiFilters
             $queryPr->whereHas('jr_rel.fakultas');
         }
 
-        $primaryTable = $this->switchTable . 's';
+        $primaryTable = $this->switchTable.'s';
         $queryPr->select("$primaryTable.*");
 
         return match ($this->sortField) {
-            'prodi'    => $this->applyProdiNameSort($queryPr),
-            'jurusan'  => $queryPr->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-                                ->orderBy('jurusans.nama_jr', $this->sortDirection),
+            'prodi' => $this->applyProdiNameSort($queryPr),
+            'jurusan' => $queryPr->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
+                ->orderBy('jurusans.nama_jr', $this->sortDirection),
             'fakultas' => $queryPr->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-                                ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
-                                ->orderBy('fakultas.nama_fk', $this->sortDirection),
-            'strata'   => $queryPr->orderBy('prodis.strata', $this->sortDirection),
-            'kode'     => $this->applyProdiKodeSort($queryPr),
-            default    => $queryPr->orderBy("$primaryTable.id", $this->sortDirection),
+                ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
+                ->orderBy('fakultas.nama_fk', $this->sortDirection),
+            'strata' => $queryPr->orderBy('prodis.strata', $this->sortDirection),
+            'kode' => $this->applyProdiKodeSort($queryPr),
+            default => $queryPr->orderBy("$primaryTable.id", $this->sortDirection),
         };
     }
 
@@ -91,7 +93,7 @@ trait WithProdiFilters
                     WHEN strata = 'Magister' THEN 2 
                     WHEN strata = 'Doktor' THEN 3 
                     ELSE 4 
-                END " . $this->sortDirection
+                END ".$this->sortDirection
             );
     }
 
@@ -99,18 +101,18 @@ trait WithProdiFilters
     {
         $queryPr->select('prodis.*')
             ->join('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-                ->join('fakultas', 'jurusans.fk_id', '=', 'fakultas.id');;
+            ->join('fakultas', 'jurusans.fk_id', '=', 'fakultas.id');
 
         return match ($this->sortField) {
-            'kode'  => $queryPr->orderBy('kode_pr', $this->sortDirection)
-                        ->orderBy('jurusans.kode_jr', $this->sortDirection)
-                            ->orderBy('fakultas.kode_fk', $this->sortDirection),
-            'prodis'  => $queryPr->orderBy('nama_pr', $this->sortDirection),
-            'jurusan'  => $queryPr->orderBy('jurusans.nama_jr', $this->sortDirection),
+            'kode' => $queryPr->orderBy('kode_pr', $this->sortDirection)
+                ->orderBy('jurusans.kode_jr', $this->sortDirection)
+                ->orderBy('fakultas.kode_fk', $this->sortDirection),
+            'prodis' => $queryPr->orderBy('nama_pr', $this->sortDirection),
+            'jurusan' => $queryPr->orderBy('jurusans.nama_jr', $this->sortDirection),
             'fakultas' => $queryPr->orderBy('fakultas.nama_fk', $this->sortDirection),
             'created_at' => $queryPr->orderBy('created_at', $this->sortDirection),
             'updated_at' => $queryPr->orderBy('updated_at', $this->sortDirection),
-            default    => $queryPr->orderBy('id', 'desc'),
+            default => $queryPr->orderBy('id', 'desc'),
         };
     }
 }

@@ -32,6 +32,9 @@ trait WithRPSShow
             'semester' => $mk?->semester ?? '-',
             'revisi' => $rps->revisi_day ?? '-',
 
+            'bobot_uts' => $rps->bobot_uts ?? '-',
+            'bobot_uas' => $rps->bobot_uas ?? '-',
+
             'deskripsi' => $rps->deskripsi ?? '-',
             'cpl' => $rps->cpls->map(function ($c, $idx) {
                 $label = trim(($c->kode ?? '').' '.($c->deskripsi ?? ''));
@@ -61,12 +64,13 @@ trait WithRPSShow
             foreach ($cpmk->scpmks as $scpmk) {
                 $rows[] = [
                     'cpmk' => $cpmk->kode,
-                    'sub_cpmk' => $scpmk->kode,
+                    'sub_cpmk' => $scpmk->kode, // Pastikan ini berisi teks Sub-CPMK
                     'materi' => $scpmk->materi,
                     'referensi' => $this->formatScpmkReferensi($scpmk),
                     'metodologi' => $scpmk->metodologi,
                     'tugas' => $scpmk->tugas,
                     'indikator' => $scpmk->indikator,
+                    // KUNCI: Pastikan bobot diambil dari scpmk jika ada
                     'bobot' => $this->formatBobot($scpmk->bobot),
                     'dosen' => $this->getDosenNamesForSubCpmk($rps, $scpmk),
                     'metode' => $scpmk->metode,
@@ -75,37 +79,42 @@ trait WithRPSShow
             }
         }
 
+        // Cek apakah ada UTS/UAS asli dari database
         $hasUTS = collect($rows)->contains(function ($row) {
-            return strtoupper(trim((string) ($row['metode'] ?? ''))) === 'UTS';
-        });
-        $hasUAS = collect($rows)->contains(function ($row) {
-            return in_array(strtoupper(trim((string) ($row['metode'] ?? ''))), ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true);
+            return strtoupper(trim((string) ($row['metode'] ?? ''))) === 'UTS' ||
+                   str_contains(strtoupper($row['sub_cpmk']), 'UTS');
         });
 
+        $uasKeywords = ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'];
+        $hasUAS = collect($rows)->contains(function ($row) use ($uasKeywords) {
+            $metode = strtoupper(trim((string) ($row['metode'] ?? '')));
+            $subCpmk = strtoupper($row['sub_cpmk']);
+
+            return in_array($metode, $uasKeywords) || collect($uasKeywords)->contains(fn ($kw) => str_contains($subCpmk, $kw));
+        });
+
+        // Jika sudah ada Sub-CPMK UTS/UAS, jangan gunakan loop 1-16 yang kaku
+        if ($hasUTS || $hasUAS) {
+            return $rows; // Kembalikan apa adanya dari database (15-16 baris)
+        }
+
+        // Jika standar 14 baris, baru gunakan logika placeholder
         $finalRows = [];
         $pointer = 0;
-
         for ($meeting = 1; $meeting <= 16; $meeting++) {
-            if (! $hasUTS && $meeting === 8) {
+            if ($meeting === 8) {
                 $finalRows[] = $this->createPlaceholderMeetingRow('UTS', $rps->bobot_uts, $rps);
 
                 continue;
             }
-
-            if (! $hasUAS && $meeting === 16) {
+            if ($meeting === 16) {
                 $finalRows[] = $this->createPlaceholderMeetingRow('UAS', $rps->bobot_uas, $rps);
 
                 continue;
             }
-
-            if (! isset($rows[$pointer])) {
-                continue;
+            if (isset($rows[$pointer])) {
+                $finalRows[] = $rows[$pointer++];
             }
-
-            $row = $rows[$pointer];
-            $row['meeting'] = $meeting;
-            $finalRows[] = $row;
-            $pointer++;
         }
 
         return $finalRows;
@@ -150,10 +159,22 @@ trait WithRPSShow
 
     private function formatBobot($value): string
     {
-        if ($value === null || $value === '') {
+        // Jika null atau kosong, beri default 0%
+        if ($value === null || $value === '' || $value === 0 || $value === '0') {
             return '0%';
         }
 
-        return rtrim(rtrim(number_format((float) $value, 2, ',', '.'), '0'), ',').'%';
+        // Jika sudah ada tanda %, bersihkan dulu untuk diformat ulang atau langsung kembalikan
+        $cleanValue = str_replace('%', '', (string) $value);
+        $cleanValue = str_replace(',', '.', $cleanValue); // Pastikan format desimal titik untuk float
+
+        if (! is_numeric($cleanValue)) {
+            return '0%';
+        }
+
+        // Format angka: 15.00 -> 15, 15.50 -> 15,5
+        $formatted = rtrim(rtrim(number_format((float) $cleanValue, 2, ',', '.'), '0'), ',');
+
+        return $formatted.'%';
     }
 }

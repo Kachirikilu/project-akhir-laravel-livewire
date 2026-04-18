@@ -13,51 +13,54 @@ trait WithCPLFilters
 
     public function inputCPLSearch()
     {
-        $queryCPL = CPL::query()->with(['rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis.jr_rel.fk_rel',
-            'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
-        $search = $this->search;
+        if ($this->switchTable === 'cpl') {
 
-        if (! empty($search)) {
-            $queryCPL->searchCPL($search);
-        }
+            $queryCPL = CPL::query()->with(['rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis.jr_rel.fk_rel',
+                'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
+            $search = $this->search;
 
-        if (! empty($this->selectedPrId)) {
-            $queryCPL->where(function ($q) {
-                $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
-                    ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
-            });
-        }
-        // if (! empty($this->selectedJrId)) {
-        //     $queryCPL->where(function ($q) {
-        //         $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
-        //             ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId);
-        //     });
-        // }
-        // if (! empty($this->selectedFkId)) {
-        //     $queryCPL->where(function ($q) {
-        //         $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
-        //             ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId);
-        //     });
-        // }
-        // if (! empty($this->selectedMKId)) {
-        //     $queryCPL->where(function ($q) {
-        //         $q->whereRelation('rps', 'mk_id', $this->selectedMKId)
-        //             ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMKId);
-        //     });
-        // }
-        if (! empty($this->selectedRPSId)) {
-            $queryCPL->where(function ($q) {
-                $q->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId))
-                    ->orWhereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
-            });
-        }
-        if (! empty($this->selectedCPMKId)) {
-            $queryCPL->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId);
-        }
+            if (! empty($search)) {
+                $queryCPL->searchCPL($search);
+            }
 
-        $this->sortFieldOrderCPL($queryCPL);
+            if (! empty($this->selectedPrId)) {
+                $queryCPL->where(function ($q) {
+                    $q->whereRelation('rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId)
+                        ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
+                });
+            }
+            // if (! empty($this->selectedJrId)) {
+            //     $queryCPL->where(function ($q) {
+            //         $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
+            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId);
+            //     });
+            // }
+            // if (! empty($this->selectedFkId)) {
+            //     $queryCPL->where(function ($q) {
+            //         $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
+            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId);
+            //     });
+            // }
+            // if (! empty($this->selectedMKId)) {
+            //     $queryCPL->where(function ($q) {
+            //         $q->whereRelation('rps', 'mk_id', $this->selectedMKId)
+            //             ->orWhereRelation('cpmks.rps', 'mk_id', $this->selectedMKId);
+            //     });
+            // }
+            if (! empty($this->selectedRPSId)) {
+                $queryCPL->where(function ($q) {
+                    $q->whereHas('rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId))
+                        ->orWhereHas('cpmks.rps', fn ($q) => $q->where('rps.id', $this->selectedRPSId));
+                });
+            }
+            if (! empty($this->selectedCPMKId)) {
+                $queryCPL->whereRelation('cpmks', 'cpmks.id', $this->selectedCPMKId);
+            }
 
-        return $queryCPL;
+            $this->sortFieldOrderCPL($queryCPL);
+
+            return $queryCPL;
+        }
     }
 
     public function buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)
@@ -69,7 +72,7 @@ trait WithCPLFilters
             $queryCPL->where('created_at', '>=', $sixMonthsAgo);
         } elseif ($this->filterCPL === 'cpl-year') {
             $queryCPL->whereYear('created_at', $currentYear);
-        } elseif ($this->filterCPL === 'cpl-5-years') {
+        } elseif ($this->filterCPL === 'cpl-older-5') {
             $queryCPL->where('created_at', '<', $fiveYearsAgo);
         }
     }

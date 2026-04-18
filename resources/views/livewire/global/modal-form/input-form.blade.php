@@ -31,18 +31,24 @@
 
             @elseif (isset($floatOnly) && $floatOnly)
                 inputmode="decimal"
-                oninput="
-                    let val = this.value.replace(/,/g, '.');
-                    val = val.replace(/[^0-9.]/g, '');
-                    const parts = val.split('.');
-                    if (parts.length > 2) {
-                        val = parts[0] + '.' + parts.slice(1).join('');
-                    }
-                    if (parts.length > 1) {
-                        val = parts[0] + '.' + parts[1].slice(0, 2);
-                    }
-                    this.value = val.slice(0, {{ $maxlength ?? 255 }});
-                "
+                     oninput="
+                            let val = this.value.replace(/,/g, '.');
+                            val = val.replace(/[^0-9.]/g, '');
+                            let parts = val.split('.');
+
+                            if (parts.length > 2) {
+                                val = parts[0] + '.' + parts.slice(1).join('');
+                                parts = val.split('.');
+                            }
+
+                            parts[0] = parts[0].slice(0, {{ $maxlength ?? 255 }});
+
+                            if (parts.length > 1) {
+                                parts[1] = parts[1].slice(0, 2);
+                            }
+
+                            this.value = parts.join('.');
+                        "
             @elseif (isset($numberOnly) && $numberOnly) 
                 inputmode="numeric" 
                 oninput="this.value = this.value.replace(/[^{{ $noZero ?? null ? 1 : 0 }}-9]/g, '').slice(0, {{ $maxlength ?? 255 }})"

@@ -326,11 +326,11 @@ class RPSManagement extends Component
         }
 
         $stats = [
-            'rps-akademik' => 0, 'rps-ref-new' => 0, 'rps-aktif' => 0, 'rps-draf' => 0, 'rps-5-years' => 0,
-            'cpmk-month' => 0, 'cpmk-6-months' => 0, 'cpmk-year' => 0, 'cpmk-old' => 0,
-            'scpmk-month' => 0, 'scpmk-6-months' => 0, 'scpmk-year' => 0, 'scpmk-old' => 0,
-            'cpl-month' => 0, 'cpl-6-months' => 0, 'cpl-year' => 0, 'cpl-5-years' => 0,
-            'ref-year' => 0, 'ref-2-3-years' => 0, 'ref-4-5-years' => 0, 'ref-6-10-years' => 0, 'ref-old' => 0
+            'rps-akademik' => 0, 'rps-rev-new' => 0, 'rps-aktif' => 0, 'rps-draf' => 0, 'rps-5-years' => 0,
+            'cpmk-month' => 0, 'cpmk-6-months' => 0, 'cpmk-year' => 0, 'cpmk-older-5' => 0,
+            'scpmk-month' => 0, 'scpmk-6-months' => 0, 'scpmk-year' => 0, 'scpmk-older-5' => 0,
+            'cpl-month' => 0, 'cpl-6-months' => 0, 'cpl-year' => 0, 'cpl-older-5' => 0,
+            'ref-year' => 0, 'ref-2-3-years' => 0, 'ref-4-5-years' => 0, 'ref-6-10-years' => 0, 'ref-older-10' => 0
         ];
 
         // switch ($this->switchTable) {
@@ -338,7 +338,7 @@ class RPSManagement extends Component
         $stats['rps-akademik'] = $baseDataRPS->filter(fn ($item) => str_contains($item->akademik, (string) $currentYear)
         )->count();
 
-        $stats['rps-ref-new'] = $baseDataRPS->filter(fn($item) => 
+        $stats['rps-rev-new'] = $baseDataRPS->filter(fn($item) => 
                 $item->revisi && Carbon::parse($item->revisi)->year == $currentYear
             )->count();
 
@@ -364,7 +364,7 @@ class RPSManagement extends Component
         $stats['cpmk-year'] = $baseDataCPMK->filter(fn ($item) => $item->created_at && $item->created_at->year == $currentYear
         )->count();
 
-        $stats['cpmk-old'] = $baseDataCPMK->filter(fn ($item) => $item->created_at && $item->created_at->lessThan($fiveYearsAgo)
+        $stats['cpmk-older-5'] = $baseDataCPMK->filter(fn ($item) => $item->created_at && $item->created_at->lessThan($fiveYearsAgo)
         )->count();
         // break;
 
@@ -375,7 +375,7 @@ class RPSManagement extends Component
         )->count();
         $stats['scpmk-year'] = $baseDataSCPMK->filter(fn ($item) => $item->created_at && $item->created_at->year == $currentYear
         )->count();
-        $stats['scpmk-old'] = $baseDataSCPMK->filter(fn ($item) => $item->created_at && $item->created_at->lessThan($fiveYearsAgo)
+        $stats['scpmk-older-5'] = $baseDataSCPMK->filter(fn ($item) => $item->created_at && $item->created_at->lessThan($fiveYearsAgo)
         )->count();
         // break;
 
@@ -387,7 +387,7 @@ class RPSManagement extends Component
         )->count();
         $stats['cpl-year'] = $baseDataCPL->filter(fn ($item) => $item->created_at && Carbon::parse($item->created_at)->year == $currentYear
         )->count();
-        $stats['cpl-5-years'] = $baseDataCPL->filter(fn ($item) => $item->created_at && Carbon::parse($item->created_at)->lessThan($fiveYearsAgo)
+        $stats['cpl-older-5'] = $baseDataCPL->filter(fn ($item) => $item->created_at && Carbon::parse($item->created_at)->lessThan($fiveYearsAgo)
         )->count();
         //  break;
         // default:
@@ -397,7 +397,7 @@ class RPSManagement extends Component
         $stats['ref-2-3-years'] = $baseDataRef->whereBetween('tahun', [$currentYear - 3, $currentYear - 2])->count();
         $stats['ref-4-5-years'] = $baseDataRef->whereBetween('tahun', [$currentYear - 5, $currentYear - 4])->count();
         $stats['ref-6-10-years'] = $baseDataRef->whereBetween('tahun', [$currentYear - 10, $currentYear - 6])->count();
-        $stats['ref-old'] = $baseDataRef->where('tahun', '<', $currentYear - 10)->count();
+        $stats['ref-older-10'] = $baseDataRef->where('tahun', '<', $currentYear - 10)->count();
 
         return view('livewire.staff.rps-management', array_merge($data, [
             'totalRPS' => $baseDataRPS->count(),
