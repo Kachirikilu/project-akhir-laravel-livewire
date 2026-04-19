@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 trait WithRPSPertemuan
 {
-    private function parsePertemuanDosen(array $pertemuanDosen, array $selectedDosenIds, array $cpmkSubItems): array
+    private function parsePertemuanDosen(array $pertemuanDosen, array $selectedDosenIds, array $cpmkSubItems, array $dosenItemsArray = []): array
     {
         $parsed = [];
         $errors = [];
@@ -17,8 +17,10 @@ trait WithRPSPertemuan
 
         $selectedDosenIds = array_map('intval', $selectedDosenIds);
 
+        $pertemuanDosen = $this->normalizePertemuanDosenKeys($pertemuanDosen, $selectedDosenIds);
+
         foreach ($pertemuanDosen as $dosenId => $rawValue) {
-            $nip = $this->getDosenNipForError((int) $dosenId);
+            $nip = $this->getDosenNipForError((int) $dosenId, $dosenItemsArray);
 
             if (! in_array((int) $dosenId, $selectedDosenIds, true)) {
                 $errors[] = "Dosen dengan NIP {$nip} tidak dipilih atau tidak valid!";
@@ -92,13 +94,67 @@ trait WithRPSPertemuan
         return ['data' => $parsed, 'errors' => array_values(array_unique($errors))];
     }
 
-    private function getDosenNipForError(int $dosenId): string
+    private function normalizePertemuanDosenKeys(array $pertemuanDosen, array $selectedDosenIds): array
     {
-        if (! empty($this->dosen_items_array) && is_array($this->dosen_items_array)) {
-            $detail = collect($this->dosen_items_array)->firstWhere('id', $dosenId);
-            if (! empty($detail['kode'])) {
-                return $detail['kode'];
+        if (empty($pertemuanDosen) || empty($selectedDosenIds)) {
+            return $pertemuanDosen;
+        }
+
+        $keys = array_keys($pertemuanDosen);
+        $isSequential = $keys === range(0, count($keys) - 1);
+        $allKeysMatchSelected = true;
+        foreach ($keys as $key) {
+            if (! is_numeric($key) || ! in_array((int) $key, $selectedDosenIds, true)) {
+                $allKeysMatchSelected = false;
+                break;
             }
+        }
+
+        if (! $allKeysMatchSelected && $isSequential) {
+            $mapped = [];
+            foreach (array_values($pertemuanDosen) as $idx => $value) {
+                if (! isset($selectedDosenIds[$idx])) {
+                    continue;
+                }
+                $mapped[$selectedDosenIds[$idx]] = $value;
+            }
+
+            if (! empty($mapped)) {
+                return $mapped;
+            }
+        }
+
+        if (! $allKeysMatchSelected) {
+            $filtered = [];
+            foreach ($pertemuanDosen as $key => $value) {
+                if (is_numeric($key) && in_array((int) $key, $selectedDosenIds, true)) {
+                    $filtered[(int) $key] = $value;
+                }
+            }
+            if (! empty($filtered)) {
+                return $filtered;
+            }
+        }
+
+        return $pertemuanDosen;
+    }
+
+    private function getDosenNipForError(int $dosenId, array $dosenItemsArray = []): string
+    {
+        $source = [];
+
+        if (! empty($dosenItemsArray) && is_array($dosenItemsArray)) {
+            $source = $dosenItemsArray;
+        } elseif (! empty($this->dosen_items_array) && is_array($this->dosen_items_array)) {
+            $source = $this->dosen_items_array;
+        }
+
+        $detail = collect($source)->firstWhere('id', $dosenId);
+        if (! empty($detail['kode'])) {
+            return $detail['kode'];
+        }
+        if (! empty($detail['nip'])) {
+            return $detail['nip'];
         }
 
         return (string) $dosenId;

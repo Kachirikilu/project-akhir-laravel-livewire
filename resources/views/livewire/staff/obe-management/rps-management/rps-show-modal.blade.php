@@ -1,5 +1,5 @@
 <flux:modal name="rps-detail-modal" wire:model="detailRPSModal" x-data flyout
-    class="md:w-[95vw] max-w-7xl h-[98vh] !bg-white !p-8 overflow-y-auto">
+    class="md:w-[95vw] max-w-7xl h-[98vh] !bg-white !p-8 overflow-y-auto scrollbar-large">
 
     <style>
         .rps-table {
@@ -15,8 +15,8 @@
 
         /* Indentasi Paragraf agar nomor sejajar */
         .list-indent {
-            padding-left: 20px;
-            text-indent: -20px;
+            padding-left: 15px;
+            text-indent: -15px;
             text-align: justify;
         }
     </style>
@@ -27,20 +27,22 @@
 
     <div class="rps-table bg-white p-4">
         {{-- ================= HEADER ================= --}}
-        <table class="w-full mb-4">
+        <table class="w-full mb-6">
             <tr>
                 <td class="w-[12%] text-center">
                     <div class="flex items-center justify-center">
                         {{-- Ganti dengan asset() jika logo ada di public --}}
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Logo_Universitas_Sriwijaya.png"
+                        <img src="{{ asset('images/logo-unsri.png') }}"
                             class="h-20 object-contain">
                     </div>
                 </td>
                 <td class="w-[88%] text-center font-bold text-lg leading-tight uppercase">
-                    <div>UNIVERSITAS SRIWIJAYA</div>
-                    <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
-                    <div>Jurusan {{ $data['jurusan'] ?? '' }}</div>
-                    <div>Program Studi {{ $data['programStudi'] ?? '' }}</div>
+                    <div class="mr-20">
+                        <div>UNIVERSITAS SRIWIJAYA</div>
+                        <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
+                        <div>Jurusan {{ $data['jurusan'] ?? '' }}</div>
+                        <div>Program Studi {{ $data['prodi'] ?? '' }}</div>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -52,7 +54,7 @@
 
         {{-- ================= IDENTITAS ================= --}}
         <div class="font-bold mb-2">A. IDENTITAS MATA KULIAH</div>
-        <table class="w-full mb-6 text-sm">
+        <table class="w-full mb-6 text-[10px]">
             <tr class="font-bold text-center bg-gray-50">
                 <td class="w-1/6">Nama Mata Kuliah</td>
                 <td class="w-1/6">Kode</td>
@@ -70,38 +72,118 @@
                 <td>{{ $data['revisi'] ?? '' }}</td>
             </tr>
             <tr>
-                <td class="font-bold bg-gray-50">Deskripsi</td>
+                <td class="font-bold bg-gray-50 text-center">Deskripsi Mata Kuliah</td>
                 <td colspan="5" class="text-justify leading-relaxed">
                     {{ $data['deskripsi'] ?? '' }}
                 </td>
             </tr>
+            @php
+                $hasCpl = collect(explode("\n", $data['cpl'] ?? ''))
+                    ->filter(fn($line) => trim($line))
+                    ->isNotEmpty();
+            @endphp
             <tr>
-                <td class="font-bold bg-gray-50 align-top">CPL</td>
-                <td colspan="5">
-                    @foreach (explode("\n", $data['cpl'] ?? '') as $line)
-                        @if (trim($line))
-                            <div class="list-indent mb-1">{{ $line }}</div>
-                        @endif
-                    @endforeach
-                </td>
+                <td rowspan="{{ $hasCpl ? 2 : 1 }}" class="font-bold bg-gray-50 text-center">Capaian Pembelajaran Mata
+                    Kuliah
+                    (CPMK)</td>
+                @if ($hasCpl)
+                    <td colspan="5">
+                        @foreach (explode("\n", $data['cpl'] ?? '') as $line)
+                            @if (trim($line))
+                                <div class="list-indent leading-relaxed mb-1">
+                                    <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                    {{ trim($line) }}
+                                </div>
+                            @endif
+                        @endforeach
+                    </td>
+                @else
+                    <td colspan="5">
+                        @foreach (explode("\n", $data['list_cpmk_with_desc'] ?? '') as $line)
+                            @if (trim($line))
+                                <div class="list-indent leading-relaxed mb-1">
+                                    <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                    {{ trim($line) }}
+                                </div>
+                            @endif
+                        @endforeach
+                    </td>
+                @endif
             </tr>
+            @if ($hasCpl)
+                <tr>
+                    <td colspan="5">
+                        @foreach (explode("\n", $data['list_cpmk_with_desc'] ?? '') as $line)
+                            @if (trim($line))
+                                <div class="list-indent leading-relaxed mb-1">
+                                    <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                    {{ trim($line) }}
+                                </div>
+                            @endif
+                        @endforeach
+                    </td>
+                </tr>
+            @endif
             <tr>
-                <td class="font-bold bg-gray-50 align-top">CPMK</td>
-                <td colspan="5">
-                    @foreach (explode("\n", $data['listCpmkWithDesc'] ?? '') as $line)
-                        @if (trim($line))
-                            <div class="list-indent mb-1">{{ $line }}</div>
-                        @endif
-                    @endforeach
+                <td rowspan="2" class="font-bold bg-gray-50 text-center"">
+                    {{ $data['tim_pengajar_label'] ?? 'Tim Pengajar' }}</td>
+                <td rowspan="2" colspan="2">
+                    @if (str_contains($data['tim_pengajar'] ?? '', "\n"))
+                        @foreach (explode("\n", $data['tim_pengajar']) as $idx => $line)
+                            @if (trim($line))
+                                <div class="list-indent mb-1">
+                                    <span class="mr-[5px]">{{ $idx + 1 }}.</span>
+                                    {!! $line !!}
+                                </div>
+                            @endif
+                        @endforeach
+                    @else
+                        {!! $data['tim_pengajar'] ?? '' !!}
+                    @endif
                 </td>
-            </tr>
-            <tr>
-                <td class="font-bold bg-gray-50">Tim Pengajar</td>
-                <td colspan="2" class="whitespace-pre-line">{{ $data['timPengajar'] ?? '' }}</td>
-                <td class="font-bold bg-gray-50 text-center">Ketua / Instruktur</td>
+                <td class="font-bold bg-gray-50 text-center">Ketua Pengajar</td>
                 <td colspan="2">
-                    <div class="font-bold text-blue-800">Ketua: {{ $data['ketuaTimPengajar'] ?? '-' }}</div>
-                    <div class="text-xs mt-1 border-t pt-1">Instruktur: <br> {{ $data['instruktur'] ?? '-' }}</div>
+                    <div class="font-bold">{{ $data['ketua_tim_pengajar'] ?? '-' }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50 text-center">Instruktur</td>
+                <td colspan="2">
+                    @if (str_contains($data['instruktur'] ?? '', "\n"))
+                        @foreach (explode("\n", $data['instruktur']) as $idx => $line)
+                            @if (trim($line))
+                                <div class="list-indent">
+                                    <span class="mr-[5px]">{{ $idx + 1 }}.</span>
+                                    {!! $line !!}
+                                </div>
+                            @endif
+                        @endforeach
+                    @else
+                        {{ $data['instruktur'] ?? '-' }}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td class="font-bold bg-gray-50 text-center align-middle">Otoritas</td>
+
+                <td colspan="2" class="text-center">
+                    <div class="flex flex-col justify-between h-18">
+                        <div class="h-full">
+                        </div>
+                        <div class="font-bold border-t pt-1">
+                            Ketua Program Studi
+                        </div>
+                    </div>
+                </td>
+
+                <td colspan="3" class="text-center border-l">
+                    <div class="flex flex-col justify-between h-18">
+                        <div class="h-full">
+                        </div>
+                        <div class="font-bold border-t pt-1">
+                            Wakil Dekan Bidang Akademik
+                        </div>
+                    </div>
                 </td>
             </tr>
         </table>
@@ -112,40 +194,186 @@
             <thead class="bg-gray-50 font-bold text-center">
                 <tr>
                     <td class="p-1">CPMK</td>
-                    <td class="p-1 w-[15%]">Sub-CPMK</td>
-                    <td class="p-1 w-[15%]">Materi</td>
-                    <td class="p-1">Metodologi & Waktu</td>
-                    <td class="p-1">Metode</td>
-                    <td class="p-1 w-[15%]">Tugas & Asesmen</td>
+                    <td class="p-1 w-[15%]">Kompetensi Mingguan (Sub-CPMK)</td>
+                    <td class="p-1 w-[15%]">Materi Pembelajaran</td>
+                    <td class="p-1">Metodologi Pembelajaran dan Alokasi Waktunya</td>
+                    {{-- <td class="p-1">Metode</td> --}}
+                    <td class="p-1 w-[15%]">Deskripsi Tugas atau Asesmen beserta Alokasi Waktunya</td>
                     <td class="p-1">Indikator</td>
                     <td class="p-1">Bobot</td>
                     <td class="p-1">Dosen</td>
                 </tr>
             </thead>
             <tbody class="border-t border-black">
-                @foreach ($data['programPembelajaran'] ?? [] as $row)
+                @php
+                    $programData = collect($data['program_pembelajaran'] ?? []);
+
+                    $calculateRowspan = function ($data, $column) {
+                        $counts = [];
+                        $index = 0;
+                        while ($index < count($data)) {
+                            $currentValue = $data[$index][$column] ?? '';
+                            $step = 0;
+                            while (
+                                $index + $step < count($data) &&
+                                ($data[$index + $step][$column] ?? '') === $currentValue
+                            ) {
+                                $step++;
+                            }
+                            $counts[$index] = $step;
+                            $index += $step;
+                        }
+                        return $counts;
+                    };
+
+                    $rowspanCpmk = $calculateRowspan($programData, 'cpmk');
+                    // $rowspanMetode = $calculateRowspan($programData, 'metode');
+                    // $rowspanIndikator = $calculateRowspan($programData, 'indikator');
+                    $rowspanBobot = $calculateRowspan($programData, 'bobot');
+                    $rowspanDosen = $calculateRowspan($programData, 'dosen');
+                @endphp
+
+                @foreach ($programData as $index => $row)
                     @php
                         $isPlaceholder = $row['is_placeholder'] ?? false;
-                        $isExam = strtoupper(trim($row['metode'] ?? '')) === 'UTS' || 
-                                 strtoupper(trim($row['metode'] ?? '')) === 'UAS';
+                        $isExam =
+                            strtoupper(trim($row['metode'] ?? '')) === 'UTS' ||
+                            strtoupper(trim($row['metode'] ?? '')) === 'UAS';
+
+                        // Check if this is UTS/UAS with empty columns
+                        $isEmptyExam =
+                            $isExam &&
+                            empty(trim($row['cpmk'] ?? '')) &&
+                            empty(trim($row['materi'] ?? '')) &&
+                            empty(trim($row['metodologi'] ?? '')) &&
+                            empty(trim($row['tugas'] ?? '')) &&
+                            empty(trim($row['indikator'] ?? ''));
                     @endphp
-                    <tr class="{{ $isPlaceholder || $isExam ? 'bg-gray-50 font-semibold italic' : '' }} {{ $isPlaceholder ? 'text-center' : '' }}">
-                        <td class="p-2 border border-black text-center font-bold">{{ $row['cpmk'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['metode'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-center text-blue-600 font-bold">{{ $row['bobot'] ?? '-' }}</td>
-                        <td class="p-2 border border-black text-center">{{ $row['dosen'] ?? '-' }}</td>
+
+                    <tr class="{{ $isPlaceholder || $isExam ? 'bg-gray-50 font-semibold italic' : '' }}">
+
+                        {{-- KOLOM CPMK --}}
+                        @if (!$isEmptyExam && isset($rowspanCpmk[$index]))
+                            <td class="p-2 border border-black text-center font-bold align-top"
+                                rowspan="{{ $rowspanCpmk[$index] }}">
+                                {{ $row['cpmk'] ?? '-' }}
+                            </td>
+                        @endif
+
+                        {{-- Kolom yang TIDAK digabung (Sub CPMK & Materi) --}}
+                        @if ($isEmptyExam)
+                            {{-- UTS/UAS dengan kolom kosong: gunakan colspan 6 --}}
+                            <td class="p-2 border border-black text-center text-center font-bold" colspan="6">
+                                @if ($row['metode'] == 'UTS')
+                                    Ujian Tengah Semester
+                                @elseif ($row['metode'] == 'UAS')
+                                    Ujian Akhir Semester
+                                @endif
+                            </td>
+                        @else
+                            {{-- Normal row --}}
+                            @if ($row['metode'] == 'UTS')
+                                <td class="p-2 border border-black text-left">Ujian Tengah Semester</td>
+                            @elseif ($row['metode'] == 'UAS')
+                                <td class="p-2 border border-black text-left">Ujian Akhir Semester</td>
+                            @else
+                                <td class="p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
+                            @endif
+                            <td class="p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
+                            <td class="p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
+                            <td class="p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
+                            <td class="p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
+                        @endif
+
+                        {{-- KOLOM BOBOT --}}
+                        @if (isset($rowspanBobot[$index]))
+                            <td class="p-2 border border-black text-center font-bold"
+                                rowspan="{{ $rowspanBobot[$index] }}">
+                                {{ $row['bobot'] ?? '-' }}
+                            </td>
+                        @endif
+
+                        {{-- KOLOM DOSEN --}}
+                        @if (isset($rowspanDosen[$index]))
+                            <td class="p-2 border border-black" rowspan="{{ $rowspanDosen[$index] }}">
+                                @if (str_contains($row['dosen'] ?? '', "\n"))
+                                    @foreach (explode("\n", $row['dosen']) as $line)
+                                        @if (trim($line))
+                                            <div class="list-indent mb-1">
+                                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                                {{ $line }}
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    {{ $row['dosen'] ?? '-' }}
+                                @endif
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
+                <tr>
+                    <td colspan="8" class="font-bold p-2">
+                        Beban Belajar Mahasiswa Selama Satu Semester: <span
+                            class="pl-1">{{ $data['total_sks'] ?? '0' }} SKS</span>
+                    </td>
+                </tr>
             </tbody>
         </table>
 
-        <div class="mt-4 text-sm font-bold border border-black p-2">
-            Beban belajar mahasiswa selama satu semester: {{ $data['totalSks'] ?? '0' }} SKS
+        <div class="mt-6">
+            <h3 class="font-bold bg-gray-50 p-1 text-[10px]">Referensi</h3>
+            <div class="px-1">
+                <ul class="list-none">
+                    @foreach (explode("\n", $data['referensi'] ?? '') as $ref)
+                        @if (trim($ref))
+                            <li class="list-indent text-[10px] leading-relaxed mb-1">
+                                <span class="font-bold mr-[5px]">{{ $loop->iteration }}.</span> {{ trim($ref) }}
+                            </li>
+                        @endif
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-6 max-w-xs">
+            <div class="font-bold bg-gray-50 p-1 text-[10px]">Skala Penilaian</div>
+            <table class="w-full text-[10px] !border-0">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="w-[20%] text-center font-bold !border-0">Nilai</th>
+                        <th class="w-[30%] text-center font-bold !border-0">Rentang Nilai</th>
+                        <th class="w-[50%] text-center font-bold !border-0">Predikat</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <tr>
+                        <td class="!border-0">A</td>
+                        <td class="!border-0">86-100</td>
+                        <td class="!border-0">Sangat Baik</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium !border-0">B</td>
+                        <td class="!border-0">71-85</td>
+                        <td class="!border-0">Baik</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium !border-0">C</td>
+                        <td class="!border-0">56-70</td>
+                        <td class="!border-0">Cukup</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium !border-0">D</td>
+                        <td class="!border-0">41-55</td>
+                        <td class="!border-0">Kurang</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium !border-0">E</td>
+                        <td class="!border-0">0-40</td>
+                        <td class="!border-0">Sangat Kurang</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </flux:modal>

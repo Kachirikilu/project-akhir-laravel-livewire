@@ -251,7 +251,8 @@ trait WithRPSModal
         $parsedPertemuan = $this->parsePertemuanDosen(
             $data['pertemuan_dosen'] ?? [],
             $data['dosen_id_array'] ?? [],
-            $data['cpmk_sub_items_array'] ?? []
+            $data['cpmk_sub_items_array'] ?? [],
+            $data['dosen_items_array'] ?? []
         );
         $data['pertemuan_dosen'] = $parsedPertemuan['data'];
 
