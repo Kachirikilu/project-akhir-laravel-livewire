@@ -12,6 +12,9 @@ class SubCPMK extends Model
 {
     use SoftDeletes;
 
+    public const UTS_FIELDS = ['UTS', 'EVALUASI AWAL'];
+    public const UAS_FIELDS = ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
+
     protected $table = 'sub_cpmks';
 
     protected $guarded = ['id'];
@@ -151,5 +154,34 @@ class SubCPMK extends Model
             $searchConverted = str_replace(',', '.', $searchTerm);
             $q->orWhere('sub_cpmks.bobot', 'like', '%'.$searchConverted.'%');
         });
+    }
+
+    /**
+     * Cek apakah item adalah UTS atau setara UTS
+     */
+    public static function isUTS($method, $text = ''): bool
+    {
+        $method = strtoupper($method ?? '');
+        $text = strtoupper($text);
+
+        return in_array($method, self::UTS_FIELDS, true)
+            || str_contains($text, 'UTS')
+            || str_contains($text, 'EVALUASI AWAL');
+    }
+
+    /**
+     * Cek apakah item adalah UAS atau setara UAS
+     */
+    public static function isUAS($method, $text = ''): bool
+    {
+        $method = strtoupper($method ?? '');
+        $text = strtoupper($text);
+
+        return in_array($method, self::UAS_FIELDS, true)
+            || str_contains($text, 'UAS')
+            || str_contains($text, 'EVALUASI AKHIR')
+            || str_contains($text, 'LAPORAN AKHIR')
+            || str_contains($text, 'HASIL PROYEK')
+            || str_contains($text, 'HASIL PROJEK');
     }
 }

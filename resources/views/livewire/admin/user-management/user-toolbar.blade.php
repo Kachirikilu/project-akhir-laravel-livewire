@@ -21,7 +21,7 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('admin');
                     "
-                    class="cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                    class="cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                     <flux:icon name="cog-6-tooth" class="!text-red-700 dark:!text-red-400 mr-2 h-4 w-4" />
 
                     <div class="flex justify-between items-center w-full">
@@ -41,7 +41,7 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('dosen');
                     "
-                    class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-50 dark:hover:!bg-lime-900/30">
+                    class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-100 dark:hover:!bg-lime-900/30">
                     <flux:icon name="briefcase" class="!text-lime-600 dark:!text-lime-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Dosen</span>
@@ -60,7 +60,7 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('mahasiswa');
                     "
-                    class="cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-50 dark:hover:!bg-cyan-900/30">
+                    class="cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30">
                     <flux:icon name="book-open" class="!text-cyan-600 dark:!text-cyan-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Mahasiswa</span>
@@ -80,7 +80,7 @@
                         $flux.modal('user-modal').show();
                         $wire.addUser('file');
                     "
-                    class="cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-50 dark:hover:!bg-green-900/30">
+                    class="cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30">
                     <flux:icon name="table-cells" class="!text-green-600 dark:!text-green-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Input File Excel</span>

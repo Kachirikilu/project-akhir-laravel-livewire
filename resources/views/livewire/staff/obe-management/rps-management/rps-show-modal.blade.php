@@ -62,20 +62,17 @@
                 <td class="w-1/6">Tanggal Revisi</td>
             </tr>
             <tr class="text-center">
-                <td>{{ $data['namaMataKuliah'] ?? '' }}</td>
-                <td>{{ $data['kodeMataKuliah'] ?? '' }}</td>
-                <td>{{ $data['bahanKajian'] ?? '' }}</td>
-                <td>{{ $data['sksKuliah'] ?? '0' }} / {{ $data['sksPraktikum'] ?? '0' }}</td>
+                <td>{{ $data['nama_mk'] ?? '' }}</td>
+                <td>{{ $data['kode_mk'] ?? '' }}</td>
+                <td>{{ $data['bahan_kajian'] ?? '' }}</td>
+                <td>{{ $data['sks'] ?? '0' }} / {{ $data['sks_pr'] ?? '0' }}</td>
                 <td>{{ $data['semester'] ?? '' }}</td>
-                <td>{{ $data['tanggalRevisi'] ?? '' }}</td>
-                <td>{{ $data['bobot_uts'] ?? '' }}</td>
-                <td>{{ $data['bobot_uas'] ?? '' }}</td>
-
+                <td>{{ $data['revisi'] ?? '' }}</td>
             </tr>
             <tr>
                 <td class="font-bold bg-gray-50">Deskripsi</td>
                 <td colspan="5" class="text-justify leading-relaxed">
-                    {{ $data['deskripsiMataKuliah'] ?? '' }}
+                    {{ $data['deskripsi'] ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -126,120 +123,23 @@
                 </tr>
             </thead>
             <tbody class="border-t border-black">
-                @php
-                    $programData = collect($data['programPembelajaran'] ?? []);
-                    $uasKeywords = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
-
-                    // 1. Deteksi apakah ada UTS/UAS di data
-                    $hasUTS = $programData->contains(function ($row) {
-                        return str_contains(strtoupper($row['sub_cpmk'] ?? ''), 'UTS') ||
-                            strtoupper(trim($row['metode'] ?? '')) === 'UTS';
-                    });
-
-                    $hasUAS = $programData->contains(function ($row) use ($uasKeywords) {
-                        $sub = strtoupper($row['sub_cpmk'] ?? '');
-                        $metode = strtoupper(trim($row['metode'] ?? ''));
-                        return collect($uasKeywords)->contains(fn($kw) => str_contains($sub, $kw)) ||
-                            in_array($metode, $uasKeywords);
-                    });
-
-                    // 2. Helper Bobot
-                    if (!function_exists('getDisplayBobot')) {
-                        function getDisplayBobot($row, $rpsData, $forceType = null)
-                        {
-                            $raw = $row['bobot'] ?? '0%';
-                            $isEmpty = in_array(trim($raw), ['0%', '0,0%', '0,00%', '0', '']);
-
-                            if ($isEmpty) {
-                                $sub = strtoupper($row['sub_cpmk'] ?? '');
-                                $metode = strtoupper(trim($row['metode'] ?? ''));
-                                $isUTS = $forceType === 'UTS' || str_contains($sub, 'UTS') || $metode === 'UTS';
-
-                                if ($isUTS) {
-                                    return ($rpsData['bobot_uts'] ?? 0) . '%';
-                                }
-                                return ($rpsData['bobot_uas'] ?? 0) . '%';
-                            }
-                            return $raw;
-                        }
-                    }
-
-                    // 3. Bangun baris final
-                    $finalRows = collect();
-
-                    if (!$hasUTS && !$hasUAS) {
-                        // SkenARIO STANDAR: Tidak ada UTS/UAS di database, sisipkan di 8 & 16
-                        foreach ($programData as $index => $row) {
-                            if ($index === 7) {
-                                $finalRows->push(['type' => 'AUTO_UTS']);
-                            }
-                            $finalRows->push(array_merge($row, ['type' => 'NORMAL']));
-                        }
-                        if ($finalRows->count() < 16) {
-                            $finalRows->push(['type' => 'AUTO_UAS']);
-                        }
-                    } else {
-                        // SKENARIO CUSTOM: Ikuti urutan database sepenuhnya
-                        foreach ($programData as $row) {
-                            $sub = strtoupper($row['sub_cpmk'] ?? '');
-                            $metode = strtoupper(trim($row['metode'] ?? ''));
-                            $isUTS = str_contains($sub, 'UTS') || $metode === 'UTS';
-                            $isUAS =
-                                collect($uasKeywords)->contains(fn($kw) => str_contains($sub, $kw)) ||
-                                in_array($metode, $uasKeywords);
-
-                            $type = $isUTS ? 'EXPLICIT_UTS' : ($isUAS ? 'EXPLICIT_UAS' : 'NORMAL');
-                            $finalRows->push(array_merge($row, ['type' => $type]));
-                        }
-                    }
-                @endphp
-
-                @foreach ($finalRows as $row)
-                    @if ($row['type'] === 'AUTO_UTS')
-                        <tr class="bg-gray-50 font-bold italic text-center">
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black text-left">UJIAN TENGAH SEMESTER (UTS)</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">Evaluasi Tengah Semester</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">Ketepatan Jawaban</td>
-                            <td class="p-2 border border-black text-blue-600">{{ ($data['bobot_uts'] ?? 0) . '%' }}
-                            </td>
-                            <td class="p-2 border border-black">Tim</td>
-                        </tr>
-                    @elseif ($row['type'] === 'AUTO_UAS')
-                        <tr class="bg-gray-50 font-bold italic text-center">
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black text-left">UJIAN AKHIR SEMESTER (UAS)</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">Evaluasi Akhir Semester</td>
-                            <td class="p-2 border border-black">-</td>
-                            <td class="p-2 border border-black">Ketepatan Jawaban</td>
-                            <td class="p-2 border border-black text-blue-600">{{ ($data['bobot_uas'] ?? 0) . '%' }}
-                            </td>
-                            <td class="p-2 border border-black">Tim</td>
-                        </tr>
-                    @else
-                        @php
-                            $isExam = in_array($row['type'], ['EXPLICIT_UTS', 'EXPLICIT_UAS']);
-                            $examType = str_contains($row['type'], 'UTS') ? 'UTS' : ($isExam ? 'UAS' : null);
-                        @endphp
-                        <tr class="{{ $isExam ? 'bg-gray-50 font-semibold italic' : '' }}">
-                            <td class="p-2 border border-black text-center font-bold">{{ $row['cpmk'] ?? '' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['metode'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
-                            <td class="p-2 border border-black text-center text-blue-600 font-bold">
-                                {{ getDisplayBobot($row, $data, $examType) }}
-                            </td>
-                            <td class="p-2 border border-black text-center">{{ $row['dosen'] ?? '-' }}</td>
-                        </tr>
-                    @endif
+                @foreach ($data['programPembelajaran'] ?? [] as $row)
+                    @php
+                        $isPlaceholder = $row['is_placeholder'] ?? false;
+                        $isExam = strtoupper(trim($row['metode'] ?? '')) === 'UTS' || 
+                                 strtoupper(trim($row['metode'] ?? '')) === 'UAS';
+                    @endphp
+                    <tr class="{{ $isPlaceholder || $isExam ? 'bg-gray-50 font-semibold italic' : '' }} {{ $isPlaceholder ? 'text-center' : '' }}">
+                        <td class="p-2 border border-black text-center font-bold">{{ $row['cpmk'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['sub_cpmk'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['materi'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['metodologi'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['metode'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['tugas'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-left">{{ $row['indikator'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-center text-blue-600 font-bold">{{ $row['bobot'] ?? '-' }}</td>
+                        <td class="p-2 border border-black text-center">{{ $row['dosen'] ?? '-' }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>

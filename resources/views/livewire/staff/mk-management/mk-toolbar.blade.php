@@ -22,7 +22,7 @@
                         $flux.modal('mk-modal').show();
                         $wire.addMK(1);
                     "
-                    class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
+                    class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
                     <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Program Studi</span>
@@ -60,7 +60,7 @@
                         $flux.modal('mk-modal').show();
                         $wire.addMK(3);
                     "
-                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30">
                     <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Fakultas</span>
@@ -79,7 +79,7 @@
                         $flux.modal('mk-modal').show();
                         $wire.addMK(4);
                     "
-                    class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                    class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                     <flux:icon name="globe-alt" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Universitas</span>

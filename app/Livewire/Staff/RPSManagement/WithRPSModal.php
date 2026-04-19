@@ -210,7 +210,7 @@ trait WithRPSModal
     {
         // 1. Ambil data dari CPMK terpilih
         $inputDeskripsi = trim($data['deskripsi'] ?? '');
-        if (! str_ends_with($inputDeskripsi, '.')) {
+        if (! str_ends_with($inputDeskripsi, '.') && !empty($inputDeskripsi)) {
             $inputDeskripsi .= '.';
         }
         $data['deskripsi'] = $inputDeskripsi;
@@ -263,7 +263,7 @@ trait WithRPSModal
 
         // --- RULES VALIDASI ---
         $rules = [
-            'deskripsi' => 'required|string|max:1000',
+            'deskripsi' => 'string|max:1000',
             'mk_id' => 'required|exists:mata_kuliahs,id',
             'akademik' => [
                 'required', 'string', 'regex:/^\d{4}\/\d{4}$/',
@@ -319,11 +319,11 @@ trait WithRPSModal
                                 $totalSubCPMK++;
                                 $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
 
-                                if ($method === 'UTS') {
+                                if (in_array($method, ['UTS', 'EVALUASI AWAL'], true)) {
                                     $hasUTS = true;
                                 }
 
-                                if (in_array($method, ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
+                                if (in_array($method, ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
                                     $hasUAS = true;
                                 }
                             }
@@ -368,9 +368,9 @@ trait WithRPSModal
                         if ($max === 14) {
                             $fail('Karena tidak ada UTS/UAS, Sub-CPMK hanya boleh 14 pertemuan!');
                         } elseif ($max === 15) {
-                            $fail('Karena hanya ada satu dari UTS atau UAS (Laporan Akhir/Hasil Proyek), Sub-CPMK hanya boleh 15 pertemuan!');
+                            $fail('Karena hanya ada satu dari UTS (Evaluasi Awal) atau UAS (Evaluasi Akhir/Laporan Akhir/Hasil Proyek), Sub-CPMK hanya boleh 15 pertemuan!');
                         } else {
-                            $fail('Karena ada UTS dan UAS (atau pengganti UAS), Sub-CPMK hanya boleh 16 pertemuan!');
+                            $fail('Karena ada UTS dan UAS (atau penggantinya), Sub-CPMK hanya boleh 16 pertemuan!');
                         }
                     }
                 },
@@ -675,7 +675,7 @@ trait WithRPSModal
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi RPS wajib diisi!',
-            'deskripsi.max' => 'Deskripsi CPMK terlalu panjang (Maksimal 1000 karakter)!',
+            'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'is_draf.required' => 'Status RPS wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
 

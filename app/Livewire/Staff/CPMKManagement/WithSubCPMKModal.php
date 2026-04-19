@@ -284,22 +284,10 @@ trait WithSubCPMKModal
                 });
 
                 $hasUTS = $otherScpmks->contains(function ($item) {
-                    $method = strtoupper($item->metode ?? '');
-                    $text = strtoupper($item->deskripsi ?? '');
-
-                    return $method === 'UTS' || str_contains($text, 'UTS');
+                    return SubCPMK::isUTS($item->metode ?? '', $item->deskripsi ?? '');
                 });
-
-                $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
-                $hasUAS = $otherScpmks->contains(function ($item) use ($uauFields) {
-                    $method = strtoupper($item->metode ?? '');
-                    $text = strtoupper($item->deskripsi ?? '');
-
-                    return in_array($method, $uauFields, true)
-                        || str_contains($text, 'UAS')
-                        || str_contains($text, 'LAPORAN AKHIR')
-                        || str_contains($text, 'HASIL PROYEK')
-                        || str_contains($text, 'HASIL PROJEK');
+                $hasUAS = $otherScpmks->contains(function ($item) {
+                    return SubCPMK::isUAS($item->metode ?? '', $item->deskripsi ?? '');
                 });
 
                 $baseTotal = $otherScpmks->sum('bobot');
@@ -324,8 +312,8 @@ trait WithSubCPMKModal
 
                 // 1. Identifikasi kondisi metode SEBELUM update
                 $beforeMethod = strtoupper($scpmk->metode);
-                $hadUTS = str_contains($beforeMethod, 'UTS');
-                $hadUAS = in_array($beforeMethod, ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'], true);
+                $hadUTS = SubCPMK::isUTS($beforeMethod, $beforeMethod);
+                $hadUAS = SubCPMK::isUAS($beforeMethod, $beforeMethod);
 
                 // 2. Update Data Utama SCPMK
                 $scpmk->update([
@@ -346,8 +334,8 @@ trait WithSubCPMKModal
 
                 // 3. Identifikasi kondisi metode SESUDAH update
                 $afterMethod = strtoupper($validated['metode']);
-                $hasUTS = str_contains($afterMethod, 'UTS');
-                $hasUAS = in_array($afterMethod, ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'], true);
+                $hasUTS = SubCPMK::isUTS($afterMethod, $afterMethod);
+                $hasUAS = SubCPMK::isUAS($afterMethod, $afterMethod);
 
                 // 4. Cari RPS Terkait
                 $relatedRps = RPS::whereHas('cpmks.scpmks', function ($query) use ($scpmk) {
@@ -356,15 +344,16 @@ trait WithSubCPMKModal
 
                 foreach ($relatedRps as $rps) {
                     $updateData = [];
+                    
                     $hasUTSInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->where('metode', 'UTS');
+                            $query->whereIn('metode', SubCPMK::UTS_FIELDS);
                         })
                         ->exists();
 
                     $hasUASInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->whereIn('metode', ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK']);
+                            $query->whereIn('metode', SubCPMK::UAS_FIELDS);
                         })
                         ->exists();
 

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('sks_kuliah')->default(1);
             $table->enum('tipe_sks', [1, 2, 3, 4])->default(1);
             $table->boolean('is_wajib')->default(true);
-            $table->text('bahan_kajian')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->text('bahan_kajian')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

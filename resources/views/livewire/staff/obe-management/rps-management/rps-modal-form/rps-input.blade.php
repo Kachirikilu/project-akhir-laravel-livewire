@@ -14,6 +14,7 @@
             'iconString' => 'clipboard-document-list',
             'placeholder' => 'Masukkan deskripsi ringkas tentang RPS...',
             'message' => $errors->first('deskripsi'),
+            'isRequired' => 0,
         ])
 
         @include('livewire.global.modal-form.search-input-form', [

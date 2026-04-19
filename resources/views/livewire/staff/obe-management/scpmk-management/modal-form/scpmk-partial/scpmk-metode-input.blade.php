@@ -24,6 +24,8 @@
                         'Mandiri',
                         'UTS',
                         'UAS',
+                        'Evaluasi Awal',
+                        'Evaluasi Akhir',
                         'Kuis',
                         'Laporan Akhir',
                         'Hasil Proyek',

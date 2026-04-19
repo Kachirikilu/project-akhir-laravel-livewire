@@ -1,6 +1,6 @@
 <div>
     {{-- ****************************************************** --}}
-    {{-- 1. INPUT PROGRAM STUDI --}}
+    {{-- 1. INPUT Mata Kuliah --}}
     {{-- ****************************************************** --}}
     <div
         class="px-4 py-6 mt-4 
@@ -17,7 +17,7 @@
             'nameXString' => 'Nama Mata Kuliah',
             'modelString' => 'nama_mk',
             'iconString' => 'rectangle-stack',
-            'placeholder' => 'Masukkan nama Mata Kuliah',
+            'placeholder' => 'Masukkan nama Mata Kuliah...',
             'message' => $errors->first('nama_mk')
         ])
 
@@ -127,4 +127,7 @@
 
         {{-- <div x-data x-init="$watch('$store.mk.nama_mk', value => console.log('nama_mk: ', value))"></div> --}}
     </div>
+
+                @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-kajian-input')
+
 </div>

@@ -27,6 +27,9 @@ document.addEventListener("alpine:init", () => {
         tipe_sks: "",
         sks_kuliah: "",
         is_wajib: "",
+        deskripsi: "",
+        bahan_kajian: "",
+
 
         // nama_pr_search_array: [],
         // pr_id: "",
@@ -58,7 +61,9 @@ document.addEventListener("alpine:init", () => {
             semester,
             sksKuliah,
             tipeSKS,
-            isWajib
+            isWajib,
+            deskripsi,
+            bahanKajian
         ) {
             this.typeModal = tingkatanMode;
             this.nama_mk = namaMK;
@@ -71,6 +76,9 @@ document.addEventListener("alpine:init", () => {
             this.sks_kuliah = sksKuliah;
             this.tipe_sks = tipeSKS; 
             this.is_wajib = isWajib;
+
+            this.deskripsi = deskripsi;
+            this.bahan_kajian = bahanKajian;
 
             // this.nama_pr_search = namaProdi;
             // this.pr_id = idPr;
@@ -117,6 +125,9 @@ document.addEventListener("alpine:init", () => {
             this.sks_kuliah = "";
             this.tipe_sks = ""; 
             this.is_wajib = "";
+
+            this.deskripsi = "";
+            this.bahan_kajian = "";
 
             this.nama_mk_delete = "";
             this.kode_mk_delete = "";

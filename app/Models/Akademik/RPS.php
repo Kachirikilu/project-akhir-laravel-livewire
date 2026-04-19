@@ -63,6 +63,17 @@ class RPS extends Model
         });
     }
 
+    protected function deskripsiRps(): Attribute
+    {
+        return Attribute::get(function () {
+            if (empty($this->deskripsi) || !$this->deskripsi) {
+                return $this->mk_rel?->deskripsi;
+            }
+
+            return $this->deskripsi;
+        });
+    }
+
     protected function mk(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->mk);

@@ -25,7 +25,7 @@ trait WithMKModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        
+
         if ($this->showEditMK == true) {
             $this->resetInputMK();
         }
@@ -51,18 +51,17 @@ trait WithMKModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
-        
+
         $this->resetInputMK();
         $this->resetValidation();
         $this->resetErrorBag();
-        
+
         $this->selected_id_mk = $id;
         $this->mkType = $tingkatan;
         $this->isEditingMK = true;
         $this->showEditMK = true;
 
         $this->prResults = [];
-
 
         try {
             $mk = MataKuliah::with(['prodis'])->findOrFail($id);
@@ -114,6 +113,18 @@ trait WithMKModal
 
     private function inputModalMK($isEditingMK, $data)
     {
+        $inputDeskripsi = trim($data['deskripsi'] ?? '');
+        if (! str_ends_with($inputDeskripsi, '.') && !empty($inputDeskripsi)) {
+            $inputDeskripsi .= '.';
+        }
+        $data['deskripsi'] = $inputDeskripsi;
+
+        $inputBahanKajian = trim($data['bahan_kajian'] ?? '');
+        if (! str_ends_with($inputBahanKajian, '.') && !empty($inputBahanKajian)) {
+            $inputBahanKajian .= '.';
+        }
+        $data['bahan_kajian'] = $inputBahanKajian;
+
         // $tingkatanMap = [
         //     'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
         //     1 => 1, 2 => 2, 3 => 3, 4 => 4,
@@ -157,6 +168,8 @@ trait WithMKModal
             'sks_kuliah' => 'required|integer|min:1',
             'tipe_sks' => 'required|in:1,2,3,4',
             'is_wajib' => 'required|boolean',
+            'deskripsi' => 'required|string|max:1000',
+            'bahan_kajian' => 'required|string|max:1000',
         ];
 
         if ($tingkatan === 1) {
@@ -226,8 +239,8 @@ trait WithMKModal
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
                     'is_wajib' => $validated['is_wajib'],
-                    'bahan_kajian' => $data['bahan_kajian'] ?? null,
-                    'deskripsi' => $data['deskripsi'] ?? null,
+                    'deskripsi' => $validated['deskripsi'],
+                    'bahan_kajian' => $validated['bahan_kajian'],
                 ]);
 
                 $targetIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
@@ -282,8 +295,8 @@ trait WithMKModal
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
                     'is_wajib' => $validated['is_wajib'],
-                    'bahan_kajian' => $data['bahan_kajian'] ?? null,
-                    'deskripsi' => $data['deskripsi'] ?? null,
+                    'deskripsi' => $validated['deskripsi'],
+                    'bahan_kajian' => $validated['bahan_kajian'],
                 ]);
 
                 // 4. LOGIKA TARGET IDs
@@ -353,6 +366,11 @@ trait WithMKModal
             'tipe_sks.in' => 'Tipe SKS yang dipilih tidak valid!',
             'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan!',
             'is_wajib.boolean' => 'Format status wajib tidak valid!',
+
+            'deskripsi.required' => 'Deskripsi Mata Kuliah wajib diisi!',
+            'deskripsi.max' => 'Deskripsi Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
+            'bahan_kajian.required' => 'Bahan KajianMata Kuliah wajib diisi!',
+            'bahan_kajian.max' => 'Bahan Kajian Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
         ];
     }
 

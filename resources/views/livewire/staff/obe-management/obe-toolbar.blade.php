@@ -43,7 +43,7 @@
                             $flux.modal('rps-modal').show();
                             $wire.addRPS();
                         "
-                        class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
+                        class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
                         <flux:icon name="clipboard-document-list"
                             class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
@@ -64,7 +64,7 @@
                             $flux.modal('cpmk-modal').show();
                             $wire.addCPMK();
                         "
-                        class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-50 dark:hover:!bg-amber-900/30">
+                        class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                         <flux:icon name="academic-cap" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>CPMK</span>
@@ -84,7 +84,7 @@
                             $flux.modal('scpmk-modal').show();
                             $wire.addSCPMK();
                         "
-                        class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                        class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30">
                         <flux:icon name="academic-cap" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>Sub-CPMK</span>
@@ -104,7 +104,7 @@
                             $flux.modal('cpl-modal').show();
                             $wire.addCPL();
                         "
-                        class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-50 dark:hover:!bg-red-900/30">
+                        class="cursor-pointer !text-red-600 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30">
                         <flux:icon name="document-text" class="!text-red-600 dark:!text-red-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>Capaian Pembelajaran Lulusan</span>
@@ -124,7 +124,7 @@
                             $flux.modal('ref-modal').show();
                             $wire.addRef();
                         "
-                        class="cursor-pointer !text-fuchsia-600 dark:!text-fuchsia-400 hover:!bg-fuchsia-50 dark:hover:!bg-fuchsia-900/30">
+                        class="cursor-pointer !text-fuchsia-600 dark:!text-fuchsia-400 hover:!bg-fuchsia-100 dark:hover:!bg-fuchsia-900/30">
                         <flux:icon name="book-open" class="!text-fuchsia-600 dark:!text-fuchsia-400 mr-2 h-4 w-4" />
                         <div class="flex justify-between items-center w-full">
                             <span>Referensi</span>

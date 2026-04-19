@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\RPSManagement;
 
 use App\Models\Akademik\RPS;
+use App\Models\Akademik\SubCPMK;
 
 trait WithRPSShow
 {
@@ -24,18 +25,18 @@ trait WithRPSShow
             'jurusan' => $prodi?->jr_rel?->nama_jr ?? '-',
             'prodi' => $prodi?->nama_pr ?? '-',
 
-            'mk' => $rps->mk,
-            'kode_mk' => $rps->kode,
-            'bahanKajian' => $mk?->bahan_kajian ?? '-',
-            'sks' => $rps->sks ?? 0,
-            'sksPraktikum' => $mk?->sks_pr ?? 0,
+            'nama_mk' => $mk->nama_mk,
+            'kode_mk' => $rps->kode_mk,
+            'bahan_kajian' => $mk?->bahan_kajian ?? '-',
+            'sks' => $mk->sks_tm ?? $mk->sks_pl ?? $mk->sks_sm ?? 0,
+            'sks_pr' => $mk?->sks_pr ?? 0,
             'semester' => $mk?->semester ?? '-',
             'revisi' => $rps->revisi_day ?? '-',
 
             'bobot_uts' => $rps->bobot_uts ?? '-',
             'bobot_uas' => $rps->bobot_uas ?? '-',
 
-            'deskripsi' => $rps->deskripsi ?? '-',
+            'deskripsi' => $rps->deskripsi_rps ?? '-',
             'cpl' => $rps->cpls->map(function ($c, $idx) {
                 $label = trim(($c->kode ?? '').' '.($c->deskripsi ?? ''));
 
@@ -64,13 +65,12 @@ trait WithRPSShow
             foreach ($cpmk->scpmks as $scpmk) {
                 $rows[] = [
                     'cpmk' => $cpmk->kode,
-                    'sub_cpmk' => $scpmk->kode, // Pastikan ini berisi teks Sub-CPMK
+                    'sub_cpmk' => $scpmk->kode,
                     'materi' => $scpmk->materi,
                     'referensi' => $this->formatScpmkReferensi($scpmk),
                     'metodologi' => $scpmk->metodologi,
                     'tugas' => $scpmk->tugas,
                     'indikator' => $scpmk->indikator,
-                    // KUNCI: Pastikan bobot diambil dari scpmk jika ada
                     'bobot' => $this->formatBobot($scpmk->bobot),
                     'dosen' => $this->getDosenNamesForSubCpmk($rps, $scpmk),
                     'metode' => $scpmk->metode,
@@ -79,37 +79,43 @@ trait WithRPSShow
             }
         }
 
-        // Cek apakah ada UTS/UAS asli dari database
+        $utsFields = SubCPMK::UTS_FIELDS;
+        $uasFields = SubCPMK::UAS_FIELDS;
+
         $hasUTS = collect($rows)->contains(function ($row) {
-            return strtoupper(trim((string) ($row['metode'] ?? ''))) === 'UTS' ||
-                   str_contains(strtoupper($row['sub_cpmk']), 'UTS');
+            return SubCPMK::isUTS($row['metode'] ?? '', $row['sub_cpmk'] ?? '');
         });
 
-        $uasKeywords = ['UAS', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'];
-        $hasUAS = collect($rows)->contains(function ($row) use ($uasKeywords) {
-            $metode = strtoupper(trim((string) ($row['metode'] ?? '')));
-            $subCpmk = strtoupper($row['sub_cpmk']);
-
-            return in_array($metode, $uasKeywords) || collect($uasKeywords)->contains(fn ($kw) => str_contains($subCpmk, $kw));
+        $hasUAS = collect($rows)->contains(function ($row) {
+            return SubCPMK::isUAS($row['metode'] ?? '', $row['sub_cpmk'] ?? '');
         });
 
-        // Jika sudah ada Sub-CPMK UTS/UAS, jangan gunakan loop 1-16 yang kaku
-        if ($hasUTS || $hasUAS) {
-            return $rows; // Kembalikan apa adanya dari database (15-16 baris)
+        // Kondisi 1: Kedua ada (UTS dan UAS) → kembalikan apa adanya
+        if ($hasUTS && $hasUAS) {
+            return $rows;
         }
 
-        // Jika standar 14 baris, baru gunakan logika placeholder
+        // Kondisi 2: Tidak ada salah satunya (hanya UTS atau hanya UAS) → tambah yang kurang
+        if ($hasUTS && !$hasUAS) {
+            $rows[] = $this->createPlaceholderMeetingRow('UAS', $rps->bobot_uas, $rps);
+            return $rows;
+        }
+
+        if (!$hasUTS && $hasUAS) {
+            $rows[] = $this->createPlaceholderMeetingRow('UTS', $rps->bobot_uts, $rps);
+            return $rows;
+        }
+
+        // Kondisi 3: Tidak ada keduanya → bikin placeholder UTS dan UAS dengan struktur 1-16
         $finalRows = [];
         $pointer = 0;
         for ($meeting = 1; $meeting <= 16; $meeting++) {
             if ($meeting === 8) {
                 $finalRows[] = $this->createPlaceholderMeetingRow('UTS', $rps->bobot_uts, $rps);
-
                 continue;
             }
             if ($meeting === 16) {
                 $finalRows[] = $this->createPlaceholderMeetingRow('UAS', $rps->bobot_uas, $rps);
-
                 continue;
             }
             if (isset($rows[$pointer])) {

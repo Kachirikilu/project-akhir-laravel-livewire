@@ -47,9 +47,10 @@ return new class extends Migration
                 'Mandiri',
 
                 // --- Evaluasi Formal (Umum) ---
-                'UTS', 'UAS', 'Kuis',
-                'Laporan Akhir',
-                'Hasil Proyek',
+                'UTS', 'UAS', 
+                'Evaluasi Awal', // Setara UTS
+                'Evaluasi Akhir', 'Laporan Akhir', 'Hasil Proyek', // Setara UAS
+                'Kuis',
 
                 // --- Evaluasi Berbasis Kinerja (Praktikum/Lapangan/Simulasi) ---
                 'Skripsi',

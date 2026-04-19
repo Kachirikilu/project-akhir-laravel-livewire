@@ -22,7 +22,7 @@
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('prodi');
                     "
-                    class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-50 dark:hover:!bg-emerald-900/30">
+                    class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
                     <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Program Studi</span>
@@ -58,7 +58,7 @@
                         $flux.modal('prodi-modal').show();
                         $wire.addProdi('fakultas');
                     "
-                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-50 dark:hover:!bg-indigo-900/30">
+                    class="cursor-pointer !text-indigo-600 dark:!text-indigo-400 hover:!bg-indigo-100 dark:hover:!bg-indigo-900/30">
                     <flux:icon name="building-library" class="!text-indigo-600 dark:!text-indigo-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Fakultas</span>

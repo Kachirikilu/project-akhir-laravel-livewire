@@ -97,22 +97,22 @@ trait WithCPMKModal
             })->toArray();
 
             $this->cpl_id_array = array_merge(
-                array_map(fn() => [], $this->cpl_id_array),
+                array_map(fn () => [], $this->cpl_id_array),
                 [$key => $cpmk->cpls->pluck('id')->toArray()]
             );
             $this->cpl_items_array = array_merge(
-                array_map(fn() => [], $this->cpl_items_array),
+                array_map(fn () => [], $this->cpl_items_array),
                 [$key => $cpmk->cpls->map(function ($c) {
                     return $this->itemsCPL($c);
                 })->toArray()]
             );
 
             $this->ref_id_array = array_merge(
-                array_map(fn() => [], $this->ref_id_array),
+                array_map(fn () => [], $this->ref_id_array),
                 [$key => $cpmk->refs->pluck('id')->toArray()]
             );
             $this->ref_items_array = array_merge(
-                array_map(fn() => [], $this->ref_items_array),
+                array_map(fn () => [], $this->ref_items_array),
                 [$key => $cpmk->refs->map(function ($c) {
                     return $this->itemsRef($c);
                 })->toArray()]
@@ -194,11 +194,11 @@ trait WithCPMKModal
             }
         }
 
-        if  (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
+        if (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
             $data['deskripsi'] = null;
         } else {
             $inputDeskripsi = trim($data['deskripsi'] ?? '');
-            if (! str_ends_with($inputDeskripsi, '.')) {
+            if (! str_ends_with($inputDeskripsi, '.') && ! empty($inputDeskripsi)) {
                 $inputDeskripsi .= '.';
             }
             $data['deskripsi'] = $inputDeskripsi;
@@ -347,9 +347,8 @@ trait WithCPMKModal
             $cpmk = CPMK::with(['rps.cpmks.scpmks'])->findOrFail($this->selected_id_cpmk);
             $selectedScpmkIds = array_values(array_unique($validated['scpmk_id_array'] ?? []));
             $selectedScpmks = SubCPMK::whereIn('id', $selectedScpmkIds)->get();
-            $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
 
-            $invalidRps = $cpmk->rps->first(function ($rps) use ($cpmk, $selectedScpmks, $uauFields) {
+            $invalidRps = $cpmk->rps->first(function ($rps) use ($cpmk, $selectedScpmks) {
                 if ($rps->is_draf != 0) {
                     return false;
                 }
@@ -364,21 +363,11 @@ trait WithCPMKModal
                 }
 
                 $hasUTS = $allScpmks->contains(function ($item) {
-                    $method = strtoupper($item->metode ?? '');
-                    $text = strtoupper($item->deskripsi ?? '');
-
-                    return $method === 'UTS' || str_contains($text, 'UTS');
+                    return SubCPMK::isUTS($item->metode ?? '', $item->deskripsi ?? '');
                 });
 
-                $hasUAS = $allScpmks->contains(function ($item) use ($uauFields) {
-                    $method = strtoupper($item->metode ?? '');
-                    $text = strtoupper($item->deskripsi ?? '');
-
-                    return in_array($method, $uauFields, true)
-                        || str_contains($text, 'UAS')
-                        || str_contains($text, 'LAPORAN AKHIR')
-                        || str_contains($text, 'HASIL PROYEK')
-                        || str_contains($text, 'HASIL PROJEK');
+                $hasUAS = $allScpmks->contains(function ($item) {
+                    return SubCPMK::isUAS($item->metode ?? '', $item->deskripsi ?? '');
                 });
 
                 $baseTotal = $allScpmks->sum(function ($item) {
@@ -396,7 +385,7 @@ trait WithCPMKModal
                 throw ValidationException::withMessages($this->getErrorBag()->messages());
             }
 
-            DB::transaction(function () use ($validated, $selectedScpmks, $uauFields) {
+            DB::transaction(function () use ($validated, $selectedScpmks) {
                 $cpmk = CPMK::findOrFail($this->selected_id_cpmk);
 
                 // 1. Update Data Utama CPMK
@@ -414,7 +403,6 @@ trait WithCPMKModal
                 $cpmk->scpmks()->sync($syncScpmk);
 
                 // 3. Update bobot UTS/UAS dan revisi RPS terkait
-                $uauFields = ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
                 foreach ($cpmk->rps as $rps) {
                     $allScpmks = collect();
                     foreach ($rps->cpmks as $rpsCpmk) {
@@ -426,21 +414,11 @@ trait WithCPMKModal
                     }
 
                     $hasUTS = $allScpmks->contains(function ($item) {
-                        $method = strtoupper($item->metode ?? '');
-                        $text = strtoupper($item->deskripsi ?? '');
-
-                        return $method === 'UTS' || str_contains($text, 'UTS');
+                        return SubCPMK::isUTS($item->metode ?? '', $item->deskripsi ?? '');
                     });
 
-                    $hasUAS = $allScpmks->contains(function ($item) use ($uauFields) {
-                        $method = strtoupper($item->metode ?? '');
-                        $text = strtoupper($item->deskripsi ?? '');
-
-                        return in_array($method, $uauFields, true)
-                            || str_contains($text, 'UAS')
-                            || str_contains($text, 'LAPORAN AKHIR')
-                            || str_contains($text, 'HASIL PROYEK')
-                            || str_contains($text, 'HASIL PROJEK');
+                    $hasUAS = $allScpmks->contains(function ($item) {
+                        return SubCPMK::isUAS($item->metode ?? '', $item->deskripsi ?? '');
                     });
 
                     $updateData = [];
@@ -538,18 +516,18 @@ trait WithCPMKModal
     private function resetInputCPMK()
     {
         $this->scpmkNameSearch = '';
-        $this->cplNameSearch = array_map(fn() => '', $this->cplNameSearch);
-        $this->refNameSearch = array_map(fn() => '', $this->refNameSearch);
-        
+        $this->cplNameSearch = array_map(fn () => '', $this->cplNameSearch);
+        $this->refNameSearch = array_map(fn () => '', $this->refNameSearch);
+
         $this->scpmk_id_array = [];
         $this->scpmk_items_array = [];
         $this->scpmk_sub_items_array = [];
 
-        $this->cpl_id_array = array_map(fn() => [], $this->cpl_id_array);
-        $this->cpl_items_array = array_map(fn() => [], $this->cpl_items_array);
+        $this->cpl_id_array = array_map(fn () => [], $this->cpl_id_array);
+        $this->cpl_items_array = array_map(fn () => [], $this->cpl_items_array);
 
-        $this->ref_id_array = array_map(fn() => [], $this->ref_id_array);
-        $this->ref_items_array = array_map(fn() => [], $this->ref_items_array);
+        $this->ref_id_array = array_map(fn () => [], $this->ref_id_array);
+        $this->ref_items_array = array_map(fn () => [], $this->ref_items_array);
 
         $this->resetErrorBag();
     }
