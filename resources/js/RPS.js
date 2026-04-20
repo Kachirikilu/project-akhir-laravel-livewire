@@ -1,6 +1,5 @@
 document.addEventListener("alpine:init", () => {
     Alpine.store("rps", {
-
         isFlyout: false,
 
         setFlyout(val) {
@@ -14,13 +13,16 @@ document.addEventListener("alpine:init", () => {
 
         rps_delete: "",
         kode_rps_delete: "",
-        
+
         setEdit(val) {
             this.isEdit = val;
         },
         setColor(val) {
             this.colorIcon = val;
         },
+
+        id: "",
+        nama_rps: "",
 
         deskripsi: "",
         digit_akademik: "",
@@ -47,11 +49,10 @@ document.addEventListener("alpine:init", () => {
                 this.is_draf = 1;
             } else if (val < 14 && this.is_draf === "") {
                 this.is_draf = "";
-            } 
+            }
         },
 
-
-        ref_cpmk: [], 
+        ref_cpmk: [],
         ref_scpmk: [],
         cpl_cpmk: [],
 
@@ -69,19 +70,31 @@ document.addEventListener("alpine:init", () => {
             this.ref_scpmk = [];
             this.cpl_cpmk = [];
 
-            allSubItems.forEach(item => {
+            allSubItems.forEach((item) => {
                 if (item.scpmk) {
-                    let rawSubRefs = item.scpmk.flatMap(sub => sub.ref || []);
+                    let rawSubRefs = item.scpmk.flatMap((sub) => sub.ref || []);
                     const combinedSubRef = [...this.ref_scpmk, ...rawSubRefs];
-                    this.ref_scpmk = Array.from(new Map(combinedSubRef.map(i => [i.id, i])).values());
+                    this.ref_scpmk = Array.from(
+                        new Map(combinedSubRef.map((i) => [i.id, i])).values(),
+                    );
                 }
                 if (item.cpl) {
-                    const combinedCPL = [...this.cpl_cpmk, ...(Array.isArray(item.cpl) ? item.cpl : [])];
-                    this.cpl_cpmk = Array.from(new Map(combinedCPL.map(i => [i.id, i])).values());
+                    const combinedCPL = [
+                        ...this.cpl_cpmk,
+                        ...(Array.isArray(item.cpl) ? item.cpl : []),
+                    ];
+                    this.cpl_cpmk = Array.from(
+                        new Map(combinedCPL.map((i) => [i.id, i])).values(),
+                    );
                 }
                 if (item.ref) {
-                    const combinedRef = [...this.ref_cpmk, ...(Array.isArray(item.ref) ? item.ref : [])];
-                    this.ref_cpmk = Array.from(new Map(combinedRef.map(i => [i.id, i])).values());
+                    const combinedRef = [
+                        ...this.ref_cpmk,
+                        ...(Array.isArray(item.ref) ? item.ref : []),
+                    ];
+                    this.ref_cpmk = Array.from(
+                        new Map(combinedRef.map((i) => [i.id, i])).values(),
+                    );
                 }
             });
         },
@@ -97,7 +110,7 @@ document.addEventListener("alpine:init", () => {
             countScpmk,
             bobotUTS,
             bobotUAS,
-            totalBobot
+            totalBobot,
         ) {
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
@@ -105,15 +118,15 @@ document.addEventListener("alpine:init", () => {
             this.mk_id = idMK;
             this.nama_mk_search = namaMK;
             this.mk_items = {
-                "id": idMK,
-                "kode": kodeMK,
-                "slot1": namaMK
+                id: idMK,
+                kode: kodeMK,
+                slot1: namaMK,
             };
 
             this.akademik = tahunAkademik;
 
-            if (tahunAkademik && tahunAkademik.includes('/')) {
-                let parts = tahunAkademik.split('/');
+            if (tahunAkademik && tahunAkademik.includes("/")) {
+                let parts = tahunAkademik.split("/");
                 this.akademik_1 = parts[0];
                 this.akademik_2 = parts[1];
             } else {
@@ -133,11 +146,12 @@ document.addEventListener("alpine:init", () => {
             this.total_bobot = totalBobot;
         },
 
-        setDeleteRPS(
-            namaRPS,
-            kodeCPLDelete,
-            forceDelete
-        ) {
+        setShowRPS(idRPS, namaRPS) {
+            this.id = idRPS;
+            this.nama_rps = namaRPS;
+        },
+
+        setDeleteRPS(namaRPS, kodeCPLDelete, forceDelete) {
             this.rps_delete = namaRPS;
             this.kode_rps_delete = kodeCPLDelete;
             this.isForceDelete = forceDelete;
@@ -146,15 +160,15 @@ document.addEventListener("alpine:init", () => {
         // resetSelect() {
         //     this.kode_blok = "";
         //     this.semester = "";
-        //     this.tipe_sks = ""; 
+        //     this.tipe_sks = "";
         //     this.is_wajib = "";
         // },
-        
+
         reset() {
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+            this.typeModal_delete = "";
+            this.isEdit = 0;
+            this.isForceDelete = 0;
+            this.colorIcon = "";
 
             this.deskripsi = "";
 
@@ -168,6 +182,13 @@ document.addEventListener("alpine:init", () => {
             this.akademik_2 = "";
 
             this.is_draf = "";
-        }
+        },
+        resetShow() {
+            this.typeModal_delete = "";
+            this.colorIcon = "";
+
+            this.id = "";
+            this.nama_rps = "";
+        },
     });
 });

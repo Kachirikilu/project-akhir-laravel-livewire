@@ -1,5 +1,5 @@
 <div wire:loading wire:target="{{ $wireLoading }}"
-    class="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[var(--second-table-color)]/60 backdrop-blur-[2px] rounded-lg">
+    class="absolute inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-[2px] rounded-lg">
 
     <div class="h-full flex flex-col items-center justify-center">
         <svg class="animate-spin h-10 w-10 text-[var(--focus-color)]" xmlns="http://www.w3.org/2000/svg" fill="none"

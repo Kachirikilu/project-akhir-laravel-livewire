@@ -4,16 +4,48 @@ namespace App\Livewire\Staff\RPSManagement;
 
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
+use Spatie\Browsershot\Browsershot;
 
 trait WithRPSShow
 {
+    public function printPDF($id)
+    {
+        $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
+        $data = $this->formatRPSDetailForShow($rps);
+
+        // --- PROSES LOGO ---
+        $logoPath = public_path('images/logo-unsri.png');
+        $logoBase64 = '';
+
+        if (file_exists($logoPath)) {
+            $type = pathinfo($logoPath, PATHINFO_EXTENSION);
+            $dataLogo = file_get_contents($logoPath);
+            $logoBase64 = 'data:image/'.$type.';base64,'.base64_encode($dataLogo);
+        }
+
+        $html = view('livewire.staff.obe-management.rps-management.rps-pdf-print', [
+            'detailRPSData' => $data,
+            'logoBase64' => $logoBase64,
+        ])->render();
+
+        return response()->streamDownload(function () use ($html) {
+            echo Browsershot::html($html)
+                ->noSandbox()
+                ->format('A4')
+                ->showBackground()
+                ->pdf();
+        }, 'rps-'.str($data['nama_mk'])->slug().'.pdf', [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
     private function formatRPSDetailForShow(RPS $rps): array
     {
         $mk = $rps->mk_rel;
         $prodi = $mk?->prodis->first();
 
         $timPengajar = $rps->dosens->map(function ($dosen) {
-            return $dosen->name . '<br>(NIP: ' . ($dosen->nip ?? '-') . ')';
+            return $dosen->name.'<br>(NIP: '.($dosen->nip ?? '-').')';
         })->filter()->implode("\n");
         $ketua = optional($rps->dosens->first(function ($d) {
             return (bool) ($d->pivot->is_ketua ?? false);
@@ -25,6 +57,7 @@ trait WithRPSShow
         $dosenCount = $rps->dosens->count();
 
         return [
+            'rps_id' => $rps->id,
             'fakultas' => $prodi?->jr_rel?->fk_rel?->nama_fk ?? '-',
             'jurusan' => $prodi?->jr_rel?->nama_jr ?? '-',
             'prodi' => $prodi?->prodi ?? '-',
@@ -48,7 +81,7 @@ trait WithRPSShow
             'cpl' => $rps->cpls->map(function ($c) {
                 return trim(($c->kode ?? '').': '.($c->deskripsi ?? ''));
             })->implode("\n"),
-            'list_cpmk_with_desc' => $rps->cpmks->map(function ($c) {
+            'cpmk' => $rps->cpmks->map(function ($c) {
                 return trim(($c->kode ?? '').': '.($c->deskripsi_cpl ?? ''));
             })->implode("\n"),
 
@@ -168,12 +201,10 @@ trait WithRPSShow
         }
 
         // Kondisi 2: Tidak ada salah satunya (hanya UTS atau hanya UAS) → tambah yang kurang
-        elseif ($hasUTS && !$hasUAS) {
+        elseif ($hasUTS && ! $hasUAS) {
             $finalRows = $rows;
             $finalRows[] = $this->createPlaceholderMeetingRow('UAS', $rps->bobot_uas, $rps);
-        }
-
-        elseif (!$hasUTS && $hasUAS) {
+        } elseif (! $hasUTS && $hasUAS) {
             $finalRows = $rows;
             $finalRows[] = $this->createPlaceholderMeetingRow('UTS', $rps->bobot_uts, $rps);
         }
@@ -184,10 +215,12 @@ trait WithRPSShow
             for ($meeting = 1; $meeting <= 16; $meeting++) {
                 if ($meeting === 8) {
                     $finalRows[] = $this->createPlaceholderMeetingRow('UTS', $rps->bobot_uts, $rps);
+
                     continue;
                 }
                 if ($meeting === 16) {
                     $finalRows[] = $this->createPlaceholderMeetingRow('UAS', $rps->bobot_uas, $rps);
+
                     continue;
                 }
                 if (isset($rows[$pointer])) {
