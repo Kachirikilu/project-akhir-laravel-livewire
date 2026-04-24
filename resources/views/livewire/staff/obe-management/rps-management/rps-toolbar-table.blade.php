@@ -26,14 +26,17 @@
         <flux:menu.separator />
 
         {{-- Tombol PDF --}}
-        <flux:menu.item wire:click="printPDF({{ $x->id }})"
-            class="!cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 transition-colors">
-            <flux:icon name="printer" class="mr-2 h-4 w-4" />
-            <div class="flex justify-between items-center w-full">
+        <div wire:click="printPDF({{ $x->id }})"
+            class="px-3 py-2 flex items-center justify-between w-full cursor-pointer
+           !text-emerald-600 dark:!text-emerald-400
+           hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30
+           transition-colors select-none">
+            <div class="flex items-center">
+                <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
-                <flux:icon wire:loading wire:target="printPDF" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
             </div>
-        </flux:menu.item>
+            <flux:icon wire:loading wire:target="printPDF" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+        </div>
 
         <flux:menu.separator />
 

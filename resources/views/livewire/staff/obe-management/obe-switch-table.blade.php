@@ -46,13 +46,13 @@
                 'tabNameString' => 'Referensi'
             ])
 
-            @include('livewire.global.search-and-filters.partial.tab-filter', [
+            {{-- @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPiv,
                 'tabString' => 'ref',
                 'tabNameString' => 'Pivot'
-            ])
+            ]) --}}
         </div>
 
     </div>
