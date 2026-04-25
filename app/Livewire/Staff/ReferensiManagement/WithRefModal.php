@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\ReferensiManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasErrorCount;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ use Livewire\WithPagination;
 trait WithRefModal
 {
     use HasToast;
+    use HasErrorCount;
     use WithPagination;
 
     public $selected_id_ref;
@@ -137,6 +139,9 @@ trait WithRefModal
 
     private function inputModalRef($isEditingRef, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $rules = [
             'kode_ref_1' => 'required|alpha|max:10',
             'kode_ref_2' => 'required|numeric|min:1',
@@ -372,6 +377,22 @@ trait WithRefModal
             // Link
             'link.url' => 'Format tautan (URL) tidak valid!',
             'link.max' => 'Tautan terlalu panjang (Maksimal 1000 karakter)!',
+        ];
+    }
+
+    public function getRefErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'kode_ref',
+                'judul',
+                'penulis',
+                'penerbit',
+                'tahun',
+                'link',
+            ]),
+            2 => $this->getErrorCount([
+            ]),
         ];
     }
 

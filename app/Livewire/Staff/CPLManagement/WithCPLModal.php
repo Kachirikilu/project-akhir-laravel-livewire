@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff\CPLManagement;
 
+use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\RPS;
@@ -12,6 +13,7 @@ use Livewire\WithPagination;
 
 trait WithCPLModal
 {
+    use HasErrorCount;
     use HasToast;
     use WithPagination;
 
@@ -130,6 +132,9 @@ trait WithCPLModal
 
     private function inputModalCPL($isEditingCPL, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $data['deskripsi'] = trim($data['deskripsi'] ?? '');
         if ($data['deskripsi'] !== '' && ! str_ends_with($data['deskripsi'], '.')) {
             $data['deskripsi'] .= '.';
@@ -143,15 +148,14 @@ trait WithCPLModal
                 'alpha_num',
                 'max:20',
                 function ($attribute, $value, $fail) use ($isEditingCPL) {
-                    $query = DB::table('cpls')
-                        ->where('kode_cpl', $value);
+                    $query = DB::table('cpls')->where('kode_cpl', $value);
 
                     if ($isEditingCPL) {
                         $query->where('id', '!=', $this->selected_id_cpl);
                     }
 
                     if ($query->exists()) {
-                        $fail("Kode CPL '$value' sudah digunakan di CPL lain!");
+                        $fail("Kode CPL '$value' sudah digunakan!");
                     }
                 },
             ],
@@ -175,18 +179,26 @@ trait WithCPLModal
 
         $validator = Validator::make($data, $rules, $this->validationMessagesCPL());
 
-        $validator->after(function ($validator) use ($data) {
-            if (empty(trim($data['kode_cpl_1'] ?? '')) && empty(trim($data['kode_cpl_2'] ?? ''))) {
-                if (! $validator->errors()->has('kode_cpl')) {
-                    $validator->errors()->add('kode_cpl', 'Kode CPL wajib diisi!');
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (empty($data['kode_cpl_1']) && empty($data['kode_cpl_2'])) {
+                $this->addError('kode_cpl', 'Kode CPL wajib diisi!');
+            } elseif ($errors->has('kode_cpl_1') || $errors->has('kode_cpl_2')) {
+                $combinedMessage = $errors->first('kode_cpl_1') ?: $errors->first('kode_cpl_2');
+                $this->addError('kode_cpl', $combinedMessage);
+            }
+            foreach ($errors->toArray() as $key => $messages) {
+                if (! in_array($key, ['kode_cpl_1', 'kode_cpl_2', 'kode_cpl'])) {
+                    foreach ($messages as $message) {
+                        $this->addError($key, $message);
+                    }
                 }
-            } elseif ($validator->errors()->has('kode_cpl_1') || $validator->errors()->has('kode_cpl_2')) {
-                if (! $validator->errors()->has('kode_cpl')) {
-                    $combinedMessage = $validator->errors()->first('kode_cpl_1') ?: $validator->errors()->first('kode_cpl_2');
-                    $validator->errors()->add('kode_cpl', $combinedMessage);
+                if ($key === 'kode_cpl' && ! $this->getErrorBag()->has('kode_cpl')) {
+                    $this->addError('kode_cpl', $messages[0]);
                 }
             }
-        });
+            throw ValidationException::withMessages($this->getErrorBag()->messages());
+        }
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
@@ -327,6 +339,18 @@ trait WithCPLModal
             'deskripsi.required' => 'Deskripsi CPL wajib diisi!',
             'deskripsi.max' => 'Deskripsi CPL terlalu panjang (Maksimal 1000 karakter)!',
             'deskripsi.unique' => 'Deskripsi CPL sudah tersedia!',
+        ];
+    }
+
+    public function getCPLErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'kode_cpl',
+                'deskripsi',
+            ]),
+            2 => $this->getErrorCount([
+            ]),
         ];
     }
 

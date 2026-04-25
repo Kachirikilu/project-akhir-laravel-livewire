@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
@@ -56,7 +55,6 @@ class RPSManagement extends Component
     use WithSubCPMKFilters;
     use WithSubCPMKModal;
     use WithSubCPMKSearchFilters;
-    use WithUserModal;
 
     public $switchTable = 'rps';
 
@@ -347,9 +345,6 @@ class RPSManagement extends Component
         $this->inputCPLFilter();
         $this->inputDosenFilter();
 
-        // $this->updatedMKNameSearch($this->mkNameSearch);
-        // $this->updatedPrNameSearch($this->prNameSearch);
-
         try {
 
             // =========================
@@ -555,7 +550,7 @@ class RPSManagement extends Component
                 'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
 
-                'stats' => $stats,
+                'stats' => $stats
             ]));
         } catch (QueryException $e) {
 

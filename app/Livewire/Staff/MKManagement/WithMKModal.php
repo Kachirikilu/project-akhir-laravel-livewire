@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\MKManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasErrorCount;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 trait WithMKModal
 {
     use HasToast;
+    use HasErrorCount;
 
     public $selected_id_mk;
 
@@ -113,6 +115,9 @@ trait WithMKModal
 
     private function inputModalMK($isEditingMK, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $inputDeskripsi = trim($data['deskripsi'] ?? '');
         if (! str_ends_with($inputDeskripsi, '.') && !empty($inputDeskripsi)) {
             $inputDeskripsi .= '.';
@@ -371,6 +376,24 @@ trait WithMKModal
             'deskripsi.max' => 'Deskripsi Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
             'bahan_kajian.required' => 'Bahan KajianMata Kuliah wajib diisi!',
             'bahan_kajian.max' => 'Bahan Kajian Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
+        ];
+    }
+
+    public function getMKErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'nama_mk',
+                'digit_mk',
+                'semester',
+                'tipe_sks',
+                'sks_kuliah',
+                'is_wajib',
+            ]),
+            2 => $this->getErrorCount([
+                'deskripsi',
+                'bahan_kajian',
+            ]),
         ];
     }
 

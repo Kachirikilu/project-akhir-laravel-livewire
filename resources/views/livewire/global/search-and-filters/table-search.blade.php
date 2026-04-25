@@ -3,7 +3,8 @@
         {{ ($isBorderX ?? false) || ($isMain ?? false) || $sortField == $sortFieldString ? 'border-l border-r' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
-        bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 py-3 relative
+        {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-3' : 'py-3' }}
+        bg-[var(--main-table-color)] border-[var(--border-table-color)] px-6 relative
         ">
     <div class="flex flex-col gap-1 items-center">
 

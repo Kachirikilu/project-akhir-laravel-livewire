@@ -10,8 +10,10 @@
                     $store.rps.digit_akademik = String(ta2);
                 } else if (ta2 >= 2100) {
                     $store.rps.digit_akademik = String(ta2).slice(-3);
-                } else {
+                } else if (ta2 >= 2000) {
                     $store.rps.digit_akademik = String(ta2).slice(-2);
+                } else {
+                    $store.rps.digit_akademik = String(ta2);
                 }
             }
         }

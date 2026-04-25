@@ -33,6 +33,7 @@ document.addEventListener("alpine:init", () => {
         status: "",
 
         // Prodi
+        pr_id: "",
         nama_pr_search: "",
         pr_items: "",
 

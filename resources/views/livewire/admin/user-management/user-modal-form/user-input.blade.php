@@ -1,61 +1,32 @@
-<div>
-    {{-- ****************************************************** --}}
-    {{-- 1. ACCOUNT INFORMATION (EMAIL & PASSWORD) --}}
-    {{-- ****************************************************** --}}
-    <div
-        class="px-4 py-6 mt-4 
-    {{-- bg-white dark:bg-neutral-800 border-gray-100 dark:border-neutral-700  --}}
-    bg-[var(--main-table-color)] border-[var(--border-table-color)]
-    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
-        <h4
-            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-            Account Information</h4>
+<div x-data="{ step: 1 }">
 
-        {{-- 📧 Email Input --}}
-        @include('livewire.global.modal-form.input-form', [
-            // 'colorIcon' => $colorIcon,
-            'alpine' => 'user',
-            'modelString' => 'email',
-            'typeString' => 'email',
-            'iconString' => 'envelope',
-            'placeholder' => 'contoh@domain.com',
-            'message' => $errors->first('email')
-        ])
+    {{-- 🔹 HEADER TAB CONTAINER --}}
+    @include('livewire.global.modal-form.paginate.tab-form', [
+        'tabs' => [1 => 'Akun', 2 => 'Personal'],
+        'errorsCount' => $this->getUserErrorSections(),
+    ])
 
-        {{-- 🔒 Password Input --}}
-        <template x-if="$store.user?.isEdit == 0" x-cloak>
-            @include('livewire.global.modal-form.input-form', [
-                // 'colorIcon' => $colorIcon,
-                'alpine' => 'user',
-                'modelString' => 'password',
-                'typeString' => 'password',
-                'iconString' => 'lock-closed',
-                'placeholder' => 'Masukkan Password',
-                'message' => $errors->first('password')
-            ])
-        </template>
-        <template x-if="$store.user?.isEdit == 1" x-cloak>
-            @include('livewire.global.modal-form.input-form', [
-                // 'colorIcon' => $colorIcon,
-                'alpine' => 'user',
-                'modelString' => 'password',
-                'typeString' => 'password',
-                'iconString' => 'lock-closed',
-                'placeholder' => 'Kosongkan jika tidak ingin diubah',
-                'message' => $errors->first('password'),
-                'isRequired' => 0,
-            ])
-        </template>
+    {{-- 🔹 CONTENT --}}
+    <div class="mt-4">
+        <div x-show="step === 1">
+            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-main-input')
+
+        </div>
+        <div x-show="step === 2">
+            <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
+                @include('livewire.admin.user-management.user-modal-form.user-input-partial.admin-input')
+            </template>
+            <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
+                @include('livewire.admin.user-management.user-modal-form.user-input-partial.dosen-input')
+            </template>
+            <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
+                @include('livewire.admin.user-management.user-modal-form.user-input-partial.mahasiswa-input')
+            </template>
+        </div>
     </div>
 
-
-    <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-        @include('livewire.admin.user-management.user-modal-form.user-input-partial.admin-input')
-    </template>
-    <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-        @include('livewire.admin.user-management.user-modal-form.user-input-partial.dosen-input')
-    </template>
-    <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-        @include('livewire.admin.user-management.user-modal-form.user-input-partial.mahasiswa-input')
-    </template>
+    {{-- 🔹 FOOTER STEPPER --}}
+    @include('livewire.global.modal-form.paginate.stepper-form', [
+        'maxStep' => 2,
+    ])
 </div>

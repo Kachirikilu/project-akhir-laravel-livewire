@@ -2,23 +2,25 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\Auth\User;
+use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasErrorCount;
+use App\Livewire\Global\WithDosenSearchFilters;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
-use App\Models\ProgramStudi\Prodi;
-
+use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
-use App\Livewire\Global\HasToast;
+use Illuminate\Validation\ValidationException;
 
 trait WithUserModal
 {
     use HasToast;
+    use HasErrorCount;
+    use WithDosenSearchFilters;
 
     public $showUserModal = false;
 
@@ -46,7 +48,7 @@ trait WithUserModal
     public function addUser($role)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         $this->resetValidation();
         $this->resetErrorBag();
@@ -59,7 +61,7 @@ trait WithUserModal
     public function editUser($id)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
 
         $this->resetInputUser();
@@ -87,6 +89,9 @@ trait WithUserModal
 
     private function inputModalUser($isEditingUser, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $rules = [
             'email' => [
                 'required',
@@ -279,7 +284,7 @@ trait WithUserModal
     public function saveUser($data)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         // if (empty($data['pr_id'])) {
         $data['pr_id'] = $this->pr_id;
@@ -312,6 +317,8 @@ trait WithUserModal
                 $prodiInput = $validated['pr_id'];
                 $statusInput = $validated['status'];
 
+                $dosen = null;
+
                 if ($this->roleType === 'admin') {
                     Admin::create([
                         'user_id' => $user->id,
@@ -322,7 +329,7 @@ trait WithUserModal
                         'status' => $statusInput,
                     ]);
                 } elseif ($this->roleType === 'dosen') {
-                    Dosen::create([
+                    $dosen = Dosen::create([
                         'user_id' => $user->id,
                         'name' => $nameInput,
                         'nip' => $identity1Input,
@@ -340,6 +347,27 @@ trait WithUserModal
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
+                }
+
+                if ($this->showRPSModal && $dosen) {
+                    if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
+                        $this->dosen_id_array = [];
+                    }
+                    if (! isset($this->dosen_items_array) || ! is_array($this->dosen_items_array)) {
+                        $this->dosen_items_array = [];
+                    }
+                    if (! in_array($dosen->id, $this->dosen_id_array)) {
+                        $this->dosen_id_array[] = $dosen->id;
+                        $this->dosen_items_array[] = $this->itemsDosen($dosen);
+                    }
+
+                    $isKetua = collect($this->dosen_items_array)
+                        ->contains(fn ($item) => $item['is_ketua'] === true);
+                    if (! $isKetua && count($this->dosen_items_array) > 0) {
+                        $lastIndex = array_key_last($this->dosen_items_array);
+                        $this->dosen_items_array[$lastIndex]['is_ketua'] = true;
+                        $this->dosen_items_array[$lastIndex]['peran'] = 'Koordinator';
+                    }
                 }
 
             });
@@ -362,12 +390,12 @@ trait WithUserModal
     public function updateUser($data)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         if ((empty($data['pr_id']) && $this->pr_id !== $this->pr_id_2) ||
             ($this->pr_id == $this->pr_id_2) || ($this->pr_id !== $this->pr_id_2)) {
             $data['pr_id'] = $this->pr_id;
-        } 
+        }
         if (empty($data['status'])) {
             $data['status'] = 'Aktif';
         }
@@ -479,10 +507,30 @@ trait WithUserModal
         ];
     }
 
+    public function getUserErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'email',
+                'password',
+            ]),
+            2 => $this->getErrorCount([
+                'name',
+                'nip',
+                'nitk',
+                'nidn',
+                'nidk',
+                'nim',
+                'angkatan',
+                'pr_id',
+                'status',
+            ]),
+        ];
+    }
+
     public function resetInputUser(
         // $keepProdi = false
-        )
-    {
+    ) {
         $fields = [
             'selected_id_user',
             // 'email', 'password', 'name', 'nip', 'nitk',

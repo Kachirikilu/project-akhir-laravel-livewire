@@ -178,7 +178,7 @@
 
     {{-- 3. AREA OPSI TERPILIH --}}
     <div
-        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
+        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
 
         @include('livewire.global.modal-form.partial.scpmk-bobot-akumulasi', [
             'nilai1' => 5,

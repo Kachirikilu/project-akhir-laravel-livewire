@@ -43,7 +43,8 @@ class RPS extends Model
             $suffixTahun = match (true) {
                 $tahunFull >= 3000 => $tahunFull,
                 $tahunFull >= 2100 => substr((string) $tahunFull, -3),
-                default => substr((string) $tahunFull, -2),
+                $tahunFull >= 2000 => substr((string) $tahunFull, -2),
+                default => (string) $tahunFull,
             };
 
             return $suffixTahun;

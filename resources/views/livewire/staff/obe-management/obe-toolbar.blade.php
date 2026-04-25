@@ -19,7 +19,9 @@
                 @elseif ($typeXString == 'cpl')
                     CPL
                 @elseif ($typeXString == 'ref')
-                    Referensi
+                    Referens
+                @elseif ($typeXString == 'dosen')
+                    Dosen
                 @else
                     OBE
                 @endif
@@ -27,7 +29,7 @@
 
             <flux:menu
                 class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-                
+
                 @if ($typeXString == 'all')
                     <flux:menu.heading>Pilih OBE</flux:menu.heading>
                     <flux:menu.separator />
@@ -74,7 +76,7 @@
                     </flux:menu.item>
                 @endif
 
-                @if ($typeXString == 'scpmk' || $typeXString == 'all')
+                @if ($typeXString == 'cpmk' || $typeXString == 'scpmk' || $typeXString == 'all')
                     {{-- SCPMK --}}
                     <flux:menu.item
                         @click="
@@ -129,6 +131,27 @@
                         <div class="flex justify-between items-center w-full">
                             <span>Referensi</span>
                             <flux:icon wire:loading wire:target="addRef()" name="arrow-path"
+                                class="animate-spin h-4 w-4 ml-2" />
+                        </div>
+                    </flux:menu.item>
+                @endif
+
+                @if ($typeXString == 'dosen' || $typeXString == 'all')
+                    {{-- Dosen --}}
+                    <flux:menu.item
+                        @click="
+                        $store.user?.setType('dosen');
+                        $store.user?.setEdit(0);
+                        {{-- $store.user?.resetSelect(); --}}
+                        $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                        $flux.modal('user-modal').show();
+                        $wire.addUser('dosen');
+                    "
+                        class="cursor-pointer !text-lime-600 dark:!text-lime-400 hover:!bg-lime-100 dark:hover:!bg-lime-900/30">
+                        <flux:icon name="briefcase" class="!text-lime-600 dark:!text-lime-400 mr-2 h-4 w-4" />
+                        <div class="flex justify-between items-center w-full">
+                            <span>Dosen</span>
+                            <flux:icon wire:loading wire:target="addUser('dosen')" name="arrow-path"
                                 class="animate-spin h-4 w-4 ml-2" />
                         </div>
                     </flux:menu.item>

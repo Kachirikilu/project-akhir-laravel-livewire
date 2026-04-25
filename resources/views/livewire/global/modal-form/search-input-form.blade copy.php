@@ -4,7 +4,6 @@
         search: @entangle($nameSearchString).live,
         items: @entangle($idString).live,
         itemsAll: @entangle($itemsAllString).live,
-        itemsAllDisplay: null,
         isManual: false
     }"
     x-effect="
@@ -14,7 +13,6 @@
         search = '';
         items = null;
         itemsAll = null;
-        itemsAllDisplay = null;
     } else {
         let currentId = config?.['{{ $idString }}'];
 
@@ -22,12 +20,10 @@
             search = '';
             items = null;
             itemsAll = null;
-            itemsAllDisplay = null;
         } else {
             search = config?.['{{ $modelString }}'];
             items =  config?.['{{ $idString }}'];
             itemsAll = config?.['{{ $itemsAllString }}'];
-            itemsAllDisplay = config?.['{{ $itemsAllString }}'];
         }
     }
 ">
@@ -58,7 +54,7 @@
         {{-- Tombol Reset --}}
         @include('livewire.global.search-and-filters.partial.reset-button', [
             'xShow' => 'search',
-            'xClick' => "search = ''; items = null; itemsAll = null; itemsAllDisplay = null",
+            'xClick' => "search = ''; items = null; itemsAll = null",
             'xWire' => $resetXInput,
             'xWire2' => $fetchString . "(null, 'single')",
             'xAlpine1' => $idString,
@@ -67,23 +63,23 @@
     </div>
 
     {{-- Info Terpilih --}}
-    <div x-show="itemsAllDisplay && search" x-cloak>
+    <div x-show="itemsAll && search" x-cloak>
         <p class="text-[var(--focus-color)] text-xs mt-1 font-medium italic">
             Terpilih:
-            <span x-text="itemsAllDisplay?.slot1" class="ml-1"></span>
+            <span x-text="itemsAll?.slot1" class="ml-1"></span>
             <span class="mx-1">|</span>
-            Kode: <span x-text="itemsAllDisplay?.kode"></span>
+            Kode: <span x-text="itemsAll?.kode"></span>
 
             @if ($typeX2String ?? null)
                 <span class="mx-1">|</span>
-                <span x-text="itemsAllDisplay?.slot2"></span>
+                <span x-text="itemsAll?.slot2"></span>
             @endif
             @if ($typeX3String ?? null)
                 <span class="mx-1">|</span>
-                <span x-text="itemsAllDisplay?.slot3"></span>
+                <span x-text="itemsAll?.slot3"></span>
             @endif
             <span class="mx-1">|</span>
-            ID: <span x-text="itemsAllDisplay?.id"></span>
+            ID: <span x-text="itemsAll?.id"></span>
         </p>
     </div>
 
@@ -108,7 +104,6 @@
                         slot2: '{{ isset($typeX2String) ? $x[$typeX2String] ?? '' : '' }}',
                         slot3: '{{ isset($typeX3String) ? $x[$typeX3String] ?? '' : '' }}'
                     };
-                    itemsAllDisplay = itemsAll;
                     isManual = true;
 
                     $store.{{ $alpine ?? 'config' }}['{{ $idString }}'] = items;

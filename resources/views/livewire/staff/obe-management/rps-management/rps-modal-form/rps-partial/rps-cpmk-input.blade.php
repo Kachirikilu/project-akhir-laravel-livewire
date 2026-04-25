@@ -10,7 +10,7 @@
         class="text-[var(--contrast-main-text)] text-lg font-medium">
         Pilih Capaian Pembelajaran Mata Kuliah</h4>
 
-        @if (!$this->showCPMKModal)
+        @if (!$this->showCPMKModal || $this->isEditingCPMK == false)
             @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk', 'isFlyout' => true])
         @endif
     </div>

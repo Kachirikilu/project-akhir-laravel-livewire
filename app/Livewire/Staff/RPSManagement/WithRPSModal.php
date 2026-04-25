@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff\RPSManagement;
 
+use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
@@ -11,6 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 trait WithRPSModal
 {
+    use HasErrorCount;
     use HasToast;
     use WithRPSPertemuan;
     use WithRPSShow;
@@ -175,26 +177,6 @@ trait WithRPSModal
                 'refs',
             ])->findOrFail($id);
 
-            // dd([
-            //     // 'id' => $rps->id,
-            //     // 'deskripsi' => $rps->deskripsi,
-            //     // 'mk' => $rps->mk,
-            //     // 'sks' => $rps->sks,
-            //     // 'wajib' => $rps->wajib,
-            //     // 'wajib_text' => $rps->wajib_text,
-            //     // 'akademik' => $rps->akademik,
-            //     // 'bobot_uts' => $rps->bobot_uts,
-            //     // 'bobot_uas' => $rps->bobot_uas,
-            //     // 'total_bobot' => $rps->total_bobot,
-            //     // 'draf' => $rps->draf,
-            //     // 'draf_text' => $rps->draf_text,
-            //     // 'revisi' => $rps->revisi,
-            //     'cpmks' => $this->mapCPMK($rps->cpmks),
-            //     // 'cpls' => $this->mapCPL($rps->cpls),
-            //     // 'refs' => $this->mapRef($rps->refs),
-            //     // 'dosens' => $this->mapDosen($rps->dosens),
-            // ]);
-
             $this->detailRPSData = $this->formatRPSDetailForShow($rps);
             $this->detailRPSModal = true;
 
@@ -208,9 +190,11 @@ trait WithRPSModal
 
     private function inputModalRPS($isEditingRPS, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
         // 1. Ambil data dari CPMK terpilih
         $inputDeskripsi = trim($data['deskripsi'] ?? '');
-        if (! str_ends_with($inputDeskripsi, '.') && !empty($inputDeskripsi)) {
+        if (! str_ends_with($inputDeskripsi, '.') && ! empty($inputDeskripsi)) {
             $inputDeskripsi .= '.';
         }
         $data['deskripsi'] = $inputDeskripsi;
@@ -262,6 +246,29 @@ trait WithRPSModal
         $bobotUTS = $data['bobot_uts'];
         $bobotUAS = $data['bobot_uas'];
 
+        $totalSubCPMK = 0;
+        $totalBobot = 0;
+        $hasUTS = false;
+        $hasUAS = false;
+
+        if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
+            foreach ($data['cpmk_sub_items_array'] as $group) {
+                foreach ($group['scpmk'] ?? [] as $scpmk) {
+                    $totalSubCPMK++;
+                    $totalBobot += (float) ($scpmk['bobot'] ?? 0);
+                    $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
+
+                    if (in_array($method, ['UTS', 'EVALUASI AWAL'], true)) {
+                        $hasUTS = true;
+                    }
+
+                    if (in_array($method, ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
+                        $hasUAS = true;
+                    }
+                }
+            }
+        }
+
         // --- RULES VALIDASI ---
         $rules = [
             'deskripsi' => 'string|max:1000',
@@ -280,20 +287,7 @@ trait WithRPSModal
             ],
             'akademik_1' => 'required|integer|min:1970',
             'akademik_2' => 'required|integer|min:1971',
-            'bobot_uts' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'bobot_uas' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data) {
-                $totalSubCPMK = 0;
-                $totalBobot = 0;
-                if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
-                    foreach ($data['cpmk_sub_items_array'] as $group) {
-                        foreach ($group['scpmk'] ?? [] as $scpmk) {
-                            $totalSubCPMK++;
-                            $totalBobot += (float) ($scpmk['bobot'] ?? 0);
-                        }
-                    }
-                }
-
+            'is_draf' => ['required', 'boolean', function ($attribute, $value, $fail) use ($data, $totalSubCPMK, $totalBobot) {
                 if (($totalSubCPMK < 14 || $totalSubCPMK > 16) && $data['is_draf'] == 0) {
                     $fail('Jumlah Sub-CPMK harus antara 14 dan 16 pertemuan!');
                 }
@@ -309,34 +303,7 @@ trait WithRPSModal
                 'required',
                 'array',
                 'min:1',
-                function ($attribute, $value, $fail) use ($data, $bobotUTS, $bobotUAS) {
-                    $totalSubCPMK = 0;
-                    $hasUTS = false;
-                    $hasUAS = false;
-
-                    if (! empty($data['cpmk_sub_items_array']) && is_array($data['cpmk_sub_items_array'])) {
-                        foreach ($data['cpmk_sub_items_array'] as $group) {
-                            foreach ($group['scpmk'] ?? [] as $scpmk) {
-                                $totalSubCPMK++;
-                                $method = strtoupper(trim((string) ($scpmk['metode'] ?? '')));
-
-                                if (in_array($method, ['UTS', 'EVALUASI AWAL'], true)) {
-                                    $hasUTS = true;
-                                }
-
-                                if (in_array($method, ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROJEK', 'HASIL PROYEK'], true)) {
-                                    $hasUAS = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if ($totalSubCPMK < 14 && $data['is_draf'] == 0) {
-                        $fail('Sub-CPMK minimal 14 pertemuan!');
-
-                        return;
-                    }
-
+                function ($attribute, $value, $fail) use ($data, $hasUTS, $hasUAS, $totalSubCPMK) {
                     $max = 14;
                     if ($hasUTS && $hasUAS) {
                         $max = 16;
@@ -344,27 +311,11 @@ trait WithRPSModal
                         $max = 15;
                     }
 
-                    if ($hasUTS && $bobotUTS !== null && $bobotUTS !== '') {
-                        $fail('Bobot UTS tidak boleh diisi jika UTS sudah ada pada Sub-CPMK!');
+                    if ($totalSubCPMK < 14 && $data['is_draf'] == 0) {
+                        $fail('Sub-CPMK minimal 14 pertemuan!');
+
+                        return;
                     }
-
-                    if ($hasUAS && $bobotUAS !== null && $bobotUAS !== '') {
-                        $fail('Bobot UAS tidak boleh diisi jika UAS atau setingkatnya sudah ada pada Sub-CPMK!');
-                    }
-
-                    if (! $hasUTS && ! $hasUAS) {
-                        if ($bobotUTS === null || $bobotUTS === '') {
-                            $fail('Bobot UTS wajib diisi untuk mode tanpa UTS/UAS!');
-
-                            return;
-                        }
-                        if ($bobotUAS === null || $bobotUAS === '') {
-                            $fail('Bobot UAS wajib diisi untuk mode tanpa UTS/UAS!');
-
-                            return;
-                        }
-                    }
-
                     if ($totalSubCPMK > $max && $data['is_draf'] == 0) {
                         if ($max === 14) {
                             $fail('Karena tidak ada UTS/UAS, Sub-CPMK hanya boleh 14 pertemuan!');
@@ -376,19 +327,62 @@ trait WithRPSModal
                     }
                 },
             ],
+            'bobot_uts' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:100',
+                function ($attribute, $value, $fail) use ($bobotUTS, $hasUTS) {
+                    if ($hasUTS && $bobotUTS !== null && $bobotUTS !== '') {
+                        $fail('Bobot UTS tidak boleh diisi jika UTS sudah ada pada Sub-CPMK!');
+                    }
+
+                    if (! $hasUTS) {
+                        if ($bobotUTS === null || $bobotUTS === '') {
+                            $fail('Bobot UTS wajib diisi untuk mode tanpa UTS/UAS!');
+
+                            return;
+                        }
+                    }
+                },
+            ],
+            'bobot_uas' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:100',
+                function ($attribute, $value, $fail) use ($bobotUAS, $hasUAS) {
+                    if ($hasUAS && $bobotUAS !== null && $bobotUAS !== '') {
+                        $fail('Bobot UAS tidak boleh diisi jika UAS atau setingkatnya sudah ada pada Sub-CPMK!');
+                    }
+
+                    if (! $hasUAS) {
+                        if ($bobotUAS === null || $bobotUAS === '') {
+                            $fail('Bobot UAS wajib diisi untuk mode tanpa UTS/UAS!');
+
+                            return;
+                        }
+                    }
+                },
+            ],
             'cpl_id_array' => 'nullable|array',
             'ref_id_array' => 'nullable|array',
             'pertemuan_dosen' => 'nullable|array',
             'dosen_id_array' => 'required|array|min:1',
             'dosen_items_array' => [
-                'required',
+                // 'required',
                 'array',
-                'min:1',
-                function ($attribute, $value, $fail, $data) {
+                // 'min:1',
+                function ($attribute, $value, $fail) use ($data) {
+
                     $hasKetua = collect($value)->contains(function ($item) {
-                        return isset($item['is_ketua']) && ($item['is_ketua'] === 1 || $item['is_ketua'] === '1' || $item['is_ketua'] === true);
+                        return isset($item['is_ketua']) &&
+                            ($item['is_ketua'] === 1 ||
+                             $item['is_ketua'] === '1' ||
+                             $item['is_ketua'] === true);
                     });
-                    if (! $hasKetua) {
+
+                    if (! $hasKetua && ! collect($data['dosen_id_array'] ?? [])->isEmpty()) {
                         $fail('Harus ada minimal satu Dosen yang dipilih sebagai Ketua Tim!');
                     }
                 },
@@ -401,30 +395,26 @@ trait WithRPSModal
         if ($validator->fails()) {
             $pesanFormatSama = 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!';
             $isThnEmpty = empty($data['akademik']) && empty($data['akademik_1']) && empty($data['akademik_2']);
+            $formattedErrors = [];
 
             foreach ($validator->errors()->toArray() as $key => $messages) {
                 if (in_array($key, ['akademik', 'akademik_1', 'akademik_2'])) {
-                    if (! $this->getErrorBag()->has('akademik')) {
-                        $this->addError('akademik', $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama);
+                    if (! isset($formattedErrors['akademik'])) {
+                        $formattedErrors['akademik'][] = $isThnEmpty ? 'Tahun Akademik wajib diisi!' : $pesanFormatSama;
                     }
                 } else {
-                    foreach ($messages as $message) {
-                        $this->addError($key, $message);
-                    }
+                    $formattedErrors[$key] = array_merge($formattedErrors[$key] ?? [], $messages);
                 }
             }
 
             foreach ($parsedPertemuan['errors'] as $message) {
-                $this->addError('dosen_id_array', $message);
+                $formattedErrors['dosen_id_array'][] = $message;
             }
 
-            $validator->validate();
+            throw ValidationException::withMessages($formattedErrors);
         }
 
         if (! empty($parsedPertemuan['errors'])) {
-            foreach ($parsedPertemuan['errors'] as $message) {
-                $this->addError('dosen_id_array', $message);
-            }
             throw ValidationException::withMessages(['dosen_id_array' => $parsedPertemuan['errors']]);
         }
 
@@ -566,6 +556,7 @@ trait WithRPSModal
             ($this->mk_id == $this->mk_id_2) || ($this->mk_id !== $this->mk_id_2)) {
             $data['mk_id'] = $this->mk_id;
         }
+        // dd($data['mk_id']);
 
         $data['cpmk_id_array'] = $this->cpmk_id_array ?? [];
         $data['dosen_id_array'] = $this->dosen_id_array ?? [];
@@ -662,10 +653,9 @@ trait WithRPSModal
             // Relasi Mata Kuliah & Prodi
             'mk_id.required' => 'Mata Kuliah asal wajib dipilih!',
             'mk_id.exists' => 'Mata Kuliah yang dipilih tidak valid!',
-            'pr_id.required' => 'Program Studi wajib diisi!',
-            'pr_id_array.required' => 'Program Studi wajib diisi!',
-            'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
-
+            // 'pr_id.required' => 'Program Studi wajib diisi!',
+            // 'pr_id_array.required' => 'Program Studi wajib diisi!',
+            // 'pr_id_array.min' => 'Pilih minimal satu Program Studi!',
             // Tahun Akademik
             'akademik.required' => 'Tahun Akademik wajib diisi!',
             'akademik.regex' => 'Format Tahun Akademik tidak valid (contoh: 2025/2026)!',
@@ -673,12 +663,18 @@ trait WithRPSModal
             'akademik_1.min' => 'Tahun awal minimal adalah 1970!',
             'akademik_2.required' => 'Tahun akhir (input kanan) wajib diisi!',
             'akademik_2.min' => 'Tahun akhir minimal adalah 1971!',
-
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi RPS wajib diisi!',
             'deskripsi.max' => 'Deskripsi RPS terlalu panjang (Maksimal 1000 karakter)!',
             'is_draf.required' => 'Status RPS wajib ditentukan!',
             'is_draf.boolean' => 'Format status draf tidak valid!',
+            // Bobot UTS & UAS
+            'bobot_uts.integer' => 'Bobot UTS harus berupa angka bulat!',
+            'bobot_uts.min' => 'Bobot UTS minimal 1!',
+            'bobot_uts.max' => 'Bobot UTS maksimal 100!',
+            'bobot_uas.integer' => 'Bobot UAS harus berupa angka bulat!',
+            'bobot_uas.min' => 'Bobot UAS minimal 1!',
+            'bobot_uas.max' => 'Bobot UAS maksimal 100!',
 
             // CPMK & Relasi Data
             'cpmk_id_array.required' => 'Minimal pilih satu CPMK untuk RPS ini!',
@@ -696,12 +692,37 @@ trait WithRPSModal
             'dosen_items_array.*.peran.in' => 'Peran Dosen hanya boleh: Koordinator, Pengajar, atau Asisten!',
             'dosen_id_array.required' => 'Dosen pengampu wajib diisi!',
 
-            'bobot_uts.integer' => 'Bobot UTS harus berupa angka bulat!',
-            'bobot_uts.min' => 'Bobot UTS minimal 0!',
-            'bobot_uts.max' => 'Bobot UTS maksimal 100!',
-            'bobot_uas.integer' => 'Bobot UAS harus berupa angka bulat!',
-            'bobot_uas.min' => 'Bobot UAS minimal 0!',
-            'bobot_uas.max' => 'Bobot UAS maksimal 100!',
+        ];
+    }
+
+    public function getRPSErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'mk_id',
+                // 'pr_id',
+                // 'pr_id_array',
+                'akademik',
+                // 'akademik_1',
+                // 'akademik_2',
+                'deskripsi',
+                'is_draf',
+            ]),
+            2 => $this->getErrorCount([
+                'cpmk_id_array',
+                'bobot_uts',
+                'bobot_uas',
+            ]),
+            3 => $this->getErrorCount([
+                'cpl_id_array',
+            ]),
+            4 => $this->getErrorCount([
+                'ref_id_array',
+            ]),
+            5 => $this->getErrorCount([
+                'dosen_id_array',
+                'dosen_items_array',
+            ]),
         ];
     }
 

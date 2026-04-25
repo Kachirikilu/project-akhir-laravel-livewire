@@ -66,6 +66,15 @@ trait WithRPSPertemuan
             }
 
             $numbers = array_values(array_unique($numbers));
+            sort($numbers);
+
+            // Jika semua pertemuan yang tersedia dipilih, anggap tidak ada assignment khusus
+            $availableMeetings = array_keys(array_filter($meetingMap, fn($v) => $v !== null));
+            if (empty(array_diff($availableMeetings, $numbers))) {
+                $parsed[(int) $dosenId] = [];
+                continue;
+            }
+
             $mappedScpmk = [];
 
             foreach ($numbers as $meeting) {

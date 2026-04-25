@@ -65,12 +65,12 @@
     </div>
 
     {{-- WADAH DENGAN SCROLL --}}
-    <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
+    <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin bg-gray-50/30 dark:bg-neutral-800/30">
         <template x-if="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length === 0">
             <div
                 class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">
                 <flux:icon.document-text class="size-8 mb-2" />
-                <p class="text-xs italic text-zinc-400">Belum ada Referensi {{ $targetString ?? null }}</p>
+                <p class="text-xs italic">Belum ada Referensi {{ $targetString ?? null }}</p>
             </div>
         </template>
         <template x-for="ref in $store.{{ $alpine ?? 'config' }}.{{ $modelString }}" :key="'main-' + ref.id">

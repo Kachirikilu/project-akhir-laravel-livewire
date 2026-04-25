@@ -10,7 +10,7 @@
         class="text-[var(--contrast-main-text)] text-lg font-medium">
         Referensi CPMK</h4>
 
-        @if (!$this->showRefModal)
+        @if (!$this->showRefModal || $this->isEditingRef == false)
             @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
         @endif
     </div>

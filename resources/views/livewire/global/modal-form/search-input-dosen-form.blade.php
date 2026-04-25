@@ -31,7 +31,7 @@
             return this.parentSelectedId != null && this.parentSelectedId != '';
         },
     
-        addItem(id, kode, slot1, slot2, slot3, slot4) {
+        addItem(id, kode, slot1, slot2, slot3, slot4, slot5) {
             let normalizedId = Number(id);
     
             if (!this.items.map(i => Number(i)).includes(normalizedId)) {
@@ -44,6 +44,7 @@
                     slot2: slot2,
                     slot3: slot3,
                     slot4: slot4,
+                    slot5: slot5,
                     peran: isFirst ? 'Koordinator' : 'Pengajar',
                     is_ketua: isFirst
                 });
@@ -188,7 +189,8 @@
                                 '{{ $x[$typeXString] }}', 
                                 @isset($typeX2String) '{{ $x[$typeX2String] ?? '' }}' @else null @endisset, 
                                 @isset($typeX3String) '{{ $x[$typeX3String] ?? '' }}' @else null @endisset,
-                                @isset($typeX4String) '{{ $x[$typeX4String] ?? '' }}' @else null @endisset
+                                @isset($typeX4String) '{{ $x[$typeX4String] ?? '' }}' @else null @endisset,
+                                @isset($typeX5String) '{{ $x[$typeX5String] ?? '' }}' @else null @endisset
                             );
                         }
                         "
@@ -221,9 +223,12 @@
     @error($idString)
         <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
     @enderror
+    @error($itemsAllString)
+        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+    @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
-    <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30">
+    <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
@@ -281,13 +286,22 @@
                                         </div>
                                     </template>
 
-                                    {{-- Slot 4 / Link jika ada --}}
+                                    {{-- Slot 4 --}}
                                     <template x-if="itemsAll[index]?.slot4">
                                         <div class="flex items-center">
                                             <span class="mx-1.5 opacity-50">|</span>
                                             <span x-text="'Status: ' + itemsAll[index]?.slot4"></span>
                                         </div>
                                     </template>
+
+                                    {{-- Slot 5 --}}
+                                    <template x-if="itemsAll[index]?.slot5">
+                                        <div class="flex items-center">
+                                            <span class="mx-1.5 opacity-50">|</span>
+                                            <span x-text="itemsAll[index]?.slot5"></span>
+                                        </div>
+                                    </template>
+
                                     <div class="flex items-center">
                                         <span class="mx-1.5 opacity-50">|</span>
                                         <span x-text="'ID: ' + itemsAll[index]?.id"></span>

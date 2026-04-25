@@ -131,7 +131,7 @@
 
     @forelse($mks as $mk)
         <tr wire:key="mk-{{ $mk->id }}" data-mk-id="{{ $mk->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-gray-400 dark:hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $mk->id }}</td>
             <td class="{{ $secondKolom }}">

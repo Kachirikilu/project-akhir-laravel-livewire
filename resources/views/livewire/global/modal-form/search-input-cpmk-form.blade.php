@@ -180,7 +180,7 @@
     <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
 @enderror
 
-    <div class="grid sm:grid-cols-4 gap-3 items-end" x-data="{}"
+    <div class="grid sm:grid-cols-4 gap-3 items-start" x-data="{}"
         x-effect="$store.{{ $alpine ?? 'config' }}.kode_cpl = ($store.{{ $alpine ?? 'config' }}.kode_cpl_1 || '') + ($store.{{ $alpine ?? 'config' }}.kode_cpl_2 || '')">
 
         <div class="sm:col-span-2 mt-4">
@@ -196,7 +196,7 @@
                 'isRequired' => 0
             ])
         </div>
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-2 mt-4">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'rps',
                 'nameXString' => 'Bobot UAS (Kustom)',
@@ -213,7 +213,7 @@
 
 {{-- 3. AREA OPSI TERPILIH --}}
 <div
-    class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-900/10">
+    class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
     @include('livewire.global.modal-form.partial.scpmk-bobot-akumulasi', [
         'nilai1' => 20,
         'nilai2' => 70,

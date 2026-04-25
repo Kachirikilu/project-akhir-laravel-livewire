@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Sub Capaian Pembelajaran Mata Kuliah</h4>
 
-        @if (!$this->showSCPMKModal)
+        @if (!$this->showSCPMKModal || $this->isEditingSCPMK == false)
             @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'scpmk', 'isFlyout' => true,])
         @endif
 

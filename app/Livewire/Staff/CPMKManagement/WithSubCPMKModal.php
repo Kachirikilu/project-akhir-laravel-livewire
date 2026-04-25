@@ -3,6 +3,7 @@
 namespace App\Livewire\Staff\CPMKManagement;
 
 use App\Livewire\Global\HasToast;
+use App\Livewire\Global\HasErrorCount;
 use App\Models\Akademik\RPS;
 use App\Models\Akademik\SCPMK;
 use App\Models\Akademik\SubCPMK;
@@ -14,6 +15,7 @@ use Livewire\WithPagination;
 trait WithSubCPMKModal
 {
     use HasToast;
+    use HasErrorCount;
     use WithPagination;
 
     public $selected_id_scpmk;
@@ -130,6 +132,9 @@ trait WithSubCPMKModal
 
     private function inputModalSCPMK($isEditingSCPMK, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         $rules = [
             'kode_scpmk_1' => 'required|alpha|max:10',
             'kode_scpmk_2' => 'required|numeric|min:1',
@@ -506,6 +511,33 @@ trait WithSubCPMKModal
             'ref_id_array.required' => 'Minimal pilih satu Referensi untuk Sub-CPMK ini!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
             'ref_id_array.min' => 'Minimal harus ada satu Referensi yang dipilih!',
+        ];
+    }
+
+    public function getSCPMKErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'kode_scpmk',
+                'deskripsi',
+            ]),
+            2 => $this->getErrorCount([
+                'materi',
+                'metodologi',
+                'indikator',
+            ]),
+            3 => $this->getErrorCount([
+                'metode',
+                'bobot',
+                'deskripsi_tugas',
+                'waktu_tugas',
+                'waktu_mandiri',
+            ]),
+            4 => $this->getErrorCount([
+                'ref_id_array',
+            ]),
+            5 => $this->getErrorCount([
+            ]),
         ];
     }
 

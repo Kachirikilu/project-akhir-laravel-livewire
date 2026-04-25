@@ -22,11 +22,11 @@
     --sub-table-color: #f7f9fc;
     --hover-table-color: #a8cfe6;
 
-    --main-table-trans: #d1e0f0a0;
+    --main-table-trans: #c4d8eca0;
     --second-table-trans: #ffffffa0;
-    --sub-table-trans: #f7f9fca0;
+    --sub-table-trans: #cfd9e7a0;
 
-    --border-table-color: #cbd5e1;
+    --border-table-color: #93abc6;
 
     --main-pop-up-color: #f0f4f9;
     --hover-pop-up-color: #e0ecf8;
@@ -55,9 +55,9 @@
     --sub-table-color: #2f3235a0;
     --hover-table-color: #37415199;
 
-    --main-table-trans: #25292da0;
+    --main-table-trans: #2d3134a0;
     --second-table-trans: #303031a0;
-    --sub-table-trans: #2f3235a0;
+    --sub-table-trans: #292c30a0;
 
     --border-table-color: #141a1f;
 
@@ -87,9 +87,9 @@
 
     --main-table-color: #e9d5ff;
     --second-table-color: #ffffff;
-    --sub-table-color: #faf5ff;
+    --sub-table-color: #d3c3e1;
 
-    --main-table-trans: #e9d5ffa0;
+    --main-table-trans: #e4cbfea0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #faf5ffa0;
     --hover-table-color: #d8b4fe;
@@ -124,7 +124,7 @@
     --sub-table-color: #312f35a0;
     --hover-table-color: #4c1d9566;
 
-    --main-table-trans: #271f27a0;
+    --main-table-trans: #282228a0;
     --second-table-trans: #2b282ba0;
     --sub-table-trans: #312f35a0;
 
@@ -154,16 +154,16 @@
     --focus-color: #ef4444;
     --hover-focus-color: #dc2626;
 
-    --main-table-color: #fde2e2;
+    --main-table-color: #ffcdcd;
     --second-table-color: #ffffff;
-    --sub-table-color: #fef9f9;
+    --sub-table-color: #ebc9c9;
 
-    --main-table-trans: #fde2e2a0;
+    --main-table-trans: #fcc4c4a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fef9f9a0;
     --hover-table-color: #fca5a5;
 
-    --border-table-color: #f5d5d5;
+    --border-table-color: #d59a9a;
 
     --main-pop-up-color: #fef2f2;
     --hover-pop-up-color: #fee2e2;
@@ -192,7 +192,7 @@
     --sub-table-color: #352f2fa0;
     --hover-table-color: #7f1d1d66;
 
-    --main-table-trans: #2d2525a0;
+    --main-table-trans: #302a2aa0;
     --second-table-trans: #313030a0;
     --sub-table-trans: #352f2fa0;
 
@@ -205,71 +205,77 @@
 
 /* Green Theme */
 [data-theme="green"] {
-    --wadah-color: #f6fdf9;
-    --border-wadah-color: #c9e7d5;
+    --wadah-color: #f5f7f6;            /* sedikit lebih gelap dari sebelumnya */
+    --border-wadah-color: #d1d5db;     /* abu netral biar kelihatan */
 
-    --main-color: #065f46;
-    --hover-main-color: #059669;
-    --border-main-color: #10b981;
+    --main-color: #14532d;
+    --hover-main-color: #166534;
+    --border-main-color: #22c55e;
     --contrast-main-color: #064e3b;
 
     --main-text: #ffffff;
-    --second-text: #a4a6aa;
+    --second-text: #6b7280;
     --contrast-main-text: #052e16;
     --contrast-second-text: #166534;
     --contrast-third-text: #15803d;
 
-    --focus-color: #17b752;
-    --hover-focus-color: #119641;
+    --focus-color: #16a34a;
+    --hover-focus-color: #15803d;
 
-    --main-table-color: #dcfce7;
+    --main-table-color: #b9dbc6;
     --second-table-color: #ffffff;
-    --sub-table-color: #f7fcf9;
+    --sub-table-color: #b6dfc7;
 
-    --main-table-trans: #dcfce7a0;
+    --main-table-trans: #adebbfa0;
     --second-table-trans: #ffffffa0;
-    --sub-table-trans: #f7fcf9a0;
-    --hover-table-color: #86efac;
+    --sub-table-trans: #ecfdf5a0;
 
-    --border-table-color: #bbf7d0;
+    --hover-table-color: #dcfce7;      /* lebih soft dari sebelumnya */
 
-    --main-pop-up-color: #ecf9f6;
-    --hover-pop-up-color: #c6f6d5;
-    --second-pop-up-color: #f0f9f5;
+    /* 🔥 BORDER DIPERTEGAS */
+    --border-table-color: #a9c6af;     /* dari hijau → abu netral */
+    
+    /* 🔥 POPUP LEBIH KONTRAS */
+    --main-pop-up-color: #ffffff;
+    --hover-pop-up-color: #f0fdf4;
+    --second-pop-up-color: #f7fcf9;
 }
-
 [data-theme="green"].dark {
-    --wadah-color: #141716;
-    --border-wadah-color: #1e3f2d;
+    --wadah-color: #161a18;            /* sedikit green tint */
+    --border-wadah-color: #2a3a32;
 
-    --main-color: #064e3b;
-    --hover-main-color: #065f46;
-    --border-main-color: #059669;
+    --main-color: #14532d;             /* sama DNA dengan light */
+    --hover-main-color: #166534;
+    --border-main-color: #22c55e;
     --contrast-main-color: #ffffff;
 
-    --main-text: #e0e9e4;
-    --second-text: #92a199;
+    --main-text: #e2e8e5;
+    --second-text: #94a3a0;
     --contrast-main-text: #ffffff;
     --contrast-second-text: #b6bdb9;
-    --contrast-third-text: #99a09d;
+    --contrast-third-text: #9ca3af;
 
-    --focus-color: #10b981;
-    --hover-focus-color: #199970;
+    /* 🔥 SAMA TONE DENGAN LIGHT */
+    --focus-color: #16a34a;
+    --hover-focus-color: #15803d;
 
-    --main-table-color: #1f2723;
-    --second-table-color: #282b2a;
-    --sub-table-color: #2f3531a0;
-    --hover-table-color: #064e3b66;
+    /* 🔥 INI YANG PALING PENTING */
+    --main-table-color: #1b2420;       /* green + gray (bukan pure black) */
+    --second-table-color: #222b27;
+    --sub-table-color: #27332d;
 
-    --main-table-trans: #1f2723a0;
-    --second-table-trans: #282b2aa0;
-    --sub-table-trans: #2f3531a0;
+    --hover-table-color: #2f4f3e;      /* green hover yang kalem */
 
-    --border-table-color: #1d3b2d;
+    --main-table-trans: #1b2420a0;
+    --second-table-trans: #222b27a0;
+    --sub-table-trans: #27332da0;
 
-    --main-pop-up-color: #293630;
+    /* 🔥 BORDER DISAMAKAN KARAKTER */
+    --border-table-color: #2f3f37;
+
+    --main-pop-up-color: #202a25;
     --hover-pop-up-color: #2a3a32;
-    --second-pop-up-color: #333937;
+    --second-pop-up-color: #26332d;
 }
 
 /* Amber Theme */
@@ -291,22 +297,21 @@
     --focus-color: #f59e0b;
     --hover-focus-color: #d97706;
 
-    --main-table-color: #f0e9cf;
+    --main-table-color: #e6dac0;
     --second-table-color: #ffffff;
-    --sub-table-color: #fffef9;
+    --sub-table-color: #e4dcb6;
 
-    --main-table-trans: #ece7d3a0;
+    --main-table-trans: #eee3b9a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fffef9a0;
     --hover-table-color: #efdd85;
 
     --border-table-color: #e6ce82;
-
+rgb(211, 190, 122)
     --main-pop-up-color: #fef3e2;
     --hover-pop-up-color: #fdba74;
     --second-pop-up-color: #fffbf0;
 }
-
 [data-theme="amber"].dark {
     --wadah-color: #171614;
     --border-wadah-color: #3b2a1a;
@@ -362,9 +367,9 @@
 
     --main-table-color: #fbcfe8;
     --second-table-color: #ffffff;
-    --sub-table-color: #fefafc;
+    --sub-table-color: #dfb6cb;
 
-    --main-table-trans: #fbcfe8a0;
+    --main-table-trans: #fac8e4a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fefafca0;
     --hover-table-color: #f472b6;
@@ -375,7 +380,6 @@
     --hover-pop-up-color: #fbcfe8;
     --second-pop-up-color: #fefafc;
 }
-
 [data-theme="pink"].dark {
     --wadah-color: #1a1012;
     --border-wadah-color: #3f1e25;
@@ -399,7 +403,7 @@
     --sub-table-color: #271619a0;
     --hover-table-color: #4c051966;
 
-    --main-table-trans: #2d1b1ea0;
+    --main-table-trans: #231619a0;
     --second-table-trans: #1a1012a0;
     --sub-table-trans: #271619a0;
 
@@ -430,22 +434,21 @@
     --focus-color: #334155;
     --hover-focus-color: #1e293b;
 
-    --main-table-color: #e2e8f0;
+    --main-table-color: #d1d9e3;
     --second-table-color: #ffffff;
-    --sub-table-color: #f8fafc;
+    --sub-table-color: #a3c0dd;
 
-    --main-table-trans: #e2e8f0a0;
+    --main-table-trans: #c4d2e4a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #f8fafca0;
     --hover-table-color: #cbd5e1;
 
-    --border-table-color: #cbd5e1;
+    --border-table-color: #a0b6d0;
 
     --main-pop-up-color: #f1f5f9;
     --hover-pop-up-color: #e2e8f0;
     --second-pop-up-color: #f4faff;
 }
-
 [data-theme="navy"].dark {
     --wadah-color: #161a22;
     --border-wadah-color: #1e293b;
@@ -464,7 +467,7 @@
     --focus-color: #a1b3cc;
     --hover-focus-color: #b8c6d9;
 
-    --main-table-color: #1f2837;
+    --main-table-color: #262f3e;
     --second-table-color: #0f172a;
     --sub-table-color: #1e293b;
     --hover-table-color: #33415566;
@@ -500,22 +503,21 @@
     --focus-color: #8d6e63;
     --hover-focus-color: #5d4037;
 
-    --main-table-color: #e8dfd4;
+    --main-table-color: #decdb6;
     --second-table-color: #ffffff;
-    --sub-table-color: #fdfaf7;
+    --sub-table-color: #e4d9cd;
 
-    --main-table-trans: #e8dfd4a0;
+    --main-table-trans: #e4d5c4a0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fdfaf7a0;
     --hover-table-color: #d7ccc8;
 
-    --border-table-color: #d7ccc8;
+    --border-table-color: #d6bcb3;
 
-    --main-pop-up-color: #f5f0eb;
+    --main-pop-up-color: #d5c6b7;
     --hover-pop-up-color: #eaddd3;
     --second-pop-up-color: #fffaf5;
 }
-
 [data-theme="brown"].dark {
     --wadah-color: #1a1715;
     --border-wadah-color: #352a22;
@@ -534,7 +536,7 @@
     --focus-color: #b69d95;
     --hover-focus-color: #ae978f;
 
-    --main-table-color: #27211e;
+    --main-table-color: #27221f;
     --second-table-color: #1a1715;
     --sub-table-color: #2d2621a0;
     --hover-table-color: #3e272366;
@@ -570,22 +572,21 @@
     --focus-color: #171717;
     --hover-focus-color: #000000;
 
-    --main-table-color: #e5e5e5;
+    --main-table-color: #adadad;
     --second-table-color: #ffffff;
-    --sub-table-color: #fafafa;
+    --sub-table-color: #b5b5b5;
 
-    --main-table-trans: #e5e5e5a0;
+    --main-table-trans: #bcbcbca0;
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #fafafaa0;
     --hover-table-color: #e5e5e5cc;
 
-    --border-table-color: #d4d4d4;
+    --border-table-color: #737373;
 
     --main-pop-up-color: #f5f5f5;
     --hover-pop-up-color: #e5e5e5;
     --second-pop-up-color: #efefef;
 }
-
 [data-theme="black"].dark {
     --wadah-color: #0a0a0a;
     --border-wadah-color: #262626;
@@ -601,15 +602,15 @@
     --contrast-second-text: #d4d4d4;
     --contrast-third-text: #737373;
 
-    --focus-color: #a2a2a2;
+    --focus-color: #797979;
     --hover-focus-color: #9f9f9f;
 
-    --main-table-color: #171717;
+    --main-table-color: #1e1e1e;
     --second-table-color: #0a0a0a;
     --sub-table-color: #171717;
     --hover-table-color: #26262666;
 
-    --main-table-trans: #171717a0;
+    --main-table-trans: #232323a0;
     --second-table-trans: #0a0a0aa0;
     --sub-table-trans: #171717a0;
 

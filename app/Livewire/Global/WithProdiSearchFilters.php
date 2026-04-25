@@ -11,30 +11,20 @@ trait WithProdiSearchFilters
     use WithPagination;
 
     public $prSearchQuery = '';
-
     public $prSearchResults = [];
-
     public $modePr = '';
-
     public $pr_id;
+    public $pr_name;
+    public $pr_items;
+    public $prNameSearch = '';
+    public $prResults = [];
+    public $selectedPrId = null;
+    public $mkType = '';
+    public $showMKModal = false;
 
     public $pr_id_array = [];
-
-    public $pr_name;
-
-    public $pr_items;
-
     public $pr_items_array = [];
 
-    public $prNameSearch = '';
-
-    public $prResults = [];
-
-    public $selectedPrId = null;
-
-    public $mkType = '';
-
-    public $showMKModal = false;
 
     private function mapPr($collection)
     {
@@ -109,12 +99,9 @@ trait WithProdiSearchFilters
     {
         $this->pr_id = null;
         $this->pr_items = null;
-
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
 
         $input = str($value)->lower()->trim();
-
-        // Jika input kosong, kembalikan ke daftar default yang sudah difilter
         if (empty($input->toString())) {
             $this->prResults = $this->getPrbyUser();
 

@@ -9,9 +9,11 @@
 
     <div class="relative">
 
-        @include('livewire.global.modal-form.loading-animation', [
-            'wireLoading' => 'add' . ($wireLoading ?? $nameXString) . ', edit' . ($wireLoading ?? $nameXString),
-        ])
+        <template x-if="$store.{{ $alpine ?? 'config' }}?.isEdit == 1">
+            @include('livewire.global.modal-form.loading-animation', [
+                'wireLoading' => 'add' . ($wireLoading ?? $nameXString) . ', edit' . ($wireLoading ?? $nameXString),
+            ])
+        </template>
 
         <div class="space-y-4">
             @php
@@ -44,7 +46,7 @@
                 </div>
 
                 {{-- WADAH LIST DENGAN SCROLL --}}
-                <div class="relative space-y-3 max-h-[450px] overflow-y-auto pr-2 scrollbar-thin">
+                <div class="relative space-y-3 max-h-[450px] overflow-y-auto pr-2 scrollbar-thin bg-gray-50/30 dark:bg-neutral-800/30">
 
                     @php
                         $rps_items_list = is_iterable($rps_items_list) ? $rps_items_list : [];
@@ -54,7 +56,12 @@
                         <div
                             class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">
                             <flux:icon.document-text class="size-8 mb-2" />
-                            <p class="text-xs italic text-zinc-400">Belum ada RPS yang terhubung</p>
+                            <template x-if="$store.{{ $alpine ?? 'config' }}?.isEdit == 0">
+                                <p class="text-xs italic">Buat terlebih dahulu {{ $nameXString }}!</p>
+                            </template>
+                            <template x-if="$store.{{ $alpine ?? 'config' }}?.isEdit == 1">
+                                <p class="text-xs italic">Belum ada RPS yang terhubung!</p>
+                            </template>
                         </div>
                     @else
                         @foreach ($rps_items_list as $index => $r)

@@ -15,7 +15,7 @@
                 @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-digit-semester')
             </div>
 
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-2 mt-1 sm:mt-0">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'mk',
                     'nameXString' => 'Urutan Mata Kuliah',

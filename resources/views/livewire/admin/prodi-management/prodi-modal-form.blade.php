@@ -17,7 +17,8 @@
         @endphp --}}
 
         {{-- 1. Header Modal --}}
-        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b">
+        <div class="sm:px-2 md:px-4 lg:px-6 py-6 pb-4 border-b border-[var(--contrast-second-text)]">
+
             <h3 class="text-xl font-semibold">
 
                 <template x-if="$store.prodi?.typeModal == 'prodi'" x-cloak>

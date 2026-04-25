@@ -96,6 +96,7 @@
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
                     'rowSpan' => 2,
+                    'pTop' => 5
                 ])
             @endif
             @if ($switchTable === 'scpmk')
@@ -191,6 +192,7 @@
                     'floatOnly' => 1,
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
+                    'pTop' => 5
                 ])
             @endif
 
@@ -231,6 +233,7 @@
                     'isMain' => 1,
                     'isCenter' => 1,
                     'rowSpan' => 2,
+                    'pTop' => 5
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'tugas',
@@ -256,7 +259,7 @@
 
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
-            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-gray-400 dark:hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 

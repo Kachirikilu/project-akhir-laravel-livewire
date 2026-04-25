@@ -11,18 +11,28 @@ trait WithMKSearchFilters
     use WithPagination;
 
     public $mkSearchQuery = '';
+
     public $mkSearchResults = [];
+
     public $modeMK = '';
+
     public $mk_id;
+
     public $mk_name = '';
-    public $mk_items;
+
+    public $mk_items = [];
+
     public $mkNameSearch = '';
+
     public $mkResults = [];
+
     public $selectedMKId = null;
 
     public $mk_id_array = [];
+
     public $mk_items_array = [];
 
+    // public $skipMkNameSearchUpdate = false;
 
     private function mapMK($collection)
     {
@@ -34,7 +44,7 @@ trait WithMKSearchFilters
             'sks' => $mk->sks,
             'sks_text' => $mk->sks_text,
             'wajib_text' => $mk->wajib_text,
-            'level_mk' => $mk->level_mk 
+            'level_mk' => $mk->level_mk,
         ])->toArray();
     }
 
@@ -48,6 +58,7 @@ trait WithMKSearchFilters
         if (! $m) {
             return null;
         }
+
         return [
             'id' => $m->id,
             'kode' => $m->kode,
@@ -92,6 +103,10 @@ trait WithMKSearchFilters
 
     public function updatedMKNameSearch($value)
     {
+        // if ($this->skipMkNameSearchUpdate) {
+        //     return;
+        // }
+
         $this->mk_id = null;
         $this->mk_items = null;
         $this->resetErrorBag(['mk_id', 'mkNameSearch']);
@@ -105,8 +120,8 @@ trait WithMKSearchFilters
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($mk) use ($value, $normalizedValue) {
                 $normalizedMkKode = str_replace(['-', ' '], '', strtolower($mk->kode));
-                
-                return strtolower($mk->mk) === strtolower($value) 
+
+                return strtolower($mk->mk) === strtolower($value)
                     || $normalizedMkKode === $normalizedValue;
             });
 
@@ -123,12 +138,12 @@ trait WithMKSearchFilters
                 }
                 $this->mkResults = $this->getMKbyUser();
             }
-        }else {
+        } else {
             if (Auth::user()->pr_id) {
                 $this->mkResults = $this->getMKbyUser();
             } else {
                 $this->mkResults = $this->mapMK(
-                    $query->orderBy('mks.nama_mk')->limit(12)->get()
+                    $query->orderBy('mata_kuliahs.nama_mk')->limit(12)->get()
                 );
             }
         }
@@ -136,32 +151,39 @@ trait WithMKSearchFilters
 
     public function getMKbyUser()
     {
+        // if ($this->skipMkNameSearchUpdate) {
+        //     return;
+        // }
+
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
 
         $query = $this->mkQuery();
-        
-        if (!$prodiId) {
+
+        if (! $prodiId) {
             $defaultMK = $query
-                ->latest()
+                ->orderBy('nama_mk', 'asc')
                 ->limit(12)
                 ->get();
+
             return $this->mapMK($defaultMK);
         }
 
         $mainResults = $query
-            ->whereHas('prodis', function($q) use ($prodiId) {
+            ->whereHas('prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
             })
+            ->orderBy('nama_mk', 'asc')
             ->limit(12)
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = $this->mkQuery()->whereNotIn('id', $mainResults->pluck('id'))
+            $extra = $this->mkQuery()
+                ->whereNotIn('id', $mainResults->pluck('id'))
                 ->orderBy('nama_mk', 'asc')
                 ->limit(12 - $mainResults->count())
                 ->get();
-                
+
             $mainResults = $mainResults->concat($extra);
         }
 
@@ -181,6 +203,7 @@ trait WithMKSearchFilters
 
         if (empty($query) || $this->mk_id) {
             $this->mkResults = $this->getMKbyUser();
+
             return;
         }
     }
@@ -202,6 +225,7 @@ trait WithMKSearchFilters
         $this->mkResults = $this->getMKbyUser();
         $this->resetErrorBag(['mk_id', 'mkNameSearch']);
     }
+
     public function selectMKArray($id)
     {
         $data = $this->mkQuery()->find($id);
@@ -214,8 +238,12 @@ trait WithMKSearchFilters
 
     public function resetMKInput()
     {
-        $this->reset(['mk_id', 'mk_items', 'mkNameSearch']);
-        $this->mkResults = $this->getMKbyUser();
+        $this->mk_id = null;
+        $this->mk_items = null;
+        $this->mkNameSearch = '';
+
+        $this->updatedMKNameSearch('');
+        $this->resetErrorBag(['mk_id', 'mkNameSearch']);
     }
 
     public function resetMKArray()

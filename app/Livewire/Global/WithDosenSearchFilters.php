@@ -25,7 +25,7 @@ trait WithDosenSearchFilters
     public $dosen_items_array = [];
 
     // Properti Dosen Pengajar
-    public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
+    // public $is_ketua_dosen = ''; // ID Dosen yang sebagai ketua
     public $peran_dosen = [];
     public $pertemuan_dosen = [];
 
@@ -37,7 +37,8 @@ trait WithDosenSearchFilters
             'nidn' => $d->nidn ?? null,
             'nidk' => $d->nidk ?? null,
             'name' => $d->name,
-            'status' => $d->status,
+            'prodi' => $d->pr_rel->prodi,
+            'status' => $d->status
         ])->toArray();
     }
 
@@ -58,8 +59,9 @@ trait WithDosenSearchFilters
             'slot2' => $d->nidn,
             'slot3' => $d->nidk,
             'slot4' => $d->status,
+            'slot5' => $d->prodi,
             'peran' => $d->pivot->peran ?? 'Pengajar',
-            'is_ketua' => (bool) ($d->pivot->is_ketua ?? false),
+            'is_ketua' => (bool) ($d->pivot->is_ketua ?? false)
         ];
     }
 

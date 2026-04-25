@@ -117,6 +117,9 @@ trait WithProdiModal
 
     private function inputModalProdi($isEditingPr, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+        
         $prodis = [];
 
         /* ===================== PROGRAM STUDI ===================== */

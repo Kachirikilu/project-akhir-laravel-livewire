@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff\CPMKManagement;
 
+use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\RPS;
@@ -13,6 +14,7 @@ use Livewire\WithPagination;
 
 trait WithCPMKModal
 {
+    use HasErrorCount;
     use HasToast;
     use WithPagination;
 
@@ -160,6 +162,9 @@ trait WithCPMKModal
 
     private function inputModalCPMK($isEditingCPMK, $data)
     {
+        $this->resetErrorBag();
+        $this->resetValidation();
+
         // 1. Ambil data Referensi yang melekat pada SCPMK terpilih saja
         $refFromScpmk = [];
 
@@ -510,6 +515,25 @@ trait WithCPMKModal
             'cpl_id_array.min' => 'Minimal harus ada satu CPL yang dipilih!',
 
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
+        ];
+    }
+
+    public function getCPMKErrorSections()
+    {
+        return [
+            1 => $this->getErrorCount([
+                'kode_cpmk',
+                'cpl_id_array',
+                'deskripsi',
+            ]),
+            2 => $this->getErrorCount([
+                'scpmk_id_array',
+            ]),
+            3 => $this->getErrorCount([
+                'ref_id_array',
+            ]),
+            4 => $this->getErrorCount([
+            ]),
         ];
     }
 

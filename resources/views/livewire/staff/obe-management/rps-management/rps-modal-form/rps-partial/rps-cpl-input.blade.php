@@ -9,7 +9,7 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Capaian Pembelajaran Lulusan</h4>
 
-        @if (!$this->showCPLModal)
+        @if (!$this->showCPLModal || $this->isEditingCPL == false)
             @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
         @endif
     </div>

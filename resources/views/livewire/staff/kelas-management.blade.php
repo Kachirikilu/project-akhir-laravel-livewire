@@ -33,8 +33,6 @@
     @include('livewire.staff.obe-management.scpmk-management.scpmk-flyout')
     @include('livewire.staff.obe-management.cpl-management.cpl-flyout')
     @include('livewire.staff.obe-management.ref-management.ref-flyout')
-
-    @include('livewire.admin.user-management.user-modal-form')
     
     {{-- @include('livewire.staff.obe-management.rps-management.rps-modal-delete') --}}
 </div>
