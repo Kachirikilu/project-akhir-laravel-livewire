@@ -2,7 +2,7 @@
 
     {{-- 🔹 HEADER TAB CONTAINER --}}
     @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'Inti', 2 => 'Deskripsi'],
+        'tabs' => [1 => 'Mata Kuliah', 2 => 'Deskripsi & Bahan Kajian'],
         'errorsCount' => $this->getMKErrorSections(),
     ])
 
