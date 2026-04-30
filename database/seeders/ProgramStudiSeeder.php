@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ProgramStudi\Fakultas;
-use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +19,7 @@ class ProgramStudiSeeder extends Seeder
                 [
                     'nama' => 'Teknik',
                     'kode' => 'TEK',
-                    'jurusan' => [
+                    'departemen' => [
                         ['nama' => 'Teknik Elektro', 'kode' => 'TKE'],
                         ['nama' => 'Teknik Kimia', 'kode' => 'TKK'],
                         ['nama' => 'Teknik Sipil', 'kode' => 'TKS'],
@@ -29,7 +29,7 @@ class ProgramStudiSeeder extends Seeder
                 [
                     'nama' => 'Ilmu Komputer',
                     'kode' => 'FIK',
-                    'jurusan' => [
+                    'departemen' => [
                         ['nama' => 'Sistem Informasi', 'kode' => 'FSI'],
                         ['nama' => 'Teknik Informatika', 'kode' => 'FTI'],
                         ['nama' => 'Ilmu Komputer', 'kode' => 'FMK'],
@@ -46,19 +46,19 @@ class ProgramStudiSeeder extends Seeder
                     'kode_fk' => $f['kode'],
                 ]);
 
-                foreach ($f['jurusan'] as $j) {
-                    // 2. Create Jurusan
-                    $jurusan = Jurusan::create([
+                foreach ($f['departemen'] as $j) {
+                    // 2. Create Departemen
+                    $departemen = Departemen::create([
                         'fk_id' => $fakultas->id,
-                        'nama_jr' => $j['nama'],
-                        'kode_jr' => $j['kode'],
+                        'nama_dp' => $j['nama'],
+                        'kode_dp' => $j['kode'],
                     ]);
 
                     foreach ($strataOptions as $strata) {
                         // 3. Create Prodi (S1, S2, S3)
                         Prodi::create([
-                            'jr_id' => $jurusan->id,
-                            'nama_pr' => $j['nama'], // Nama prodi sama dengan nama jurusan sesuai request
+                            'dp_id' => $departemen->id,
+                            'nama_pr' => $j['nama'], // Nama prodi sama dengan nama departemen sesuai request
                             'strata' => $strata,
                         ]);
                     }

@@ -8,42 +8,28 @@
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalRPS,
-                'tabString' => 'rps',
-                'tabNameString' => 'RPS'
+                'tabFilter' => $totalUsers,
+                'tabString' => '',
+                'tabNameString' => 'Semua Pengguna'
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalCPMK,
-                'tabString' => 'cpmk',
-                'tabNameString' => 'CPMK'
+                'tabFilter' => $totalAdmins,
+                'tabString' => 'admin',
+                'tabNameString' => 'Admin'
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalSCPMK,
-                'tabString' => 'scpmk',
-                'tabNameString' => 'Sub-CPMK'
+                'tabFilter' => $totalMahasiswas,
+                'tabString' => 'mahasiswa',
+                'tabNameString' => 'Mahasiswa'
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalCPL,
-                'tabString' => 'cpl',
-                'tabNameString' => 'CPL'
-            ])
-            @include('livewire.global.search-and-filters.partial.tab-filter', [
-                'xString' => 'switchingTable',
-                'xFilter' => $switchTable,
-                'tabFilter' => $totalRef,
-                'tabString' => 'ref',
-                'tabNameString' => 'Referensi'
-            ])
-            @include('livewire.global.search-and-filters.partial.tab-filter', [
-                'xString' => 'switchingTable',
-                'xFilter' => $switchTable,
-                'tabFilter' => $totalDosen,
+                'tabFilter' => $totalDosens,
                 'tabString' => 'dosen',
                 'tabNameString' => 'Dosen'
             ])

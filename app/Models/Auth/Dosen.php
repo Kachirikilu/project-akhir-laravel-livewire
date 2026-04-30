@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
 class Dosen extends Model
@@ -111,12 +112,12 @@ class Dosen extends Model
                     });
             });
 
-            // 3. Pencarian Berdasarkan Lokasi (Prodi, Jurusan, Fakultas)
+            // 3. Pencarian Berdasarkan Lokasi (Prodi, Departemen, Fakultas)
             $q->orWhereHas('pr_rel', function ($p) use ($searchTerm) {
                 $p->where('nama_pr', 'like', $searchTerm)
-                    ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
-                        $j->where('nama_jr', 'like', $searchTerm)
-                            ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+                    ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+                        $j->where('nama_dp', 'like', $searchTerm)
+                            ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
                             ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
                                 $f->where('nama_fk', 'like', $searchTerm)
                                     ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);

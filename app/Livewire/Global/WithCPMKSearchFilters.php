@@ -51,7 +51,23 @@ trait WithCPMKSearchFilters
                 'count_scpmk' => $c->count_scpmk,
                 'ref' => $this->mapRef($cpmkUniqueRefs),
                 'cpl' => $this->mapCPL($c->cpls),
-                'total_bobot' => $c->scpmks->sum('bobot'),
+                'total_bobot' => $c->scpmks->sum('bobot') ?? 0,
+            ];
+        })->toArray();
+    }
+
+    private function mapCPMKSearch($collection)
+    {
+        return $collection->map(function ($c) {
+            $allScpmkRefIds = $c->scpmks->flatMap(fn ($s) => $s->refs->pluck('id'))->unique()->toArray();
+            $cpmkUniqueRefs = $c->refs->filter(fn ($r) => ! in_array($r->id, $allScpmkRefIds));
+
+            return [
+                'id' => $c->id,
+                'kode' => $c->kode,
+                'deskripsi' => $c->deskripsi_cpl,
+                'total_pertemuan' => $c->count_scpmk.' Pertemuan',
+                'total_bobot_text' => ($c->scpmks->sum('bobot') ?? 0).'% Bobot',
             ];
         })->toArray();
     }
@@ -95,11 +111,11 @@ trait WithCPMKSearchFilters
 
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpmk_name) {
-            $this->cpmkSearchResults = $this->mapCPMK(
+            $this->cpmkSearchResults = $this->mapCPMKSearch(
                 $this->cpmkQuery()->searchCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpmk_name) {
-            $this->cpmkSearchResults = $this->getCPMKbyUser();
+            $this->cpmkSearchResults = $this->getCPMKbyUser('search');
         } else {
             $this->cpmkSearchResults = [];
         }
@@ -181,7 +197,7 @@ trait WithCPMKSearchFilters
         }
     }
 
-    public function getCPMKbyUser()
+    public function getCPMKbyUser($mode = 'full')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -194,7 +210,9 @@ trait WithCPMKSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapCPMK($defaultCPMK);
+            return $mode === 'search'
+                ? $this->mapCPMKSearch($defaultCPMK)
+                : $this->mapCPMK($defaultCPMK);
         }
 
         $mainResults = $query
@@ -213,7 +231,9 @@ trait WithCPMKSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapCPMK($mainResults);
+        return $mode === 'search'
+            ? $this->mapCPMKSearch($mainResults)
+            : $this->mapCPMK($mainResults);
     }
 
     public function fetchCPMK($query = '', $mode = 'single')

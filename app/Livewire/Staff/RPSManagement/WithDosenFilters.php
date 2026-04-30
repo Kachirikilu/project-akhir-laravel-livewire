@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Staff\RPSManagement;
 
+use App\Models\Auth\User;
 use App\Models\Auth\Dosen;
 use Livewire\WithPagination;
 
@@ -9,40 +10,59 @@ trait WithDosenFilters
 {
     use WithPagination;
 
+    public $filterDosen = '';
+
     public function inputDosenSearch()
     {
+        $queryDosen = Dosen::query();
+
         if ($this->switchTable === 'dosen') {
 
-            $query = Dosen::query();
             $search = '%'.trim($this->search).'%';
 
             if (! empty($this->search)) {
-                $query->where('name', 'like', $search)
+                $queryDosen->where('name', 'like', $search)
                     ->orWhere('nip', 'like', $search)
                     ->orWhere('nidn', 'like', $search)
                     ->orWhere('dosens.id', 'like', $search);
             }
 
-            $this->sortFieldOrderDosen($query);
+            $this->sortFieldOrderDosen($queryDosen);
 
-            return $query;
+        }
+
+        return $queryDosen;
+    }
+
+    public function buttonDosenFilter($queryDosen)
+    {
+        if ($this->filterDosen === 'dosen-rps') {
+            $queryDosen->whereHas('rps');
+        } elseif ($this->filterDosen === 'dosen-non-rps') {
+            $queryDosen->whereDoesntHave('rps');
         }
     }
 
-    public function sortFieldOrderDosen($query)
+    public function filterByDosen($dosen)
     {
-        $query->select('dosens.*');
+        $this->filterDosen = $dosen;
+        $this->resetPage();
+    }
+
+    public function sortFieldOrderDosen($queryDosen)
+    {
+        $queryDosen->select('dosens.*');
 
         if ($this->sortField === 'nama') {
-            $query->orderBy('name', $this->sortDirection);
+            $queryDosen->orderBy('name', $this->sortDirection);
         } elseif ($this->sortField === 'nip') {
-            $query->orderBy('nip', $this->sortDirection);
+            $queryDosen->orderBy('nip', $this->sortDirection);
         } elseif ($this->sortField === 'nidn') {
-            $query->orderBy('nidn', $this->sortDirection);
+            $queryDosen->orderBy('nidn', $this->sortDirection);
         } else {
-            $query->orderBy('dosens.id', $this->sortDirection);
+            $queryDosen->orderBy('dosens.id', $this->sortDirection);
         }
 
-        return $query;
+        return $queryDosen;
     }
 }

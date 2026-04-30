@@ -35,7 +35,7 @@
 
                     const colors = {
                         prodi: 'text-emerald-700 dark:text-emerald-400',
-                        jurusan: 'text-amber-700 dark:text-amber-400',
+                        departemen: 'text-amber-700 dark:text-amber-400',
                         fakultas: 'text-indigo-700 dark:text-indigo-400'
                     };
                     $store.prodi?.setColor(colors[type] ?? 'text-gray-700 dark:text-gray-400');
@@ -43,12 +43,12 @@
                         $store.prodi?.setValueProdi(
                             '{{ $x->prodi ?? '' }}',
                             '{{ $x->strata ?? '' }}',
-                            '{{ $x->jr_id ?? '' }}',
-                            '{{ $x->jurusanJr ?? '' }}',
+                            '{{ $x->dp_id ?? '' }}',
+                            '{{ $x->departemenDp ?? '' }}',
                             '{{ $x->fk_id ?? '' }}',
                             '{{ $x->fakultasFk ?? '' }}',
                             '{{ $x->kode ?? '' }}',
-                            '{{ $x->kode_jr ?? '' }}',
+                            '{{ $x->kode_dp ?? '' }}',
                             '{{ $x->kode_fk ?? '' }}'
                         );
                         $flux.modal('prodi-modal').show();
@@ -72,7 +72,7 @@
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
                         $store.prodi?.setDeleteProdi(
                             '{{ $x->prodi ?? '' }}',
-                            '{{ $x->jurusan ?? '' }}',
+                            '{{ $x->departemen ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $typeXString ?? '' }}'
@@ -111,7 +111,7 @@
                 @click="
                         $store.prodi?.setDeleteProdi(
                             '{{ $x->prodi ?? '' }}',
-                            '{{ $x->jurusan ?? '' }}',
+                            '{{ $x->departemen ?? '' }}',
                             '{{ $x->fakultas ?? '' }}',
                             '{{ $x->kode ?? '' }}',
                             '{{ $typeXString ?? '' }}',

@@ -37,7 +37,7 @@ class MataKuliah extends Model
     //     return Attribute::get(function () {
     //         return match ((int) $this->level_mk) {
     //             1 => 'mk-prodi',
-    //             2 => 'mk-jurusan',
+    //             2 => 'mk-departemen',
     //             3 => 'mk-fakultas',
     //             4 => 'mk-universitas',
     //             default => 'mk',
@@ -54,11 +54,11 @@ class MataKuliah extends Model
 
             if ($prodi) {
                 if ($this->level_mk == 1) { // Tingkat Prodi
-                    $prefix = $prodi->kode_pr ?? $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
-                } elseif ($this->level_mk == 2) { // Tingkat Jurusan
-                    $prefix = $prodi->jr_rel?->kode_jr ?? $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->kode_pr ?? $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                } elseif ($this->level_mk == 2) { // Tingkat Departemen
+                    $prefix = $prodi->dp_rel?->kode_dp ?? $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->level_mk == 3) { // Tingkat Fakultas
-                    $prefix = $prodi->jr_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
+                    $prefix = $prodi->dp_rel?->fk_rel?->kode_fk ?? $prefixDefault ?? 'UNI';
                 } elseif ($this->level_mk == 4) { // Tingkat Universitas
                     $prefix = $prefixDefault ?? 'UNI';
                 }
@@ -105,36 +105,36 @@ class MataKuliah extends Model
     //     return Attribute::get(fn () => $this->getFirstProdi()?->nama_pr);
     // }
 
-    // // Data Jurusan (Asumsi Prodi belongsTo Jurusan)
-    // protected function jurusanId(): Attribute
+    // // Data Departemen (Asumsi Prodi belongsTo Departemen)
+    // protected function departemenId(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->id);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->id);
     // }
 
-    // protected function kodeJr(): Attribute
+    // protected function kodeDp(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->kode_jurusan);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->kode_departemen);
     // }
 
-    // protected function namaJurusan(): Attribute
+    // protected function namaDepartemen(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->nama_jr);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->nama_dp);
     // }
 
-    // // Data Fakultas (Asumsi Jurusan belongsTo Fakultas)
+    // // Data Fakultas (Asumsi Departemen belongsTo Fakultas)
     // protected function fakultasId(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->fakultas?->id);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->fakultas?->id);
     // }
 
     // protected function kodeFk(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->fakultas?->kode_fakultas);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->fakultas?->kode_fakultas);
     // }
 
     // protected function namaFakultas(): Attribute
     // {
-    //     return Attribute::get(fn () => $this->getFirstProdi()?->jurusan?->fakultas?->nama_fk);
+    //     return Attribute::get(fn () => $this->getFirstProdi()?->departemen?->fakultas?->nama_fk);
     // }
 
     protected function mk(): Attribute
@@ -188,6 +188,26 @@ class MataKuliah extends Model
                 default => 'Tidak Diketahui',
             };
         });
+    }
+
+    protected function sksFull(): Attribute
+    {
+        return Attribute::get(function () {
+            $sksPart = match ((int) $this->sks_text) {
+                1 => 'Tatap Muka',
+                2 => 'Praktikum',
+                3 => 'Praktek Lapangan',
+                4 => 'Simulasi',
+                0 => 'Teori',
+                default => 'Tidak Diketahui',
+            };
+            return $this->sks_kuliah.' SKS '.$sksPart;
+        });
+    }
+
+    protected function semesterText(): Attribute
+    {
+        return Attribute::get(fn () => 'Semester ' . $this->semester);
     }
 
     protected function wajib(): Attribute
@@ -306,8 +326,8 @@ class MataKuliah extends Model
                     //             $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
                     //                 ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
                     //                     $pro->where('kode_pr', 'like', $prefixPart . '%')
-                    //                         ->orWhereHas('jr_rel', function ($jur) use ($prefixPart) {
-                    //                             $jur->where('kode_jr', 'like', $prefixPart . '%')
+                    //                         ->orWhereHas('dp_rel', function ($jur) use ($prefixPart) {
+                    //                             $jur->where('kode_dp', 'like', $prefixPart . '%')
                     //                                 ->orWhereHas('fk_rel', function ($fak) use ($prefixPart) {
                     //                                     $fak->where('kode_fk', 'like', $prefixPart . '%');
                     //                                 });
@@ -334,29 +354,29 @@ class MataKuliah extends Model
                                 // 1. Cari langsung di Kode MK
                                 $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart.'%')
 
-                                // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke jurusan, jika null ke fakultas, dst.
+                                // 2. Tingkatan MK = 1 (Prodi): Cari di prodi, jika null ke departemen, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.level_mk', 1)
                                             ->whereHas('prodis', function ($pro) use ($prefixPart) {
-                                                $pro->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-                                                    ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
-                                                    ->whereRaw("COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
+                                                $pro->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+                                                    ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(prodis.kode_pr, departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
 
-                                // 3. Tingkatan MK = 2 (Jurusan): Cari di jurusan, jika null ke fakultas, dst.
+                                // 3. Tingkatan MK = 2 (Departemen): Cari di departemen, jika null ke fakultas, dst.
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.level_mk', 2)
-                                            ->whereHas('prodis.jr_rel', function ($jur) use ($prefixPart) {
-                                                $jur->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
-                                                    ->whereRaw("COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
+                                            ->whereHas('prodis.dp_rel', function ($jur) use ($prefixPart) {
+                                                $jur->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
+                                                    ->whereRaw("COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
 
                                 // 4. Tingkatan MK = 3 (Fakultas): Cari di fakultas, jika null ke 'UNI'
                                     ->orWhere(function ($q) use ($prefixPart) {
                                         $q->where('mata_kuliahs.level_mk', 3)
-                                            ->whereHas('prodis.jr_rel.fk_rel', function ($fak) use ($prefixPart) {
+                                            ->whereHas('prodis.dp_rel.fk_rel', function ($fak) use ($prefixPart) {
                                                 $fak->whereRaw("COALESCE(fakultas.kode_fk, 'UNI') LIKE ?", [$prefixPart.'%']);
                                             });
                                     })
@@ -382,13 +402,13 @@ class MataKuliah extends Model
                 });
             }
 
-            // 7. Silsilah (Prodi/Jurusan/Fakultas)
+            // 7. Silsilah (Prodi/Departemen/Fakultas)
             // $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
             //     $pq->where('nama_pr', 'like', $searchTerm)
             //         ->orWhere('kode_pr', 'like', $searchTerm)
-            //         ->orWhereHas('jr_rel', function ($jq) use ($searchTerm) {
-            //             $jq->where('nama_jr', 'like', $searchTerm)
-            //                 ->orWhere('kode_jr', 'like', $searchTerm)
+            //         ->orWhereHas('dp_rel', function ($jq) use ($searchTerm) {
+            //             $jq->where('nama_dp', 'like', $searchTerm)
+            //                 ->orWhere('kode_dp', 'like', $searchTerm)
             //                 ->orWhereHas('fk_rel', function ($fq) use ($searchTerm) {
             //                     $fq->where('nama_fk', 'like', $searchTerm)
             //                         ->orWhere('kode_fk', 'like', $searchTerm);

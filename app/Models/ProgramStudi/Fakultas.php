@@ -20,18 +20,18 @@ class Fakultas extends Model
         'updated_at' => 'date',
     ];
 
-    public function jurusans(): HasMany 
+    public function departemens(): HasMany 
     {
-        return $this->hasMany(Jurusan::class, 'fk_id');
+        return $this->hasMany(Departemen::class, 'fk_id');
     }
 
     public function prodis(): HasManyThrough
     {
         return $this->hasManyThrough(
             Prodi::class, 
-            Jurusan::class, 
+            Departemen::class, 
             'fk_id', 
-            'jr_id', 
+            'dp_id', 
             'id', 
             'id'
         );

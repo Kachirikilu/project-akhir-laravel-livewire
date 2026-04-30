@@ -17,11 +17,6 @@ trait WithRPSFilters
 
     public $searchBobotRPS = '';
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
     public function updatingSearchBobotRPS()
     {
         $this->resetPage();
@@ -35,11 +30,10 @@ trait WithRPSFilters
 
     public function inputRPSSearch()
     {
+        $queryRPS = RPS::query()
+            ->with(['mk_rel.prodis', 'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel']);
+
         if ($this->switchTable === 'rps') {
-
-            $queryRPS = RPS::query()
-                ->with(['mk_rel.prodis', 'mk_rel.prodis.jr_rel', 'mk_rel.prodis.jr_rel.fk_rel']);
-
             $search = $this->search;
 
             if (! empty($search)) {
@@ -55,11 +49,11 @@ trait WithRPSFilters
             if (! empty($this->selectedPrId)) {
                 $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
-            // if (! empty($this->selectedJrId)) {
-            //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+            // if (! empty($this->selectedDpId)) {
+            //     $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('dp_id', $this->selectedDpId));
             // }
             // if (! empty($this->selectedFkId)) {
-            //     $queryRPS->whereHas('mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            //     $queryRPS->whereHas('mk_rel.prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
             // }
             if (! empty($this->selectedMKId)) {
                 $queryRPS->where('rps.mk_id', $this->selectedMKId);
@@ -70,8 +64,10 @@ trait WithRPSFilters
                 });
             }
 
-            return $queryRPS;
         }
+
+        return $queryRPS;
+
     }
 
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
@@ -98,17 +94,6 @@ trait WithRPSFilters
     public function resetInputFilter()
     {
         $this->reset(['search', 'filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef']);
-        $this->resetPage();
-    }
-
-    public function sortBy($field)
-    {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
         $this->resetPage();
     }
 
@@ -196,16 +181,16 @@ trait WithRPSFilters
     //     return $queryRPS->leftJoin('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
     //         ->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
     //         ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
-    //         ->leftJoin('jurusans', 'prodis.jr_id', '=', 'jurusans.id')
-    //         ->leftJoin('fakultas', 'jurusans.fk_id', '=', 'fakultas.id')
+    //         ->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+    //         ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
     //         ->select('rps.*')
     //         ->groupBy('rps.id')
     //         ->orderBy(DB::raw("
     //             CONCAT(
     //                 MAX(CASE
     //                     WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-    //                     WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, jurusans.kode_jr, fakultas.kode_fk, 'UNI')
-    //                     WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(jurusans.kode_jr, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, departemens.kode_dp, fakultas.kode_fk, 'UNI')
+    //                     WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI')
     //                     WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
     //                     ELSE 'UNI'
     //                 END),
@@ -223,8 +208,8 @@ trait WithRPSFilters
         SELECT CONCAT(
             MIN(
                 CASE 
-                    WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_jr, f.kode_fk, 'UNI')
-                    WHEN mk.level_mk = 2 THEN COALESCE(j.kode_jr, f.kode_fk, 'UNI')
+                    WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
+                    WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
                     WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
                     WHEN mk.level_mk = 4 THEN 'UNI'
                     ELSE mk.kode_mk
@@ -237,7 +222,7 @@ trait WithRPSFilters
         FROM mata_kuliahs mk
         LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
         LEFT JOIN prodis p ON ppm.pr_id = p.id
-        LEFT JOIN jurusans j ON p.jr_id = j.id
+        LEFT JOIN departemens j ON p.dp_id = j.id
         LEFT JOIN fakultas f ON j.fk_id = f.id
         WHERE mk.id = rps.mk_id
     ) {$this->sortDirection}

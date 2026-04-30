@@ -28,7 +28,7 @@
 
                 <template x-if="$store.mk?.typeModal == 2" x-cloak>
                     <flux:badge icon="book-open" color="amber" size="lg">
-                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Jurusan' : 'Tambah Mata Kuliah - Jurusan'"></span>
+                        <span x-text="$store.mk?.isEdit ? 'Edit Mata Kuliah - Departemen' : 'Tambah Mata Kuliah - Departemen'"></span>
                     </flux:badge>
                 </template>
 

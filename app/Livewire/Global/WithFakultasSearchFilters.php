@@ -34,6 +34,16 @@ trait WithFakultasSearchFilters
             'fakultas' => $f->fakultasFk
         ])->toArray();
     }
+
+    private function mapFkSearch($collection)
+    {
+        return $collection->map(fn ($f) => [
+            'id' => $f->id,
+            'kode' => $f->kode,
+            'kode_text' => 'Kode: '.$f->kode,
+            'fakultas' => $f->fakultasFk
+        ])->toArray();
+    }
     
     private function fkQuery()
     {
@@ -57,13 +67,13 @@ trait WithFakultasSearchFilters
         $search = trim($this->fkSearchQuery);
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->fk_name) {
-            $this->fkSearchResults = $this->mapFk(
+            $this->fkSearchResults = $this->mapFkSearch(
                 $this->fkQuery()
                     ->searchFakultas($search)
                     ->limit(12)->get()
             );
         } elseif (empty($search) || $this->fk_name) {
-            $this->fkSearchResults = $this->getFkbyUser();
+            $this->fkSearchResults = $this->getFkbyUser('search');
         } else {
             $this->fkSearchResults = [];
         }
@@ -131,7 +141,7 @@ trait WithFakultasSearchFilters
         }
     }
 
-    public function getFkbyUser()
+    public function getFkbyUser($mode = 'full')
     {
         $user = Auth::user();
         $fakultasId = $user->fk_id ?? null;
@@ -143,7 +153,10 @@ trait WithFakultasSearchFilters
                 ->orderBy('nama_fk', 'asc')
                 ->limit(12)
                 ->get();
-            return $this->mapFk($defaultFakultas);
+
+            return $mode === 'search'
+                ? $this->mapFkSearch($defaultFakultas)
+                : $this->mapFk($defaultFakultas);
         }
 
         $mainResults = $query
@@ -152,7 +165,9 @@ trait WithFakultasSearchFilters
             ->sortBy(fn ($f) => $f->id === $fakultasId ? 0 : 1)
             ->take(12);
 
-        return $this->mapFk($mainResults);
+        return $mode === 'search'
+            ? $this->mapFkSearch($mainResults)
+            : $this->mapFk($mainResults);
     }
 
     public function fetchFk($query = '')

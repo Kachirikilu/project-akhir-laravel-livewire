@@ -6,7 +6,7 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'jr_items',
+                    'kodeString' => 'dp_items',
                     'placeholder' => '---',
                     'iconString' => 'book-open'
                 ])
@@ -36,22 +36,22 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'mk',
-        'xResults' => $jrResults,
-        'selectX' => 'selectJr',
-        'modelString' => 'nama_jr_search',
+        'xResults' => $dpResults,
+        'selectX' => 'selectDp',
+        'modelString' => 'nama_dp_search',
 
-        'idString' => 'jr_id',
-        'itemsAllString' => 'jr_items',
+        'idString' => 'dp_id',
+        'itemsAllString' => 'dp_items',
 
-        'resetXInput' => 'resetJrInput()',
-        'typeXString' => 'jurusan',
+        'resetXInput' => 'resetDpInput()',
+        'typeXString' => 'departemen',
         'typeX2String' => 'fakultas',
         
-        'nameXString' => 'Jurusan',
-        'nameSearchString' => 'jrNameSearch',
-        'fetchString' => 'fetchJr',
+        'nameXString' => 'Departemen',
+        'nameSearchString' => 'dpNameSearch',
+        'fetchString' => 'fetchDp',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchJr'
+        'wireLoading' => 'fetchDp'
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -64,7 +64,7 @@
         'itemsAllString' => 'pr_items_array',
 
         'typeXString' => 'prodi',
-        'typeX2String' => 'jurusan',
+        'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',
@@ -72,9 +72,9 @@
         'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
     
-        'parentIdString' => 'jr_id',
-        'nameXParent' => 'Jurusan',
+        'parentIdString' => 'dp_id',
+        'nameXParent' => 'Departemen',
         'wireLoading' => 'fetchPr',
-        'wireLoadingParent' => 'selectJr, resetJrInput, selectJrForFilter, resetJrFilter',
+        'wireLoadingParent' => 'selectDp, resetDpInput, selectDpForFilter, resetDpFilter',
     ])
 </div>

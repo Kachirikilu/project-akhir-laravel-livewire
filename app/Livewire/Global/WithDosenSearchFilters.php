@@ -38,6 +38,20 @@ trait WithDosenSearchFilters
             'nidk' => $d->nidk ?? null,
             'name' => $d->name,
             'prodi' => $d->pr_rel->prodi,
+            'fakultas' => $d->pr_rel->fakultasFk,
+            'status' => $d->status
+        ])->toArray();
+    }
+
+    private function mapDosenSearch($collection)
+    {
+        return $collection->map(fn ($d) => [
+            'id' => $d->id,
+            'kode' => 'NIP: '.$d->nip,
+            'name' => $d->name,
+            'prodi' => $d->pr_rel->prodi,
+            'departemen' => $d->pr_rel->departemenDp,
+            'fakultas' => $d->pr_rel->fakultasFk,
             'status' => $d->status
         ])->toArray();
     }
@@ -71,11 +85,11 @@ trait WithDosenSearchFilters
 
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->dosen_name) {
-            $this->dosenSearchResults = $this->mapDosen(
+            $this->dosenSearchResults = $this->mapDosenSearch(
                 $this->dosenQuery()->searchDosen($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->dosen_name) {
-            $this->dosenSearchResults = $this->getDosenbyUser();
+            $this->dosenSearchResults = $this->getDosenbyUser('search');
         } else {
             $this->dosenSearchResults = [];
         }
@@ -135,6 +149,14 @@ trait WithDosenSearchFilters
                     $this->dosenNameSearch = '';
                     $this->dosen_id_array[] = $exactMatch->id;
                     $this->dosen_items_array[] = $this->itemsDosen($exactMatch);
+
+                    $isKetua = collect($this->dosen_items_array)
+                        ->contains(fn ($item) => $item['is_ketua'] === true);
+                    if (! $isKetua && count($this->dosen_items_array) > 0) {
+                        $lastIndex = array_key_last($this->dosen_items_array);
+                        $this->dosen_items_array[$lastIndex]['is_ketua'] = true;
+                        $this->dosen_items_array[$lastIndex]['peran'] = 'Koordinator';
+                    }
                 }
                 $this->dosenResults = $this->getDosenbyUser();
             }
@@ -149,7 +171,7 @@ trait WithDosenSearchFilters
         }
     }
 
-    public function getDosenbyUser()
+    public function getDosenbyUser($mode = 'full')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -161,7 +183,10 @@ trait WithDosenSearchFilters
                 ->latest()
                 ->limit(12)
                 ->get();
-            return $this->mapDosen($defaultDosen);
+
+            return $mode === 'search'
+                ? $this->mapDosenSearch($defaultDosen)
+                : $this->mapDosen($defaultDosen);
         }
 
         $mainResults = $query
@@ -180,7 +205,9 @@ trait WithDosenSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapDosen($mainResults);
+        return $mode === 'search'
+            ? $this->mapDosenSearch($mainResults)
+            : $this->mapDosen($mainResults);
     }
 
     public function fetchDosen($query = '', $mode = 'single')

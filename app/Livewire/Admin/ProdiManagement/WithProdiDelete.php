@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Livewire\Global\HasToast;
 use App\Models\ProgramStudi\Fakultas;
-use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Prodi;
 
 trait WithProdiDelete
@@ -27,7 +27,7 @@ trait WithProdiDelete
     {
         return [
             'prodi' => Prodi::class,
-            'jurusan' => Jurusan::class,
+            'departemen' => Departemen::class,
             'fakultas' => Fakultas::class,
         ];
     }
@@ -67,8 +67,8 @@ trait WithProdiDelete
 
             return 'Program Studi '.$strata.' '.$data->nama_pr;
         }
-        if (isset($data->nama_jr)) {
-            return 'Jurusan '.$data->nama_jr;
+        if (isset($data->nama_dp)) {
+            return 'Departemen '.$data->nama_dp;
         }
         if (isset($data->nama_fk)) {
             return 'Fakultas '.$data->nama_fk;

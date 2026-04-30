@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\UserManagement;
 
 use App\Models\Auth\User;
 // use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Jurusan;
+// use App\Models\ProgramStudi\Departemen;
 // use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\WithPagination;
@@ -15,14 +15,9 @@ trait WithUserFilters
 
     public $search = '';
 
-    public $filterUser = '';
+    public $filterStatus = '';
 
     public $searchAngkatan = '';
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
 
     public function updatingSearchAngkatan()
     {
@@ -38,7 +33,7 @@ trait WithUserFilters
     public function inputUserSearch()
     {
         $queryUser = User::query()
-            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.jr_rel', 'mahasiswa.pr_rel.jr_rel.fk_rel']);
+            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
 
         $search = $this->search;
 
@@ -46,7 +41,7 @@ trait WithUserFilters
             $queryUser->searchUser($search);
         }
 
-        if (! empty($this->searchAngkatan) && $this->filterUser === 'mahasiswa') {
+        if (! empty($this->searchAngkatan) && $this->switchTable === 'mahasiswa') {
             $queryUser->searchUser($search, true);
         }
 
@@ -54,12 +49,18 @@ trait WithUserFilters
             $queryUser->inLocationUser('prodi', $this->selectedPrId);
         }
 
-        if ($this->selectedJrId) {
-            $queryUser->inLocationUser('jurusan', $this->selectedJrId);
+        if ($this->selectedDpId) {
+            $queryUser->inLocationUser('departemen', $this->selectedDpId);
         }
 
         if ($this->selectedFkId) {
             $queryUser->inLocationUser('fakultas', $this->selectedFkId);
+        }
+
+        if ($this->selectedRPSId) {
+            $queryUser->whereHas('dosen.rps', function ($q) {
+                $q->where('rps.id', $this->selectedRPSId);
+            });
         }
 
         $this->sortFieldOrderUser($queryUser);
@@ -67,20 +68,49 @@ trait WithUserFilters
         return $queryUser;
     }
 
+    public function buttonRoleFilter($queryUser)
+    {
+        $queryUser->when(in_array($this->switchTable, ['admin', 'dosen', 'mahasiswa']), function ($q) {
+            $q->whereHas($this->switchTable);
+        });
+
+        if ($this->switchTable === 'dosen') {
+            if (! empty($this->filterDosen)) {
+                if ($this->filterDosen == 'dosen-rps') {
+                    $queryUser->whereHas('dosen.rps');
+                } elseif ($this->filterDosen == 'dosen-non-rps') {
+                    $queryUser->whereDoesntHave('dosen.rps');
+                }
+            }
+        }
+
+        // Filter by status
+        if ($this->filterStatus === 'aktif') {
+            $queryUser->where(function ($q) {
+                $q->whereHas('admin', fn ($sub) => $sub->where('status', 'Aktif'))
+                    ->orWhereHas('dosen', fn ($sub) => $sub->where('status', 'Aktif'))
+                    ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', 'Aktif'));
+            });
+        } elseif ($this->filterStatus === 'non-aktif') {
+            $queryUser->where(function ($q) {
+                $q->whereHas('admin', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
+                    ->orWhereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
+                    ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+            });
+        }
+
+        return $queryUser;
+    }
+
     public function filterByUser($role)
     {
-        $this->filterUser = $role;
+        $this->switchTable = $role;
         $this->resetPage();
     }
 
-    public function sortBy($field)
+    public function filterByStatus($status)
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
+        $this->filterStatus = $status;
         $this->resetPage();
     }
 

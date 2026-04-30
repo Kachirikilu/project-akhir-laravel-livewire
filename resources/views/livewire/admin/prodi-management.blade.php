@@ -9,13 +9,13 @@
         @include('livewire.admin.prodi-management.prodi-table', [
             'xResults' => match ($this->switchTable) {
                 'prodi' => $prodis,
-                'jurusan' => $jurusans,
+                'departemen' => $departemens,
                 'fakultas' => $fakultas,
                 default => collect([]),
             },
             'xNameString' => match ($this->switchTable) {
                 'prodi' => 'Program Studi',
-                'jurusan' => 'Jurusan',
+                'departemen' => 'Departemen',
                 'fakultas' => 'Fakultas',
                 default => 'Data',
             },
@@ -35,8 +35,8 @@
 
             nama_pr: '',
             strata: '',
-            jr_id: '',
-            nama_jr: '',
+            dp_id: '',
+            nama_dp: '',
             fk_id: '',
             nama_fk: '',
 
@@ -52,11 +52,11 @@
                 this.colorIcon = val
             },
 
-            setValueProdi(namaProdi, strata, idJr, namaJurusan, idFk, namaFakultas) {
+            setValueProdi(namaProdi, strata, idDp, namaDepartemen, idFk, namaFakultas) {
                 this.nama_pr = namaProdi
                 this.strata = strata
-                this.jr_id = idJr
-                this.nama_jr = namaJurusan
+                this.dp_id = idDp
+                this.nama_dp = namaDepartemen
                 this.fk_id = idFk
                 this.nama_fk = namaFakultas
             },
@@ -68,8 +68,8 @@
 
                 this.nama_pr = ''
                 this.strata = ''
-                this.jr_id = ''
-                this.nama_jr = ''
+                this.dp_id = ''
+                this.nama_dp = ''
                 this.fk_id = ''
                 this.nama_fk = ''
             }

@@ -65,6 +65,22 @@ trait WithRPSSearchFilters
         ])->toArray();
     }
 
+    private function mapRPSSearch($collection)
+    {
+        if ($collection instanceof AbstractPaginator) {
+            $collection = $collection->getCollection();
+        }
+
+        return $collection->map(fn ($r) => [
+            'id' => $r->id,
+            'kode' => $r->kode,
+            'rps' => $r->rps,
+            'draf_text' => $r->draf_text,
+            'wajib_text' => $r->wajib_text,
+            'sks_full' => $r->sks_full,
+        ])->toArray();
+    }
+
     private function rpsQuery()
     {
         return RPS::query()->with(['mk_rel', 'cpmks', 'cpmks.scpmks']);
@@ -89,11 +105,11 @@ trait WithRPSSearchFilters
 
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->rps_name) {
-            $this->rpsSearchResults = $this->mapRPS(
+            $this->rpsSearchResults = $this->mapRPSSearch(
                 $this->rpsQuery()->searchRPS($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->rps_name) {
-            $this->rpsSearchResults = $this->getRPSbyUser();
+            $this->rpsSearchResults = $this->getRPSbyUser('search');
         } else {
             $this->rpsSearchResults = [];
         }
@@ -164,7 +180,7 @@ trait WithRPSSearchFilters
         }
     }
 
-    public function getRPSbyUser()
+    public function getRPSbyUser($mode = 'full')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -177,7 +193,9 @@ trait WithRPSSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapRPS($defaultRPS);
+            return $mode === 'search'
+                ? $this->mapRPSSearch($defaultRPS)
+                : $this->mapRPS($defaultRPS);
         }
 
         $mainResults = $query
@@ -196,7 +214,9 @@ trait WithRPSSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapRPS($mainResults);
+        return $mode === 'search'
+            ? $this->mapRPSSearch($mainResults)
+            : $this->mapRPS($mainResults);
     }
 
     public function fetchRPS($query = '', $mode = 'single')

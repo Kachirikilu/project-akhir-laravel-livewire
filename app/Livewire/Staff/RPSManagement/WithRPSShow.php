@@ -58,8 +58,8 @@ trait WithRPSShow
 
         return [
             'rps_id' => $rps->id,
-            'fakultas' => $prodi?->jr_rel?->fk_rel?->nama_fk ?? '-',
-            'jurusan' => $prodi?->jr_rel?->nama_jr ?? '-',
+            'fakultas' => $prodi?->dp_rel?->fk_rel?->nama_fk ?? '-',
+            'departemen' => $prodi?->dp_rel?->nama_dp ?? '-',
             'prodi' => $prodi?->prodi ?? '-',
 
             'nama_mk' => $mk->nama_mk,

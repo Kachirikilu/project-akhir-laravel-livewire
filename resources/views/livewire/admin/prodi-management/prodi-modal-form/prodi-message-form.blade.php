@@ -38,8 +38,8 @@
                 
                     get labels() {
                         const mapping = {
-                            'prodi': ['Program Studi', 'ID Jurusan'],
-                            'jurusan': ['Jurusan', 'ID Fakultas'],
+                            'prodi': ['Program Studi', 'ID Departemen'],
+                            'departemen': ['Departemen', 'ID Fakultas'],
                             'fakultas': ['Fakultas']
                         };
                         return mapping[$store.prodi?.typeModal] || [];
@@ -74,7 +74,7 @@
                      <span 
                         x-text="
                             $store.prodi?.typeModal === 'prodi' ? 'Program Studi' :
-                            $store.prodi?.typeModal === 'jurusan' ? 'Jurusan' :
+                            $store.prodi?.typeModal === 'departemen' ? 'Departemen' :
                             $store.prodi?.typeModal === 'fakultas' ? 'Fakultas' :
                             'Data'
                         "

@@ -55,6 +55,8 @@
                 'xSearchResults' => $prSearchResults,
                 'selectXForFilterString' => 'selectPrForFilter',
                 'typeXString' => 'prodi',
+                'typeX2String' => 'departemen',
+                'typeX3String' => 'fakultas',
                 'unfoundString' => 'Tidak ada Program Studi ditemukan!',
             ])
         </div>
@@ -94,19 +96,21 @@
 
         <div class="sm:col-span-4 relative">
             @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputJrFilter',
-                'xSearchResultsString' => 'jrSearchResults',
+                'inputXFilterString' => 'inputDpFilter',
+                'xSearchResultsString' => 'dpSearchResults',
                 'iconString' => 'book-open',
-                'placeholderString' => 'Filter berdasarkan Jurusan...',
-                'xSearchQueryString' => 'jrSearchQuery',
-                'selectedXId' => $selectedJrId,
-                'selectedXName' => $jr_name,
-                'resetXFilter' => 'resetJrFilter()',
-                'xSearchQuery' => $jrSearchQuery,
-                'xSearchResults' => $jrSearchResults,
-                'selectXForFilterString' => 'selectJrForFilter',
-                'typeXString' => 'jurusan',
-                'unfoundString' => 'Tidak ada Jurusan ditemukan!',
+                'placeholderString' => 'Filter berdasarkan Departemen...',
+                'xSearchQueryString' => 'dpSearchQuery',
+                'selectedXId' => $selectedDpId,
+                'selectedXName' => $dp_name,
+                'resetXFilter' => 'resetDpFilter()',
+                'xSearchQuery' => $dpSearchQuery,
+                'xSearchResults' => $dpSearchResults,
+                'selectXForFilterString' => 'selectDpForFilter',
+                'typeXString' => 'departemen',
+                'typeX2String' => 'kode_text',
+                'typeX3String' => 'fakultas',
+                'unfoundString' => 'Tidak ada Departemen ditemukan!',
             ])
         </div>
 
@@ -124,6 +128,7 @@
                 'xSearchResults' => $fkSearchResults,
                 'selectXForFilterString' => 'selectFkForFilter',
                 'typeXString' => 'fakultas',
+                'typeX2String' => 'kode_text',
                 'unfoundString' => 'Tidak ada Fakultas ditemukan!',
             ])
         </div>

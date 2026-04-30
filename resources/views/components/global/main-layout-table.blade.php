@@ -13,7 +13,8 @@
             {{-- wire:loading.class="opacity-50"  --}}
                 wire:loading.class="opacity-50 pointer-events-none transition-opacity"
                 wire:target="
-                filterByUser, filterByStrata, filterByMK, filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef,
+                filterByStatus, filterByStrata, filterByMK,
+                filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
                 showDeleted,
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, restoreUser,
@@ -26,7 +27,7 @@
                 saveRef, updateRef, destroyRef, restoreRef,
                 search,
                 selectPrForFilter, resetPrFilter,
-                selectJrForFilter, resetJrFilter,
+                selectDpForFilter, resetDpFilter,
                 selectFkForFilter, resetFkFilter,
                 selectMKForFilter, resetMKFilter,
                 selectRPSForFilter, resetRPSFilter,
@@ -37,7 +38,7 @@
                 resetInputFilter, searchAngkatan, resetInputAngkatan,
                 searchBobotRPS, resetInputBobotRPS,
                 searchBobotCPMK, resetInputBobotCPMK,
-                page, loadingTable, sortBy
+                perPage, loadingTable, sortBy
                 {{-- gotoPage, previousPage, nextPage, page --}}
                 "
                 class="bg-[var(--second-table-color)] border-[var(--border-table-color)] divide-y">

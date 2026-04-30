@@ -7,7 +7,7 @@ document.addEventListener("alpine:init", () => {
         colorIcon: "",
 
         nama_pr_delete: "",
-        nama_jr_delete: "",
+        nama_dp_delete: "",
         nama_fk_delete: "",
         kode_delete: "",
         
@@ -23,16 +23,16 @@ document.addEventListener("alpine:init", () => {
 
         // Prodi
         nama_pr: "",
-        jr_id: "",
-        nama_jr_search: "",
+        dp_id: "",
+        nama_dp_search: "",
         kodePr: "",
         strata: "",
 
-        // Jurusan
-        nama_jr: "",
-        jr_id: "",
+        // Departemen
+        nama_dp: "",
+        dp_id: "",
         nama_fakulas_search: "",
-        kodeJr: "",
+        kodeDp: "",
         strata: "",
 
         // Fakultas
@@ -40,38 +40,38 @@ document.addEventListener("alpine:init", () => {
         kodeFk: "",
 
         // Items
-        jurusanItems: "",
+        departemenItems: "",
         fakultasItems: "",
 
         setValueProdi(
             prodi,
             strata,
-            idJr,
-            jurusan,
+            idDp,
+            departemen,
             idFk,
             fakultas,
             kodePr,
-            kodeJr,
+            kodeDp,
             kodeFk,
         ) {
             this.nama_pr = prodi;
-            this.jr_id = idJr;
-            this.nama_jr_search = jurusan;
+            this.dp_id = idDp;
+            this.nama_dp_search = departemen;
             this.kode_pr = kodePr;
             this.strata = strata;
 
-            this.nama_jr = jurusan;
+            this.nama_dp = departemen;
             this.fk_id = idFk;
             this.nama_fk_search = fakultas;
-            this.kode_jr = kodePr;
+            this.kode_dp = kodePr;
 
             this.nama_fk = fakultas;
             this.kode_fk = kodePr;
 
-            this.jr_items = {
-                "id": idJr,
-                "kode": kodeJr,
-                "slot1": jurusan,
+            this.dp_items = {
+                "id": idDp,
+                "kode": kodeDp,
+                "slot1": departemen,
                 "slot2": fakultas,
             };
 
@@ -84,14 +84,14 @@ document.addEventListener("alpine:init", () => {
 
         setDeleteProdi(
             prodi,
-            jurusan,
+            departemen,
             fakultas,
             kodePrDelete,
             type,
             forceDelete
         ) {
             this.nama_pr_delete = prodi;
-            this.nama_jr_delete = jurusan;
+            this.nama_dp_delete = departemen;
             this.nama_fk_delete = fakultas;
             this.kode_delete = kodePrDelete;
             this.typeModal_delete = type;
@@ -110,24 +110,24 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = "",
 
             this.nama_pr = "";
-            this.jr_id = "";
-            this.nama_jr_search = "";
+            this.dp_id = "";
+            this.nama_dp_search = "";
             this.kode_pr = "";
             this.strata = "";
 
-            this.nama_jr = "";
+            this.nama_dp = "";
             this.fk_id = "";
             this.nama_fk_search = "";
-            this.kode_jr = "";
+            this.kode_dp = "";
 
             this.nama_fk = "";
             this.kode_fk = "";
 
-            this.jr_items = "";
+            this.dp_items = "";
             this.fk_items = "";
 
             this.nama_pr_delete = "",
-            this.nama_jr_delete = "",
+            this.nama_dp_delete = "",
             this.nama_fk_delete = "",
             this.kode_delete = ""
         }

@@ -11,7 +11,7 @@ trait WithFakultasFilters
 
     public function inputFkSearch()
     {
-        $queryFk = Fakultas::query()->with(['jurusans', 'jurusans.prodis']);
+        $queryFk = Fakultas::query()->with(['departemens', 'departemens.prodis']);
         $search = $this->search;
 
         if (! empty($search)) {
@@ -22,9 +22,9 @@ trait WithFakultasFilters
             $queryFk->where('id', $this->selectedFkId);
         }
 
-        if (! empty($this->selectedJrId)) {
-            $queryFk->whereHas('jurusans', function ($q) {
-                $q->where('id', $this->selectedJrId);
+        if (! empty($this->selectedDpId)) {
+            $queryFk->whereHas('departemens', function ($q) {
+                $q->where('id', $this->selectedDpId);
             });
         }
 

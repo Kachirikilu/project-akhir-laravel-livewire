@@ -48,7 +48,7 @@
                 <div>
                     <div>UNIVERSITAS SRIWIJAYA</div>
                     <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
-                    <div>Jurusan {{ $data['jurusan'] ?? '' }}</div>
+                    <div>Departemen {{ $data['departemen'] ?? '' }}</div>
                     <div>Program Studi {{ $data['prodi'] ?? '' }}</div>
                 </div>
             </td>

@@ -69,7 +69,7 @@
 
         'resetXInput' => 'resetPrInput()',
         'typeXString' => 'prodi',
-        'typeX2String' => 'jurusan',
+        'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
 
         'nameXString' => 'Program Studi',

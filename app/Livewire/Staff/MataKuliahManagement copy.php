@@ -3,7 +3,7 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 
 use App\Livewire\Staff\MKManagement\WithMKFilters;
@@ -11,7 +11,7 @@ use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 
 use App\Models\ProgramStudi\Prodi;
-use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 
 use Livewire\Component;
@@ -20,7 +20,7 @@ use Livewire\WithPagination;
 class MataKuliahManagement extends Component
 {
     use WithProdiSearchFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenSearchFilters;
     use WithFakultasSearchFilters;
 
     use WithMKFilters;
@@ -97,7 +97,7 @@ class MataKuliahManagement extends Component
     public function render()
     {
         $this->inputPrFilter();
-        $this->inputJrFilter();
+        $this->inputDpFilter();
         $this->inputFkFilter();
 
         $query = $this->inputMKSearch();

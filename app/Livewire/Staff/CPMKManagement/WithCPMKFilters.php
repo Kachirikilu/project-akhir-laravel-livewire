@@ -27,8 +27,9 @@ trait WithCPMKFilters
 
     public function inputCPMKSearch()
     {
+        $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
+
         if ($this->switchTable === 'cpmk') {
-            $queryCPMK = CPMK::query()->with(['rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis', 'rps.mk_rel']);
             $search = $this->search;
 
             if (! empty($search)) {
@@ -42,11 +43,11 @@ trait WithCPMKFilters
             if (! empty($this->selectedPrId)) {
                 $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
             }
-            // if (! empty($this->selectedJrId)) {
-            //     $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('jr_id', $this->selectedJrId));
+            // if (! empty($this->selectedDpId)) {
+            //     $queryCPMK->whereHas('rps.mk_rel.prodis', fn ($q) => $q->where('dp_id', $this->selectedDpId));
             // }
             // if (! empty($this->selectedFkId)) {
-            //     $queryCPMK->whereHas('rps.mk_rel.prodis.jr_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
+            //     $queryCPMK->whereHas('rps.mk_rel.prodis.dp_rel', fn ($q) => $q->where('fk_id', $this->selectedFkId));
             // }
             // if (! empty($this->selectedMKId)) {
             //     $queryCPMK->whereHas('rps', fn ($q) => $q->where('mk_id', $this->selectedMKId));
@@ -60,8 +61,10 @@ trait WithCPMKFilters
 
             $this->sortFieldOrderCPMK($queryCPMK);
 
-            return $queryCPMK;
         }
+
+        return $queryCPMK;
+
     }
 
     public function buttonCPMKFilter($queryCPMK, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)

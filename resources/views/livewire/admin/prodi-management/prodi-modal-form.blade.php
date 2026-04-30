@@ -27,9 +27,9 @@
                     </flux:badge>
                 </template>
 
-                <template x-if="$store.prodi?.typeModal == 'jurusan'" x-cloak>
+                <template x-if="$store.prodi?.typeModal == 'departemen'" x-cloak>
                     <flux:badge icon="book-open" color="amber" size="lg">
-                        <span x-text="$store.prodi?.isEdit ? 'Edit Jurusan' : 'Tambah Jurusan'"></span>
+                        <span x-text="$store.prodi?.isEdit ? 'Edit Departemen' : 'Tambah Departemen'"></span>
                     </flux:badge>
                 </template>
 
@@ -52,8 +52,8 @@
                     @include('livewire.admin.prodi-management.prodi-modal-form.prodi-input')
                 </template>
 
-                <template x-if="$store.prodi?.typeModal == 'jurusan'" x-cloak>
-                    @include('livewire.admin.prodi-management.prodi-modal-form.jurusan-input')
+                <template x-if="$store.prodi?.typeModal == 'departemen'" x-cloak>
+                    @include('livewire.admin.prodi-management.prodi-modal-form.departemen-input')
                 </template>
 
                 <template x-if="$store.prodi?.typeModal == 'fakultas'" x-cloak>

@@ -3,14 +3,14 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Models\Akademik\MataKuliah;
 // use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Jurusan;
+// use App\Models\ProgramStudi\Departemen;
 // use App\Models\ProgramStudi\Fakultas;
 
 use Illuminate\Database\QueryException;
@@ -20,7 +20,7 @@ use Livewire\WithPagination;
 class MataKuliahManagement extends Component
 {
     use WithFakultasSearchFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenSearchFilters;
     use WithMKDelete;
     use WithMKFilters;
     use WithMKModal;
@@ -106,9 +106,9 @@ class MataKuliahManagement extends Component
 
     // public function render()
     // {
-    //     // 1. Jalankan filter input (Prodi, Jurusan, Fakultas)
+    //     // 1. Jalankan filter input (Prodi, Departemen, Fakultas)
     //     $this->inputPrFilter();
-    //     $this->inputJrFilter();
+    //     $this->inputDpFilter();
     //     $this->inputFkFilter();
 
     //     try {
@@ -200,7 +200,7 @@ class MataKuliahManagement extends Component
         // 1. FILTER INPUT
         // =========================
         $this->inputPrFilter();
-        $this->inputJrFilter();
+        $this->inputDpFilter();
         $this->inputFkFilter();
 
         try {

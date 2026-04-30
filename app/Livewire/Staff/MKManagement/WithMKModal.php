@@ -42,7 +42,7 @@ trait WithMKModal
         if ($tingkatan == 1 || $tingkatan == 4) {
             $this->updatedPrNameSearch($this->prNameSearch);
         } elseif ($tingkatan == 2) {
-            $this->updatedJrNameSearch($this->jrNameSearch);
+            $this->updatedDpNameSearch($this->dpNameSearch);
         } elseif ($tingkatan == 3) {
             $this->updatedFkNameSearch($this->fkNameSearch);
         }
@@ -78,8 +78,8 @@ trait WithMKModal
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
-                $this->jr_id = $firstProdi->jr_id;
-                $this->jrNameSearch = $firstProdi->jurusanJr;
+                $this->dp_id = $firstProdi->dp_id;
+                $this->dpNameSearch = $firstProdi->departemenDp;
 
                 $this->fk_id = $firstProdi->fk_id;
                 $this->fkNameSearch = $firstProdi->fakultasFk;
@@ -96,8 +96,8 @@ trait WithMKModal
             if ($tingkatan == 4) {
                 $this->updatedPrNameSearch($this->prNameSearch);
             } elseif ($tingkatan == 2) {
-                $this->updatedJrNameSearch($this->jrNameSearch);
-                $this->fetchJr();
+                $this->updatedDpNameSearch($this->dpNameSearch);
+                $this->fetchDp();
             } elseif ($tingkatan == 3) {
                 $this->updatedFkNameSearch($this->fkNameSearch);
                 $this->fetchFk();
@@ -131,7 +131,7 @@ trait WithMKModal
         $data['bahan_kajian'] = $inputBahanKajian;
 
         // $tingkatanMap = [
-        //     'mk-prodi' => 1, 'mk-jurusan' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
+        //     'mk-prodi' => 1, 'mk-departemen' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
         //     1 => 1, 2 => 2, 3 => 3, 4 => 4,
         // ];
         $tingkatan = $this->mkType ?? 1;
@@ -205,9 +205,9 @@ trait WithMKModal
     private function generateKodePrefix($data, $tingkatan)
     {
         if ($tingkatan === 1) { // Prodi
-            return $this->prodi_kode ?? $this->jurusan_kode ?? $this->fakultas_kode ?? 'UNI';
-        } elseif ($tingkatan === 2) { // Jurusan
-            return $this->jurusan_kode ?? $this->fakultas_kode ?? 'UNI';
+            return $this->prodi_kode ?? $this->departemen_kode ?? $this->fakultas_kode ?? 'UNI';
+        } elseif ($tingkatan === 2) { // Departemen
+            return $this->departemen_kode ?? $this->fakultas_kode ?? 'UNI';
         } elseif ($tingkatan === 3) { // Fakultas
             return $this->fakultas_kode ?? 'UNI';
         } elseif ($tingkatan === 4) {
@@ -400,11 +400,11 @@ trait WithMKModal
     private function resetInputMK()
     {
         $this->prNameSearch = '';
-        $this->jrNameSearch = '';
+        $this->dpNameSearch = '';
         $this->fkNameSearch = '';
 
         $this->pr_id = null;
-        $this->jr_id = null;
+        $this->dp_id = null;
         $this->fk_id = null;
 
         $this->pr_id_array = [];

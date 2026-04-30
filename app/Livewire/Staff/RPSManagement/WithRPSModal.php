@@ -167,7 +167,7 @@ trait WithRPSModal
         try {
             // 1. Load data RPS dengan relasi yang sangat lengkap
             $rps = RPS::with([
-                'mk_rel.prodis.jr_rel.fk_rel',
+                'mk_rel.prodis.dp_rel.fk_rel',
                 'dosens',
                 'cpmks.scpmks.dosens',
                 'cpmks.scpmks.refs',

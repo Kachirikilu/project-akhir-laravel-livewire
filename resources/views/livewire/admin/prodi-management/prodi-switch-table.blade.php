@@ -13,13 +13,13 @@
                 'tabString' => 'prodi',
                 'tabNameString' => 'Program Studi'
             ])
-            {{-- Tab Jurusan --}}
+            {{-- Tab Departemen --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalJurusan,
-                'tabString' => 'jurusan',
-                'tabNameString' => 'Jurusan'
+                'tabFilter' => $totalDepartemen,
+                'tabString' => 'departemen',
+                'tabNameString' => 'Departemen'
             ])
             {{-- Tab Fakultas --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [

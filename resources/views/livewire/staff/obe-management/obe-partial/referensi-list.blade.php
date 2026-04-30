@@ -1,4 +1,4 @@
-<div>
+<div class="space-y-4">
     @php
         // Mapping warna utuh agar terdeteksi oleh JIT Tailwind
         $theme = match ($colorLink) {
@@ -52,73 +52,91 @@
             ],
         };
     @endphp
-    <div class="flex items-center gap-3 mb-4">
-
-        <div class="p-2 {{ $theme['bg'] }} rounded-lg shadow-sm {{ $theme['shadow'] }} dark:shadow-none">
+    {{-- HEADER --}}
+    <div class="flex items-center gap-3">
+        <div class="p-2 {{ $theme['bg'] }} rounded-lg shadow-sm {{ $theme['shadow'] }}">
             <flux:icon.book-open variant="solid" class="size-4 {{ $theme['icon'] }}" />
         </div>
         <div>
-            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">Referensi
-                {{ $targetString ?? null }}</h3>
+            <h3 class="font-bold text-zinc-900 dark:text-white leading-none text-sm">
+                Referensi {{ $targetString ?? null }}
+            </h3>
             <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">{{ $textString }}</p>
         </div>
     </div>
 
-    {{-- WADAH DENGAN SCROLL --}}
-    <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin bg-gray-50/30 dark:bg-neutral-800/30">
-        <template x-if="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length === 0">
-            <div
-                class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">
-                <flux:icon.document-text class="size-8 mb-2" />
-                <p class="text-xs italic">Belum ada Referensi {{ $targetString ?? null }}</p>
-            </div>
-        </template>
-        <template x-for="ref in $store.{{ $alpine ?? 'config' }}.{{ $modelString }}" :key="'main-' + ref.id">
-            <div x-data="{ expanded: false }"
-                class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden transition-all shadow-sm mb-3 {{ $theme['hover-border'] }}">
+    {{-- LIST AREA --}}
+    <div
+        class="border-2 border-dashed border-[var(--border-table-color)] rounded-xl p-3 bg-gray-50/30 dark:bg-neutral-800/30">
 
-                <div x-on:click="expanded = !expanded"
-                    class="p-3 cursor-pointer flex items-center gap-3 border-l-4 {{ $theme['hover-bg'] }} {{ $theme['border-l'] }}">
+        {{-- SUBHEADER --}}
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Daftar Referensi:</span>
+            <template x-if="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length > 0">
+                <span
+                    class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full font-bold uppercase tracking-tighter"
+                    x-text="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length + ' Referensi'"></span>
+            </template>
+        </div>
 
-                    <span x-text="'ID' + ref.id"
-                        class="text-xs font-bold px-1.5 py-0.5 mb-0.5 rounded {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }}"></span>
+        {{-- LIST --}}
+        <div class="space-y-2 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
 
-                    <div class="flex-grow min-w-0">
-                        <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200" x-text="ref.judul"></p>
-                        <p class="text-xs text-zinc-500 font-medium"
-                            x-text="ref.penulis + ' (' + (ref.tahun || '-') + ')'"></p>
-                    </div>
-                    <flux:icon.chevron-down variant="micro" class="text-zinc-400 transition-transform duration-200"
-                        x-bind:class="expanded ? 'rotate-180' : ''" />
+            <template x-if="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}.length === 0">
+                <div
+                    class="flex flex-col items-center justify-center py-8 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl opacity-50">
+                    <flux:icon.document-text class="size-8 mb-2" />
+                    <p class="text-xs italic">Belum ada Referensi {{ $targetString ?? null }}</p>
                 </div>
+            </template>
 
-                <div x-show="expanded" x-collapse>
-                    <div class="px-3 pb-3 pt-0 ml-1">
-                        <div
-                            class="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-100 dark:border-zinc-700 space-y-2">
+            <template x-for="ref in $store.{{ $alpine ?? 'config' }}.{{ $modelString }}" :key="'ref-' + ref.id">
+                <div x-data="{ expanded: false }"
+                    class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm {{ $theme['hover-border'] }} transition-all">
 
-                            <p class="text-xs text-zinc-600 dark:text-zinc-400 italic leading-relaxed">
-                                <span class="font-bold {{ $theme['link'] }} not-italic">Sitasi:</span>
-                                <span
-                                    x-text="ref.penulis + '. (' + ref.tahun + '). ' + ref.judul + '. ' + (ref.penerbit || '-')"></span>
+                    <div x-on:click="expanded = !expanded"
+                        class="p-3 cursor-pointer flex items-center gap-3 border-l-4 {{ $theme['hover-bg'] }} {{ $theme['border-l'] }}">
+                        <span x-text="'ID' + ref.id"
+                            class="text-xs font-bold px-1.5 py-0.5 rounded {{ $theme['badge-bg'] }} {{ $theme['badge-text'] }} flex-shrink-0"></span>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-sm font-bold truncate text-zinc-800 dark:text-zinc-200" x-text="ref.judul">
                             </p>
-                            <span class="flex items-center gap-1.5 text-xs {{ $theme['link'] }}">
-                                <flux:icon.building-library variant="micro" class="{{ $theme['badge-text'] }}" />
-                                <span x-text="ref.penerbit || 'Penerbit -'"></span>
-                            </span>
+                            <p class="text-xs text-zinc-500 font-medium italic"
+                                x-text="ref.penulis + ' (' + (ref.tahun || '-') + ')'"></p>
+                        </div>
+                        <flux:icon.chevron-down variant="micro"
+                            class="text-zinc-400 transition-transform duration-200 flex-shrink-0"
+                            x-bind:class="expanded ? 'rotate-180' : ''" />
+                    </div>
 
-                            <template x-if="ref.link">
-                                <a :href="ref.link" target="_blank"
-                                    class="flex items-center gap-1 hover:underline text-xs font-bold {{ $theme['link'] }}">
-                                    <flux:icon.link variant="micro" /> <span x-text="ref.link"></span>
-                                </a>
-                            </template>
-                            <flux:badge color="{{ $theme['flux-badge'] }}" size="xs" x-text="ref.kode"
-                                class="scale-80 origin-left"></flux:badge>
+                    <div x-show="expanded" x-collapse>
+                        <div class="px-3 pb-3 pt-0 ml-1">
+                            <div
+                                class="p-3 bg-zinc-50 dark:bg-zinc-800/40 rounded-lg border border-zinc-100 dark:border-zinc-700 space-y-2">
+                                <p class="text-xs text-zinc-600 dark:text-zinc-400 italic leading-relaxed">
+                                    <span class="font-bold {{ $theme['link'] }} not-italic">Sitasi:</span>
+                                    <span
+                                        x-text="ref.penulis + '. (' + ref.tahun + '). ' + ref.judul + '. ' + (ref.penerbit || '-')"></span>
+                                </p>
+                                <span class="flex items-center gap-1.5 text-xs {{ $theme['link'] }}">
+                                    <flux:icon.building-library variant="micro" />
+                                    <span x-text="ref.penerbit || '-'"></span>
+                                </span>
+                                <template x-if="ref.link">
+                                    <a :href="ref.link" target="_blank"
+                                        class="flex items-center gap-1 hover:underline text-xs font-bold {{ $theme['link'] }}">
+                                        <flux:icon.link variant="micro" />
+                                        <span x-text="ref.link"></span>
+                                    </a>
+                                </template>
+                                <flux:badge color="{{ $theme['flux-badge'] }}" size="xs" x-text="ref.kode">
+                                </flux:badge>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
+
+        </div>
     </div>
 </div>

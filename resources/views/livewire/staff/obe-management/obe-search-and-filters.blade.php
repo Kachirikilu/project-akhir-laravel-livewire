@@ -20,9 +20,9 @@
                 'totalTab' => $totalRPS,
                 'totalTab1' => $stats['rps-akademik'],
                 'totalTab2' => $stats['rps-rev-new'],
-                // 'totalTab3' => $stats['rps-aktif'],
-                // 'totalTab4' => $stats['rps-draf'],
-                // 'totalTab5' => $stats['rps-older-5'],
+                'totalTab3' => $stats['rps-aktif'],
+                'totalTab4' => $stats['rps-draf'],
+                'totalTab5' => $stats['rps-older-5'],
                 'tab1String' => 'rps-akademik',
                 'tab2String' => 'rps-rev-new',
                 'tab3String' => 'rps-aktif',
@@ -54,9 +54,9 @@
                 'filterString' => 'filterCPMK',
                 'totalTab' => $totalCPMK,
                 'totalTab1' => $stats['cpmk-month'],
-                // 'totalTab2' => $stats['cpmk-6-months'],
-                // 'totalTab3' => $stats['cpmk-year'],
-                // 'totalTab4' => $stats['cpmk-older-5'],
+                'totalTab2' => $stats['cpmk-6-months'],
+                'totalTab3' => $stats['cpmk-year'],
+                'totalTab4' => $stats['cpmk-older-5'],
                 'tab1String' => 'cpmk-month',
                 'tab2String' => 'cpmk-6-months',
                 'tab3String' => 'cpmk-year',
@@ -86,9 +86,9 @@
                 'filterString' => 'filterSCPMK',
                 'totalTab' => $totalSCPMK,
                 'totalTab1' => $stats['scpmk-month'],
-                // 'totalTab2' => $stats['scpmk-6-months'],
-                // 'totalTab3' => $stats['scpmk-year'],
-                // 'totalTab4' => $stats['scpmk-older-5'],
+                'totalTab2' => $stats['scpmk-6-months'],
+                'totalTab3' => $stats['scpmk-year'],
+                'totalTab4' => $stats['scpmk-older-5'],
                 'tab1String' => 'scpmk-month',
                 'tab2String' => 'scpmk-6-months',
                 'tab3String' => 'scpmk-year',
@@ -119,9 +119,9 @@
                 'filterString' => 'filterCPL',
                 'totalTab' => $totalCPL,
                 'totalTab1' => $stats['cpl-month'],
-                // 'totalTab2' => $stats['cpl-6-months'],
-                // 'totalTab3' => $stats['cpl-year'],
-                // 'totalTab4' => $stats['cpl-older-5'],
+                'totalTab2' => $stats['cpl-6-months'],
+                'totalTab3' => $stats['cpl-year'],
+                'totalTab4' => $stats['cpl-older-5'],
                 'tab1String' => 'cpl-month',
                 'tab2String' => 'cpl-6-months',
                 'tab3String' => 'cpl-year',
@@ -138,6 +138,44 @@
             ])
         </div>
 
+        <div x-show="activeTab == 'dosen'" x-transition:enter="transition ease-out duration-1000"
+            x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
+            class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
+            @include('livewire.global.search-and-filters.filter-mode', [
+                'typeXString' => 'Dosen',
+                'filterByFunc' => 'filterByDosen',
+                'filterString' => 'filterDosen',
+                'totalTab' => $totalDosen,
+                'totalTab1' => $stats['dosen-rps'],
+                'totalTab2' => $stats['dosen-non-rps'],
+                'tab1String' => 'dosen-rps',
+                'tab2String' => 'dosen-non-rps',
+                'tab1Name' => 'Memiliki RPS',
+                'tab2Name' => 'Tidak Memiliki RPS',
+            ])
+            @include('livewire.global.search-and-filters.filter-mode', [
+                'typeXString' => 'Status',
+                'filterByFunc' => 'filterByStatus',
+                'filterString' => 'filterStatus',
+                'totalTab' => $totalDosen,
+                'totalTab1' => $stats['dosen-aktif'],
+                'totalTab2' => $stats['dosen-non-aktif'],
+                'tab1String' => 'aktif',
+                'tab2String' => 'non-aktif',
+                'tab2Name' => 'Tidak Aktif',
+            ])
+
+
+            @include('livewire.global.search-and-filters.page-control', [
+                'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
+                'key' => 'page-control-dosen',
+            ])
+        </div>
+
         <div x-show="activeTab == 'ref'" x-transition:enter="transition ease-out duration-1000"
             x-transition:enter-start="opacity-0 scale-100 -translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -151,10 +189,10 @@
                 'filterString' => 'filterRef',
                 'totalTab' => $totalRef,
                 'totalTab1' => $stats['ref-year'],
-                // 'totalTab2' => $stats['ref-2-3-years'],
-                // 'totalTab3' => $stats['ref-4-5-years'],
-                // 'totalTab4' => $stats['ref-6-10-years'],
-                // 'totalTab5' => $stats['ref-older-10'],
+                'totalTab2' => $stats['ref-2-3-years'],
+                'totalTab3' => $stats['ref-4-5-years'],
+                'totalTab4' => $stats['ref-6-10-years'],
+                'totalTab5' => $stats['ref-older-10'],
                 'tab1String' => 'ref-year',
                 'tab2String' => 'ref-2-3-years',
                 'tab3String' => 'ref-4-5-years',
@@ -183,14 +221,13 @@
         {{-- Tab RPS --}}
         <div class="sm:col-span-4 w-full row-start-1 col-start-1">
             @include('livewire.global.search-and-filters.main-search', [
-                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, dan Referensi...',
+                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
             ])
         </div>
 
 
         {{-- 🔹 PRODI --}}
-        <div x-show="activeTab !== 'ref'"
-            class="sm:col-span-3 relative row-start-1 col-start-2">
+        <div x-show="activeTab !== 'ref'" class="sm:col-span-3 relative row-start-1 col-start-2">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputPrFilter',
                 'xSearchResultsString' => 'prSearchResults',
@@ -204,13 +241,14 @@
                 'xSearchResults' => $prSearchResults,
                 'selectXForFilterString' => 'selectPrForFilter',
                 'typeXString' => 'prodi',
+                'typeX2String' => 'departemen',
+                'typeX3String' => 'fakultas',
                 'unfoundString' => 'Tidak ada Program Studi ditemukan!',
             ])
         </div>
 
         {{-- 🔹 MK --}}
-        <div x-show="activeTab == 'rps'"
-            class="sm:col-span-3 relative grid row-start-2 col-start-1">
+        <div x-show="activeTab == 'rps'" class="sm:col-span-3 relative grid row-start-2 col-start-1">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputMKFilter',
                 'xSearchResultsString' => 'mkSearchResults',
@@ -224,13 +262,15 @@
                 'xSearchResults' => $mkSearchResults,
                 'selectXForFilterString' => 'selectMKForFilter',
                 'typeXString' => 'mk',
+                'typeX2String' => 'sks_full',
+                'typeX3String' => 'semester_text',
+                'typeX4String' => 'wajib_text',
                 'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
             ])
         </div>
 
         {{-- 🔹 Dosen --}}
-        <div x-show="activeTab == 'rps'"
-            class="sm:col-span-4 relative row-start-2 col-start-2">
+        <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative row-start-2 col-start-2">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputDosenFilter',
                 'xSearchResultsString' => 'dosenSearchResults',
@@ -244,6 +284,9 @@
                 'xSearchResults' => $dosenSearchResults,
                 'selectXForFilterString' => 'selectDosenForFilter',
                 'typeXString' => 'name',
+                'typeX2String' => 'prodi',
+                'typeX3String' => 'departemen',
+                'typeX4String' => 'fakultas',
                 'unfoundString' => 'Tidak ada Dosen ditemukan!',
             ])
         </div>
@@ -265,6 +308,9 @@
                 'xSearchResults' => $rpsSearchResults,
                 'selectXForFilterString' => 'selectRPSForFilter',
                 'typeXString' => 'rps',
+                'typeX2String' => 'sks_full',
+                'typeX3String' => 'wajib_text',
+                'typeX4String' => 'draf_text',
                 'unfoundString' => 'Tidak ada RPS ditemukan!',
             ])
         </div>
@@ -286,13 +332,13 @@
                 'xSearchResults' => $cplSearchResults,
                 'selectXForFilterString' => 'selectCPLForFilter',
                 'typeXString' => 'deskripsi',
+                'typeX2String' => 'kode',
                 'unfoundString' => 'Tidak ada CPL ditemukan!',
             ])
         </div>
 
         {{-- 🔹 CPMK --}}
         <div x-show="activeTab == 'scpmk' || activeTab == 'cpl' || activeTab == 'ref'"
-           
             x-bind:class="activeTab !== 'ref' ? 'sm:col-span-4' : 'sm:col-span-3'"
             class="relative row-start-2 col-start-2">
             @include('livewire.global.search-and-filters.secondary-search', [
@@ -308,13 +354,15 @@
                 'xSearchResults' => $cpmkSearchResults,
                 'selectXForFilterString' => 'selectCPMKForFilter',
                 'typeXString' => 'deskripsi',
+                'typeX2String' => 'kode',
+                'typeX3String' => 'total_bobot_text',
+                'typeX4String' => 'total_pertemuan',
                 'unfoundString' => 'Tidak ada CPMK ditemukan!',
             ])
         </div>
 
         {{-- 🔹 Sub-CPMK --}}
-        <div x-show="activeTab == 'ref'"
-            class="sm:col-span-4 relative row-start-2 col-start-2">
+        <div x-show="activeTab == 'ref'" class="sm:col-span-4 relative row-start-2 col-start-2">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputSCPMKFilter',
                 'xSearchResultsString' => 'scpmkSearchResults',
@@ -328,7 +376,29 @@
                 'xSearchResults' => $scpmkSearchResults,
                 'selectXForFilterString' => 'selectSCPMKForFilter',
                 'typeXString' => 'deskripsi',
+                'typeX2String' => 'kode',
+                'typeX3String' => 'metode',
+                'typeX4String' => 'bobot_text',
                 'unfoundString' => 'Tidak ada Sub-CPMK ditemukan!',
+            ])
+        </div>
+
+        <div x-show="activeTab == 'dosen'" class="sm:col-span-4 relative row-start-2 col-start-2">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputFkFilter',
+                'xSearchResultsString' => 'fkSearchResults',
+                'iconString' => 'building-library',
+                'placeholderString' => 'Filter berdasarkan Fakultas...',
+                'xSearchQueryString' => 'fkSearchQuery',
+                'selectedXId' => $selectedFkId,
+                'selectedXName' => $fk_name,
+                'resetXFilter' => 'resetFkFilter()',
+                'xSearchQuery' => $fkSearchQuery,
+                'xSearchResults' => $fkSearchResults,
+                'selectXForFilterString' => 'selectFkForFilter',
+                'typeXString' => 'fakultas',
+                'typeX2String' => 'kode_text',
+                'unfoundString' => 'Tidak ada Fakultas ditemukan!',
             ])
         </div>
 

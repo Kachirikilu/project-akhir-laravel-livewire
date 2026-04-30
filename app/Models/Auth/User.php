@@ -87,11 +87,11 @@ class User extends Authenticatable
                     if ($type === 'prodi') {
                         $r->where('pr_id', $id);
                     }
-                    if ($type === 'jurusan') {
-                        $r->where('jr_id', $id);
+                    if ($type === 'departemen') {
+                        $r->where('dp_id', $id);
                     }
                     if ($type === 'fakultas') {
-                        $r->whereHas('jr_rel', fn ($j) => $j->where('fk_id', $id));
+                        $r->whereHas('dp_rel', fn ($j) => $j->where('fk_id', $id));
                     }
                 });
             }
@@ -202,7 +202,7 @@ class User extends Authenticatable
 
     // / ... /// ... /// ...
 
-    // / Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas
+    // / Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas
     protected function prId(): Attribute
     {
         return Attribute::get(function () {
@@ -230,12 +230,12 @@ class User extends Authenticatable
         });
     }
 
-    protected function jrId(): Attribute
+    protected function dpId(): Attribute
     {
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->jr_id;
+            return $profile?->pr_rel->dp_id;
         });
     }
 
@@ -244,10 +244,10 @@ class User extends Authenticatable
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->jr_rel->fk_id;
+            return $profile?->pr_rel->dp_rel->fk_id;
         });
     }
-    // / Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas /// Attribute Prodi/Jurusan/Fakultas
+    // / Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas
 
     // / ... /// ... /// ...
 
@@ -357,12 +357,12 @@ class User extends Authenticatable
                         });
                     });
 
-                    // Pencarian berdasarkan lokasi (Prodi, Jurusan, Fakultas)
+                    // Pencarian berdasarkan lokasi (Prodi, Departemen, Fakultas)
                     $q->orWhereHas("$role.pr_rel", function ($p) use ($searchTerm) {
                         $p->where('nama_pr', 'like', $searchTerm)
-                            ->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
-                                $j->where('nama_jr', 'like', $searchTerm)
-                                    ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+                            ->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+                                $j->where('nama_dp', 'like', $searchTerm)
+                                    ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
                                     ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {
                                         $f->where('nama_fk', 'like', $searchTerm)
                                             ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);

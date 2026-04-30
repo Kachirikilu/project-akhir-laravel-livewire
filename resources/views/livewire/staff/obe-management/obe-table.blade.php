@@ -35,12 +35,15 @@
                 'rowSpan' => 2,
             ])
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'kode',
-                'isMain' => 1,
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
+
+            @if ($switchTable !== 'dosen')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'kode',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                ])
+            @endif
 
 
             @if ($switchTable === 'rps')
@@ -96,7 +99,7 @@
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
                     'rowSpan' => 2,
-                    'pTop' => 5
+                    'pTop' => 5,
                 ])
             @endif
             @if ($switchTable === 'scpmk')
@@ -153,7 +156,7 @@
             @if ($switchTable === 'rps')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
-                    'headString' => 'Nama Mata Kuliah',
+                    'headString' => 'Mata Kuliah',
                     'isBorderL' => 1,
                 ])
 
@@ -192,7 +195,7 @@
                     'floatOnly' => 1,
                     'wInput' => 15,
                     'placeholder' => 'Bobot',
-                    'pTop' => 5
+                    'pTop' => 5,
                 ])
             @endif
 
@@ -233,7 +236,7 @@
                     'isMain' => 1,
                     'isCenter' => 1,
                     'rowSpan' => 2,
-                    'pTop' => 5
+                    'pTop' => 5,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'tugas',
@@ -259,67 +262,67 @@
 
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
-            class="border-[var(--border-table-color)] hover:bg-gray-400 dark:hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
+            @if ($switchTable !== 'dosen')
+                <td class="{{ $mainKolom }} text-center">
+                    <flux:dropdown>
+                        <button class="cursor-pointer">
+                            @if ($switchTable === 'rps')
+                                @switch($x->level_mk)
+                                    @case(1)
+                                        <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-            <td class="{{ $mainKolom }} text-center">
-                <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @if ($switchTable === 'rps')
-                            @switch($x->level_mk)
-                                @case(1)
-                                    <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                                @break
+                                    @case(2)
+                                        <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-                                @case(2)
-                                    <flux:badge icon="book-open" color="amber" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                                @break
+                                    @case(3)
+                                        <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-                                @case(3)
-                                    <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                                @break
+                                    @default
+                                        <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                @endswitch
+                            @else
+                                @switch($switchTable)
+                                    @case('cpmk')
+                                        <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-                                @default
-                                    <flux:badge icon="globe-alt" color="red" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                            @endswitch
-                        @else
-                            @switch($switchTable)
-                                @case('cpmk')
-                                    <flux:badge icon="academic-cap" color="sky" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                                @break
+                                    @case('scpmk')
+                                        <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-                                @case('scpmk')
-                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                                @break
+                                    @case('cpl')
+                                        <flux:badge icon="beaker" color="lime" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                    @break
 
-                                @case('cpl')
-                                    <flux:badge icon="beaker" color="lime" size="sm">{{ $x->kode ?? '-' }}</flux:badge>
-                                @break
+                                    @default
+                                        <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '-' }}
+                                        </flux:badge>
+                                @endswitch
+                            @endif
+                        </button>
 
-                                @default
-                                    <flux:badge icon="book-open" color="violet" size="sm">{{ $x->kode ?? '-' }}
-                                    </flux:badge>
-                            @endswitch
-                        @endif
-                    </button>
-
-                    @include('livewire.staff.obe-management.obe-toolbar-table', [
-                        'x' => $x,
-                        'typeXString' => $switchTable,
-                        'nameXString' => $xNameString,
-                    ])
-                </flux:dropdown>
-            </td>
-
-
+                        @include('livewire.staff.obe-management.obe-toolbar-table', [
+                            'x' => $x,
+                            'typeXString' => $switchTable,
+                            'nameXString' => $xNameString,
+                        ])
+                    </flux:dropdown>
+                </td>
+            @endif
 
 
             @if ($switchTable === 'rps')
@@ -546,6 +549,8 @@
                 </td>
             @endif
 
+            @if ($switchTable !== 'dosen')
+
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <flux:button class="cursor-pointer" variant="ghost" size="sm" icon="ellipsis-horizontal"
@@ -560,6 +565,7 @@
 
                 </flux:dropdown>
             </td>
+            @endif
 
 
             <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->created_day ?? '-' }}</td>

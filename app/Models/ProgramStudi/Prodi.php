@@ -14,20 +14,20 @@ class Prodi extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'jr_id',
+        'dp_id',
         'kode_pr',
         'nama_pr',
         'strata',
     ];
-    protected $appends = ['kode', 'prodi', 'jurusan', 'fakultas'];
+    protected $appends = ['kode', 'prodi', 'departemen', 'fakultas'];
     protected $casts = [
         'created_at' => 'date',
         'updated_at' => 'date',
     ];
 
-    public function jr_rel()
+    public function dp_rel()
     {
-        return $this->belongsTo(Jurusan::class, 'jr_id')->withTrashed();
+        return $this->belongsTo(Departemen::class, 'dp_id')->withTrashed();
     }
 
     public function mata_kuliahs()
@@ -62,11 +62,11 @@ class Prodi extends Model
             if (! empty($this->attributes['kode_pr'])) {
                 return $this->attributes['kode_pr'];
             }
-            $kodeJurusan = $this->jr_rel?->kode_jr;
-            if (! empty($kodeJurusan)) {
-                return $kodeJurusan;
+            $kodeDepartemen = $this->dp_rel?->kode_dp;
+            if (! empty($kodeDepartemen)) {
+                return $kodeDepartemen;
             }
-            $kodeFakultas = $this->jr_rel?->fk_rel?->kode_fk;
+            $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -74,14 +74,14 @@ class Prodi extends Model
         });
     }
 
-    protected function kodeJr(): Attribute
+    protected function kodeDp(): Attribute
     {
         return Attribute::get(function () {
-            $kodeJurusan = $this->jr_rel?->kode_jr;
-            if (! empty($kodeJurusan)) {
-                return $kodeJurusan;
+            $kodeDepartemen = $this->dp_rel?->kode_dp;
+            if (! empty($kodeDepartemen)) {
+                return $kodeDepartemen;
             }
-            $kodeFakultas = $this->jr_rel?->fk_rel?->kode_fk;
+            $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -92,7 +92,7 @@ class Prodi extends Model
     protected function kodeFk(): Attribute
     {
         return Attribute::get(function () {
-            $kodeFakultas = $this->jr_rel?->fk_rel?->kode_fk;
+            $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return $kodeFakultas;
             }
@@ -106,11 +106,11 @@ class Prodi extends Model
     //         if (! empty($this->attributes['kode_pr'])) {
     //             return $this->attributes['kode_pr'];
     //         }
-    //         $kodeJurusan = $this->jr_rel?->kode_jr;
-    //         if (! empty($kodeJurusan)) {
-    //             return $kodeJurusan;
+    //         $kodeDepartemen = $this->dp_rel?->kode_dp;
+    //         if (! empty($kodeDepartemen)) {
+    //             return $kodeDepartemen;
     //         }
-    //         $kodeFakultas = $this->jr_rel?->fk_rel?->kode_fk;
+    //         $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
     //         if (! empty($kodeFakultas)) {
     //             return $kodeFakultas;
     //         }
@@ -123,11 +123,11 @@ class Prodi extends Model
             if (! empty($this->attributes['kode_pr'])) {
                 return 1;
             }
-            $kodeJurusan = $this->jr_rel?->kode_jr;
-            if (! empty($kodeJurusan)) {
+            $kodeDepartemen = $this->dp_rel?->kode_dp;
+            if (! empty($kodeDepartemen)) {
                 return 2;
             }
-            $kodeFakultas = $this->jr_rel?->fk_rel?->kode_fk;
+            $kodeFakultas = $this->dp_rel?->fk_rel?->kode_fk;
             if (! empty($kodeFakultas)) {
                 return 3;
             }
@@ -135,26 +135,26 @@ class Prodi extends Model
         });
     }
 
-    protected function jurusan(): Attribute
+    protected function departemen(): Attribute
     {
-        return Attribute::get(fn () => $this->jr_rel?->nama_jr);
+        return Attribute::get(fn () => $this->dp_rel?->nama_dp);
     }
-    protected function jurusanJr(): Attribute
+    protected function departemenDp(): Attribute
     {
-        return Attribute::get(fn () => 'Jurusan '.$this->jr_rel?->nama_jr);
+        return Attribute::get(fn () => 'Departemen '.$this->dp_rel?->nama_dp);
     }
 
     protected function fakultas(): Attribute
     {
-        return Attribute::get(fn () => $this->jr_rel?->fk_rel?->nama_fk);
+        return Attribute::get(fn () => $this->dp_rel?->fk_rel?->nama_fk);
     }
     protected function fakultasFk(): Attribute
     {
-        return Attribute::get(fn () => 'Fakultas '.$this->jr_rel?->fk_rel?->nama_fk);
+        return Attribute::get(fn () => 'Fakultas '.$this->dp_rel?->fk_rel?->nama_fk);
     }
     protected function fakultasId(): Attribute
     {
-        return Attribute::get(fn () => $this->jr_rel?->fk_rel?->id);
+        return Attribute::get(fn () => $this->dp_rel?->fk_rel?->id);
     }
 
     protected function createdDay(): Attribute
@@ -224,11 +224,11 @@ class Prodi extends Model
                     ->orWhereRaw("LOWER(DATE_FORMAT(prodis.updated_at, '%W %d %M %Y')) LIKE ?", ['%' . $searchLower . '%']);
                 });
 
-            // 3. Filter Relasi ke Jurusan (Termasuk kode_jr)
-            $q->orWhereHas('jr_rel', function ($j) use ($searchTerm) {
-                $j->where('nama_jr', 'like', $searchTerm)
-                    ->orWhere('kode_jr', 'like', $searchTerm)
-                    ->orWhereRaw("CONCAT('Jurusan ', nama_jr) LIKE ?", [$searchTerm])
+            // 3. Filter Relasi ke Departemen (Termasuk kode_dp)
+            $q->orWhereHas('dp_rel', function ($j) use ($searchTerm) {
+                $j->where('nama_dp', 'like', $searchTerm)
+                    ->orWhere('kode_dp', 'like', $searchTerm)
+                    ->orWhereRaw("CONCAT('Departemen ', nama_dp) LIKE ?", [$searchTerm])
 
                     // 4. Filter Relasi ke Fakultas (Termasuk kode_fk)
                     ->orWhereHas('fk_rel', function ($f) use ($searchTerm) {

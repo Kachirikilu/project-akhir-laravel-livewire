@@ -100,6 +100,11 @@ class RPS extends Model
         return Attribute::get(fn () => $this->mk_rel?->sks_text);
     }
 
+    protected function sksFull(): Attribute
+    {
+        return Attribute::get(fn () => $this->mk_rel?->sks_full);
+    }
+
     protected function levelMk(): Attribute
     {
         return Attribute::get(fn () => $this->mk_rel?->level_mk);

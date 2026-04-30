@@ -44,9 +44,10 @@
             <span
                 class="absolute bottom-0 left-0 w-full h-[2px]
                         transform origin-left transition-all duration-300"
-                :class="step === {{ $maxStep }} ?"
+                :class="step === {{ $maxStep }} ?
                     'scale-x-0 bg-gray-300' :
-                    'scale-x-0 group-hover:scale-x-100 bg-[var(--focus-color)]'"></span>
+                    'scale-x-0 group-hover:scale-x-100 bg-[var(--focus-color)]'">
+            </span>
         </button>
 
     </div>

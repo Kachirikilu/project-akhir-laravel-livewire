@@ -30,10 +30,11 @@
                 'isCenter' => 1,
             ])
 
-            @if ($filterUser == '')
+            @if ($switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'role',
                     'rowSpan' => 2,
+                    'isCenter' => 1
                 ])
             @else
                 <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Role</th>
@@ -50,13 +51,13 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="{{ $filterUser == 'mahasiswa' ? 1 : ($filterUser == 'admin' ? 2 : 3) }}"
+            <th colspan="{{ $switchTable == 'mahasiswa' ? 1 : ($switchTable == 'admin' ? 2 : 3) }}"
                 class="{{ $headSubKolom }}">
                 Identitas (ID)
             </th>
 
             {{-- Angkatan - Autocomplete Input --}}
-            @if ($filterUser == 'mahasiswa')
+            @if ($switchTable == 'mahasiswa')
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'angkatan',
                     'headString' => 'Angkatan',
@@ -96,29 +97,23 @@
 
         </tr>
 
-        {{-- NIP/NIM
-        NITK/NIDN
-        NIDK --}}
-
-        {{-- $filterUser == '' ? 'NIP/NIM' : ($filterUser == 'mahasiswa' ? 'NIM' : 'NIP'), --}}
-
         <tr>
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'identity1',
-                'headString' => $filterUser == '' ? 'NIP/NIM' : ($filterUser == 'mahasiswa' ? 'NIM' : 'NIP'),
+                'headString' => $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
                 // 'isSubHeader' => 1,
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
-            @if ($filterUser !== 'mahasiswa')
+            @if ($switchTable !== 'mahasiswa')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'identity2',
-                    'headString' => $filterUser == '' ? 'NITK/NIDN' : ($filterUser == 'dosen' ? 'NIDN' : 'NIDK'),
+                    'headString' => $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NIDK'),
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
-                    'isBorderR' => $filterUser == 'admin' ? 1 : 0,
+                    'isBorderR' => $switchTable == 'admin' ? 1 : 0,
                 ])
-                @if ($filterUser !== 'admin')
+                @if ($switchTable !== 'admin')
                     @include('livewire.global.table.head-table', [
                         'sortFieldString' => 'identity3',
                         'headString' => 'NIDK',
@@ -138,7 +133,7 @@
         @endphp
 
         <tr wire:key="user-{{ $user->id }}" data-user-id="{{ $user->id }}"
-            class="border-[var(--border-table-color)] hover:bg-gray-400 dark:hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
             {{-- Role --}}
@@ -174,18 +169,18 @@
             <td class="{{ $mainKolom }} min-w-84">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
-            @if ($filterUser != 'mahasiswa')
-                <td class="{{ $subKolom }} {{ $filterUser == 'admin' ? 'border-r' : '' }} text-center">
+            @if ($switchTable != 'mahasiswa')
+                <td class="{{ $subKolom }} {{ $switchTable == 'admin' ? 'border-r' : '' }} text-center">
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
-            @if ($filterUser == 'dosen' || $filterUser == '')
+            @if ($switchTable == 'dosen' || $switchTable == '')
                 <td
-                    class="{{ $subKolom }} {{ $filterUser == '' || $filterUser == 'dosen' ? 'border-r' : '' }} text-center">
+                    class="{{ $subKolom }} {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
-            @if ($filterUser == 'mahasiswa')
+            @if ($switchTable == 'mahasiswa')
                 <td class="{{ $secondKolom }} text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
@@ -274,7 +269,7 @@
 
         @empty
             <tr>
-                <td colspan="{{ match ($filterUser) {
+                <td colspan="{{ match ($switchTable) {
                     'admin' => 11,
                     'dosen' => 12,
                     'mahasiswa' => 11,

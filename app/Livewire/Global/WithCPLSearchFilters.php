@@ -42,6 +42,16 @@ trait WithCPLSearchFilters
         ])->toArray();
     }
 
+    private function mapCPLSearch($collection)
+    {
+        return $collection->map(fn ($c) => [
+            'id' => $c->id,
+            'kode' => $c->kode,
+            'kode_text' => 'Kode: '.$c->kode,
+            'deskripsi' => $c->deskripsi,
+        ])->toArray();
+    }
+
     private function cplQuery()
     {
         return CPL::query()->with('cpmks.rps', 'cpmks');
@@ -84,11 +94,11 @@ trait WithCPLSearchFilters
 
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->cpl_name) {
-            $this->cplSearchResults = $this->mapCPL(
+            $this->cplSearchResults = $this->mapCPLSearch(
                 $this->cplQuery()->searchCPL($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->cpl_name) {
-            $this->cplSearchResults = $this->getCPLbyUser();
+            $this->cplSearchResults = $this->getCPLbyUser('search');
         } else {
             $this->cplSearchResults = [];
         }
@@ -215,7 +225,7 @@ trait WithCPLSearchFilters
     //     }
     // }
 
-    public function getCPLbyUser()
+    public function getCPLbyUser($mode = 'full')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -228,7 +238,9 @@ trait WithCPLSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapCPL($defaultCPL);
+            return $mode === 'search'
+                ? $this->mapCPLSearch($defaultCPL)
+                : $this->mapCPL($defaultCPL);
         }
 
         $mainResults = $query
@@ -247,7 +259,9 @@ trait WithCPLSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapCPL($mainResults);
+        return $mode === 'search'
+            ? $this->mapCPLSearch($mainResults)
+            : $this->mapCPL($mainResults);
     }
 
     public function fetchCPL($query = '', $mode = 'single', $key = 'default')

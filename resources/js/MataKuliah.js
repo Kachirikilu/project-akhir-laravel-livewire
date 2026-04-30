@@ -56,7 +56,7 @@ document.addEventListener("alpine:init", () => {
             // idPr,
             // kodePr,
             // namaProdi,
-            // namaJurusan,
+            // namaDepartemen,
             // namaFakultas,
             semester,
             sksKuliah,
@@ -86,7 +86,7 @@ document.addEventListener("alpine:init", () => {
             // this.pr_items = {
             //     "kode": kodePr,
             //     "slot1": namaProdi,
-            //     // "slot2": namaJurusan,
+            //     // "slot2": namaDepartemen,
             //     // "slot3": namaFakultas,
             // };
         },

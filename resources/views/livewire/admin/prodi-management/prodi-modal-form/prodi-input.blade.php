@@ -23,22 +23,22 @@
 
     @include('livewire.global.modal-form.search-input-form', [
         'alpine' => 'prodi',
-        'xResults' => $jrResults,
-        'selectX' => 'selectJr',
-        'modelString' => 'nama_jr_search',
+        'xResults' => $dpResults,
+        'selectX' => 'selectDp',
+        'modelString' => 'nama_dp_search',
 
-        'idString' => 'jr_id',
-        'itemsAllString' => 'jr_items',
+        'idString' => 'dp_id',
+        'itemsAllString' => 'dp_items',
 
-        'resetXInput' => 'resetJrInput()',
-        'typeXString' => 'jurusan',
+        'resetXInput' => 'resetDpInput()',
+        'typeXString' => 'departemen',
         'typeX2String' => 'fakultas',
 
-        'nameXString' => 'Jurusan',
-        'nameSearchString' => 'jrNameSearch',
-        'fetchString' => 'fetchJr',
+        'nameXString' => 'Departemen',
+        'nameSearchString' => 'dpNameSearch',
+        'fetchString' => 'fetchDp',
         'iconString' => 'book-open',
-        'wireLoading' => 'fetchJr'
+        'wireLoading' => 'fetchDp'
     ])
 
     {{-- 📧 Kode Program Studi Input --}}

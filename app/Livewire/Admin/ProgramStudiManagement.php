@@ -3,14 +3,14 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Admin\ProdiManagement\WithFakultasFilters;
-use App\Livewire\Admin\ProdiManagement\WithJurusanFilters;
+use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Models\ProgramStudi\Fakultas;
-use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Prodi;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -19,8 +19,8 @@ class ProgramStudiManagement extends Component
 {
     use WithFakultasFilters;
     use WithFakultasSearchFilters;
-    use WithJurusanFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenFilters;
+    use WithDepartemenSearchFilters;
     use WithPagination;
     use WithProdiDelete;
     use WithProdiFilters;
@@ -52,6 +52,11 @@ class ProgramStudiManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function loadingTable() {}
 
     public function updatedPerPage()
@@ -70,13 +75,24 @@ class ProgramStudiManagement extends Component
         $this->resetPage();
     }
 
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+        $this->resetPage();
+    }
+
     private function syncSortField($table, $sortField)
     {
         if ($sortField != 'id' && $sortField != 'kode') {
             if ($table === 'prodi') {
                 $this->sortField = 'prodi';
-            } elseif ($table === 'jurusan') {
-                $this->sortField = 'jurusan';
+            } elseif ($table === 'departemen') {
+                $this->sortField = 'departemen';
                 $this->filterPr = '';
             } elseif ($table === 'fakultas') {
                 $this->sortField = 'fakultas';
@@ -93,7 +109,7 @@ class ProgramStudiManagement extends Component
         if ($table == 'fakultas' && $this->perPage > 10) {
             $this->perPage = 10;
         }
-        if ($table == 'jurusan' && $this->perPage > 50) {
+        if ($table == 'departemen' && $this->perPage > 50) {
             $this->perPage = 50;
         }
 
@@ -109,51 +125,51 @@ class ProgramStudiManagement extends Component
 
     // public function render()
     // {
-    //     $this->inputJrFilter();
+    //     $this->inputDpFilter();
     //     $this->inputFkFilter();
 
     //     $queryProdi = $this->inputProdiSearch();
-    //     $queryJurusan = $this->inputJurusanSearch();
+    //     $queryDepartemen = $this->inputDepartemenSearch();
     //     $queryFakultas = $this->inputFkSearch();
 
     //     try {
 
     //         $queryPr = clone $queryProdi;
-    //         $queryJr = clone $queryJurusan;
+    //         $queryDp = clone $queryDepartemen;
     //         $queryFk = clone $queryFakultas;
 
     //         $prodis = collect();
-    //         $jurusans = collect();
+    //         $departemens = collect();
     //         $fakultas = collect();
 
     //         if ($this->showDeleted) {
     //             $queryProdi->onlyTrashed();
-    //             $queryJurusan->onlyTrashed();
+    //             $queryDepartemen->onlyTrashed();
     //             $queryFakultas->onlyTrashed();
 
     //             $queryPr->onlyTrashed();
-    //             $queryJr->onlyTrashed();
+    //             $queryDp->onlyTrashed();
     //             $queryFk->onlyTrashed();
     //         }
 
     //         if ($this->switchTable === 'prodi') {
     //             $this->buttonStrataFilter($queryPr);
     //             $prodis = $queryPr->paginate($this->perPage);
-    //         } elseif ($this->switchTable === 'jurusan') {
-    //             $jurusans = $queryJr->paginate($this->perPage);
+    //         } elseif ($this->switchTable === 'departemen') {
+    //             $departemens = $queryDp->paginate($this->perPage);
     //         } elseif ($this->switchTable === 'fakultas') {
     //             $fakultas = $queryFk->paginate($this->perPage);
     //         }
 
     //         return view('livewire.admin.prodi-management', [
     //             'prodis' => $prodis,
-    //             'jurusans' => $jurusans,
+    //             'departemens' => $departemens,
     //             'fakultas' => $fakultas,
     //             'totalProdis' => Prodi::count(),
     //             'totalSarjanas' => Prodi::where('strata', 'Sarjana')->count(),
     //             'totalMagisters' => Prodi::where('strata', 'Magister')->count(),
     //             'totalDoktors' => Prodi::where('strata', 'Doktor')->count(),
-    //             'totalJurusan' => Jurusan::count(),
+    //             'totalDepartemen' => Departemen::count(),
     //             'totalFakultas' => Fakultas::count(),
     //         ]);
 
@@ -163,33 +179,33 @@ class ProgramStudiManagement extends Component
 
     //         return view('livewire.admin.prodi-management', [
     //             'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),
-    //             'jurusans' => Jurusan::whereRaw('1=0')->paginate($this->perPage),
+    //             'departemens' => Departemen::whereRaw('1=0')->paginate($this->perPage),
     //             'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
 
-    //             'totalProdis' => 0,
-    //             'totalSarjanas' => 0,
-    //             'totalMagisters' => 0,
-    //             'totalDoktors' => 0,
+    //             'totalProdis' => '-',
+    //             'totalSarjanas' => '-',
+    //             'totalMagisters' => '-',
+    //             'totalDoktors' => '-',
 
-    //             'totalJurusan' => 0,
-    //             'totalFakultas' => 0,
+    //             'totalDepartemen' => '-',
+    //             'totalFakultas' => '-',
     //         ]);
     //     }
     // }
 
     public function render()
     {
-        $this->inputJrFilter();
+        $this->inputDpFilter();
         $this->inputFkFilter();
 
         $queryPr = $this->inputProdiSearch();
-        $queryJr = $this->inputJurusanSearch();
+        $queryDp = $this->inputDepartemenSearch();
         $queryFk = $this->inputFkSearch();
 
         try {
 
             $prodis = collect();
-            $jurusans = collect();
+            $departemens = collect();
             $fakultas = collect();
 
             // =========================
@@ -197,7 +213,7 @@ class ProgramStudiManagement extends Component
             // =========================
             if ($this->showDeleted) {
                 $queryPr->onlyTrashed();
-                $queryJr->onlyTrashed();
+                $queryDp->onlyTrashed();
                 $queryFk->onlyTrashed();
             }
 
@@ -207,8 +223,8 @@ class ProgramStudiManagement extends Component
             if ($this->switchTable === 'prodi') {
                 $this->buttonStrataFilter($queryPr);
                 $prodis = $queryPr->paginate($this->perPage);
-            } elseif ($this->switchTable === 'jurusan') {
-                $jurusans = $queryJr->paginate($this->perPage);
+            } elseif ($this->switchTable === 'departemen') {
+                $departemens = $queryDp->paginate($this->perPage);
             } elseif ($this->switchTable === 'fakultas') {
                 $fakultas = $queryFk->paginate($this->perPage);
             }
@@ -217,18 +233,18 @@ class ProgramStudiManagement extends Component
             // COUNT (ISOLATED QUERY)
             // =========================
             $countPr = Prodi::query();
-            $countJr = Jurusan::query();
+            $countDp = Departemen::query();
             $countFk = Fakultas::query();
 
             if ($this->showDeleted) {
                 $countPr->onlyTrashed();
-                $countJr->onlyTrashed();
+                $countDp->onlyTrashed();
                 $countFk->onlyTrashed();
             }
 
             return view('livewire.admin.prodi-management', [
                 'prodis' => $prodis,
-                'jurusans' => $jurusans,
+                'departemens' => $departemens,
                 'fakultas' => $fakultas,
 
                 // 🔥 FIX DI SINI
@@ -237,7 +253,7 @@ class ProgramStudiManagement extends Component
                 'totalMagisters' => (clone $countPr)->where('strata', 'Magister')->count(),
                 'totalDoktors' => (clone $countPr)->where('strata', 'Doktor')->count(),
 
-                'totalJurusan' => (clone $countJr)->count(),
+                'totalDepartemen' => (clone $countDp)->count(),
                 'totalFakultas' => (clone $countFk)->count(),
             ]);
 
@@ -247,15 +263,15 @@ class ProgramStudiManagement extends Component
 
             return view('livewire.admin.prodi-management', [
                 'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),
-                'jurusans' => Jurusan::whereRaw('1=0')->paginate($this->perPage),
+                'departemens' => Departemen::whereRaw('1=0')->paginate($this->perPage),
                 'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
 
-                'totalProdis' => 0,
-                'totalSarjanas' => 0,
-                'totalMagisters' => 0,
-                'totalDoktors' => 0,
-                'totalJurusan' => 0,
-                'totalFakultas' => 0,
+                'totalProdis' => '-',
+                'totalSarjanas' => '-',
+                'totalMagisters' => '-',
+                'totalDoktors' => '-',
+                'totalDepartemen' => '-',
+                'totalFakultas' => '-',
             ]);
         }
     }

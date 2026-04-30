@@ -33,7 +33,7 @@
                 get labels() {
                     const mapping = {
                         'rps-prodi': ['Program Studi'],
-                        'rps-jurusan': ['Program Studi', 'Jurusan'],
+                        'rps-departemen': ['Program Studi', 'Departemen'],
                         'rps-fakultas': ['Program Studi', 'Fakultas'],
                         'rps-universitas': ['Program Studi']
                     };

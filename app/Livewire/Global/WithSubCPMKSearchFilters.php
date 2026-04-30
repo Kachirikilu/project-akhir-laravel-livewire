@@ -51,8 +51,21 @@ trait WithSubCPMKSearchFilters
             'waktu_tugas' => $s->waktu_tugas,
             'waktu_mandiri' => $s->waktu_mandiri,
             'bobot' => $s->bobot ?? 0,
+            'bobot' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.'),
+            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.') . '% Bobot',
             'ref' => $this->mapRef($s->refs),
             'dosen' => $this->mapDosen($s->dosens)
+        ])->toArray();
+    }
+
+    private function mapSCPMKSearch($collection)
+    {
+        return $collection->map(fn ($s) => [
+            'id' => $s->id,
+            'kode' => $s->kode,
+            'deskripsi' => $s->deskripsi,
+            'metode' => $s->metode,
+            'bobot_text' => rtrim(rtrim(number_format($s->bobot ?? 0, 2, '.', ''), '0'), '.') . '% Bobot',
         ])->toArray();
     }
 
@@ -91,11 +104,11 @@ trait WithSubCPMKSearchFilters
 
         // Jika ada input search
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->scpmk_name) {
-            $this->scpmkSearchResults = $this->mapSCPMK(
+            $this->scpmkSearchResults = $this->mapSCPMKSearch(
                 $this->scpmkQuery()->searchSCPMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->scpmk_name) {
-            $this->scpmkSearchResults = $this->getSCPMKbyUser();
+            $this->scpmkSearchResults = $this->getSCPMKbyUser('search');
         } else {
             $this->scpmkSearchResults = [];
         }
@@ -174,7 +187,7 @@ trait WithSubCPMKSearchFilters
         }
     }
 
-    public function getSCPMKbyUser()
+    public function getSCPMKbyUser($mode = 'full')
     {
         $user = Auth::user();
         $prodiId = $user->pr_id ?? null;
@@ -187,7 +200,9 @@ trait WithSubCPMKSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapSCPMK($defaultSCPMK);
+            return $mode === 'search'
+                ? $this->mapSCPMKSearch($defaultSCPMK)
+                : $this->mapSCPMK($defaultSCPMK);
         }
 
         $mainResults = $query
@@ -206,7 +221,9 @@ trait WithSubCPMKSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapSCPMK($mainResults);
+        return $mode === 'search'
+            ? $this->mapSCPMKSearch($mainResults)
+            : $this->mapSCPMK($mainResults);
     }
 
     public function fetchSCPMK($query = '', $mode = 'single')

@@ -13,14 +13,15 @@ trait WithRefFilters
 
     public function inputRefSearch()
     {
+        $queryRef = Referensi::query()->with([
+            'rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis.dp_rel.fk_rel',
+            'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel',
+            'scpmks.cpmks.rps.mk_rel', 'scpmks.cpmks.rps.mk_rel.prodis', 'scpmks.cpmks.rps.mk_rel.prodis.dp_rel', 'scpmks.cpmks.rps.mk_rel.prodis.dp_rel.fk_rel',
+
+        ]);
+        
         if ($this->switchTable === 'ref') {
 
-            $queryRef = Referensi::query()->with([
-                'rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis.jr_rel.fk_rel',
-                'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel',
-                'scpmks.cpmks.rps.mk_rel', 'scpmks.cpmks.rps.mk_rel.prodis', 'scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'scpmks.cpmks.rps.mk_rel.prodis.jr_rel.fk_rel',
-
-            ]);
             $search = $this->search;
 
             if (! empty($search)) {
@@ -34,18 +35,18 @@ trait WithRefFilters
             //         ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
             //     });
             // }
-            // if (! empty($this->selectedJrId)) {
+            // if (! empty($this->selectedDpId)) {
             //     $queryRef->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
-            //         ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
-            //         ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId);
+            //         $q->whereRelation('rps.mk_rel.prodis', 'dp_id', $this->selectedDpId)
+            //         ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'dp_id', $this->selectedDpId)
+            //         ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis', 'dp_id', $this->selectedDpId);
             //     });
             // }
             // if (! empty($this->selectedFkId)) {
             //     $queryRef->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
-            //         ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
-            //         ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId);
+            //         $q->whereRelation('rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId)
+            //         ->orWhereRelation('cpmks.rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId)
+            //         ->orWhereRelation('scpmks.cpmks.rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId);
             //     });
             // }
             // if (! empty($this->selectedMKId)) {
@@ -74,8 +75,10 @@ trait WithRefFilters
 
             $this->sortFieldOrderRef($queryRef);
 
-            return $queryRef;
         }
+
+        return $queryRef;
+
     }
 
     public function buttonRefFilter($queryRef, $now, $sixMonthsAgo, $currentYear, $threeYearsAgo, $fiveYearsAgo, $tenYearsAgo)

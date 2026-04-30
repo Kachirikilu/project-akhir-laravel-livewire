@@ -3,14 +3,14 @@
 namespace App\Livewire\Staff;
 
 use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Models\Akademik\MataKuliah;
 // use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Jurusan;
+// use App\Models\ProgramStudi\Departemen;
 // use App\Models\ProgramStudi\Fakultas;
 
 use Illuminate\Database\QueryException;
@@ -20,7 +20,7 @@ use Livewire\WithPagination;
 class MataKuliahManagement extends Component
 {
     use WithFakultasSearchFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenSearchFilters;
     use WithMKDelete;
     use WithMKFilters;
     use WithMKModal;
@@ -53,6 +53,11 @@ class MataKuliahManagement extends Component
         'sortDirection' => ['except' => 'asc'],
     ];
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function loadingTable() {}
 
     public function updatedPerPage()
@@ -71,15 +76,15 @@ class MataKuliahManagement extends Component
         $this->resetPage();
     }
 
-    public function buttonMKFilter($queryMK)
+    public function sortBy($field)
     {
-        if ($this->filterMK === 'wajib') {
-            $queryMK->where('is_wajib', true);
-        } elseif ($this->filterMK === 'pilihan') {
-            $queryMK->where('is_wajib', false);
-        } elseif ($this->filterMK === 'universitas') {
-            $queryMK->where('level_mk', 4);
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
         }
+        $this->resetPage();
     }
 
     private function syncSortField($table, $sortField)
@@ -106,9 +111,9 @@ class MataKuliahManagement extends Component
 
     // public function render()
     // {
-    //     // 1. Jalankan filter input (Prodi, Jurusan, Fakultas)
+    //     // 1. Jalankan filter input (Prodi, Departemen, Fakultas)
     //     $this->inputPrFilter();
-    //     $this->inputJrFilter();
+    //     $this->inputDpFilter();
     //     $this->inputFkFilter();
 
     //     try {
@@ -181,15 +186,15 @@ class MataKuliahManagement extends Component
 
     //         return view('livewire.staff.mk-management', [
     //             'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
-    //             'totalAllOpsi' => 0,
-    //             'totalWajib' => 0,
-    //             'totalPilihan' => 0,
-    //             'totalUni' => 0,
-    //             'totalSemuaMK' => 0,
-    //             'totalTatapMuka' => 0,
-    //             'totalPraktikum' => 0,
-    //             'totalPraktekLapangan' => 0,
-    //             'totalSimulasi' => 0,
+    //             'totalAllOpsi' => '-',
+    //             'totalWajib' => '-',
+    //             'totalPilihan' => '-',
+    //             'totalUni' => '-',
+    //             'totalSemuaMK' => '-',
+    //             'totalTatapMuka' => '-',
+    //             'totalPraktikum' => '-',
+    //             'totalPraktekLapangan' => '-',
+    //             'totalSimulasi' => '-',
     //         ]);
     //     }
     // }
@@ -197,7 +202,7 @@ class MataKuliahManagement extends Component
     public function render()
     {
         $this->inputPrFilter();
-        $this->inputJrFilter();
+        $this->inputDpFilter();
         $this->inputFkFilter();
 
         try {
@@ -285,16 +290,16 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
 
-                'totalAllOpsi' => 0,
-                'totalWajib' => 0,
-                'totalPilihan' => 0,
-                'totalUni' => 0,
+                'totalAllOpsi' => '-',
+                'totalWajib' => '-',
+                'totalPilihan' => '-',
+                'totalUni' => '-',
 
-                'totalSemuaMK' => 0,
-                'totalTatapMuka' => 0,
-                'totalPraktikum' => 0,
-                'totalPraktekLapangan' => 0,
-                'totalSimulasi' => 0,
+                'totalSemuaMK' => '-',
+                'totalTatapMuka' => '-',
+                'totalPraktikum' => '-',
+                'totalPraktekLapangan' => '-',
+                'totalSimulasi' => '-',
             ]);
         }
     }

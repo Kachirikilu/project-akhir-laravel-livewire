@@ -1,5 +1,19 @@
-/* Blue Theme */
-:root, [data-theme="blue"] {
+/* ============================================================
+   TEMA WARNA — LARAVEL PROJECT
+   Semua tema telah disesuaikan agar konsisten:
+   - focus-color: selalu cukup gelap untuk kontras teks putih
+   - focus-color: selalu berbeda dari main-color dan main-table-color
+   - main-pop-up-color: selalu terang (cocok untuk form background)
+   - hover-pop-up-color: selalu lebih gelap dari main-pop-up-color
+   - second-pop-up-color: selalu paling terang (field background)
+   ============================================================ */
+
+
+/* ============================================================
+   BLUE THEME (default)
+   ============================================================ */
+:root,
+[data-theme="blue"] {
     --wadah-color: #feffff;
     --border-wadah-color: #c0ced5;
 
@@ -14,8 +28,9 @@
     --contrast-second-text: #4b5563;
     --contrast-third-text: #64748b;
 
-    --focus-color: #3b82f6;
-    --hover-focus-color: #2563eb;
+    /* FIX: lebih gelap dari sebelumnya (#3b82f6) agar kontras teks putih cukup */
+    --focus-color: #1d6fb8;
+    --hover-focus-color: #1558a0;
 
     --main-table-color: #d1e0f0;
     --second-table-color: #ffffff;
@@ -32,7 +47,9 @@
     --hover-pop-up-color: #e0ecf8;
     --second-pop-up-color: #f8fafc;
 }
-.dark, [data-theme="blue"].dark {
+
+.dark,
+[data-theme="blue"].dark {
     --wadah-color: #17191a;
     --border-wadah-color: #1e343f;
 
@@ -47,8 +64,9 @@
     --contrast-second-text: #b6b6bd;
     --contrast-third-text: #9999a0;
 
-    --focus-color: #3b82f6;
-    --hover-focus-color:  #2563eb;
+    /* FIX: lebih terang di dark mode */
+    --focus-color: #60a5fa;
+    --hover-focus-color: #93c5fd;
 
     --main-table-color: #25292d;
     --second-table-color: #303031;
@@ -66,7 +84,10 @@
     --second-pop-up-color: #383e3e;
 }
 
-/* Purple Theme */
+
+/* ============================================================
+   PURPLE THEME
+   ============================================================ */
 [data-theme="purple"] {
     --wadah-color: #fcfaff;
     --border-wadah-color: #e9d5ff;
@@ -82,8 +103,9 @@
     --contrast-second-text: #6b21a8;
     --contrast-third-text: #7c3aed;
 
-    --focus-color: #9333ea;
-    --hover-focus-color: #7e22ce;
+    /* FIX: dari #9333ea → lebih gelap, kontras teks putih cukup */
+    --focus-color: #7c3aed;
+    --hover-focus-color: #6d28d9;
 
     --main-table-color: #e9d5ff;
     --second-table-color: #ffffff;
@@ -98,7 +120,8 @@
 
     --main-pop-up-color: #f5f3ff;
     --hover-pop-up-color: #ede9fe;
-    --second-pop-up-color: #faf5ff;
+    /* FIX: sedikit ungu agar lebih on-theme */
+    --second-pop-up-color: #fdf8ff;
 }
 
 [data-theme="purple"].dark {
@@ -116,8 +139,9 @@
     --contrast-second-text: #bdb6bd;
     --contrast-third-text: #a099a0;
 
-    --focus-color: #7c3aed;
-    --hover-focus-color: #9465e0;
+    /* FIX: terang di dark mode */
+    --focus-color: #a78bfa;
+    --hover-focus-color: #c4b5fd;
 
     --main-table-color: #271f27;
     --second-table-color: #2b282b;
@@ -135,7 +159,10 @@
     --second-pop-up-color: #3b343b;
 }
 
-/* Red Theme */
+
+/* ============================================================
+   RED THEME
+   ============================================================ */
 [data-theme="red"] {
     --wadah-color: #feffff;
     --border-wadah-color: #e5cbd0;
@@ -151,8 +178,9 @@
     --contrast-second-text: #7f1d1d;
     --contrast-third-text: #991b1b;
 
-    --focus-color: #ef4444;
-    --hover-focus-color: #dc2626;
+    /* FIX: dari #ef4444 → lebih gelap, beda dari main-table-color yang merah muda */
+    --focus-color: #dc2626;
+    --hover-focus-color: #b91c1c;
 
     --main-table-color: #ffcdcd;
     --second-table-color: #ffffff;
@@ -167,8 +195,10 @@
 
     --main-pop-up-color: #fef2f2;
     --hover-pop-up-color: #fee2e2;
-    --second-pop-up-color: #fef9f9;
+    /* FIX: putih dengan sentuhan merah, bukan putih murni */
+    --second-pop-up-color: #fffafa;
 }
+
 [data-theme="red"].dark {
     --wadah-color: #1a1717;
     --border-wadah-color: #3f1e1e;
@@ -184,8 +214,9 @@
     --contrast-second-text: #bdb6b6;
     --contrast-third-text: #a09999;
 
-    --focus-color: #fb423c;
-    --hover-focus-color: #f93416;
+    /* FIX: terang di dark mode */
+    --focus-color: #f87171;
+    --hover-focus-color: #fca5a5;
 
     --main-table-color: #2d2525;
     --second-table-color: #313030;
@@ -203,10 +234,13 @@
     --second-pop-up-color: #383131;
 }
 
-/* Green Theme */
+
+/* ============================================================
+   GREEN THEME
+   ============================================================ */
 [data-theme="green"] {
-    --wadah-color: #f5f7f6;            /* sedikit lebih gelap dari sebelumnya */
-    --border-wadah-color: #d1d5db;     /* abu netral biar kelihatan */
+    --wadah-color: #f5f7f6;
+    --border-wadah-color: #d1d5db;
 
     --main-color: #14532d;
     --hover-main-color: #166534;
@@ -230,21 +264,22 @@
     --second-table-trans: #ffffffa0;
     --sub-table-trans: #ecfdf5a0;
 
-    --hover-table-color: #dcfce7;      /* lebih soft dari sebelumnya */
+    --hover-table-color: #dcfce7;
 
-    /* 🔥 BORDER DIPERTEGAS */
-    --border-table-color: #a9c6af;     /* dari hijau → abu netral */
-    
-    /* 🔥 POPUP LEBIH KONTRAS */
-    --main-pop-up-color: #ffffff;
-    --hover-pop-up-color: #f0fdf4;
+    --border-table-color: #a9c6af;
+
+    /* FIX: dari #ffffff → ada sentuhan hijau, lebih on-theme */
+    --main-pop-up-color: #f0fdf4;
+    /* FIX: tambahkan agar konsisten dengan tema lain */
+    --hover-pop-up-color: #dcfce7;
     --second-pop-up-color: #f7fcf9;
 }
+
 [data-theme="green"].dark {
-    --wadah-color: #161a18;            /* sedikit green tint */
+    --wadah-color: #161a18;
     --border-wadah-color: #2a3a32;
 
-    --main-color: #14532d;             /* sama DNA dengan light */
+    --main-color: #14532d;
     --hover-main-color: #166534;
     --border-main-color: #22c55e;
     --contrast-main-color: #ffffff;
@@ -255,22 +290,20 @@
     --contrast-second-text: #b6bdb9;
     --contrast-third-text: #9ca3af;
 
-    /* 🔥 SAMA TONE DENGAN LIGHT */
-    --focus-color: #16a34a;
-    --hover-focus-color: #15803d;
+    /* FIX: lebih terang di dark */
+    --focus-color: #4ade80;
+    --hover-focus-color: #86efac;
 
-    /* 🔥 INI YANG PALING PENTING */
-    --main-table-color: #1b2420;       /* green + gray (bukan pure black) */
+    --main-table-color: #1b2420;
     --second-table-color: #222b27;
     --sub-table-color: #27332d;
 
-    --hover-table-color: #2f4f3e;      /* green hover yang kalem */
+    --hover-table-color: #2f4f3e;
 
     --main-table-trans: #1b2420a0;
     --second-table-trans: #222b27a0;
     --sub-table-trans: #27332da0;
 
-    /* 🔥 BORDER DISAMAKAN KARAKTER */
     --border-table-color: #2f3f37;
 
     --main-pop-up-color: #202a25;
@@ -278,7 +311,10 @@
     --second-pop-up-color: #26332d;
 }
 
-/* Amber Theme */
+
+/* ============================================================
+   AMBER THEME
+   ============================================================ */
 [data-theme="amber"] {
     --wadah-color: #fffdfa;
     --border-wadah-color: #f1e2c4;
@@ -294,8 +330,9 @@
     --contrast-second-text: #92400e;
     --contrast-third-text: #b45309;
 
-    --focus-color: #f59e0b;
-    --hover-focus-color: #d97706;
+    /* FIX: dari #f59e0b (kuning) → #b45309 (coklat tua), kontras teks putih OK */
+    --focus-color: #b45309;
+    --hover-focus-color: #92400e;
 
     --main-table-color: #e6dac0;
     --second-table-color: #ffffff;
@@ -307,11 +344,15 @@
     --hover-table-color: #efdd85;
 
     --border-table-color: #e6ce82;
-    
-    --main-pop-up-color: #fef3e2;
-    --hover-pop-up-color: #fdba74;
-    --second-pop-up-color: #fffbf0;
+
+    /* FIX: lebih netral, tidak terlalu oranye */
+    --main-pop-up-color: #fffbeb;
+    /* FIX: dari #fdba74 (terlalu jenuh) → #fef3c7 (lebih soft) */
+    --hover-pop-up-color: #fef3c7;
+    /* FIX: hampir putih dengan sentuhan amber */
+    --second-pop-up-color: #fffdf5;
 }
+
 [data-theme="amber"].dark {
     --wadah-color: #171614;
     --border-wadah-color: #3b2a1a;
@@ -327,8 +368,9 @@
     --contrast-second-text: #bdb9b6;
     --contrast-third-text: #a09d99;
 
-    --focus-color: #f59e0b;
-    --hover-focus-color: #d97706;
+    /* FIX: kuning cerah di dark mode */
+    --focus-color: #fbbf24;
+    --hover-focus-color: #f59e0b;
 
     --main-table-color: #27231f;
     --second-table-color: #2b2a28;
@@ -346,12 +388,15 @@
     --second-pop-up-color: #39332f;
 }
 
-/* Pink Theme */
+
+/* ============================================================
+   PINK THEME
+   ============================================================ */
 [data-theme="pink"] {
     --wadah-color: #fffafb;
     --border-wadah-color: #fce7f3;
 
-    --main-color: #be185d; /* Pink 700 */
+    --main-color: #be185d;
     --hover-main-color: #db2777;
     --border-main-color: #f472b6;
     --contrast-main-color: #9d174d;
@@ -362,8 +407,9 @@
     --contrast-second-text: #831843;
     --contrast-third-text: #be185d;
 
-    --focus-color: #ec4899;
-    --hover-focus-color: #db2777;
+    /* FIX: dari #ec4899 (terlalu terang & mirip tabel) → pakai main-color yang sudah gelap */
+    --focus-color: #be185d;
+    --hover-focus-color: #9d174d;
 
     --main-table-color: #fbcfe8;
     --second-table-color: #ffffff;
@@ -376,10 +422,12 @@
 
     --border-table-color: #f9a8d4;
 
-    --main-pop-up-color: #fef2f5;
-    --hover-pop-up-color: #fbcfe8;
+    /* FIX: lebih pink subtle untuk form */
+    --main-pop-up-color: #fdf2f8;
+    --hover-pop-up-color: #fce7f3;
     --second-pop-up-color: #fefafc;
 }
+
 [data-theme="pink"].dark {
     --wadah-color: #1a1012;
     --border-wadah-color: #3f1e25;
@@ -395,6 +443,7 @@
     --contrast-second-text: #bdb6b8;
     --contrast-third-text: #a0999a;
 
+    /* ok, terang di dark mode */
     --focus-color: #f472b6;
     --hover-focus-color: #ec4899;
 
@@ -415,7 +464,9 @@
 }
 
 
-/* Navy Theme */
+/* ============================================================
+   NAVY THEME
+   ============================================================ */
 [data-theme="navy"] {
     --wadah-color: #f8fafc;
     --border-wadah-color: #e2e8f0;
@@ -431,8 +482,9 @@
     --contrast-second-text: #475569;
     --contrast-third-text: #94a3b8;
 
-    --focus-color: #334155;
-    --hover-focus-color: #1e293b;
+    /* FIX: dari #334155 (= main-color, tidak bisa dibedakan) → biru yang kontras */
+    --focus-color: #2563eb;
+    --hover-focus-color: #1d4ed8;
 
     --main-table-color: #d1d9e3;
     --second-table-color: #ffffff;
@@ -447,8 +499,10 @@
 
     --main-pop-up-color: #f1f5f9;
     --hover-pop-up-color: #e2e8f0;
-    --second-pop-up-color: #f4faff;
+    /* FIX: putih bersih untuk form field */
+    --second-pop-up-color: #ffffff;
 }
+
 [data-theme="navy"].dark {
     --wadah-color: #161a22;
     --border-wadah-color: #1e293b;
@@ -464,8 +518,9 @@
     --contrast-second-text: #94a3b8;
     --contrast-third-text: #64748b;
 
-    --focus-color: #a1b3cc;
-    --hover-focus-color: #b8c6d9;
+    /* FIX: biru terang di dark mode */
+    --focus-color: #60a5fa;
+    --hover-focus-color: #93c5fd;
 
     --main-table-color: #262f3e;
     --second-table-color: #0f172a;
@@ -484,7 +539,9 @@
 }
 
 
-/* Brown Theme */
+/* ============================================================
+   BROWN THEME
+   ============================================================ */
 [data-theme="brown"] {
     --wadah-color: #fdfaf7;
     --border-wadah-color: #ede0d4;
@@ -500,8 +557,9 @@
     --contrast-second-text: #5d4037;
     --contrast-third-text: #8d6e63;
 
-    --focus-color: #8d6e63;
-    --hover-focus-color: #5d4037;
+    /* FIX: dari #8d6e63 (terlalu mirip hover) → coklat tua yang lebih kontras */
+    --focus-color: #78350f;
+    --hover-focus-color: #451a03;
 
     --main-table-color: #decdb6;
     --second-table-color: #ffffff;
@@ -514,10 +572,14 @@
 
     --border-table-color: #d6bcb3;
 
-    --main-pop-up-color: #d5c6b7;
-    --hover-pop-up-color: #eaddd3;
-    --second-pop-up-color: #fffaf5;
+    /* FIX: dari #d5c6b7 (terlalu gelap untuk form) → krem terang */
+    --main-pop-up-color: #fdf8f5;
+    /* FIX: lebih netral, tidak terlalu coklat tua */
+    --hover-pop-up-color: #f5ece4;
+    /* FIX: hampir putih dengan sentuhan warm */
+    --second-pop-up-color: #fffdf9;
 }
+
 [data-theme="brown"].dark {
     --wadah-color: #1a1715;
     --border-wadah-color: #352a22;
@@ -533,8 +595,9 @@
     --contrast-second-text: #bdb9b6;
     --contrast-third-text: #a09d99;
 
-    --focus-color: #b69d95;
-    --hover-focus-color: #ae978f;
+    /* FIX: coklat terang di dark mode */
+    --focus-color: #d4a574;
+    --hover-focus-color: #e8c4a0;
 
     --main-table-color: #27221f;
     --second-table-color: #1a1715;
@@ -553,7 +616,9 @@
 }
 
 
-/* Black Theme */
+/* ============================================================
+   BLACK THEME
+   ============================================================ */
 [data-theme="black"] {
     --wadah-color: #fafafa;
     --border-wadah-color: #d4d4d4;
@@ -569,8 +634,9 @@
     --contrast-second-text: #404040;
     --contrast-third-text: #a3a3a3;
 
-    --focus-color: #171717;
-    --hover-focus-color: #000000;
+    /* FIX: dari #171717 (= main-color, tombol = header tabel) → abu gelap yang berbeda */
+    --focus-color: #404040;
+    --hover-focus-color: #262626;
 
     --main-table-color: #adadad;
     --second-table-color: #ffffff;
@@ -583,10 +649,12 @@
 
     --border-table-color: #737373;
 
-    --main-pop-up-color: #f5f5f5;
-    --hover-pop-up-color: #e5e5e5;
-    --second-pop-up-color: #efefef;
+    --main-pop-up-color: #f9f9f9;
+    --hover-pop-up-color: #efefef;
+    /* FIX: putih bersih untuk form field */
+    --second-pop-up-color: #ffffff;
 }
+
 [data-theme="black"].dark {
     --wadah-color: #0a0a0a;
     --border-wadah-color: #262626;
@@ -602,8 +670,9 @@
     --contrast-second-text: #d4d4d4;
     --contrast-third-text: #737373;
 
-    --focus-color: #797979;
-    --hover-focus-color: #9f9f9f;
+    /* FIX: abu terang di dark mode, beda dari background gelap */
+    --focus-color: #a3a3a3;
+    --hover-focus-color: #d4d4d4;
 
     --main-table-color: #1e1e1e;
     --second-table-color: #0a0a0a;

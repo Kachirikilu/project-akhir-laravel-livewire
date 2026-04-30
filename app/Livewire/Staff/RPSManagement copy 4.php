@@ -6,7 +6,7 @@ use App\Livewire\Global\WithCPLSearchFilters;
 use App\Livewire\Global\WithCPMKSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithMKSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
@@ -43,7 +43,7 @@ class RPSManagement extends Component
     use WithDosenFilters;
     use WithDosenSearchFilters;
     use WithFakultasSearchFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenSearchFilters;
     use WithMKSearchFilters;
     use WithPagination;
     use WithProdiSearchFilters;

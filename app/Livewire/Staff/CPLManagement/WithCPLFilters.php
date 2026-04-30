@@ -13,10 +13,10 @@ trait WithCPLFilters
 
     public function inputCPLSearch()
     {
-        if ($this->switchTable === 'cpl') {
+        $queryCPL = CPL::query()->with(['rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.dp_rel', 'rps.mk_rel.prodis.dp_rel.fk_rel',
+            'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.dp_rel', 'cpmks.rps.mk_rel.prodis.dp_rel.fk_rel']);
 
-            $queryCPL = CPL::query()->with(['rps.mk_rel', 'rps.mk_rel.prodis', 'rps.mk_rel.prodis.jr_rel', 'rps.mk_rel.prodis.jr_rel.fk_rel',
-                'cpmks.rps.mk_rel', 'cpmks.rps.mk_rel.prodis', 'cpmks.rps.mk_rel.prodis.jr_rel', 'cpmks.rps.mk_rel.prodis.jr_rel.fk_rel']);
+        if ($this->switchTable === 'cpl') {
             $search = $this->search;
 
             if (! empty($search)) {
@@ -29,16 +29,16 @@ trait WithCPLFilters
                         ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'prodis.id', $this->selectedPrId);
                 });
             }
-            // if (! empty($this->selectedJrId)) {
+            // if (! empty($this->selectedDpId)) {
             //     $queryCPL->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis', 'jr_id', $this->selectedJrId)
-            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'jr_id', $this->selectedJrId);
+            //         $q->whereRelation('rps.mk_rel.prodis', 'dp_id', $this->selectedDpId)
+            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis', 'dp_id', $this->selectedDpId);
             //     });
             // }
             // if (! empty($this->selectedFkId)) {
             //     $queryCPL->where(function ($q) {
-            //         $q->whereRelation('rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId)
-            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis.jr_rel', 'fk_id', $this->selectedFkId);
+            //         $q->whereRelation('rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId)
+            //             ->orWhereRelation('cpmks.rps.mk_rel.prodis.dp_rel', 'fk_id', $this->selectedFkId);
             //     });
             // }
             // if (! empty($this->selectedMKId)) {
@@ -58,9 +58,9 @@ trait WithCPLFilters
             }
 
             $this->sortFieldOrderCPL($queryCPL);
-
-            return $queryCPL;
         }
+
+        return $queryCPL;
     }
 
     public function buttonCPLFilter($queryCPL, $now, $sixMonthsAgo, $currentYear, $fiveYearsAgo)

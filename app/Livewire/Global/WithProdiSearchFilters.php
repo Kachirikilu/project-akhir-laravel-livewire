@@ -32,7 +32,7 @@ trait WithProdiSearchFilters
             'id' => $p->id,
             'kode' => $p->kode,
             'prodi' => $p->prodi,
-            'jurusan' => $p->jurusanJr,
+            'departemen' => $p->departemenDp,
             'fakultas' => $p->fakultasFk,
             'strata' => $p->strata,
         ])->toArray();
@@ -40,7 +40,7 @@ trait WithProdiSearchFilters
 
     private function prQuery()
     {
-        return Prodi::query()->with(['jr_rel', 'jr_rel.fk_rel']);
+        return Prodi::query()->with(['dp_rel', 'dp_rel.fk_rel']);
     }
 
     private function itemsPr($p)
@@ -53,7 +53,7 @@ trait WithProdiSearchFilters
             'id' => $p->id,
             'kode' => $p->kode,
             'slot1' => $p->prodi,
-            'slot2' => $p->jurusanJr,
+            'slot2' => $p->departemenDp,
             'slot3' => $p->fakultasFk,
         ];
     }
@@ -111,10 +111,10 @@ trait WithProdiSearchFilters
         $query = $this->prQuery()->select('prodis.*');
 
         // --- TAMBAHKAN LOGIKA FILTER DI SINI ---
-        if (($this->mkType == 2) && filled($this->jr_id) && $this->showMKModal) {
-            $query->where('jr_id', $this->jr_id);
+        if (($this->mkType == 2) && filled($this->dp_id) && $this->showMKModal) {
+            $query->where('dp_id', $this->dp_id);
         } elseif (($this->mkType == 3) && filled($this->fk_id) && $this->showMKModal) {
-            $query->whereHas('jr_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         }
 
         // 1. Logika shortcut 'uni' untuk mkType 4
@@ -141,14 +141,14 @@ trait WithProdiSearchFilters
             $namaProdi = str($prodi->prodi)->lower()->trim();
             $kodeProdi = str($prodi->kode)->lower()->trim();
 
-            $kodeJurusan = $kodeProdi;
+            $kodeDepartemen = $kodeProdi;
             $kodeFakultas = $kodeProdi;
 
             if ($this->mkType >= 2) {
-                $kodeJurusan = str($prodi->jr_rel?->kode ?? '')->lower()->trim();
+                $kodeDepartemen = str($prodi->dp_rel?->kode ?? '')->lower()->trim();
             }
             if ($this->mkType >= 3) {
-                $kodeFakultas = str($prodi->jr_rel?->fk_rel?->kode ?? '')->lower()->trim();
+                $kodeFakultas = str($prodi->dp_rel?->fk_rel?->kode ?? '')->lower()->trim();
             }
 
             $namaStrata = str($prodi->strata)->lower()->trim();
@@ -159,7 +159,7 @@ trait WithProdiSearchFilters
             $possibilities = [
                 $namaProdi->toString(),
                 $kodeProdi->toString(),
-                $kodeJurusan->toString(),
+                $kodeDepartemen->toString(),
                 $kodeFakultas->toString(),
                 "$inisialStrata $namaProdi",
                 "$namaStrata $namaProdi",
@@ -193,7 +193,7 @@ trait WithProdiSearchFilters
     {
         $user = Auth::user();
         $prodiId = $user?->pr_id;
-        $jurusanId = $user->jr_id ?? null;
+        $departemenId = $user->dp_id ?? null;
         $fakultasId = $user->fk_id ?? null;
 
         $query = $this->prQuery();
@@ -207,19 +207,19 @@ trait WithProdiSearchFilters
             return $this->mapPr($defaultProdis);
         }
 
-        if (($this->mkType == 2) && filled($this->jr_id) && $this->showMKModal) {
-            $query->where('jr_id', $this->jr_id);
+        if (($this->mkType == 2) && filled($this->dp_id) && $this->showMKModal) {
+            $query->where('dp_id', $this->dp_id);
         } elseif (($this->mkType == 3) && filled($this->fk_id) && $this->showMKModal) {
-            $query->whereHas('jr_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
         } else {
-            $query->whereHas('jr_rel', fn ($q) => $q->where('fk_id', $fakultasId));
+            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $fakultasId));
         }
 
-        $mainResults = $query->get()->sortBy(function ($p) use ($prodiId, $jurusanId, $fakultasId) {
+        $mainResults = $query->get()->sortBy(function ($p) use ($prodiId, $departemenId, $fakultasId) {
             if ($p->id === $prodiId) {
                 return 0;
             }
-            if ($p->jr_id === $jurusanId) {
+            if ($p->dp_id === $departemenId) {
                 return 1;
             }
             if ($p->fk_id === $fakultasId) {
@@ -231,7 +231,7 @@ trait WithProdiSearchFilters
 
         if ($mainResults->count() < 12) {
             $extra = $this->prQuery()
-                ->whereHas('jr_rel', fn ($q) => $q->where('fk_id', '!=', $fakultasId))
+                ->whereHas('dp_rel', fn ($q) => $q->where('fk_id', '!=', $fakultasId))
                 ->whereNotIn('id', $mainResults->pluck('id'))
                 ->limit(12 - $mainResults->count())
                 ->get();

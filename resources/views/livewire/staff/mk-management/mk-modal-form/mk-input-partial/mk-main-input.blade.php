@@ -26,7 +26,7 @@
         </template>
 
         <template x-if="$store.mk?.typeModal == 2" x-cloak>
-            @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-jurusan-input')
+            @include('livewire.staff.mk-management.mk-modal-form.mk-input-partial.mk-departemen-input')
         </template>
 
         <template x-if="$store.mk?.typeModal == 3" x-cloak>

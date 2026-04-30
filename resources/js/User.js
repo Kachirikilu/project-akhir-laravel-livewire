@@ -51,7 +51,7 @@ document.addEventListener("alpine:init", () => {
             idPr,
             kodePr,
             prodi,
-            jurusan,
+            departemen,
             fakultas
         ) {
             this.email = email;
@@ -72,7 +72,7 @@ document.addEventListener("alpine:init", () => {
                 "id": idPr,
                 "kode": kodePr,
                 "slot1": prodi,
-                "slot2": jurusan,
+                "slot2": departemen,
                 "slot3": fakultas
             };
         },

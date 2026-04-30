@@ -15,17 +15,17 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::create('jurusans', function (Blueprint $table) {
+        Schema::create('departemens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('fk_id')->nullable() ->constrained('fakultas')->onDelete('set null');
-            $table->string('kode_jr')->nullable();
-            $table->string('nama_jr');
+            $table->string('kode_dp')->nullable();
+            $table->string('nama_dp');
             $table->softDeletes();
             $table->timestamps();
         });
         Schema::create('prodis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jr_id')->nullable() ->constrained('jurusans')->onDelete('set null');
+            $table->foreignId('dp_id')->nullable() ->constrained('departemens')->onDelete('set null');
             $table->string('kode_pr')->nullable();
             $table->string('nama_pr');
             $table->enum('strata', ['Sarjana', 'Magister', 'Doktor'])->default('Sarjana');
@@ -37,7 +37,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('fakultas');
-        Schema::dropIfExists('jurusans');
+        Schema::dropIfExists('departemens');
         Schema::dropIfExists('prodis');
     }
 };

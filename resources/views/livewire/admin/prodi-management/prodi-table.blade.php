@@ -41,8 +41,8 @@
                 ])
             @endif
 
-            @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
-                @include('livewire.global.table.head-table', ['sortFieldString' => 'jurusan'])
+            @if ($switchTable === 'prodi' || $switchTable === 'departemen')
+                @include('livewire.global.table.head-table', ['sortFieldString' => 'departemen'])
             @endif
 
             @include('livewire.global.table.head-table', ['sortFieldString' => 'fakultas'])
@@ -65,7 +65,7 @@
 
     @forelse($xResults as $x)
         <tr wire:key="{{ $switchTable }}-{{ $x->id }}" data-{{ $switchTable }}-id="{{ $x->id }}"
-            class="border-[var(--border-table-color)] hover:bg-gray-400 dark:hover:bg-[var(--hover-table-color)] transition-colors duration-200">
+            class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $x->id }}</td>
 
@@ -110,9 +110,9 @@
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->prodi ?? '-' }}</td>
             @endif
 
-            @if ($switchTable === 'prodi' || $switchTable === 'jurusan')
+            @if ($switchTable === 'prodi' || $switchTable === 'departemen')
                 <td class="{{ $secondKolom }} min-w-48">
-                    {{ $switchTable === 'jurusan' ? 'Jurusan ' . $x->jurusan : $x->jurusan . ' (' . $x->kode_jr . ')' }}</td>
+                    {{ $switchTable === 'departemen' ? 'Departemen ' . $x->departemen : $x->departemen . ' (' . $x->kode_dp . ')' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} min-w-48">
@@ -173,7 +173,7 @@
             <tr>
                 <td colspan="{{ match ($filterPr) {
                     'prodi' => 9,
-                    'jurusan' => 7,
+                    'departemen' => 7,
                     'fakultas' => 6,
                     default => 9,
                 } }}"

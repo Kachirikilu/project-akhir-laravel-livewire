@@ -11,7 +11,7 @@ use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithDosenSearchFilters;
 
 use App\Livewire\Global\WithProdiSearchFilters;
-use App\Livewire\Global\WithJurusanSearchFilters;
+use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
@@ -45,7 +45,7 @@ class RPSManagement extends Component
     use WithDosenFilters;
 
     use WithFakultasSearchFilters;
-    use WithJurusanSearchFilters;
+    use WithDepartemenSearchFilters;
     use WithProdiSearchFilters;
     
     use WithMKSearchFilters;
@@ -231,7 +231,7 @@ class RPSManagement extends Component
     public function render()
     {
         $this->inputPrFilter();
-        // $this->inputJrFilter();
+        // $this->inputDpFilter();
         // $this->inputFkFilter();
         $this->inputMKFilter();
         $this->inputRPSFilter();
@@ -265,7 +265,7 @@ class RPSManagement extends Component
         // $queryRef2 = clone $queryRef;
         // $queryDosen2 = clone $queryDosen;
 
-        // $queryJr = clone $queryJurusan;
+        // $queryDp = clone $queryDepartemen;
         // $queryFk = clone $queryFakultas;
 
         if ($this->showDeleted) {

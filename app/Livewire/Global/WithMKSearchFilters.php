@@ -43,8 +43,21 @@ trait WithMKSearchFilters
             'semester' => $mk->semester,
             'sks' => $mk->sks,
             'sks_text' => $mk->sks_text,
+            'sks_full' => $mk->sks_full,
             'wajib_text' => $mk->wajib_text,
             'level_mk' => $mk->level_mk,
+        ])->toArray();
+    }
+
+    private function mapMKSearch($collection)
+    {
+        return $collection->map(fn ($mk) => [
+            'id' => $mk->id,
+            'kode' => $mk->kode,
+            'mk' => $mk->mk,
+            'semester_text' => $mk->semester_text,
+            'sks_full' => $mk->sks_full,
+            'wajib_text' => $mk->wajib_text,
         ])->toArray();
     }
 
@@ -71,11 +84,11 @@ trait WithMKSearchFilters
         $search = trim($this->mkSearchQuery);
 
         if ((strlen($search) > 1 || is_numeric($search)) && ! $this->mk_name) {
-            $this->mkSearchResults = $this->mapMK(
+            $this->mkSearchResults = $this->mapMKSearch(
                 $this->mkQuery()->searchMK($search)->limit(12)->get()
             );
         } elseif (empty($search) || $this->mk_name) {
-            $this->mkSearchResults = $this->getMKbyUser();
+            $this->mkSearchResults = $this->getMKbyUser('search');
         } else {
             $this->mkSearchResults = [];
         }
@@ -149,7 +162,7 @@ trait WithMKSearchFilters
         }
     }
 
-    public function getMKbyUser()
+    public function getMKbyUser($mode = 'full')
     {
         // if ($this->skipMkNameSearchUpdate) {
         //     return;
@@ -166,7 +179,9 @@ trait WithMKSearchFilters
                 ->limit(12)
                 ->get();
 
-            return $this->mapMK($defaultMK);
+            return $mode === 'search'
+                ? $this->mapMKSearch($defaultMK)
+                : $this->mapMK($defaultMK);
         }
 
         $mainResults = $query
@@ -187,7 +202,9 @@ trait WithMKSearchFilters
             $mainResults = $mainResults->concat($extra);
         }
 
-        return $this->mapMK($mainResults);
+        return $mode === 'search'
+            ? $this->mapMKSearch($mainResults)
+            : $this->mapMK($mainResults);
     }
 
     public function fetchMK($query = '', $mode = 'single')

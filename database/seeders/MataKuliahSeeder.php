@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ProgramStudi\Jurusan;
+use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Prodi;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\Seeder;
@@ -84,9 +84,9 @@ class MataKuliahSeeder extends Seeder
             // =========================
             // 3. JURUSAN (20 MK)
             // =========================
-            $jurusan = Jurusan::first();
+            $departemen = Departemen::first();
 
-            if ($jurusan) {
+            if ($departemen) {
 
                 for ($i = 1; $i <= 20; $i++) {
 
@@ -94,18 +94,18 @@ class MataKuliahSeeder extends Seeder
 
                     $mk = MataKuliah::create([
                         'level_mk' => 2,
-                        'nama_mk' => "MK Jurusan $i",
+                        'nama_mk' => "MK Departemen $i",
                         'digit_semester' => $generateDigitSemester($semester),
                         'digit_mk' => str_pad($digitCounter++, 2, '0', STR_PAD_LEFT),
                         'semester' => $semester,
                         'sks_kuliah' => rand(2, 4),
                         'tipe_sks' => rand(1, 2),
                         'is_wajib' => rand(0, 1),
-                        'deskripsi' => "Deskripsi MK Jurusan $i",
+                        'deskripsi' => "Deskripsi MK Departemen $i",
                         'bahan_kajian' => "Bahan kajian $i",
                     ]);
 
-                    $mk->prodis()->attach($jurusan->prodis->pluck('id'));
+                    $mk->prodis()->attach($departemen->prodis->pluck('id'));
                 }
             }
 

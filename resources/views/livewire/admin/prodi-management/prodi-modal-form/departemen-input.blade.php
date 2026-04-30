@@ -7,18 +7,18 @@
     bg-[var(--main-table-color)] border-[var(--border-table-color)]
     shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
     <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
-        Input Jurusan</h4>
+        Input Departemen</h4>
 
-    {{-- 📧 Jurusan Input --}}
+    {{-- 📧 Departemen Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
         // 'colorIcon' => $colorIcon,
-        'nameXString' => 'Nama Jurusan',
-        'modelString' => 'nama_jr',
+        'nameXString' => 'Nama Departemen',
+        'modelString' => 'nama_dp',
         // 'typeString' => 'text',
         'iconString' => 'book-open',
-        'placeholder' => 'Masukkan nama Jurusan',
-        'message' => $errors->first('nama_jr')
+        'placeholder' => 'Masukkan nama Departemen',
+        'message' => $errors->first('nama_dp')
     ])
 
     @include('livewire.global.modal-form.search-input-form', [
@@ -40,14 +40,14 @@
         'wireLoading' => 'fetchFk'
     ])
 
-    {{-- 📧 Kode Jurusan Input --}}
+    {{-- 📧 Kode Departemen Input --}}
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'prodi',
-        'nameXString' => 'Kode Jurusan',
-        'modelString' => 'kode_jr',
+        'nameXString' => 'Kode Departemen',
+        'modelString' => 'kode_dp',
         'iconString' => 'hashtag',
-        'placeholder' => 'Masukkan 3 huruf Kode Jurusan',
-        'message' => $errors->first('kode_jr'),
+        'placeholder' => 'Masukkan 3 huruf Kode Departemen',
+        'message' => $errors->first('kode_dp'),
         'isKode' => 3,
         'isFocusSelect' => 1,
     ])

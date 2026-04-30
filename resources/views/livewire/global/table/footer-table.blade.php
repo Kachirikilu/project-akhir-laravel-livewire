@@ -15,7 +15,7 @@
                 saveRef, updateRef, destroyRef, restoreRef,
                 search,
                 selectPrForFilter, resetPrFilter,
-                selectJrForFilter, resetJrFilter,
+                selectDpForFilter, resetDpFilter,
                 selectFkForFilter, resetFkFilter,
                 selectMKForFilter, resetMKFilter,
                 selectRPSForFilter, resetRPSFilter,

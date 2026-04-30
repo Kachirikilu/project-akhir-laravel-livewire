@@ -57,7 +57,7 @@
                         '{{ $x->pr_id ?? '' }}',
                         '{{ $x->kode_pr ?? '' }}',
                         '{{ $x->prodi ?? '' }}',
-                        '{{ $detail->pr_rel->jurusan_jr ?? '' }}',
+                        '{{ $detail->pr_rel->departemen_dp ?? '' }}',
                         '{{ $detail->pr_rel->fakultas_fk ?? '' }}',
                     );
                     $flux.modal('user-modal').show();
