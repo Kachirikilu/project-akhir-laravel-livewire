@@ -1,5 +1,12 @@
-<div x-data="{ step: 1 }">
-
+<div 
+    x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showMKModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showMKModal
+    "
+>
     {{-- 🔹 HEADER TAB CONTAINER --}}
     @include('livewire.global.modal-form.paginate.tab-form', [
         'tabs' => [1 => 'Mata Kuliah', 2 => 'Deskripsi & Bahan Kajian'],

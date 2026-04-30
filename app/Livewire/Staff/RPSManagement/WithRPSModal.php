@@ -5,6 +5,7 @@ namespace App\Livewire\Staff\RPSManagement;
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPMK;
+use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -156,7 +157,7 @@ trait WithRPSModal
         }
     }
 
-    public function showRPS($id, $showMode = false)
+    public function showRPS($id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
@@ -192,6 +193,17 @@ trait WithRPSModal
     {
         $this->resetErrorBag();
         $this->resetValidation();
+
+        $mk = MataKuliah::find($data['mk_id'] ?? null);
+        $desMK = $mk?->deskripsi ?? '';
+        if (! str_ends_with($desMK, '.') && ! empty($desMK)) {
+            $desMK .= '.';
+        }
+
+        if ($data['deskripsi'] == $mk->deskripsi || $data['deskripsi'] == $desMK) {
+            $data['deskripsi'] = '';
+        }
+
         // 1. Ambil data dari CPMK terpilih
         $inputDeskripsi = trim($data['deskripsi'] ?? '');
         if (! str_ends_with($inputDeskripsi, '.') && ! empty($inputDeskripsi)) {
@@ -633,6 +645,11 @@ trait WithRPSModal
             }
             $this->showRPSModal = false;
             $this->dispatch('refresh-data-rps');
+
+            if ($this->detailRPSModal == true) {
+                $this->detailRPSModal = false;
+                $this->showRPS($this->selected_id_rps);
+            }
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');

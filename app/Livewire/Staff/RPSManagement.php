@@ -528,6 +528,7 @@ class RPSManagement extends Component
                 'scpmk_rps_modal_paginator' => $this->scpmk_rps_modal_paginator,
                 'cpl_rps_modal_paginator' => $this->cpl_rps_modal_paginator,
                 'ref_rps_modal_paginator' => $this->ref_rps_modal_paginator,
+                'dosen_rps_modal_paginator' => $this->dosen_rps_modal_paginator,
 
                 'stats' => $stats,
             ]));
@@ -554,6 +555,7 @@ class RPSManagement extends Component
                 'scpmk_rps_modal_paginator' => collect(),
                 'cpl_rps_modal_paginator' => collect(),
                 'ref_rps_modal_paginator' => collect(),
+                'dosen_rps_modal_paginator' => collect(),
 
                 'stats' => [
                     'rps-akademik' => '-',

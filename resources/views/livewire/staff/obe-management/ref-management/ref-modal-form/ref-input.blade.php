@@ -1,18 +1,26 @@
-<div x-data="{ step: 1 }">
+<div x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showRefModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showRefModal
+    ">
 
     {{-- 🔹 HEADER TAB CONTAINER --}}
-    @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'Referensi', 2 => 'RPS Terkait'],
-        'errorsCount' => $this->getRefErrorSections(),
-    ])
+    <template x-if="$store.ref.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [1 => 'Edit Referensi', 2 => 'RPS Terkait'],
+            'errorsCount' => $this->getRefErrorSections(),
+        ])
+    </template>
 
     {{-- 🔹 CONTENT --}}
     <div class="mt-4">
         <div x-show="step === 1">
             <div
                 class="px-4 py-6 mt-4
-            bg-[var(--main-table-color)] border-[var(--border-table-color)]
-            shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
+                    bg-[var(--main-table-color)] border-[var(--border-table-color)]
+                    shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
                 <h4
                     class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
                     Input Referensi</h4>
@@ -104,17 +112,21 @@
             </div>
         </div>
         <div x-show="step === 2">
-            @include('livewire.staff.obe-management.obe-partial.rps-list', [
-                'alpine' => 'ref',
-                'rps_items_list' => $ref_rps_items_list,
-                'rps_modal_paginator' => $ref_rps_modal_paginator,
-                'nameXString' => 'Referensi',
-            ])
+            <template x-if="$store.ref.isEdit" x-cloak>
+                @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                    'alpine' => 'ref',
+                    'rps_items_list' => $ref_rps_items_list,
+                    'rps_modal_paginator' => $ref_rps_modal_paginator,
+                    'nameXString' => 'Referensi',
+                ])
+            </template>
         </div>
     </div>
 
     {{-- 🔹 FOOTER STEPPER --}}
-    @include('livewire.global.modal-form.paginate.stepper-form', [
-        'maxStep' => 2,
-    ])
+    <template x-if="$store.ref.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.stepper-form', [
+            'maxStep' => 2,
+        ])
+    </template>
 </div>

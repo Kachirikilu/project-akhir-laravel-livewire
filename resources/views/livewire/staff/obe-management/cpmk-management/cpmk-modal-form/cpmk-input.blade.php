@@ -1,10 +1,26 @@
-<div x-data="{ step: 1 }">
+<div 
+    x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showCPMKModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showCPMKModal
+    "
+>
 
     {{-- 🔹 HEADER TAB CONTAINER --}}
-    @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'CPMK', 2 => 'Sub-CPMK', 3 => 'Referensi', 4 => 'RPS Terkait'],
-        'errorsCount' => $this->getCPMKErrorSections(),
-    ])
+    <template x-if="$store.cpmk.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [1 => 'CPMK', 2 => 'Sub-CPMK', 3 => 'Referensi', 4 => 'RPS Terkait'],
+            'errorsCount' => $this->getCPMKErrorSections(),
+        ])
+    </template>
+    <template x-if="$store.cpmk.isEdit == 0" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [1 => 'CPMK', 2 => 'Sub-CPMK', 3 => 'Referensi'],
+            'errorsCount' => $this->getCPMKErrorSections(),
+        ])
+    </template>
 
     {{-- 🔹 CONTENT --}}
     <div class="mt-4">
@@ -22,21 +38,28 @@
         </div>
 
         <div x-show="step === 4">
-            {{-- <template x-if="$store.cpmk?.isEdit == 1"> --}}
-            @include('livewire.staff.obe-management.obe-partial.rps-list', [
-                'alpine' => 'cpmk',
-                'rps_items_list' => $cpmk_rps_items_list,
-                'rps_modal_paginator' => $cpmk_rps_modal_paginator,
-                'nameXString' => 'CPMK',
-            ])
-            {{-- </template> --}}
+            <template x-if="$store.cpmk?.isEdit == 1" x-action-message>
+                @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                    'alpine' => 'cpmk',
+                    'rps_items_list' => $cpmk_rps_items_list,
+                    'rps_modal_paginator' => $cpmk_rps_modal_paginator,
+                    'nameXString' => 'CPMK',
+                ])
+            </template>
         </div>
 
     </div>
 
     {{-- 🔹 FOOTER STEPPER --}}
-    @include('livewire.global.modal-form.paginate.stepper-form', [
-        'maxStep' => 4,
-    ])
+    <template x-if="$store.cpmk.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.stepper-form', [
+            'maxStep' => 4
+        ])
+    </template>
+    <template x-if="$store.cpmk.isEdit == 0" x-cloak>
+        @include('livewire.global.modal-form.paginate.stepper-form', [
+            'maxStep' => 3
+        ])
+    </template>
 
 </div>

@@ -56,24 +56,42 @@ trait WithRPSShow
 
         $dosenCount = $rps->dosens->count();
 
+        $desRPS = $rps->deskripsi_rps ?? null;
+        if (! str_ends_with($desRPS, '.') && ! empty($desRPS)) {
+            $desRPS .= '.';
+        }
+        
         return [
             'rps_id' => $rps->id,
+            'kode_blok' => $rps->kode_blok ?? null,
+            'kode_rps' => $rps->kode ?? null,
+            'nama_rps' => $rps->rps ?? null,
+            'deskripsi' => $desRPS,
+            'akademik' => $rps->akademik ?? null,
+            'is_draf' => $rps->is_draf ?? false,
+            'count_scpmk' => $rps->count_scpmk ?? null,
+            'bobot_uts' => $rps->bobot_uts ?? null,
+            'bobot_uas' => $rps->bobot_uas ?? null,
+            'total_bobot' => $rps->sks ?? null,
+            
             'fakultas' => $prodi?->dp_rel?->fk_rel?->nama_fk ?? '-',
             'departemen' => $prodi?->dp_rel?->nama_dp ?? '-',
             'prodi' => $prodi?->prodi ?? '-',
 
-            'nama_mk' => $mk->nama_mk,
+            'mk_id' => $mk->id ?? null,
             'kode_mk' => $rps->kode_mk,
+            'nama_mk' => $mk->nama_mk,
+            'level_mk' => $mk->level_mk ?? null,
             'bahan_kajian' => $mk?->bahan_kajian ?? '-',
-            'sks' => $mk->sks_tm ?? $mk->sks_pl ?? $mk->sks_sm ?? 0,
-            'sks_pr' => $mk?->sks_pr ?? 0,
+            'sks' => $mk->sks_tm ?? $mk->sks_pl ?? $mk->sks_sm ?? '-',
+            'sks_pr' => $mk?->sks_pr ?? '-',
             'semester' => $mk?->semester ?? '-',
             'revisi' => $rps->revisi_day ?? '-',
 
             'bobot_uts' => $rps->bobot_uts ?? '-',
             'bobot_uas' => $rps->bobot_uas ?? '-',
 
-            'deskripsi' => $rps->deskripsi_rps ?? '-',
+            // 'deskripsi' => $rps->deskripsi_rps ?? '-',
             // 'cpl' => $rps->cpls->map(function ($c, $idx) {
             //     $label = trim(($c->kode ?? '').': '.($c->deskripsi ?? ''));
             //     return ($idx + 1).'. '.trim($label);
@@ -87,9 +105,9 @@ trait WithRPSShow
 
             'tim_pengajar_label' => $dosenCount === 1 ? 'Dosen Pengampu' : 'Tim Pengajar',
             'tim_pengajar' => $timPengajar,
-            'ketua_tim_pengajar' => $ketua ?? '-',
-            'instruktur' => $instruktur ?: '-',
-            'total_sks' => $rps->sks ?? 0,
+            'ketua_tim_pengajar' => $ketua ?? null,
+            'instruktur' => $instruktur ?: null,
+            'total_sks' => $rps->sks ?? '-',
 
             'program_pembelajaran' => $this->buildProgramPembelajaranRows($rps),
             'referensi' => $this->collectReferensiByPriority($rps),

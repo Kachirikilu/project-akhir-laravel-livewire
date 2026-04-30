@@ -6,20 +6,21 @@
             color: black !important;
         }
 
-        .rps-table > thead > tr > th,
-        .rps-table > tbody > tr > td,
-        .nilai-table > thead > tr > th,
-        .nilai-table > tbody > tr > td {
+        .rps-table>thead>tr>th,
+        .rps-table>tbody>tr>td,
+        .nilai-table>thead>tr>th,
+        .nilai-table>tbody>tr>td {
             border: 1px solid black !important;
             padding: 8px;
         }
 
-        .rps-table > thead > tr > th,
-        .rps-table > tbody > tr > td {
+        .rps-table>thead>tr>th,
+        .rps-table>tbody>tr>td {
             padding: 8px;
         }
-        .nilai-table > thead > tr > th,
-        .nilai-table > tbody > tr > td {
+
+        .nilai-table>thead>tr>th,
+        .nilai-table>tbody>tr>td {
             padding: 4px;
         }
 
@@ -66,24 +67,29 @@
     <div class="font-bold mt-8 mb-2 ">A. IDENTITAS MATA KULIAH</div>
     <table class="w-full mb-6 text-[10px] rps-table">
         <tr class="font-bold text-center bg-gray-50">
-            <td class="w-1/6">Nama Mata Kuliah</td>
-            <td class="w-1/6">Kode</td>
-            <td class="w-1/6">Bahan Kajian</td>
-            <td class="w-1/6">SKS (K/P)</td>
-            <td class="w-1/6">Semester</td>
-            <td class="w-1/6">Tanggal Revisi</td>
+            <td rowspan="2" class="w-1/6">Nama Mata Kuliah</td>
+            <td rowspan="2" class="w-1/6">Kode</td>
+            <td rowspan="2" class="w-1/6">Bahan Kajian</td>
+            <td colspan="2" class="w-1/6">SKS</td>
+            <td rowspan="2" class="w-1/6">Semester</td>
+            <td rowspan="2" class="w-1/6">Tanggal Revisi</td>
+        </tr>
+        <tr class="font-bold text-center bg-gray-50">
+            <td class="w-1/12">Kuliah</td>
+            <td class="w-1/12">Praktikum</td>
         </tr>
         <tr class="text-center">
             <td>{{ $data['nama_mk'] ?? '' }}</td>
             <td>{{ $data['kode_mk'] ?? '' }}</td>
             <td>{{ $data['bahan_kajian'] ?? '' }}</td>
-            <td>{{ $data['sks'] ?? '0' }} / {{ $data['sks_pr'] ?? '0' }}</td>
+            <td>{{ $data['sks'] ?? '-' }}</td>
+            <td>{{ $data['sks_pr'] ?? '-' }}</td>
             <td>{{ $data['semester'] ?? '' }}</td>
             <td>{{ $data['revisi'] ?? '' }}</td>
         </tr>
         <tr>
             <td class="font-bold bg-gray-50 text-center">Deskripsi Mata Kuliah</td>
-            <td colspan="5" class="text-justify leading-relaxed">
+            <td colspan="6" class="text-justify leading-relaxed">
                 {{ $data['deskripsi'] ?? '' }}
             </td>
         </tr>
@@ -97,7 +103,7 @@
                 Kuliah
                 (CPMK)</td>
             @if ($hasCpl)
-                <td colspan="5">
+                <td colspan="6">
                     @foreach (explode("\n", $data['cpl'] ?? '') as $line)
                         @if (trim($line))
                             <div class="list-indent text-justify leading-relaxed mb-1">
@@ -108,7 +114,7 @@
                     @endforeach
                 </td>
             @else
-                <td colspan="5">
+                <td colspan="6">
                     @foreach (explode("\n", $data['cpmk'] ?? '') as $line)
                         @if (trim($line))
                             <div class="list-indent text-justify leading-relaxed mb-1">
@@ -122,7 +128,7 @@
         </tr>
         @if ($hasCpl)
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     @foreach (explode("\n", $data['cpmk'] ?? '') as $line)
                         @if (trim($line))
                             <div class="list-indent text-justify leading-relaxed mb-1">
@@ -137,7 +143,7 @@
         <tr>
             <td rowspan="2" class="font-bold bg-gray-50 text-center"">
                 {{ $data['tim_pengajar_label'] ?? 'Tim Pengajar' }}</td>
-            <td rowspan="2" colspan="2">
+            <td rowspan="2" @if (!empty($data['instruktur'])) colspan="3" @else colspan="6" @endif>
                 @if (str_contains($data['tim_pengajar'] ?? '', "\n"))
                     @foreach (explode("\n", $data['tim_pengajar']) as $idx => $line)
                         @if (trim($line))
@@ -151,32 +157,36 @@
                     {!! $data['tim_pengajar'] ?? '' !!}
                 @endif
             </td>
-            <td class="font-bold bg-gray-50 text-center">Ketua Pengajar</td>
-            <td colspan="2">
-                <div class="font-bold">{{ $data['ketua_tim_pengajar'] ?? '-' }}</div>
-            </td>
+            @if (!empty($data['instruktur']))
+                <td class="font-bold bg-gray-50 text-center">Ketua Pengajar</td>
+                <td colspan="2">
+                    <div class="font-bold">{{ $data['ketua_tim_pengajar'] ?? '-' }}</div>
+                </td>
+            @endif
         </tr>
         <tr>
-            <td class="font-bold bg-gray-50 text-center">Instruktur</td>
-            <td colspan="2">
-                @if (str_contains($data['instruktur'] ?? '', "\n"))
-                    @foreach (explode("\n", $data['instruktur']) as $idx => $line)
-                        @if (trim($line))
-                            <div class="list-indent">
-                                <span class="mr-[5px]">{{ $idx + 1 }}.</span>
-                                {!! $line !!}
-                            </div>
-                        @endif
-                    @endforeach
-                @else
-                    {{ $data['instruktur'] ?? '-' }}
-                @endif
-            </td>
+            @if (!empty($data['instruktur']))
+                <td class="font-bold bg-gray-50 text-center">Instruktur</td>
+                <td colspan="3">
+                    @if (str_contains($data['instruktur'] ?? '', "\n"))
+                        @foreach (explode("\n", $data['instruktur']) as $idx => $line)
+                            @if (trim($line))
+                                <div class="list-indent">
+                                    <span class="mr-[5px]">{{ $idx + 1 }}.</span>
+                                    {!! $line !!}
+                                </div>
+                            @endif
+                        @endforeach
+                    @else
+                        {{ $data['instruktur'] ?? '-' }}
+                    @endif
+                </td>
+            @endif
         </tr>
         <tr>
             <td class="font-bold bg-gray-50 text-center align-middle">Otoritas</td>
 
-            <td colspan="2" class="text-center">
+            <td colspan="3" class="text-center">
                 <div class="flex flex-col justify-between h-18">
                     <div class="h-full">
                     </div>
@@ -203,6 +213,31 @@
     {{-- ================= PROGRAM PEMBELAJARAN ================= --}}
     <div class="font-bold mt-8 mb-2">B. PROGRAM PEMBELAJARAN</div>
     <table class="w-full text-[10px] leading-tight rps-table">
+        @php
+            $programData = collect($data['program_pembelajaran'] ?? []);
+
+            $calculateRowspan = function ($data, $column) {
+                $counts = [];
+                $index = 0;
+                while ($index < count($data)) {
+                    $currentValue = $data[$index][$column] ?? '';
+                    $step = 0;
+                    while ($index + $step < count($data) && ($data[$index + $step][$column] ?? '') === $currentValue) {
+                        $step++;
+                    }
+                    $counts[$index] = $step;
+                    $index += $step;
+                }
+                return $counts;
+            };
+
+            $rowspanCpmk = $calculateRowspan($programData, 'cpmk');
+            // $rowspanMetode = $calculateRowspan($programData, 'metode');
+            // $rowspanIndikator = $calculateRowspan($programData, 'indikator');
+            $rowspanBobot = $calculateRowspan($programData, 'bobot');
+            $rowspanDosen = $calculateRowspan($programData, 'dosen');
+            $isDosenUniform = $programData->pluck('dosen')->unique()->count() === 1;
+        @endphp
         <thead class="bg-gray-50 font-bold text-center">
             <tr>
                 <th class="p-1">CPMK</th>
@@ -213,38 +248,12 @@
                 <th class="p-1 w-[15%]">Deskripsi Tugas atau Asesmen beserta Alokasi Waktunya</th>
                 <th class="p-1">Indikator</th>
                 <th class="p-1">Bobot</th>
-                <th class="p-1">Dosen</th>
+                @if (!$isDosenUniform)
+                    <th class="p-1">Dosen</th>
+                @endif
             </tr>
         </thead>
         <tbody class="border-t border-black">
-            @php
-                $programData = collect($data['program_pembelajaran'] ?? []);
-
-                $calculateRowspan = function ($data, $column) {
-                    $counts = [];
-                    $index = 0;
-                    while ($index < count($data)) {
-                        $currentValue = $data[$index][$column] ?? '';
-                        $step = 0;
-                        while (
-                            $index + $step < count($data) &&
-                            ($data[$index + $step][$column] ?? '') === $currentValue
-                        ) {
-                            $step++;
-                        }
-                        $counts[$index] = $step;
-                        $index += $step;
-                    }
-                    return $counts;
-                };
-
-                $rowspanCpmk = $calculateRowspan($programData, 'cpmk');
-                // $rowspanMetode = $calculateRowspan($programData, 'metode');
-                // $rowspanIndikator = $calculateRowspan($programData, 'indikator');
-                $rowspanBobot = $calculateRowspan($programData, 'bobot');
-                $rowspanDosen = $calculateRowspan($programData, 'dosen');
-            @endphp
-
             @foreach ($programData as $index => $row)
                 @php
                     $isPlaceholder = $row['is_placeholder'] ?? false;
@@ -306,21 +315,23 @@
                     @endif
 
                     {{-- KOLOM DOSEN --}}
-                    @if (isset($rowspanDosen[$index]))
-                        <td class="p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
-                            @if (str_contains($row['dosen'] ?? '', "\n"))
-                                @foreach (explode("\n", $row['dosen'] ?? '') as $line)
-                                    @if (trim($line))
-                                        <div class="list-indent leading-relaxed mb-1">
-                                            <span class="mr-[5px]">{{ $loop->iteration }}.</span>
-                                            {{ trim($line) }}
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @else
-                                {{ $row['dosen'] ?? '-' }}
-                            @endif
-                        </td>
+                    @if (!$isDosenUniform)
+                        @if (isset($rowspanDosen[$index]))
+                            <td class="p-2 align-top border border-black" rowspan="{{ $rowspanDosen[$index] }}">
+                                @if (str_contains($row['dosen'] ?? '', "\n"))
+                                    @foreach (explode("\n", $row['dosen'] ?? '') as $line)
+                                        @if (trim($line))
+                                            <div class="list-indent leading-relaxed mb-1">
+                                                <span class="mr-[5px]">{{ $loop->iteration }}.</span>
+                                                {{ trim($line) }}
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    {{ $row['dosen'] ?? '-' }}
+                                @endif
+                            </td>
+                        @endif
                     @endif
                 </tr>
             @endforeach
@@ -336,7 +347,7 @@
     <div class="page-break"></div>
 
     <div class="mt-8">
-        <h3 class="font-bold bg-gray-50 p-1 text-[10px]">Referensi</h3>
+        <h3 class="font-bold p-1 text-[10px]">Referensi</h3>
         <div class="px-1">
             <ul class="list-none">
                 @foreach (explode("\n", $data['referensi'] ?? '') as $ref)
@@ -351,13 +362,13 @@
     </div>
 
     <div class="mt-6 max-w-xs">
-        <div class="font-bold bg-gray-50 p-1 text-[10px] leading-tight">
+        <div class="font-bold p-1 text-[10px] leading-tight">
             Skala Penilaian
         </div>
 
         <table class="w-full text-[10px] border-collapse nilai-table">
             <thead>
-                <tr class="bg-gray-50">
+                <tr>
                     <th class="w-[20%] text-center font-bold py-0.5 px-1 leading-tight !border-0">
                         Nilai
                     </th>

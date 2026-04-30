@@ -1,17 +1,16 @@
 <div class="relative" wire:key="select-form-{{ $modelString }}" x-data="{
     open: false,
     {{-- Ambil opsi dan value dari Blade ke JS --}}
-        options: [], {{-- Inisialisasi kosong --}}
+        options: [],
         values: [],
     
-    {{-- Fungsi untuk mencari Label berdasarkan Value --}}
     getLabel(val) {
         if (val === '' || val === null || val === undefined) return '';
-        const index = this.values.indexOf(Number(val)); {{-- Gunakan Number() untuk memastikan tipe data --}}
+        const index = this.values.indexOf(Number(val));
         return index !== -1 ? this.options[index] : val;
     },
     
-    value: '' {{-- Init kosong dulu --}}
+    value: ''
 }"
 x-init="value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }})"
 x-effect="

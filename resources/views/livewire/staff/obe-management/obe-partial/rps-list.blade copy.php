@@ -10,8 +10,7 @@
 
         <template x-if="$store.{{ $alpine ?? 'config' }}?.isEdit == 1">
             @include('livewire.global.modal-form.loading-animation', [
-                'wireLoading' =>
-                    'add' . ($wireLoading ?? $nameXString) . ', edit' . ($wireLoading ?? $nameXString),
+                'wireLoading' => 'add' . ($wireLoading ?? $nameXString) . ', edit' . ($wireLoading ?? $nameXString),
             ])
         </template>
 
@@ -35,12 +34,12 @@
             {{-- SUBHEADER --}}
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Daftar RPS:</span>
-                {{-- @if (count($rps_items_list) > 0)
+                @if (count($rps_items_list) > 0)
                     <span
                         class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full font-bold uppercase tracking-tighter">
                         {{ count($rps_items_list) }} RPS
                     </span>
-                @endif --}}
+                @endif
             </div>
 
             {{-- LIST --}}
@@ -63,7 +62,6 @@
                     @foreach ($rps_items_list as $r)
                         <div wire:key="rps-row-{{ $r['id'] }}-{{ $nameXString }}" x-data="{ expanded: false }"
                             wire:loading.class="opacity-50 pointer-events-none"
-                            wire:target="editCPMK, editSCPMK, editCPL, editRef, editUser, loadingRPSList"
                             class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:border-emerald-300 dark:hover:border-emerald-800 transition-all">
 
                             {{-- HEADER ITEM (clickable) --}}
@@ -153,83 +151,45 @@
                                             </div>
                                         </div>
 
-                                        <div
-                                            class="col-span-2 flex items-center gap-6 pt-3 mt-1 border-t border-zinc-200/50 dark:border-zinc-700/50">
+                                       <div
+                                                    class="col-span-2 flex items-center gap-4 pt-3 mt-1 border-t border-zinc-200/50 dark:border-zinc-700/50">
 
+                                                    {{-- Action Link: Edit --}}
+                                                    <button type="button"
+                                                        class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200"
+                                                        @click="
+                                                                $store.rps?.reset();
+                                                                $store.rps?.setEdit(1);
+                                                                $store.rps?.setFlyout(true);
+                                                                $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                                                                $store.rps?.setValueRPS(
+                                                                    '{{ $r['kode_blok'] ?? '' }}',
+                                                                    '{{ $r['deskripsi'] ?? '' }}',
+                                                                    '{{ $r['mk_id'] ?? '' }}',
+                                                                    '{{ $r['kode_mk'] ?? '' }}',
+                                                                    '{{ $r['mk'] ?? '' }}',
+                                                                    '{{ $r['akademik'] ?? '' }}',
+                                                                    '{{ $r['draf'] ?? '' }}',
+                                                                    '{{ $r['count_scpmk'] }}',
+                                                                    '{{ $r['bobot_uts'] }}',
+                                                                    '{{ $r['bobot_uas'] }}',
+                                                                    '{{ $r['total_bobot'] }}'
+                                                                );
+                                                                $flux.modal('rps-modal').show();
+                                                            "
+                                                        wire:click="editRPS('{{ $r['id'] }}')">
 
-                                            <button type="button"
-                                                class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
-                                                @click="
-                                                    $store.rps?.resetShow();
-                                                    $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                                                        <div
+                                                            class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
+                                                            <flux:icon name="pencil-square" variant="micro"
+                                                                class="w-3.5 h-3.5" />
+                                                        </div>
+                                                        <span>Edit RPS</span>
+                                                        <flux:icon wire:loading wire:target="editRPS()"
+                                                            name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+                                                    </button>
 
-                                                        $store.rps?.setShowRPS(
-                                                            '{{ $r['id'] }}',
-                                                            '{{ $r['rps'] }}',
-                                                        );
-
-                                                    $flux.modal('rps-detail-modal').show();
-                                                "
-                                                wire:click="showRPS({{ $r['id'] }})"
-                                            >
-                                                <div
-                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30 transition-colors">
-                                                    <flux:icon name="eye" variant="micro" class="w-3.5 h-3.5" />
                                                 </div>
-                                                <span>Show RPS</span>
-                                                <flux:icon wire:loading wire:target="showRPS({{ $r['id'] }})"
-                                                    name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
-                                            </button>
-
-                                            <button type="button"
-                                                class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200"
-                                                wire:click="printPDF({{ $r['id'] }})"
-                                            >
-                                                <div
-                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
-                                                    <flux:icon name="printer" variant="micro" class="w-3.5 h-3.5" />
-                                                </div>
-                                                <span>Print PDF RPS</span>
-                                                <flux:icon wire:loading wire:target="printPDF({{ $r['id'] }})"
-                                                    name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
-                                            </button>
-
-                                            {{-- Action Link: Edit --}}
-                                            <button type="button"
-                                                class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
-                                                @click="
-                                                    $store.rps?.reset();
-                                                    $store.rps?.setEdit(1);
-                                                    $store.rps?.setFlyout(true);
-                                                    $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
-                                                    $store.rps?.setValueRPS(
-                                                        '{{ $r['kode_blok'] ?? '' }}',
-                                                        '{{ $r['deskripsi'] ?? '' }}',
-                                                        '{{ $r['mk_id'] ?? '' }}',
-                                                        '{{ $r['kode_mk'] ?? '' }}',
-                                                        '{{ $r['mk'] ?? '' }}',
-                                                        '{{ $r['akademik'] ?? '' }}',
-                                                        '{{ $r['draf'] ?? '' }}',
-                                                        '{{ $r['count_scpmk'] }}',
-                                                        '{{ $r['bobot_uts'] }}',
-                                                        '{{ $r['bobot_uas'] }}',
-                                                        '{{ $r['total_bobot'] }}'
-                                                    );
-                                                    $flux.modal('rps-modal').show();
-                                                "
-                                                wire:click="editRPS('{{ $r['id'] }}')"
-                                            >
-                                                <div
-                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
-                                                    <flux:icon name="pencil-square" variant="micro"
-                                                        class="w-3.5 h-3.5" />
-                                                </div>
-                                                <span>Edit RPS</span>
-                                                <flux:icon wire:loading wire:target="editRPS({{ $r['id'] }})"
-                                                    name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
-                                            </button>
-
-                                        </div>
 
                                     </div>
                                 </div>

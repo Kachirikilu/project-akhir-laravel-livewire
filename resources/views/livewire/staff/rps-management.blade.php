@@ -27,7 +27,7 @@
             },
         ])
         @else
-            @include('livewire.admin.user-management.user-table')
+            @include('livewire.admin.user-management.user-table', ['withRPS' => true])
             @include('livewire.admin.user-management.user-modal-delete')
         @endif
     </div>
@@ -40,7 +40,7 @@
     @include('livewire.staff.obe-management.cpl-management.cpl-flyout')
     @include('livewire.staff.obe-management.ref-management.ref-flyout')
 
-    @include('livewire.admin.user-management.user-modal-form')
+    @include('livewire.admin.user-management.user-modal-form', ['withRPS' => true])
     
     {{-- @include('livewire.staff.obe-management.rps-management.rps-modal-delete') --}}
 </div>

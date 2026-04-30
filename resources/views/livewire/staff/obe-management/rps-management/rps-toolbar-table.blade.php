@@ -7,7 +7,18 @@
 
                     $store.rps?.setShowRPS(
                         '{{ $x->id ?? '' }}',
-                        '{{ $x->rps ?? '' }}',
+                        {{-- '{{ $x->rps ?? '' }}', --}}
+                        {{-- '{{ $x->kode_blok ?? '' }}',
+                        '{{ $x->deskripsi ?? '' }}',
+                        '{{ $x->mk_id ?? '' }}',
+                        '{{ $x->kode_mk ?? '' }}',
+                        '{{ $x->mk ?? '' }}',
+                        '{{ $x->akademik ?? '' }}',
+                        '{{ $x->draf ?? '' }}',
+                        '{{ $x->count_scpmk ?? '' }}',
+                        '{{ $x->bobot_uts ?? '' }}',
+                        '{{ $x->bobot_uas ?? '' }}',
+                        '{{ $x->total_bobot ?? '' }}' --}}
                     );
 
                     $flux.modal('rps-detail-modal').show();
@@ -35,7 +46,7 @@
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
             </div>
-            <flux:icon wire:loading wire:target="printPDF" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+            <flux:icon wire:loading wire:target="printPDF({{ $x->id }})" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
         </div>
 
         <flux:menu.separator />
@@ -52,16 +63,16 @@
 
                     $store.rps?.setValueRPS(
                         '{{ $x->kode_blok ?? '' }}',
-                        '{{ $x->deskripsi ?? '' }}',
+                        '{{ $x->deskripsi_rps ?? '' }}',
                         '{{ $x->mk_id ?? '' }}',
                         '{{ $x->kode_mk ?? '' }}',
                         '{{ $x->mk ?? '' }}',
                         '{{ $x->akademik ?? '' }}',
                         '{{ $x->draf ?? '' }}',
-                        '{{ $x->count_scpmk }}',
-                        '{{ $x->bobot_uts }}',
-                        '{{ $x->bobot_uas }}',
-                        '{{ $x->total_bobot }}'
+                        '{{ $x->count_scpmk ?? '' }}',
+                        '{{ $x->bobot_uts ?? '' }}',
+                        '{{ $x->bobot_uas ?? '' }}',
+                        '{{ $x->total_bobot ?? '' }}'
                     );
 
                     $flux.modal('rps-modal').show();

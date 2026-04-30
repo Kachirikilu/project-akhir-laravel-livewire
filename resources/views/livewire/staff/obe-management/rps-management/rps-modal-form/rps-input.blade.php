@@ -1,5 +1,12 @@
-<div x-data="{ step: 1 }">
-
+<div 
+    x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showRPSModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showRPSModal
+    "
+>
     {{-- 🔹 HEADER TAB CONTAINER --}}
     @include('livewire.global.modal-form.paginate.tab-form', [
         'tabs' => [1 => 'RPS', 2 => 'CPMK', 3 => 'CPL', 4 => 'Referensi', 5 => 'Dosen'],

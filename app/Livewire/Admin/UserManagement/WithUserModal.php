@@ -2,13 +2,14 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasErrorCount;
+use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDosenSearchFilters;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
+use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,8 +19,8 @@ use Illuminate\Validation\ValidationException;
 
 trait WithUserModal
 {
-    use HasToast;
     use HasErrorCount;
+    use HasToast;
     use WithDosenSearchFilters;
 
     public $showUserModal = false;
@@ -31,6 +32,14 @@ trait WithUserModal
     public $selected_id_user;
 
     public $pr_id_2;
+
+    public $dosen_rps_items_list = [];
+
+    public $dosen_rps_modal_page = 3;
+
+    public $dosen_rps_id;
+
+    protected $dosen_rps_modal_paginator;
 
     protected $rules = [
         'email' => 'required|email',
@@ -58,7 +67,7 @@ trait WithUserModal
         $this->updatedPrNameSearch($this->prNameSearch);
     }
 
-    public function editUser($id)
+    public function editUser($id, $withRPS = false)
     {
         if (! $this->AuthCheck()) {
             return;
@@ -81,10 +90,41 @@ trait WithUserModal
             $this->getPrbyUser();
             $this->fetchPr($this->prNameSearch);
 
+            if ($user->dosen && $withRPS) {
+                $this->dosen_rps_id = $user->dosen->id;
+                $this->resetPage('dosen_rps_modal_page');
+                $this->loadDosenRPSPagination();
+            }
+
             $this->roleType = strtolower($user->role);
         } catch (\Exception $e) {
             $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
         }
+    }
+
+    private function loadDosenRPSPagination()
+    {
+        if (empty($this->dosen_rps_id)) {
+            return;
+        }
+
+        $dosen = Dosen::find($this->dosen_rps_id);
+
+        if (! $dosen) {
+            return;
+        }
+
+        $rps = RPS::whereHas('dosens', function ($query) use ($dosen) {
+            $query->where('dosens.id', $dosen->id);
+        })->paginate($this->dosen_rps_modal_page, ['*'], 'dosen_rps_modal_page');
+
+        $this->dosen_rps_items_list = $this->mapRPS($rps);
+        $this->dosen_rps_modal_paginator = $rps;
+    }
+
+    public function updatedDosenRPSModalPage($page)
+    {
+        $this->loadDosenRPSPagination();
     }
 
     private function inputModalUser($isEditingUser, $data)
@@ -525,6 +565,7 @@ trait WithUserModal
                 'pr_id',
                 'status',
             ]),
+            3 => $this->getErrorCount([]),
         ];
     }
 

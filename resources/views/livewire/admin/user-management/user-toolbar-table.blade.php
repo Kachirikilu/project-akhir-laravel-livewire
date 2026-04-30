@@ -5,7 +5,9 @@
         @php
             $isTrashed = $x->trashed();
 
-            $editCall = "editUser($x->id)";
+            $rpsCall = $withRPS ?? false;
+
+            $editCall = "editUser($x->id, $rpsCall)";
             $deleteCall = "deleteUser($x->id, $isTrashed)";
             $restoreCall = "restoreUser($x->id)";
 

@@ -1,10 +1,17 @@
-<div x-data="{ step: 1 }">
-
+<div x-data="{ step: 1, isOpen: false }"
+    x-effect="
+        if ($wire.showCPLModal && !isOpen) {
+            step = 1
+        }
+        isOpen = $wire.showCPLModal
+    ">
     {{-- 🔹 HEADER TAB CONTAINER --}}
-    @include('livewire.global.modal-form.paginate.tab-form', [
-        'tabs' => [1 => 'CPL', 2 => 'RPS Terkait'],
-        'errorsCount' => $this->getCPLErrorSections(),
-    ])
+    <template x-if="$store.cpl.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.tab-form', [
+            'tabs' => [1 => 'CPL', 2 => 'RPS Terkait'],
+            'errorsCount' => $this->getCPLErrorSections(),
+        ])
+    </template>
 
     {{-- 🔹 CONTENT --}}
     <div class="mt-4">
@@ -65,17 +72,22 @@
 
         </div>
         <div x-show="step === 2">
-            @include('livewire.staff.obe-management.obe-partial.rps-list', [
-                'alpine' => 'cpl',
-                'rps_items_list' => $cpl_rps_items_list,
-                'rps_modal_paginator' => $cpl_rps_modal_paginator,
-                'nameXString' => 'CPL',
-            ])
+            <template x-if="$store.cpl.isEdit" x-cloak>
+                @include('livewire.staff.obe-management.obe-partial.rps-list', [
+                    'alpine' => 'cpl',
+                    'rps_items_list' => $cpl_rps_items_list,
+                    'rps_modal_paginator' => $cpl_rps_modal_paginator,
+                    'nameXString' => 'CPL',
+                ])
+            </template>
+
         </div>
     </div>
 
     {{-- 🔹 FOOTER STEPPER --}}
-    @include('livewire.global.modal-form.paginate.stepper-form', [
-        'maxStep' => 2,
-    ])
+    <template x-if="$store.cpl.isEdit" x-cloak>
+        @include('livewire.global.modal-form.paginate.stepper-form', [
+            'maxStep' => 2,
+        ])
+    </template>
 </div>
