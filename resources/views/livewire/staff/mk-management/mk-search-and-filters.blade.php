@@ -9,16 +9,19 @@
         class="border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
-            'typeXString' => 'Opsi',
             'filterByFunc' => 'filterByMK',
             'filterString' => 'filterMK',
-            'totalTab' => $totalAllOpsi,
-            'totalTab1' => $totalWajib,
-            'totalTab2' => $totalPilihan,
-            'totalTab3' => $totalUni,
-            'tab1String' => 'wajib',
-            'tab2String' => 'pilihan',
-            'tab3String' => 'universitas',
+            'totalTab' => $totalMKProdi,
+            'totalTab1' => $totalMKOpsi,
+            'totalTab2' => $totalWajib,
+            'totalTab3' => $totalPilihan,
+            'totalTab4' => $totalUni,
+            'tab1String' => 'mk-all',
+            'tab2String' => 'wajib',
+            'tab3String' => 'pilihan',
+            'tab4String' => 'universitas',
+            'tabName' => Auth::user()->prodi,
+            'tab1Name' => 'Semua MK'
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}

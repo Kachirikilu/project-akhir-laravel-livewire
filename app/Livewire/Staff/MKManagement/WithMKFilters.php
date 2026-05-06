@@ -2,11 +2,14 @@
 
 namespace App\Livewire\Staff\MKManagement;
 
+use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 trait WithMKFilters
 {
+    use HasSortir;
     use WithPagination;
 
     public $search = '';
@@ -49,7 +52,11 @@ trait WithMKFilters
 
     public function buttonMKFilter($queryMK)
     {
-        if ($this->filterMK === 'wajib') {
+        if ($this->filterMK === '') {
+            $totalMKSaya = $queryMK->whereHas('prodis', function ($q) {
+                $q->where('prodis.id', Auth::user()->pr_id);
+            });
+        } elseif ($this->filterMK === 'wajib') {
             $queryMK->where('is_wajib', true);
         } elseif ($this->filterMK === 'pilihan') {
             $queryMK->where('is_wajib', false);
@@ -104,53 +111,4 @@ trait WithMKFilters
             CASE WHEN tipe_sks = $targetType THEN sks_kuliah ELSE 0 END $this->sortDirection
         ");
     }
-
-    private function applyMKKodeSort($queryMK)
-    {
-        return $queryMK->orderByRaw("
-            (
-                SELECT CONCAT(
-                    MIN(
-                        CASE 
-                            WHEN mk.level_mk = 1 THEN COALESCE(p.kode_pr, j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 2 THEN COALESCE(j.kode_dp, f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 3 THEN COALESCE(f.kode_fk, 'UNI')
-                            WHEN mk.level_mk = 4 THEN 'UNI'
-                            ELSE mk.kode_mk
-                        END
-                    ),
-                    LPAD(mk.digit_semester, 2, '0'),
-                    LPAD(mk.digit_mk, 2, '0')
-                )
-                FROM mata_kuliahs mk
-                LEFT JOIN prodi_pivot_mk ppm ON mk.id = ppm.mk_id
-                LEFT JOIN prodis p ON ppm.pr_id = p.id
-                LEFT JOIN departemens j ON p.dp_id = j.id
-                LEFT JOIN fakultas f ON j.fk_id = f.id
-                WHERE mk.id = mata_kuliahs.id
-            ) {$this->sortDirection}
-        ");
-    }
-
-    // private function applyMKKodeSort($queryMK)
-    // {
-    //     return $queryMK->leftJoin('prodi_pivot_mk', 'mata_kuliahs.id', '=', 'prodi_pivot_mk.mk_id')
-    //         ->leftJoin('prodis', 'prodi_pivot_mk.pr_id', '=', 'prodis.id')
-    //         ->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
-    //         ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id')
-    //         ->groupBy('mata_kuliahs.id')
-    //         ->orderByRaw("
-    //             CONCAT(
-    //                 MAX(CASE
-    //                     WHEN mata_kuliahs.level_mk = 1 THEN UPPER(mata_kuliahs.kode_mk)
-    //                     WHEN mata_kuliahs.level_mk = 2 THEN COALESCE(prodis.kode_pr, departemens.kode_dp, fakultas.kode_fk, 'UNI')
-    //                     WHEN mata_kuliahs.level_mk = 3 THEN COALESCE(departemens.kode_dp, fakultas.kode_fk, 'UNI')
-    //                     WHEN mata_kuliahs.level_mk = 4 THEN COALESCE(fakultas.kode_fk, 'UNI')
-    //                     ELSE 'UNI'
-    //                 END),
-    //                 MAX(mata_kuliahs.digit_semester),
-    //                 MAX(mata_kuliahs.digit_mk)
-    //             ) $this->sortDirection
-    //         ");
-    // }
 }

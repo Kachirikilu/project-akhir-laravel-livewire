@@ -83,6 +83,16 @@ class MataKuliah extends Model
         });
     }
 
+    protected function kodeSemester(): Attribute
+    {
+        return Attribute::get(function () {
+            $semester = $this->semester;
+            $ganjilGenap = $semester % 2 === 1 ? '01' : '02';
+
+            return $ganjilGenap;
+        });
+    }
+
     // Helper untuk mengambil objek prodi pertama (Eager Loaded)
     // protected function getFirstProdi()
     // {
@@ -313,40 +323,17 @@ class MataKuliah extends Model
                 $q->orWhere('mata_kuliahs.tipe_sks', $tipeMap[$searchLower]);
             }
 
-            // 6. Partial Code Search (Prefix & Digits)
+            // 6. SKS
+            if (preg_match('/^(\d+(?:\.\d+)?) ?sks$/i', $search, $matches)) {
+                $q->orWhere('mata_kuliahs.sks_kuliah', $matches[1]);
+            }
+
+            // 7. Partial Code Search (Prefix & Digits)
             $cleanSearchUpper = strtoupper($search);
             if (preg_match('/[A-Z0-9]/', $cleanSearchUpper)) {
                 $q->orWhere(function ($sq) use ($cleanSearchUpper) {
                     $prefixPart = preg_replace('/[^A-Z]/', '', $cleanSearchUpper);
                     $digitPart = preg_replace('/[^0-9]/', '', $cleanSearchUpper);
-
-                    // $sq->where(function ($sub) use ($prefixPart, $digitPart) {
-                    //     if (!empty($prefixPart)) {
-                    //         $sub->where(function ($low) use ($prefixPart) {
-                    //             $low->where('mata_kuliahs.kode_mk', 'like', $prefixPart . '%')
-                    //                 ->orWhereHas('prodis', function ($pro) use ($prefixPart) {
-                    //                     $pro->where('kode_pr', 'like', $prefixPart . '%')
-                    //                         ->orWhereHas('dp_rel', function ($jur) use ($prefixPart) {
-                    //                             $jur->where('kode_dp', 'like', $prefixPart . '%')
-                    //                                 ->orWhereHas('fk_rel', function ($fak) use ($prefixPart) {
-                    //                                     $fak->where('kode_fk', 'like', $prefixPart . '%');
-                    //                                 });
-                    //                         });
-                    //                 })
-                    //                 ->when($prefixPart === 'UNI', fn($uni) => $uni->orWhere('level_mk', '4'));
-                    //         });
-                    //     }
-                    //     if (!empty($digitPart)) {
-                    //         if (strlen($digitPart) <= 2) {
-                    //             $sub->where('mata_kuliahs.digit_semester', 'like', $digitPart . '%');
-                    //         } else {
-                    //             $dSem = substr($digitPart, 0, 2);
-                    //             $dMk = substr($digitPart, 2);
-                    //             $sub->where('mata_kuliahs.digit_semester', 'like', $dSem . '%')
-                    //                 ->where('mata_kuliahs.digit_mk', 'like', $dMk . '%');
-                    //         }
-                    //     }
-                    // });
 
                     $sq->where(function ($sub) use ($prefixPart, $digitPart) {
                         if (! empty($prefixPart)) {
@@ -402,7 +389,7 @@ class MataKuliah extends Model
                 });
             }
 
-            // 7. Silsilah (Prodi/Departemen/Fakultas)
+            // 8. Silsilah (Prodi/Departemen/Fakultas)
             // $q->orWhereHas('prodis', function ($pq) use ($searchTerm) {
             //     $pq->where('nama_pr', 'like', $searchTerm)
             //         ->orWhere('kode_pr', 'like', $searchTerm)

@@ -36,28 +36,29 @@ trait WithMKSearchFilters
 
     private function mapMK($collection)
     {
-        return $collection->map(fn ($mk) => [
-            'id' => $mk->id,
-            'kode' => $mk->kode,
-            'mk' => $mk->mk,
-            'semester' => $mk->semester,
-            'sks' => $mk->sks,
-            'sks_text' => $mk->sks_text,
-            'sks_full' => $mk->sks_full,
-            'wajib_text' => $mk->wajib_text,
-            'level_mk' => $mk->level_mk,
+        return $collection->map(fn ($m) => [
+            'id' => $m->id,
+            'kode' => $m->kode,
+            'mk' => $m->mk,
+            'semester' => $m->semester,
+            'kode_semester' => $m->kode_semester,
+            'sks' => $m->sks,
+            'sks_text' => $m->sks_text,
+            'sks_full' => $m->sks_full,
+            'wajib_text' => $m->wajib_text,
+            'level_mk' => $m->level_mk,
         ])->toArray();
     }
 
     private function mapMKSearch($collection)
     {
-        return $collection->map(fn ($mk) => [
-            'id' => $mk->id,
-            'kode' => $mk->kode,
-            'mk' => $mk->mk,
-            'semester_text' => $mk->semester_text,
-            'sks_full' => $mk->sks_full,
-            'wajib_text' => $mk->wajib_text,
+        return $collection->map(fn ($m) => [
+            'id' => $m->id,
+            'kode' => $m->kode,
+            'mk' => $m->mk,
+            'semester_text' => $m->semester_text,
+            'sks_full' => $m->sks_full,
+            'wajib_text' => $m->wajib_text,
         ])->toArray();
     }
 
@@ -76,6 +77,7 @@ trait WithMKSearchFilters
             'id' => $m->id,
             'kode' => $m->kode,
             'slot1' => $m->mk,
+            'slot2' => $m->kode_semester,
         ];
     }
 

@@ -389,7 +389,7 @@ trait WithUserModal
                     ]);
                 }
 
-                if ($this->showRPSModal && $dosen) {
+                if (!empty($this->showRPSModal) && $dosen) {
                     if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
                         $this->dosen_id_array = [];
                     }

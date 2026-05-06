@@ -3,10 +3,12 @@
 namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Models\ProgramStudi\Prodi;
+use App\Livewire\Global\HasSortir;
 use Livewire\WithPagination;
 
 trait WithProdiFilters
 {
+    use HasSortir;
     use WithPagination;
 
     public $search = '';
@@ -56,7 +58,7 @@ trait WithProdiFilters
         $queryPr->select("$primaryTable.*");
 
         return match ($this->sortField) {
-            'prodi' => $this->applyProdiNameSort($queryPr),
+            'prodi' => $this->applyProdiSort($queryPr),
             'departemen' => $queryPr->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
                 ->orderBy('departemens.nama_dp', $this->sortDirection),
             'fakultas' => $queryPr->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
@@ -66,19 +68,6 @@ trait WithProdiFilters
             'kode' => $this->applyProdiKodeSort($queryPr),
             default => $queryPr->orderBy("$primaryTable.id", $this->sortDirection),
         };
-    }
-
-    private function applyProdiNameSort($queryPr)
-    {
-        return $queryPr->orderBy('prodis.nama_pr', $this->sortDirection)
-            ->orderByRaw("
-                CASE 
-                    WHEN strata = 'Sarjana' THEN 1 
-                    WHEN strata = 'Magister' THEN 2 
-                    WHEN strata = 'Doktor' THEN 3 
-                    ELSE 4 
-                END ".$this->sortDirection
-            );
     }
 
     private function applyProdiKodeSort($queryPr)

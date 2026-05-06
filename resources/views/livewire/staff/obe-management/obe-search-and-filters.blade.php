@@ -13,27 +13,56 @@
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
-            @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'RPS',
-                'filterByFunc' => 'filterByRPS',
-                'filterString' => 'filterRPS',
-                'totalTab' => $totalRPS,
-                'totalTab1' => $stats['rps-akademik'],
-                'totalTab2' => $stats['rps-rev-new'],
-                'totalTab3' => $stats['rps-aktif'],
-                'totalTab4' => $stats['rps-draf'],
-                'totalTab5' => $stats['rps-older-5'],
-                'tab1String' => 'rps-akademik',
-                'tab2String' => 'rps-rev-new',
-                'tab3String' => 'rps-aktif',
-                'tab4String' => 'rps-draf',
-                'tab5String' => 'rps-older-5',
-                'tab1Name' => 'Terbaru',
-                'tab2Name' => 'Baru Direvisi',
-                'tab3Name' => 'Aktif',
-                'tab4Name' => 'Draf',
-                'tab5Name' => '>5 Tahun Lalu',
-            ])
+
+
+            @if (Auth::user()->dosen)
+                @include('livewire.global.search-and-filters.filter-mode', [
+                    'filterByFunc' => 'filterByRPS',
+                    'filterString' => 'filterRPS',
+                    'totalTab' => $totalRPSSaya,
+                    'totalTab1' => $totalRPS,
+                    'totalTab2' => $stats['rps-akademik'],
+                    'totalTab3' => $stats['rps-rev-new'],
+                    'totalTab4' => $stats['rps-aktif'],
+                    'totalTab5' => $stats['rps-draf'],
+                    'totalTab6' => $stats['rps-older-5'],
+                    'tab1String' => 'rps-all',
+                    'tab2String' => 'rps-akademik',
+                    'tab3String' => 'rps-rev-new',
+                    'tab4String' => 'rps-aktif',
+                    'tab5String' => 'rps-draf',
+                    'tab6String' => 'rps-older-5',
+                    'tabName' => 'RPS Saya',
+                    'tab1Name' => 'Semua RPS',
+                    'tab2Name' => 'Terbaru',
+                    'tab3Name' => 'Baru Direvisi',
+                    'tab4Name' => 'Aktif',
+                    'tab5Name' => 'Draf',
+                    'tab6Name' => '>5 Tahun Lalu',
+                ])
+            @else
+                @include('livewire.global.search-and-filters.filter-mode', [
+                    'filterByFunc' => 'filterByRPS',
+                    'filterString' => 'filterRPS',
+                    'totalTab' => $totalRPS,
+                    'totalTab1' => $stats['rps-akademik'],
+                    'totalTab2' => $stats['rps-rev-new'],
+                    'totalTab3' => $stats['rps-aktif'],
+                    'totalTab4' => $stats['rps-draf'],
+                    'totalTab5' => $stats['rps-older-5'],
+                    'tab1String' => 'rps-akademik',
+                    'tab2String' => 'rps-rev-new',
+                    'tab3String' => 'rps-aktif',
+                    'tab4String' => 'rps-draf',
+                    'tab5String' => 'rps-older-5',
+                    'tabName' => 'Semua RPS',
+                    'tab1Name' => 'Terbaru',
+                    'tab2Name' => 'Baru Direvisi',
+                    'tab3Name' => 'Aktif',
+                    'tab4Name' => 'Draf',
+                    'tab5Name' => '>5 Tahun Lalu',
+                ])
+            @endif
 
             @include('livewire.global.search-and-filters.page-control', [
                 'perPageOptions' => [3, 5, 8, 10, 15, 25, 50, 75, 100, 150, 200],
@@ -49,7 +78,6 @@
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'CPMK',
                 'filterByFunc' => 'filterByCPMK',
                 'filterString' => 'filterCPMK',
                 'totalTab' => $totalCPMK,
@@ -61,6 +89,7 @@
                 'tab2String' => 'cpmk-6-months',
                 'tab3String' => 'cpmk-year',
                 'tab4String' => 'cpmk-older-5',
+                'tabName' => 'Semua CPMK',
                 'tab1Name' => 'Terbaru',
                 'tab2Name' => 'Semester Ini',
                 'tab3Name' => 'Tahun Ini',
@@ -81,7 +110,6 @@
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'SCPMK',
                 'filterByFunc' => 'filterBySCPMK',
                 'filterString' => 'filterSCPMK',
                 'totalTab' => $totalSCPMK,
@@ -93,6 +121,7 @@
                 'tab2String' => 'scpmk-6-months',
                 'tab3String' => 'scpmk-year',
                 'tab4String' => 'scpmk-older-5',
+                'tabName' => 'Semua Sub-CPMK',
                 'tab1Name' => 'Terbaru',
                 'tab2Name' => 'Semester Ini',
                 'tab3Name' => 'Tahun Ini',
@@ -114,7 +143,6 @@
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'CPL',
                 'filterByFunc' => 'filterByCPL',
                 'filterString' => 'filterCPL',
                 'totalTab' => $totalCPL,
@@ -126,6 +154,7 @@
                 'tab2String' => 'cpl-6-months',
                 'tab3String' => 'cpl-year',
                 'tab4String' => 'cpl-older-5',
+                'tabName' => 'Semua CPL',
                 'tab1Name' => 'Terbaru',
                 'tab2Name' => 'Semester Ini',
                 'tab3Name' => 'Tahun Ini',
@@ -146,7 +175,6 @@
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'Dosen',
                 'filterByFunc' => 'filterByDosen',
                 'filterString' => 'filterDosen',
                 'totalTab' => $totalDosen,
@@ -154,11 +182,11 @@
                 'totalTab2' => $stats['dosen-non-rps'],
                 'tab1String' => 'dosen-rps',
                 'tab2String' => 'dosen-non-rps',
+                'tabName' => 'Semua Dosen',
                 'tab1Name' => 'Memiliki RPS',
                 'tab2Name' => 'Tidak Memiliki RPS',
             ])
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'Status',
                 'filterByFunc' => 'filterByStatus',
                 'filterString' => 'filterStatus',
                 'totalTab' => $totalDosen,
@@ -166,6 +194,7 @@
                 'totalTab2' => $stats['dosen-non-aktif'],
                 'tab1String' => 'aktif',
                 'tab2String' => 'non-aktif',
+                'tabName' => 'Semua Status',
                 'tab2Name' => 'Tidak Aktif',
             ])
 
@@ -184,7 +213,6 @@
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
             class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
             @include('livewire.global.search-and-filters.filter-mode', [
-                'typeXString' => 'Referensi',
                 'filterByFunc' => 'filterByRef',
                 'filterString' => 'filterRef',
                 'totalTab' => $totalRef,
@@ -198,6 +226,7 @@
                 'tab3String' => 'ref-4-5-years',
                 'tab4String' => 'ref-6-10-years',
                 'tab5String' => 'ref-older-10',
+                'tabName' => 'Semua Referensi',
                 'tab1Name' => 'Terbaru',
                 'tab2Name' => '2-3 Tahun Lalu',
                 'tab3Name' => '4-5 Tahun Lalu',
@@ -248,7 +277,11 @@
         </div>
 
         {{-- 🔹 MK --}}
-        <div x-show="activeTab == 'rps'" class="sm:col-span-3 relative grid row-start-2 col-start-1">
+        @if (Auth::user()->admin || $this->filterRPS !== '')
+            <div x-show="activeTab == 'rps'" class="sm:col-span-3 relative grid row-start-2 col-start-1">
+        @else
+            <div x-show="activeTab == 'rps'" class="sm:col-span-7 relative grid row-start-2 col-start-1">
+        @endif
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputMKFilter',
                 'xSearchResultsString' => 'mkSearchResults',
@@ -269,27 +302,31 @@
             ])
         </div>
 
-        {{-- 🔹 Dosen --}}
-        <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative row-start-2 col-start-2">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputDosenFilter',
-                'xSearchResultsString' => 'dosenSearchResults',
-                'iconString' => 'user',
-                'placeholderString' => 'Filter berdasarkan Dosen...',
-                'xSearchQueryString' => 'dosenSearchQuery',
-                'selectedXId' => $selectedDosenId,
-                'selectedXName' => $dosen_name,
-                'resetXFilter' => 'resetDosenFilter()',
-                'xSearchQuery' => $dosenSearchQuery,
-                'xSearchResults' => $dosenSearchResults,
-                'selectXForFilterString' => 'selectDosenForFilter',
-                'typeXString' => 'name',
-                'typeX2String' => 'prodi',
-                'typeX3String' => 'departemen',
-                'typeX4String' => 'fakultas',
-                'unfoundString' => 'Tidak ada Dosen ditemukan!',
-            ])
-        </div>
+        @if (Auth::user()->admin || $this->filterRPS !== '')
+            {{-- 🔹 Dosen --}}
+            <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative row-start-2 col-start-2">
+                @include('livewire.global.search-and-filters.secondary-search', [
+                    'inputXFilterString' => 'inputDosenFilter',
+                    'xSearchResultsString' => 'dosenSearchResults',
+                    'iconString' => 'user',
+                    'placeholderString' => 'Filter berdasarkan Dosen...',
+                    'xSearchQueryString' => 'dosenSearchQuery',
+                    'selectedXId' => $selectedDosenId,
+                    'selectedXName' => $dosen_name,
+                    'resetXFilter' => 'resetDosenFilter()',
+                    'xSearchQuery' => $dosenSearchQuery,
+                    'xSearchResults' => $dosenSearchResults,
+                    'selectXForFilterString' => 'selectDosenForFilter',
+                    'typeXString' => 'name',
+                    'typeX2String' => 'nip_full',
+                    'typeX3String' => 'status',
+                    'typeKodeString' => 'kode_pr',
+                    'unfoundString' => 'Tidak ada Dosen ditemukan!',
+                ])
+
+            </div>
+        @endif
+
 
         {{-- 🔹 RPS --}}
         <div x-show="activeTab !== 'rps'"

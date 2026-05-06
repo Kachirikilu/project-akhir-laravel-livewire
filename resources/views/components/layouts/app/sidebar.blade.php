@@ -91,11 +91,11 @@
                 
                 $allNavItems = [
                     ['icon' => 'home', 'route' => 'dashboard', 'label' => 'Dashboard', 'roles' => ['admin', 'dosen', 'mahasiswa']],
-                    ['icon' => 'user', 'route' => 'user-management', 'label' => 'User Management', 'roles' => ['admin']],
+                    ['icon' => 'users', 'route' => 'user-management', 'label' => 'User Management', 'roles' => ['admin']],
                     ['icon' => 'academic-cap', 'route' => 'program-studi-management', 'label' => 'Study Program', 'roles' => ['admin']],
                     ['icon' => 'rectangle-stack', 'route' => 'mata-kuliah-management', 'label' => 'Mata Kuliah', 'roles' => ['admin', 'dosen']],
                     ['icon' => 'clipboard-document-list', 'route' => 'rps-management', 'label' => 'RPS Management', 'roles' => ['admin', 'dosen']],
-                    ['icon' => 'clipboard-document-list', 'route' => 'kelas-management', 'label' => 'Kelas Management', 'roles' => ['admin', 'dosen']],
+                    ['icon' => 'rectangle-group', 'route' => 'kelas-management', 'label' => 'Kelas Management', 'roles' => ['admin', 'dosen']],
                 ];
 
                 $navItems = array_filter($allNavItems, function($item) use ($user) {

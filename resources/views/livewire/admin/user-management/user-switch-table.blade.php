@@ -22,16 +22,16 @@
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalMahasiswas,
-                'tabString' => 'mahasiswa',
-                'tabNameString' => 'Mahasiswa'
+                'tabFilter' => $totalDosens,
+                'tabString' => 'dosen',
+                'tabNameString' => 'Dosen'
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalDosens,
-                'tabString' => 'dosen',
-                'tabNameString' => 'Dosen'
+                'tabFilter' => $totalMahasiswas,
+                'tabString' => 'mahasiswa',
+                'tabNameString' => 'Mahasiswa'
             ])
         </div>
 

@@ -65,7 +65,7 @@
                             {{ $x[$typeXString] }}
                         </div>
 
-                        <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
+                        {{-- <div class="text-[var(--contrast-main-text)] text-xs flex items-center mt-0.5">
                             <span>- <span class="text-[var(--hover-focus-color)] font-medium">ID:
                                     {{ $x['id'] }}</span></span>
 
@@ -81,10 +81,42 @@
                                 <span class="mx-1 text-[var(--contrast-second-text)]">|</span>
                                 <span>{{ $x[$typeX4String] }}</span>
                             @endif
+                        </div> --}}
+
+                        <div class="flex flex-wrap items-center text-sm">
+                            <div class="whitespace-nowrap text-[var(--hover-focus-color)]">
+                                <span class="font-bold">- ID: {{ $x['id'] }}</span>
+                            </div>
+
+                            @if ($typeX2String ?? null)
+                                <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                    <span class="mx-2">|</span>
+                                    <span>{{ $x[$typeX2String] }}</span>
+                                </div>
+                            @endif
+
+                            @if ($typeX3String ?? null)
+                                <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                    <span class="mx-2">|</span>
+                                    <span>{{ $x[$typeX3String] }}</span>
+                                </div>
+                            @endif
+
+                            @if ($typeX4String ?? null)
+                                <div class="inline-flex items-center whitespace-nowrap text-[var(--contrast-second-text)]">
+                                    <span class="mx-2">|</span>
+                                    <span>{{ $x[$typeX4String] }}</span>
+                                </div>
+                            @endif
                         </div>
+
                     </div>
                     <span class="bg-[var(--focus-color)] text-[var(--main-text)] text-xs px-2 py-1 rounded-md ml-2">
-                        {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
+                        @if ($typeKodeString ?? null)
+                            {{ $x[$typeKodeString] }}
+                        @else
+                            {{ filled($x['kode']) ? $x['kode'] : 'UNI' }}
+                        @endif
                     </span>
                 </div>
             </div>

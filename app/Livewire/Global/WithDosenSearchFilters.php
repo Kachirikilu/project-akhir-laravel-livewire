@@ -47,11 +47,13 @@ trait WithDosenSearchFilters
     {
         return $collection->map(fn ($d) => [
             'id' => $d->id,
-            'kode' => 'NIP: '.$d->nip,
+            'kode' => $d->nip,
+            'nip_full' => 'NIP: '.$d->nip,
             'name' => $d->name,
             'prodi' => $d->pr_rel->prodi,
             'departemen' => $d->pr_rel->departemenDp,
             'fakultas' => $d->pr_rel->fakultasFk,
+            'kode_pr' => $d->pr_rel->kode,
             'status' => $d->status
         ])->toArray();
     }

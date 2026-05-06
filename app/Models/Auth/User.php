@@ -208,7 +208,7 @@ class User extends Authenticatable
         return Attribute::get(function () {
             return $this->admin?->pr_id
                 ?? $this->dosen?->pr_id
-                ?? $this->mahasiswa?->pr_id;
+                ?? $this->mahasiswa?->pr_id ?? 0;
         });
     }
 

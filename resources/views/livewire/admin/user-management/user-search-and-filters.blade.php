@@ -5,15 +5,18 @@
 
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
-            'typeXString' => 'Status',
             'filterByFunc' => 'filterByStatus',
             'filterString' => 'filterStatus',
-            'totalTab' => $totalAllOpsi,
-            'totalTab1' => $totalAktif,
-            'totalTab2' => $totalNonAktif,
-            'tab1String' => 'aktif',
-            'tab2String' => 'non-aktif',
-            'tab2Name' => 'Tidak Aktif',
+            'totalTab' => $totalUserProdi,
+            'totalTab1' => $totalAllOpsi,
+            'totalTab2' => $totalAktif,
+            'totalTab3' => $totalNonAktif,
+            'tab1String' => 'status-all',
+            'tab2String' => 'aktif',
+            'tab3String' => 'non-aktif',
+            'tabName' => Auth::user()->prodi,
+            'tab1Name' => 'Semua Strata',
+            'tab3Name' => 'Tidak Aktif',
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}

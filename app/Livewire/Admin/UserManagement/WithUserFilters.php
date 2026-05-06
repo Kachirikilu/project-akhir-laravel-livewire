@@ -3,14 +3,14 @@
 namespace App\Livewire\Admin\UserManagement;
 
 use App\Models\Auth\User;
-// use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Departemen;
-// use App\Models\ProgramStudi\Fakultas;
+use App\Livewire\Global\HasSortir;
+use Illuminate\Support\Facades\Auth;
 
 use Livewire\WithPagination;
 
 trait WithUserFilters
 {
+    use HasSortir;
     use WithPagination;
 
     public $search = '';
@@ -33,7 +33,11 @@ trait WithUserFilters
     public function inputUserSearch()
     {
         $queryUser = User::query()
-            ->with(['admin', 'dosen', 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
+            ->with([
+                'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
+                'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+                'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
+            ]);
 
         $search = $this->search;
 
@@ -57,7 +61,7 @@ trait WithUserFilters
             $queryUser->inLocationUser('fakultas', $this->selectedFkId);
         }
 
-        if ($this->selectedRPSId) {
+        if (! empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
             $queryUser->whereHas('dosen.rps', function ($q) {
                 $q->where('rps.id', $this->selectedRPSId);
             });
@@ -85,7 +89,13 @@ trait WithUserFilters
         }
 
         // Filter by status
-        if ($this->filterStatus === 'aktif') {
+        if ($this->filterStatus === '') {
+            $queryUser->where(function ($q) {
+                $q->whereHas('admin.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('dosen.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('mahasiswa.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id));
+            });
+        } elseif ($this->filterStatus === 'aktif') {
             $queryUser->where(function ($q) {
                 $q->whereHas('admin', fn ($sub) => $sub->where('status', 'Aktif'))
                     ->orWhereHas('dosen', fn ($sub) => $sub->where('status', 'Aktif'))
@@ -116,12 +126,16 @@ trait WithUserFilters
 
     public function sortFieldOrderUser($queryUser)
     {
-        $profileFields = ['role', 'name', 'identity1', 'identity2', 'identity3', 'prodi', 'status', 'angkatan'];
+        $profileFields = [
+            'role', 'admin_id', 'dosen_id', 'mahasiswa_id', 
+            'name', 'identity1', 'identity2', 'identity3', 
+            'prodi', 'status', 'angkatan'
+        ];
 
         if (in_array($this->sortField, $profileFields)) {
             return $this->applyUserCombinedSort($queryUser);
         }
-
+        
         $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
 
         return $queryUser->orderBy($field, $this->sortDirection);
@@ -134,38 +148,35 @@ trait WithUserFilters
             ->leftJoin('mahasiswas', 'users.id', '=', 'mahasiswas.user_id')
             ->select('users.*');
 
+        if ($this->sortField === 'prodi') {
+            return $this->applyProdiSort($queryUser->leftJoin('prodis as ap', 'admins.pr_id', '=', 'ap.id')
+                ->leftJoin('prodis as dp', 'dosens.pr_id', '=', 'dp.id')
+                ->leftJoin('prodis as mp', 'mahasiswas.pr_id', '=', 'mp.id'),
+                'COALESCE(ap.strata, dp.strata, mp.strata)',
+                'COALESCE(ap.nama_pr, dp.nama_pr, mp.nama_pr)');
+        }
+
         $orderByRaw = match ($this->sortField) {
+            'admin_id'      => 'admins.id',
+            'dosen_id'      => 'dosens.id',
+            'mahasiswa_id'  => 'mahasiswas.id',
             'role' => 'CASE 
                         WHEN admins.id IS NOT NULL THEN 1
                         WHEN dosens.id IS NOT NULL THEN 2
                         WHEN mahasiswas.id IS NOT NULL THEN 3
                         ELSE 4
                     END',
-
-            'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+            'name'      => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
             'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
             'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
             'identity3' => 'dosens.nidk',
-            'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
-
-            'prodi' => $this->joinProdiAndGetSortSql($queryUser),
-
-            'angkatan' => 'mahasiswas.angkatan',
+            'status'    => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
+            'angkatan'  => 'mahasiswas.angkatan',
             'created_at' => 'users.created_at',
             'updated_at' => 'users.updated_at',
-
-            default => 'users.id'
+            default      => 'users.id'
         };
 
         return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");
-    }
-
-    private function joinProdiAndGetSortSql($queryUser)
-    {
-        $queryUser->leftJoin('prodis as admin_prodis', 'admins.pr_id', '=', 'admin_prodis.id')
-            ->leftJoin('prodis as dosen_prodis', 'dosens.pr_id', '=', 'dosen_prodis.id')
-            ->leftJoin('prodis as mahasiswa_prodis', 'mahasiswas.pr_id', '=', 'mahasiswa_prodis.id');
-
-        return 'COALESCE(admin_prodis.nama_pr, dosen_prodis.nama_pr, mahasiswa_prodis.nama_pr)';
     }
 }

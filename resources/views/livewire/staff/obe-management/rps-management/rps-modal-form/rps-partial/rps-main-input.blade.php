@@ -27,6 +27,7 @@
     
         'resetXInput' => 'resetMKInput()',
         'typeXString' => 'mk',
+        'typeX2String' => 'kode_semester',
     
         'nameXString' => 'Mata Kuliah',
         'nameSearchString' => 'mkNameSearch',
@@ -45,34 +46,42 @@
                 } else {
                     mk_items_display = null;
                 }
+                
             ">
 
         <div class="space-y-4">
 
             <div class="grid sm:grid-cols-6 gap-1 sm:gap-3 items-end">
-                <div class="sm:col-span-4">
-
+                <div class="sm:col-span-2">
+                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-digit-akademik')
+                </div>
+                <div class="sm:col-span-1">
                     @include('livewire.global.modal-form.kode-input', [
                         'alpine' => 'rps',
-                        'nameXString' => 'Kode RPS',
+                        'kode2String' => 'mk_items_display',
+                        'itemString' => 'slot2',
+                        'placeholder' => '--',
+                        'iconString' => 'variable',
+                    ])
+                </div>
+                <div class="sm:col-span-3">
+                    @include('livewire.global.modal-form.kode-input', [
+                        'alpine' => 'rps',
                         'kode2String' => 'mk_items_display',
                         'placeholder' => '--------',
                         'iconString' => 'clipboard-document-list',
                     ])
-
-                </div>
-                <div class="sm:col-span-2">
-                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-digit-akademik')
                 </div>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <div class="grid sm:grid-cols-4 gap-1 sm:gap-3 items-end" x-data="{}" x-init="$watch('$store.rps.akademik_1', value => {
-                        let year = parseInt(value);
-                        if (year && year >= 0) {
-                            $store.rps.akademik_2 = year + 1;
-                        }
+                    <div class="grid sm:grid-cols-4 gap-1 sm:gap-3 items-end" x-data="{}"
+                        x-init="$watch('$store.rps.akademik_1', value => {
+                            let year = parseInt(value);
+                            if (year && year >= 0) {
+                                $store.rps.akademik_2 = year + 1;
+                            }
                         });
                         $watch('$store.rps.akademik_2', value => {
                             let year = parseInt(value);

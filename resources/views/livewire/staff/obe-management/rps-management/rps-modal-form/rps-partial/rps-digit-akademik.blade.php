@@ -1,25 +1,30 @@
-<div x-data="{}"
+<div x-data="{
+        getSuffix(tahun) {
+            let ta = parseInt(tahun);
+            if (!ta) return '';
+            
+            if (ta >= 3000) return String(ta);
+            if (ta >= 2100) return String(ta).slice(-3);
+            if (ta >= 2000) return String(ta).slice(-2);
+            return String(ta);
+        }
+    }"
     x-effect="
         if ($store.rps) {
-            let ta2 = parseInt($store.rps.akademik_2);
+            let ta1 = $store.rps.akademik_1;
+            let ta2 = $store.rps.akademik_2;
 
-            if (!ta2) {
+            if (!ta1 || !ta2) {
                 $store.rps.digit_akademik = '';
             } else {
-                if (ta2 >= 3000) {
-                    $store.rps.digit_akademik = String(ta2);
-                } else if (ta2 >= 2100) {
-                    $store.rps.digit_akademik = String(ta2).slice(-3);
-                } else if (ta2 >= 2000) {
-                    $store.rps.digit_akademik = String(ta2).slice(-2);
-                } else {
-                    $store.rps.digit_akademik = String(ta2);
-                }
+                // Menggabungkan suffix ta1 dan ta2
+                $store.rps.digit_akademik = getSuffix(ta1) + getSuffix(ta2);
             }
         }
     ">
     @include('livewire.global.modal-form.digit-input', [
         'alpine' => 'rps',
+        'nameXString' => 'Kode RPS',
         'modelString' => 'digit_akademik',
     ])
 </div>

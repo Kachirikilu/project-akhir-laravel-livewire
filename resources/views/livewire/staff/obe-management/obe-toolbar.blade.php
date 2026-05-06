@@ -136,7 +136,7 @@
                     </flux:menu.item>
                 @endif
 
-                @if ($typeXString == 'dosen' || $typeXString == 'all')
+                @if (Auth::user()->admin && ($typeXString == 'dosen' || $typeXString == 'all'))
                     {{-- Dosen --}}
                     <flux:menu.item
                         @click="

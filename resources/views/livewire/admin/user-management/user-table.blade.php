@@ -20,6 +20,10 @@
             $padingKolom;
     @endphp
 
+    @php
+        $borderR = 'border-[var(--border-table-color)] border-r';
+    @endphp
+
     <x-slot:header>
         <tr>
 
@@ -30,11 +34,37 @@
                 'isCenter' => 1,
             ])
 
+            @if ($switchTable == 'admin')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'admin_id',
+                    'rowSpan' => 2,
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'headString' => 'Admin ID',
+                ])
+            @elseif ($switchTable == 'dosen')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'dosen_id',
+                    'rowSpan' => 2,
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'headString' => 'Dosen ID',
+                ])
+            @elseif ($switchTable == 'mahasiswa')
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'mahasiswa_id',
+                    'rowSpan' => 2,
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'headString' => 'Mahasiswa ID',
+                ])
+            @endif
+
             @if ($switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'role',
                     'rowSpan' => 2,
-                    'isCenter' => 1
+                    'isCenter' => 1,
                 ])
             @else
                 <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Role</th>
@@ -108,7 +138,8 @@
             @if ($switchTable !== 'mahasiswa')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'identity2',
-                    'headString' => $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NIDK'),
+                    'headString' =>
+                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NIDK'),
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
                     'isBorderR' => $switchTable == 'admin' ? 1 : 0,
@@ -136,6 +167,14 @@
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $mainKolom }} text-center">{{ $user->id }}</td>
+
+            @if ($switchTable == 'admin')
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->admin->id }}</td>
+            @elseif ($switchTable == 'dosen')
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->dosen->id }}</td>
+            @elseif ($switchTable == 'mahasiswa')
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->mahasiswa->id }}</td>
+            @endif
             {{-- Role --}}
             <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
@@ -166,7 +205,7 @@
 
                 </flux:dropdown>
             </td>
-            <td class="{{ $mainKolom }} min-w-84">{{ $user->name ?? '-' }}</td>
+            <td class="{{ $mainKolom }} whitespace-nowrap">{{ $user->name ?? '-' }}</td>
             <td class="{{ $secondKolom }}">{{ $user->email }}</td>
             <td class="{{ $mainKolom }} text-center">{{ $user->identity1 ?? '-' }}</td>
             @if ($switchTable != 'mahasiswa')
@@ -263,16 +302,16 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $user->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $user->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $user->updated_day ?? '-' }}</td>
         </tr>
 
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'admin' => 11,
-                    'dosen' => 12,
-                    'mahasiswa' => 11,
+                    'admin' => 12,
+                    'dosen' => 13,
+                    'mahasiswa' => 12,
                     default => 12,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">

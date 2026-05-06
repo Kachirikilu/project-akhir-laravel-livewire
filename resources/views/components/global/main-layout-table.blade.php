@@ -15,6 +15,7 @@
                 wire:target="
                 filterByStatus, filterByStrata, filterByMK,
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
+                filterByKelas,
                 showDeleted,
                 saveAllRows, processImport, saveUserInternal,
                 saveUser, updateUser, destroyUser, restoreUser,

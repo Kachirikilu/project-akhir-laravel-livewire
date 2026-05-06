@@ -42,6 +42,12 @@ class Dosen extends Model
             ->withTimestamps();
     }
 
+    public function sesiMengajars(): BelongsToMany
+    {
+        return $this->belongsToMany(SesiKelas::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
+            ->withPivot(['peran', 'is_ketua', 'sort_order']);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

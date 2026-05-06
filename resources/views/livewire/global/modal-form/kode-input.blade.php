@@ -7,9 +7,9 @@
 
         <input type="text" readonly
             @if($kodeString ?? null)
-                x-bind:value="itemsAll?.kode || '{{ $placeholder ?? null }}'"
+                x-bind:value="itemsAll?.{{ $itemString ?? 'kode' }} || '{{ $placeholder ?? null }}'"
             @elseif($kode2String ?? null)
-                x-bind:value="{{ $kode2String }}?.kode || '{{ $placeholder ?? null }}'"
+                x-bind:value="{{ $kode2String }}?.{{ $itemString ?? 'kode' }} || '{{ $placeholder ?? null }}'"
             @else 
                 value="{{ $secondValue ?? null }}"
             @endif

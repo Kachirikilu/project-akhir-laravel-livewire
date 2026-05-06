@@ -5,8 +5,8 @@
                 'xString' => $filterByFunc,
                 'xFilter' => $filterString,
                 'tabFilter' => $totalTab ?? null,
-                'tabString' => '',
-                'tabNameString' => 'Semua ' . ucfirst($typeXString)
+                'tabString' => $tabString ?? null,
+                'tabNameString' => $tabName ?? ucfirst($tabString)
             ])
 
     {{-- Tab 1 --}}

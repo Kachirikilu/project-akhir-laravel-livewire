@@ -213,7 +213,8 @@
                                                         '{{ $r['count_scpmk'] }}',
                                                         '{{ $r['bobot_uts'] }}',
                                                         '{{ $r['bobot_uas'] }}',
-                                                        '{{ $r['total_bobot'] }}'
+                                                        '{{ $r['total_bobot'] }}',
+                                                        '{{ $r['mk_rel']->kode_semester ?? '' }}',
                                                     );
                                                     $flux.modal('rps-modal').show();
                                                 "

@@ -11,7 +11,6 @@
         class="relative z-40 isolate border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
         {{-- Bagian Tab / Link (Kiri) --}}
         @include('livewire.global.search-and-filters.filter-mode', [
-            'typeXString' => 'Strata',
             'filterByFunc' => 'filterByStrata',
             'filterString' => 'filterPr',
             'totalTab' => $totalProdis,
@@ -21,6 +20,7 @@
             'tab1String' => 'sarjana',
             'tab2String' => 'magister',
             'tab3String' => 'doktor',
+            'tabName' => 'Semua Stara'
         ])
 
         {{-- Kontrol Jumlah Data Per Halaman (Ditempatkan di kanan) --}}

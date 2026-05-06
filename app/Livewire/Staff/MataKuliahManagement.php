@@ -2,25 +2,22 @@
 
 namespace App\Livewire\Staff;
 
-use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Models\Akademik\MataKuliah;
-// use App\Models\ProgramStudi\Prodi;
-// use App\Models\ProgramStudi\Departemen;
-// use App\Models\ProgramStudi\Fakultas;
-
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class MataKuliahManagement extends Component
 {
-    use WithFakultasSearchFilters;
     use WithDepartemenSearchFilters;
+    use WithFakultasSearchFilters;
     use WithMKDelete;
     use WithMKFilters;
     use WithMKModal;
@@ -41,7 +38,7 @@ class MataKuliahManagement extends Component
 
     public $showDeleted = false;
 
-    protected $listeners = ['refresh-table' => 'refreshMKsList',
+    protected $listeners = ['refresh-table' => 'refreshMKList',
         'loadDraft' => 'loadDraft', 'saveToDraft' => 'saveToDraft'];
 
     protected $queryString = [
@@ -71,7 +68,7 @@ class MataKuliahManagement extends Component
         $this->resetPage();
     }
 
-    public function refreshMKsList()
+    public function refreshMKList()
     {
         $this->resetPage();
     }
@@ -132,10 +129,10 @@ class MataKuliahManagement extends Component
     //             ->unique('id');
 
     //         // --- Perhitungan Statistik Statistik ---
-    //         $totalSemuaMK = $baseMK->count();
+    //         $totalMK = $baseMK->count();
     //         $totalTatapMuka = $baseMK->where('tipe_sks', 1)->count();
     //         $totalPraktikum = $baseMK->where('tipe_sks', 2)->count();
-    //         $totalPraktekLapangan = $baseMK->where('tipe_sks', 3)->count();
+    //         $totalPraktek = $baseMK->where('tipe_sks', 3)->count();
     //         $totalSimulasi = $baseMK->where('tipe_sks', 4)->count();
 
     //         // 4. Filter berdasarkan Tab (Switch Table)
@@ -174,10 +171,10 @@ class MataKuliahManagement extends Component
     //             'totalWajib' => $totalWajib,
     //             'totalPilihan' => $totalPilihan,
     //             'totalUni' => $totalUni,
-    //             'totalSemuaMK' => $totalSemuaMK,
+    //             'totalMK' => $totalMK,
     //             'totalTatapMuka' => $totalTatapMuka,
     //             'totalPraktikum' => $totalPraktikum,
-    //             'totalPraktekLapangan' => $totalPraktekLapangan,
+    //             'totalPraktek' => $totalPraktek,
     //             'totalSimulasi' => $totalSimulasi,
     //         ]);
 
@@ -190,10 +187,10 @@ class MataKuliahManagement extends Component
     //             'totalWajib' => '-',
     //             'totalPilihan' => '-',
     //             'totalUni' => '-',
-    //             'totalSemuaMK' => '-',
+    //             'totalMK' => '-',
     //             'totalTatapMuka' => '-',
     //             'totalPraktikum' => '-',
-    //             'totalPraktekLapangan' => '-',
+    //             'totalPraktek' => '-',
     //             'totalSimulasi' => '-',
     //         ]);
     //     }
@@ -211,16 +208,13 @@ class MataKuliahManagement extends Component
             // =========================
             $queryMK = $this->inputMKSearch();
 
-            if ($this->showDeleted) {
-                $queryMK->onlyTrashed();
-            }
-
             // =========================
             // QUERY COUNT (TERPISAH 🔥)
             // =========================
             $countMK = MataKuliah::query();
 
             if ($this->showDeleted) {
+                $queryMK->onlyTrashed();
                 $countMK->onlyTrashed();
             }
 
@@ -239,10 +233,10 @@ class MataKuliahManagement extends Component
             // =========================
             // STATS GLOBAL (FULL DATA)
             // =========================
-            $totalSemuaMK = (clone $countMK)->count();
+            $totalMK = (clone $countMK)->count();
             $totalTatapMuka = (clone $countMK)->where('tipe_sks', 1)->count();
             $totalPraktikum = (clone $countMK)->where('tipe_sks', 2)->count();
-            $totalPraktekLapangan = (clone $countMK)->where('tipe_sks', 3)->count();
+            $totalPraktek = (clone $countMK)->where('tipe_sks', 3)->count();
             $totalSimulasi = (clone $countMK)->where('tipe_sks', 4)->count();
 
             // =========================
@@ -254,7 +248,10 @@ class MataKuliahManagement extends Component
                 $tabQuery->where('tipe_sks', $currentTabTipe);
             }
 
-            $totalAllOpsi = (clone $tabQuery)->count();
+            $totalMKProdi = (clone $tabQuery)->whereHas('prodis', function ($q) {
+                $q->where('prodis.id', Auth::user()->pr_id);
+            })->count();
+            $totalMKOpsi = (clone $tabQuery)->count();
             $totalWajib = (clone $tabQuery)->where('is_wajib', true)->count();
             $totalPilihan = (clone $tabQuery)->where('is_wajib', false)->count();
             $totalUni = (clone $tabQuery)->where('level_mk', 4)->count();
@@ -271,15 +268,16 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => $queryMK->paginate($this->perPage),
 
-                'totalAllOpsi' => $totalAllOpsi,
+                'totalMKProdi' => $totalMKProdi,
+                'totalMKOpsi' => $totalMKOpsi,
                 'totalWajib' => $totalWajib,
                 'totalPilihan' => $totalPilihan,
                 'totalUni' => $totalUni,
 
-                'totalSemuaMK' => $totalSemuaMK,
+                'totalMK' => $totalMK,
                 'totalTatapMuka' => $totalTatapMuka,
                 'totalPraktikum' => $totalPraktikum,
-                'totalPraktekLapangan' => $totalPraktekLapangan,
+                'totalPraktek' => $totalPraktek,
                 'totalSimulasi' => $totalSimulasi,
             ]);
 
@@ -290,15 +288,16 @@ class MataKuliahManagement extends Component
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),
 
-                'totalAllOpsi' => '-',
+                'totalMKProdi' => '-',
+                'totalMKOpsi' => '-',
                 'totalWajib' => '-',
                 'totalPilihan' => '-',
                 'totalUni' => '-',
 
-                'totalSemuaMK' => '-',
+                'totalMK' => '-',
                 'totalTatapMuka' => '-',
                 'totalPraktikum' => '-',
-                'totalPraktekLapangan' => '-',
+                'totalPraktek' => '-',
                 'totalSimulasi' => '-',
             ]);
         }

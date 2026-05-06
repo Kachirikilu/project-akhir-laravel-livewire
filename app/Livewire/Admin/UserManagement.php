@@ -14,6 +14,7 @@ use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\Auth\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class UserManagement extends Component
 {
@@ -104,18 +105,24 @@ class UserManagement extends Component
 
     private function syncSortField($filter, $sortField)
     {
-        if ($filter != '' && $sortField == 'role') {
-            $this->sortField = 'name';
-        } elseif ($filter != 'mahasiswa' && $sortField == 'angkatan') {
-            $this->sortField = 'status';
-        } elseif ($filter == 'mahasiswa' && $sortField == 'identity2') {
-            $this->sortField = 'identity1';
-        } elseif ($filter != 'dosen' && $sortField == 'identity3') {
-            if ($filter == 'mahasiswa') {
-                $this->sortField = 'identity1';
-            } elseif ($filter == 'dosen') {
-                $this->sortField = 'identity2';
-            }
+        $this->sortField = match (true) {
+            $filter != '' && $sortField == 'role' => 'name',
+            $filter != 'mahasiswa' && $sortField == 'angkatan' => 'status',
+            $filter == 'mahasiswa' && in_array($sortField, ['identity2', 'identity3']) => 'identity1',
+            $filter != 'dosen' && $sortField == 'identity3' => ($filter == 'admin' ? 'identity2' : 'identity1'),
+
+            default => $sortField
+        };
+
+        $idFields = ['admin_id', 'dosen_id', 'mahasiswa_id'];
+
+        if (in_array($this->sortField, $idFields)) {
+            $this->sortField = match ($filter) {
+                'admin' => 'admin_id',
+                'dosen' => 'dosen_id',
+                'mahasiswa' => 'mahasiswa_id',
+                default => 'id',
+            };
         }
     }
 
@@ -126,7 +133,6 @@ class UserManagement extends Component
         $this->resetPage();
     }
 
-
     public function render()
     {
         $this->inputPrFilter();
@@ -134,30 +140,27 @@ class UserManagement extends Component
         $this->inputFkFilter();
 
         try {
+            $queryUser = $this->inputUserSearch();
 
             // =========================
             // 1. BASE MURNI (JANGAN DIUBAH)
             // =========================
             $baseUser = User::query();
 
-            // =========================
-            // 2. TABLE QUERY (TERPENGARUH FILTER UI)
-            // =========================
-            $tableQuery = clone $baseUser;
-
-            $this->buttonRoleFilter($tableQuery);
+            $this->buttonRoleFilter($queryUser);
 
             if (! empty($this->switchTable)) {
-                $tableQuery->whereHas($this->switchTable);
+                $queryUser->whereHas($this->switchTable);
             }
 
             if ($this->showDeleted) {
-                $tableQuery->onlyTrashed();
+                $queryUser->onlyTrashed();
             }
 
             // =========================
             // 3. STATS QUERY (SELALU CLEAN)
             // =========================
+            $statsPr = User::query();
             $statsAll = User::query();
             $statsAktif = User::query();
             $statsNonAktif = User::query();
@@ -166,12 +169,14 @@ class UserManagement extends Component
             // SWITCH TABLE APPLY KE STATS (HANYA ROLE FILTER)
             // =========================
             if (! empty($this->switchTable)) {
+                $statsPr->whereHas($this->switchTable);
                 $statsAll->whereHas($this->switchTable);
                 $statsAktif->whereHas($this->switchTable);
                 $statsNonAktif->whereHas($this->switchTable);
             }
 
             if ($this->showDeleted) {
+                $statsPr->onlyTrashed();
                 $statsAll->onlyTrashed();
                 $statsAktif->onlyTrashed();
                 $statsNonAktif->onlyTrashed();
@@ -180,6 +185,11 @@ class UserManagement extends Component
             // =========================
             // STATUS FILTER DIPISAH PER STAT (INI KUNCI 🔥)
             // =========================
+            $statsPr->where(function ($q) {
+                $q->whereHas('admin.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('dosen.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('mahasiswa.pr_rel', fn ($s) => $s->where('prodis.id', Auth::user()->pr_id));
+            });
             $statsAktif->where(function ($q) {
                 $q->whereHas('admin', fn ($s) => $s->where('status', 'Aktif'))
                     ->orWhereHas('dosen', fn ($s) => $s->where('status', 'Aktif'))
@@ -196,8 +206,9 @@ class UserManagement extends Component
             // RESULT VIEW
             // =========================
             return view('livewire.admin.user-management', [
-                'users' => $tableQuery->paginate($this->perPage),
+                'users' => $queryUser->paginate($this->perPage),
 
+                'totalUserProdi' => $statsPr->count(),
                 'totalAllOpsi' => $statsAll->count(),
                 'totalAktif' => $statsAktif->count(),
                 'totalNonAktif' => $statsNonAktif->count(),
@@ -215,9 +226,15 @@ class UserManagement extends Component
             return view('livewire.admin.user-management', [
                 'users' => User::whereRaw('1=0')->paginate($this->perPage),
 
+                'totalUserProdi' => '-',
                 'totalAllOpsi' => '-',
                 'totalAktif' => '-',
                 'totalNonAktif' => '-',
+
+                'totalUsers' => '-',
+                'totalAdmins' => '-',
+                'totalDosens' => '-',
+                'totalMahasiswas' => '-'
             ]);
         }
     }

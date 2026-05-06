@@ -24,8 +24,8 @@
         @endphp
 
         @include('livewire.global.table.text-copy', [
-            'xType' => $x->kode,
-            'typeXString' => 'Kode ' . $typeX2String,
+            'xType' => $copyText ?? $x->kode,
+            'typeXString' => $copyName ?? 'Kode ' . $typeX2String,
         ])
 
         <flux:menu.separator />

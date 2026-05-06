@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             ProgramStudiSeeder::class,
             MataKuliahSeeder::class,
             UserRoleSeeder::class,
-            RPSSeeder::class
+            RPSSeeder::class,
+            KelasSeeder::class
         ]);
     }
 }

@@ -111,6 +111,7 @@ document.addEventListener("alpine:init", () => {
             bobotUTS,
             bobotUAS,
             totalBobot,
+            kodeSemester,
         ) {
             this.digit_akademik = kodeBlok;
             this.deskripsi = deskripsi;
@@ -121,6 +122,7 @@ document.addEventListener("alpine:init", () => {
                 id: idMK,
                 kode: kodeMK,
                 slot1: namaMK,
+                slot2: kodeSemester,
             };
 
             this.akademik = tahunAkademik;

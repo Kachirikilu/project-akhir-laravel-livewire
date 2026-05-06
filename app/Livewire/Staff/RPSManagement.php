@@ -35,6 +35,7 @@ use App\Models\Auth\Dosen;
 use App\Models\Auth\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class RPSManagement extends Component
 {
@@ -163,7 +164,7 @@ class RPSManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'mk', 5 => 'sks', 6 => 'is_wajib', 7 => 'count-cpmk', 8 => 'count-scpmk', 9 => 'total_bobot', 10 => 'is_draf', 11 => 'revisi', 12 => 'created_at', 13 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'kode_mk', 4 => 'akademik', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'metodologi', 6 => 'indikator', 7 => 'metode', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
@@ -350,6 +351,12 @@ class RPSManagement extends Component
                     break;
             }
 
+            if (Auth::user()->dosen) {
+                $totalRPSSaya = (clone $countRPS)->whereHas('dosens', function ($q) {
+                    $q->where('dosens.id', Auth::user()->dosen->id);
+                })->count();
+            }
+
             $stats = [
                 'rps-akademik' => '📘',
                 'rps-rev-new' => '✨',
@@ -517,6 +524,7 @@ class RPSManagement extends Component
             // =========================
             return view('livewire.staff.rps-management', array_merge($data, [
                 'users' => $users,
+                'totalRPSSaya' => $totalRPSSaya ?? 0,
                 'totalRPS' => RPS::count(),
                 'totalCPMK' => CPMK::count(),
                 'totalSCPMK' => SubCPMK::count(),
@@ -536,7 +544,7 @@ class RPSManagement extends Component
 
             $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
 
-            return view('livewire.staff.rps-management', array_merge([
+            return view('livewire.staff.rps-management', [
                 'rps' => RPS::whereRaw('1=0')->paginate($this->perPage),
                 'cpmk' => CPMK::whereRaw('1=0')->paginate($this->perPage),
                 'scpmk' => SubCPMK::whereRaw('1=0')->paginate($this->perPage),
@@ -544,6 +552,7 @@ class RPSManagement extends Component
                 'ref' => Referensi::whereRaw('1=0')->paginate($this->perPage),
             ], [
                 'users' => User::whereRaw('1=0')->whereHas('dosen')->paginate($this->perPage),
+                'totalRPSSaya' => '-',
                 'totalRPS' => '-',
                 'totalCPMK' => '-',
                 'totalSCPMK' => '-',
@@ -590,7 +599,7 @@ class RPSManagement extends Component
                     'dosen-aktif' => '-',
                     'dosen-non-aktif' => '-',
                 ],
-            ]));
+            ]);
         }
     }
 }

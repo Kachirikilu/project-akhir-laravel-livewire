@@ -22,10 +22,10 @@
 
     @php
         if ($switchTable !== '') {
-            $borderRight = 'border-[var(--border-table-color)] border-r';
+            $borderR = 'border-[var(--border-table-color)] border-r';
             $isBorderRight = 1;
         } else {
-            $borderRight = '';
+            $borderR = '';
             $isBorderRight = 0;
         }
     @endphp
@@ -169,38 +169,38 @@
                         @switch($mk->semester)
                             {{-- Tahun 1: Biru/Cyan --}}
                             @case(1)
-                                <flux:badge color="blue" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="blue" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             @case(2)
-                                <flux:badge color="cyan" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="cyan" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             {{-- Tahun 2: Hijau/Emerald --}}
                             @case(3)
-                                <flux:badge color="green" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="green" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             @case(4)
-                                <flux:badge color="emerald" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="emerald" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             {{-- Tahun 3: Kuning/Oranye --}}
                             @case(5)
-                                <flux:badge color="yellow" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="yellow" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             @case(6)
-                                <flux:badge color="orange" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="orange" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             {{-- Tahun 4: Merah/Ungu (Fase Tugas Akhir) --}}
                             @case(7)
-                                <flux:badge color="red" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="red" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                             @break
 
                             @default
-                                <flux:badge color="purple" size="sm">{{ $mk->kode ?? '-' }}</flux:badge>
+                                <flux:badge color="purple" size="sm">{{ $mk->kode ?? '---' }}</flux:badge>
                         @endswitch
                     </button>
 
@@ -222,16 +222,16 @@
             <td class="{{ $mainKolom }} text-center">{{ $mk->sks ?? '-' }}</td>
 
             @if ($switchTable == 'tatap_muka' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderRight }} text-center">{{ $mk->sks_tm ?? '-' }}</td>
+                <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $mk->sks_tm ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktikum' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderRight }} text-center">
+                <td class="{{ $subKolom }} {{ $borderR }} text-center">
                     {{ $mk->sks_pr ?? '-' }}</td>
             @endif
 
             @if ($switchTable == 'praktek_lapangan' || $switchTable == '')
-                <td class="{{ $subKolom }} {{ $borderRight }} text-center">
+                <td class="{{ $subKolom }} {{ $borderR }} text-center">
                     {{ $mk->sks_pl ?? '-' }}</td>
             @endif
 
@@ -280,8 +280,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $mk->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $mk->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $mk->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>

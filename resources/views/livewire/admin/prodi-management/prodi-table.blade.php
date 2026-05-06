@@ -75,25 +75,25 @@
                         @switch($x->tingkatan_prodi)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">
-                                    {{ $x->kode ?? '-' }}
+                                    {{ $x->kode ?? '---' }}
                                 </flux:badge>
                             @break
 
                             @case(2)
                                 <flux:badge icon="book-open" color="amber" size="sm">
-                                    {{ $x->kode ?? '-' }}
+                                    {{ $x->kode ?? '---' }}
                                 </flux:badge>
                             @break
 
                             @case(3)
                                 <flux:badge icon="building-library" color="indigo" size="sm">
-                                    {{ $x->kode ?? '-' }}
+                                    {{ $x->kode ?? '---' }}
                                 </flux:badge>
                             @break
 
                             @default
                                 <flux:badge icon="globe-alt" color="red" size="sm">
-                                    {{ $x->kode ?? '-' }}
+                                    {{ $x->kode ?? '---' }}
                                 </flux:badge>
                         @endswitch
                     </button>
@@ -107,15 +107,15 @@
             </td>
 
             @if ($switchTable === 'prodi')
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->prodi ?? '-' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap">{{ $x->prodi ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'prodi' || $switchTable === 'departemen')
-                <td class="{{ $secondKolom }} min-w-48">
+                <td class="{{ $secondKolom }} whitespace-nowrap">
                     {{ $switchTable === 'departemen' ? 'Departemen ' . $x->departemen : $x->departemen . ' (' . $x->kode_dp . ')' }}</td>
             @endif
 
-            <td class="{{ $secondKolom }} min-w-48">
+            <td class="{{ $secondKolom }} whitespace-nowrap">
                     {{ $switchTable === 'fakultas' ? 'Fakultas ' . $x->fakultas : $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
 
 
@@ -166,8 +166,8 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} min-w-48 text-center">{{ $x->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>

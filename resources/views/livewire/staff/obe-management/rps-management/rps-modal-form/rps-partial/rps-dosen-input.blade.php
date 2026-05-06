@@ -9,15 +9,13 @@
         <h4 class="text-[var(--contrast-main-text)] text-lg font-medium">
             Pilih Dosen Pengajar</h4>
 
-        @if (!$this->showUserModal || $this->isEditingUser == false)
+        @if (Auth::user()->admin && (!$this->showUserModal || $this->isEditingUser == false))
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'dosen',
                 'isFlyout' => true,
             ])
         @endif
     </div>
-
-
 
     <div class="relative">
 

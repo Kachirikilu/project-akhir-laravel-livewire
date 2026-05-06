@@ -13,7 +13,6 @@ trait WithRPSShow
         $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);
 
-        // --- PROSES LOGO ---
         $logoPath = public_path('images/logo-unsri.png');
         $logoBase64 = '';
 
@@ -28,13 +27,16 @@ trait WithRPSShow
             'logoBase64' => $logoBase64,
         ])->render();
 
+        $akademikSafe = str_replace('/', '-', $data['akademik']);
+        $fileName = 'RPS_'.$data['kode_rps'].'_'.$data['nama_mk'].'_'.$akademikSafe.'.pdf';
+
         return response()->streamDownload(function () use ($html) {
             echo Browsershot::html($html)
                 ->noSandbox()
                 ->format('A4')
                 ->showBackground()
                 ->pdf();
-        }, 'rps-'.str($data['nama_mk'])->slug().'.pdf', [
+        }, $fileName, [
             'Content-Type' => 'application/pdf',
         ]);
     }
