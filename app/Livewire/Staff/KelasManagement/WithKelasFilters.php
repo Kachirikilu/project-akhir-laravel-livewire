@@ -87,18 +87,28 @@ trait WithKelasFilters
                 $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
                     $q->where('dosens.id', Auth::user()->dosen->id);
                 });
+            } elseif ($this->filterKelas === 'kelas-prodi') {
+                $queryKelas->whereHas('pr_rel', function ($q) {
+                    $q->where('prodis.id', Auth::user()->pr_id);
+                });
+            }
+        } else {
+            if ($this->filterKelas === '' || $this->filterKelas === 'kelas-prodi') {
+                $queryKelas->whereHas('pr_rel', function ($q) {
+                    $q->where('prodis.id', Auth::user()->pr_id);
+                });
             }
         }
 
-        if ($this->filterKelas === 'wajib') {
+        if ($this->filterKelas === 'kelas-wajib') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.is_wajib', true);
             });
-        } elseif ($this->filterKelas === 'pilihan') {
+        } elseif ($this->filterKelas === 'kelas-pilihan') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.is_wajib', false);
             });
-        } elseif ($this->filterKelas === 'universitas') {
+        } elseif ($this->filterKelas === 'kelas-universitas') {
             $queryKelas->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.level_mk', 4);
             });

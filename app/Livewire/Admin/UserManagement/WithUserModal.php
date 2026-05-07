@@ -5,11 +5,11 @@ namespace App\Livewire\Admin\UserManagement;
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Livewire\Global\WithDosenSearchFilters;
+use App\Models\Akademik\RPS;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
-use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -140,6 +140,12 @@ trait WithUserModal
             ],
             'password' => $isEditingUser ? 'nullable|min:8' : 'required|min:8',
             'name' => 'required|string|max:255',
+            'nip' => 'nullable|string|max:20',
+            'nitk' => 'nullable|string|max:20',
+            'nidn' => 'nullable|string|max:20',
+            'nidk' => 'nullable|string|max:20',
+            'nim' => 'nullable|string|max:20',
+            'nik' => 'required|string|min:12|max:16',
         ];
 
         /* ===================== ADMIN ===================== */
@@ -153,6 +159,9 @@ trait WithUserModal
                 Rule::unique('dosens', 'nidn'),
                 Rule::unique('dosens', 'nidk'),
                 Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['nitk'] = [
@@ -163,6 +172,9 @@ trait WithUserModal
                 Rule::unique('dosens', 'nidn'),
                 Rule::unique('dosens', 'nidk'),
                 Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['status'] = [
@@ -191,6 +203,9 @@ trait WithUserModal
                 Rule::unique('admins', 'nip'),
                 Rule::unique('admins', 'nitk'),
                 Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['nidn'] = [
@@ -201,6 +216,9 @@ trait WithUserModal
                 Rule::unique('admins', 'nip'),
                 Rule::unique('admins', 'nitk'),
                 Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['nidk'] = [
@@ -211,6 +229,9 @@ trait WithUserModal
                 Rule::unique('admins', 'nip'),
                 Rule::unique('admins', 'nitk'),
                 Rule::unique('mahasiswas', 'nim'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['status'] = [
@@ -240,6 +261,9 @@ trait WithUserModal
                 Rule::unique('dosens', 'nip'),
                 Rule::unique('dosens', 'nidn'),
                 Rule::unique('dosens', 'nidk'),
+                Rule::unique('admins', 'nik'),
+                Rule::unique('dosens', 'nik'),
+                Rule::unique('mahasiswas', 'nik'),
             ];
 
             $rules['angkatan'] =
@@ -269,7 +293,7 @@ trait WithUserModal
 
             if ($this->roleType === 'admin') {
 
-                if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk']) {
+                if (! empty($data['nip']) && ! empty($data['nitk']) && $data['nip'] === $data['nitk'] && $data['nip'] === $data['nik']) {
 
                     $validator->errors()->add(
                         'nitk',
@@ -280,7 +304,7 @@ trait WithUserModal
 
             } elseif ($this->roleType === 'dosen') {
 
-                if (! empty($data['nip']) && ! empty($data['nidn']) && $data['nip'] === $data['nidn']) {
+                if (! empty($data['nip']) && ! empty($data['nidn']) && $data['nip'] === $data['nidn'] && $data['nip'] === $data['nik']) {
 
                     $validator->errors()->add(
                         'nidn',
@@ -289,7 +313,7 @@ trait WithUserModal
 
                 }
 
-                if (! empty($data['nip']) && ! empty($data['nidk']) && $data['nip'] === $data['nidk']) {
+                if (! empty($data['nip']) && ! empty($data['nidk']) && $data['nip'] === $data['nidk'] && $data['nip'] === $data['nik']) {
 
                     $validator->errors()->add(
                         'nidk',
@@ -298,7 +322,7 @@ trait WithUserModal
 
                 }
 
-                if (! empty($data['nidn']) && ! empty($data['nidk']) && $data['nidn'] === $data['nidk']) {
+                if (! empty($data['nidn']) && ! empty($data['nidk']) && $data['nidn'] === $data['nidk'] && $data['nidn'] === $data['nik']) {
 
                     $validator->errors()->add(
                         'nidk',
@@ -306,7 +330,6 @@ trait WithUserModal
                     );
 
                 }
-
             }
 
         });
@@ -354,6 +377,7 @@ trait WithUserModal
                 } else {
                     $identity1Input = $validated['nim'];
                 }
+                $nikInput = $validated['nik'];
                 $prodiInput = $validated['pr_id'];
                 $statusInput = $validated['status'];
 
@@ -365,6 +389,7 @@ trait WithUserModal
                         'name' => $nameInput,
                         'nip' => $identity1Input,
                         'nitk' => $identity2Input,
+                        'nik' => $nikInput,
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
@@ -375,6 +400,7 @@ trait WithUserModal
                         'nip' => $identity1Input,
                         'nidn' => $identity2Input,
                         'nidk' => ($validated['nidk'] ?? null) ?: null,
+                        'nik' => $nikInput,
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
@@ -383,13 +409,14 @@ trait WithUserModal
                         'user_id' => $user->id,
                         'name' => $nameInput,
                         'nim' => $identity1Input,
+                        'nik' => $nikInput,
                         'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
                     ]);
                 }
 
-                if (!empty($this->showRPSModal) && $dosen) {
+                if (! empty($this->showRPSModal) && $dosen) {
                     if (! isset($this->dosen_id_array) || ! is_array($this->dosen_id_array)) {
                         $this->dosen_id_array = [];
                     }
@@ -463,6 +490,7 @@ trait WithUserModal
                 } else {
                     $identity1Input = $validated['nim'];
                 }
+                $nikInput = $validated['nik'];
                 $prodiInput = $validated['pr_id'];
                 $statusInput = $validated['status'];
 
@@ -472,6 +500,7 @@ trait WithUserModal
                             'name' => $nameInput,
                             'nip' => $identity1Input,
                             'nitk' => $identity2Input,
+                            'nik' => $nikInput,
                             'pr_id' => $prodiInput,
                             'status' => $statusInput,
                         ]
@@ -483,6 +512,7 @@ trait WithUserModal
                             'nip' => $identity1Input,
                             'nidn' => $identity2Input,
                             'nidk' => ($validated['nidk'] ?? null) ?: null,
+                            'nik' => $nikInput,
                             'pr_id' => $prodiInput,
                             'status' => $statusInput,
                         ]
@@ -491,6 +521,7 @@ trait WithUserModal
                     $user->mahasiswa->update([
                         'name' => $nameInput,
                         'nim' => $identity1Input,
+                        'nik' => $nikInput,
                         'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
                         'status' => $statusInput,
@@ -528,11 +559,20 @@ trait WithUserModal
             'name.max' => 'Nama tidak boleh lebih dari 255 karakter!',
             'nip.required' => 'NIP wajib diisi untuk Admin dan Dosen!',
             'nip.unique' => 'NIP ini sudah terdaftar!',
+            'nip.max' => 'NIP maksimal 20 karakter!',
             'nitk.unique' => 'NITK ini sudah terdaftar!',
+            'nitk.max' => 'NITK maksimal 20 karakter!',
             'nidn.unique' => 'NIDN ini sudah terdaftar!',
+            'nidn.max' => 'NIDN maksimal 20 karakter!',
             'nidk.unique' => 'NIDK ini sudah terdaftar!',
+            'nidk.max' => 'NIDK maksimal 20 karakter!',
             'nim.required' => 'NIM wajib diisi untuk Mahasiswa!',
             'nim.unique' => 'NIM ini sudah terdaftar!',
+            'nim.max' => 'NIM maksimal 20 karakter!',
+            'nik.required' => 'NIK wajib diisi!',
+            'nik.unique' => 'NIK ini sudah terdaftar!',
+            'nik.min' => 'NIK minimal harus 12 karakter!',
+            'nik.max' => 'NIK maksimal 16 karakter!',
             'angkatan.required' => 'Tahun angkatan wajib diisi!',
             'angkatan.integer' => 'Tahun angkatan harus berupa angka!',
             'angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
@@ -556,16 +596,19 @@ trait WithUserModal
             ]),
             2 => $this->getErrorCount([
                 'name',
+                'angkatan',
+                'pr_id',
+                'status',
+            ]),
+            3 => $this->getErrorCount([
                 'nip',
                 'nitk',
                 'nidn',
                 'nidk',
                 'nim',
-                'angkatan',
-                'pr_id',
-                'status',
+                'nik',
             ]),
-            3 => $this->getErrorCount([]),
+            4 => $this->getErrorCount([]),
         ];
     }
 

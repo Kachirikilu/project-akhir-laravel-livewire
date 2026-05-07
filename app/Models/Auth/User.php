@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -41,6 +42,7 @@ class User extends Authenticatable
         'identity1',
         'identity2',
         'identity3',
+        'nik',
         'status',
     ];
 
@@ -125,6 +127,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Mahasiswa::class);
     }
+
+    public function pendidikans(): HasMany
+    {
+        return $this->hasMany(Pendidikan::class);
+    }
     // / Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
 
     // / ... /// ... /// ...
@@ -146,6 +153,23 @@ class User extends Authenticatable
             $this->dosen()->exists() => 'Dosen',
             $this->mahasiswa()->exists() => 'Mahasiswa',
             default => 'User',
+        });
+    }
+
+    protected function nik(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->nik;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->nik;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->nik;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 
@@ -187,6 +211,91 @@ class User extends Authenticatable
             $value = $this->dosen?->nidk;
 
             return $value ?: null;
+        });
+    }
+
+    protected function tmtLahir(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->tempat_lahir;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->tempat_lahir;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->tempat_lahir;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
+    protected function tglLahir(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->tanggal_lahir;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->tanggal_lahir;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->tanggal_lahir;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
+    protected function gender(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->jenis_kelamin;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->jenis_kelamin;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->jenis_kelamin;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
+    protected function agama(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->agama;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->agama;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->agama;
+            }
+
+            return empty($value) ? null : $value;
+        });
+    }
+
+    protected function noHp(): Attribute
+    {
+        return Attribute::get(function () {
+            $value = null;
+
+            if ($this->admin) {
+                $value = $this->admin->no_hp;
+            } elseif ($this->dosen) {
+                $value = $this->dosen->no_hp;
+            } elseif ($this->mahasiswa) {
+                $value = $this->mahasiswa->no_hp;
+            }
+
+            return empty($value) ? null : $value;
         });
     }
 

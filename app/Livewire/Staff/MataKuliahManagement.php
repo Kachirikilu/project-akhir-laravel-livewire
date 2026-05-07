@@ -222,10 +222,10 @@ class MataKuliahManagement extends Component
             // MAP TAB
             // =========================
             $mapTipe = [
-                'tatap_muka' => 1,
-                'praktikum' => 2,
-                'praktek_lapangan' => 3,
-                'simulasi' => 4,
+                'mk-tatap-muka' => 1,
+                'mk-praktikum' => 2,
+                'mk-praktek-lapangan' => 3,
+                'mk-simulasi' => 4,
             ];
 
             $currentTabTipe = $mapTipe[$this->switchTable] ?? null;

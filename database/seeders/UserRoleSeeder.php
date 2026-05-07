@@ -6,110 +6,154 @@ use App\Models\Auth\User;
 use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
-use App\Models\ProgramStudi\Prodi; // Import model Prodi
+use App\Models\Auth\Pendidikan;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
 
 class UserRoleSeeder extends Seeder
 {
     public function run(): void
     {
+        $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
+        $totalUsers = 2000;
 
-        DB::transaction(function () use ($defaultPw) {
+        DB::transaction(function () use ($faker, $defaultPw, $totalUsers) {
             
-            // Ambil ID Prodi Utama (misal: Teknik Elektro)
-            $prodiUtama = Prodi::first();
-            
-            // Pastikan ada prodi, jika tidak ada, beri peringatan atau buat dummy
-            if (!$prodiUtama) {
+            $prodiIds = Prodi::pluck('id')->toArray();
+            if (empty($prodiIds)) {
                 throw new \Exception("Tabel prodis kosong! Jalankan SilsilahSeeder terlebih dahulu.");
             }
 
-            // --- 1. DATA SPESIFIK (WILDAN) ---
-
-            // Admin Wildan
-            $adminUser = User::create([
-                'email' => 'muttaqien.wildan12@gmail.com',
-                'password' => $defaultPw,
-            ]);
-            Admin::create([
-                'user_id' => $adminUser->id,
-                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
-                'nip' => '199001012024011001',
-                'name' => 'Wildan Athif Muttaqien (Admin)',
-                'status' => 'Aktif',
-            ]);
-
-            // Dosen Wildan
-            $dosenUser = User::create([
-                'email' => 'muttaqien.wildan13@gmail.com',
-                'password' => $defaultPw,
-            ]);
-            Dosen::create([
-                'user_id' => $dosenUser->id,
-                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
-                'nip' => '199001012024011002',
-                'nidn' => '0012345678',
-                'name' => 'Wildan Athif Muttaqien (Dosen)',
-                'status' => 'Aktif',
-            ]);
-
-            // Mahasiswa Wildan
-            $mhsUser = User::create([
-                'email' => 'muttaqien.wildan14@gmail.com',
-                'password' => $defaultPw,
-            ]);
-            Mahasiswa::create([
-                'user_id' => $mhsUser->id,
-                'pr_id' => $prodiUtama->id, // Tambahkan pr_id
-                'nim' => '06111281722000',
-                'name' => 'Wildan Athif Muttaqien (Mhs)',
-                'angkatan' => 2021,
-                'status' => 'Aktif',
-            ]);
-
-            // --- 2. DATA DUMMY TAMBAHAN (LOOPING) ---
+            // --- 1. AKUN UTAMA ---
             
-            // Ambil semua ID prodi yang tersedia untuk variasi data dummy
-            $prodiIds = Prodi::pluck('id')->toArray();
+            // Admin Utama
+            $adminUser = User::create(['email' => 'muttaqien.wildan12@gmail.com', 'password' => $defaultPw]);
+            $this->createAdminProfile($adminUser, 'Wildan Athif Muttaqien (Admin)', $faker, $prodiIds[0]);
 
-            for ($i = 1; $i <= 7; $i++) {
-                // Gunakan prodi acak dari koleksi prodi yang ada
-                $randomProdiId = $prodiIds[array_rand($prodiIds)];
+            // Dosen Utama
+            $dosenUser = User::create(['email' => 'muttaqien.wildan13@gmail.com', 'password' => $defaultPw]);
+            $this->createDosenProfile($dosenUser, 'Wildan Athif Muttaqien (Dosen)', $faker, $prodiIds[0]);
 
-                // Admin tambahan
-                $uA = User::create(['email' => "admin.test{$i}@gmail.com", 'password' => $defaultPw]);
-                Admin::create([
-                    'user_id' => $uA->id, 
-                    'pr_id' => $randomProdiId,
-                    'name' => "Admin Test {$i}", 
-                    'nip' => "888{$i}", 
-                    'status' => 'Aktif'
-                ]);
+            // Mahasiswa Utama
+            $mhsUser = User::create(['email' => 'muttaqien.wildan14@gmail.com', 'password' => $defaultPw]);
+            $this->createMahasiswaProfile($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)', $faker, $prodiIds[0]);
 
-                // Dosen tambahan
-                $uD = User::create(['email' => "dosen.test{$i}@gmail.com", 'password' => $defaultPw]);
-                Dosen::create([
-                    'user_id' => $uD->id, 
-                    'pr_id' => $randomProdiId,
-                    'name' => "Dosen Test {$i}", 
-                    'nip' => "777{$i}", 
-                    'status' => 'Aktif'
-                ]);
+            // --- 2. DATA DUMMY (Distribusi 10/30/60) ---
+            
+            $countAdmin = (int) ($totalUsers * 0.10) - 1;
+            $countDosen = (int) ($totalUsers * 0.30) - 1;
+            $countMhs = $totalUsers - $countAdmin - $countDosen - 3; // Sisa dikurangi 3 akun utama
 
-                // Mahasiswa tambahan
-                $uM = User::create(['email' => "mhs.test{$i}@gmail.com", 'password' => $defaultPw]);
-                Mahasiswa::create([
-                    'user_id' => $uM->id, 
-                    'pr_id' => $randomProdiId,
-                    'name' => "Mhs Test {$i}", 
-                    'nim' => "0611{$i}", 
-                    'angkatan' => 2021, 
-                    'status' => 'Aktif'
-                ]);
+            // Loop Admin
+            for ($i = 0; $i < $countAdmin; $i++) {
+                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+                $this->createAdminProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
+            }
+
+            // Loop Dosen
+            for ($i = 0; $i < $countDosen; $i++) {
+                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+                $this->createDosenProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
+            }
+
+            // Loop Mahasiswa
+            for ($i = 0; $i < $countMhs; $i++) {
+                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+                $this->createMahasiswaProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
             }
         });
+    }
+
+    private function createAdminProfile($user, $name, $faker, $prodiId)
+    {
+        $admin = Admin::create([
+            'user_id' => $user->id,
+            'pr_id' => $prodiId,
+            'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),
+            'nip' => $faker->unique()->numerify('19#########'),
+            'nitk' => $faker->unique()->numerify('88#########'),
+            'nik' => $faker->unique()->numerify('################'),
+            'name' => $name,
+            'tempat_lahir' => $faker->city,
+            'tanggal_lahir' => $faker->date('Y-m-d', '2000-01-01'),
+            'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
+            'agama' => $faker->randomElement(['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik']),
+            'no_hp' => $faker->phoneNumber,
+            'pangkat' => 'Penata Muda',
+            'golongan_awal' => 'III/a',
+            'golongan_akhir' => 'III/b',
+            'tmt_cp_blu' => $faker->date('Y-m-d', '2023-01-01'),
+            'tmt_blu' => $faker->date('Y-m-d', '2024-01-01'),
+            'status' => 'Aktif',
+        ]);
+
+        $this->seedEducation($user, $faker, ['S1', 'S2']);
+    }
+
+    private function createDosenProfile($user, $name, $faker, $prodiId)
+    {
+        $dosen = Dosen::create([
+            'user_id' => $user->id,
+            'pr_id' => $prodiId,
+            'name' => $name,
+            'nip' => $faker->unique()->numerify('19#########'),
+            'nidn' => $faker->unique()->numerify('00########'),
+            'nidk' => $faker->unique()->numerify('88########'),
+            'nik' => $faker->unique()->numerify('################'),
+            'tempat_lahir' => $faker->city,
+            'tanggal_lahir' => $faker->date('Y-m-d', '1995-01-01'),
+            'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
+            'agama' => $faker->randomElement(['Islam', 'Kristen', 'Katolik']),
+            'no_hp' => $faker->phoneNumber,
+            'no_karpeg' => $faker->unique()->numerify('N#########'),
+            'pangkat_terakhir' => 'Lektor',
+            'golongan_terakhir' => 'III/c',
+            'tmt_golongan' => $faker->date('Y-m-d', '2020-01-01'),
+            'jabatan_fungsional' => 'Dosen Tetap',
+            'tmt_jabatan' => $faker->date('Y-m-d', '2021-01-01'),
+            'status' => 'Aktif',
+        ]);
+
+        $this->seedEducation($user, $faker, ['S1', 'S2', 'S3']);
+    }
+
+    private function createMahasiswaProfile($user, $name, $faker, $prodiId)
+    {
+        $mhs = Mahasiswa::create([
+            'user_id' => $user->id,
+            'pr_id' => $prodiId,
+            'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),
+            'name' => $name,
+            'nim' => $faker->unique()->numerify('061112817#####'),
+            'nik' => $faker->unique()->numerify('################'),
+            'tempat_lahir' => $faker->city,
+            'tanggal_lahir' => $faker->date('Y-m-d', '2005-01-01'),
+            'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
+            'agama' => 'Islam',
+            'no_hp' => $faker->phoneNumber,
+            'angkatan' => $faker->numberBetween(2018, 2024),
+            'status' => 'Aktif',
+        ]);
+
+        $this->seedEducation($user, $faker, ['SMA']);
+    }
+
+    private function seedEducation($user, $faker, $levels)
+    {
+        foreach ($levels as $level) {
+            Pendidikan::create([
+                'user_id' => $user->id,
+                'institusi' => $faker->company . ' ' . $faker->city,
+                'negara' => 'Indonesia',
+                'tahun_lulus' => $faker->year,
+                'jenjang_pendidikan' => $level,
+                'bidang_ilmu' => $faker->sentence(2),
+                'gelar' => $faker->suffix,
+            ]);
+        }
     }
 }

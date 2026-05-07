@@ -5,9 +5,9 @@ namespace App\Livewire\Staff\RPSManagement;
 use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 trait WithRPSFilters
 {
@@ -77,17 +77,22 @@ trait WithRPSFilters
     {
         if (Auth::user()?->dosen) {
             if ($this->filterRPS === '') {
-                // $queryKelas->whereHas('rps_rel.dosens', function ($q) {
-                //     $q->where('dosens.id', Auth::user()->dosen->id);
-                // });
-                // $queryKelas->orWhereHas('jadwals.sesis.dosens', function ($q) {
-                //     $q->where('dosens.id', Auth::user()->dosen->id);
-                // });
                 $queryRPS->whereHas('dosens', function ($q) {
                     $q->where('dosens.id', Auth::user()->dosen->id);
                 });
+            } elseif ($this->filterRPS === 'rps-prodi') {
+                $queryRPS->whereHas('mk_rel.prodis', function ($q) {
+                    $q->where('prodis.id', Auth::user()->pr_id);
+                });
+            }
+        } else {
+            if ($this->filterRPS === '' || $this->filterRPS === 'rps-prodi') {
+                $queryRPS->whereHas('mk_rel.prodis', function ($q) {
+                    $q->where('prodis.id', Auth::user()->pr_id);
+                });
             }
         }
+
         if ($this->filterRPS === 'rps-akademik') {
             $queryRPS->where('akademik', 'like', '%'.$currentYear.'%');
         } elseif ($this->filterRPS === 'rps-rev-new') {

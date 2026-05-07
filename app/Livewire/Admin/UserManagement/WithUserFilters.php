@@ -128,7 +128,7 @@ trait WithUserFilters
     {
         $profileFields = [
             'role', 'admin_id', 'dosen_id', 'mahasiswa_id', 
-            'name', 'identity1', 'identity2', 'identity3', 
+            'name', 'identity1', 'identity2', 'identity3', 'nik',
             'prodi', 'status', 'angkatan'
         ];
 
@@ -170,6 +170,7 @@ trait WithUserFilters
             'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
             'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
             'identity3' => 'dosens.nidk',
+            'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
             'status'    => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
             'angkatan'  => 'mahasiswas.angkatan',
             'created_at' => 'users.created_at',

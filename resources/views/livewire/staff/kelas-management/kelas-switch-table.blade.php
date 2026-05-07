@@ -9,16 +9,16 @@
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
-                'tabFilter' => $totalMK,
+                'tabFilter' => $totalKelas,
                 'tabString' => '',
-                'tabNameString' => 'Semua Mata Kuliah'
+                'tabNameString' => 'Semua Kelas'
             ])
             {{-- Tab Tatap Muka --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalTatapMuka,
-                'tabString' => 'tatap_muka',
+                'tabString' => 'kelas-tatap-muka',
                 'tabNameString' => 'Tatap Muka'
             ])
             {{-- Tab Praktikum --}}
@@ -26,7 +26,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktikum,
-                'tabString' => 'praktikum',
+                'tabString' => 'kelas-praktikum',
                 'tabNameString' => 'Praktikum'
             ])
             {{-- Tab Praktek Lapangan --}}
@@ -34,7 +34,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktek,
-                'tabString' => 'praktek_lapangan',
+                'tabString' => 'kelas-praktek-lapangan',
                 'tabNameString' => 'Praktek Lapangan'
             ])
             {{-- Tab Simulasi --}}
@@ -42,7 +42,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalSimulasi,
-                'tabString' => 'simulasi',
+                'tabString' => 'kelas-simulasi',
                 'tabNameString' => 'Simulasi'
             ])
         </div>

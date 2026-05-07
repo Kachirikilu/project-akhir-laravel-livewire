@@ -1,11 +1,11 @@
 <?php
-// Script untuk fix importExcel method
+// Script untuk fix importUserExcel method
 
 $filePath = 'app/Livewire/Admin/UserManagement/WithUserModal.php';
 $content = file_get_contents($filePath);
 
 $oldMethod = <<<'PHP'
-    public function importExcel()
+    public function importUserExcel()
     {
         if ($this->roleType !== 'file') {
             return;
@@ -111,7 +111,7 @@ $oldMethod = <<<'PHP'
 PHP;
 
 $newMethod = <<<'PHP'
-    public function importExcel()
+    public function importUserExcel()
     {
         if ($this->roleType !== 'file') {
             return;

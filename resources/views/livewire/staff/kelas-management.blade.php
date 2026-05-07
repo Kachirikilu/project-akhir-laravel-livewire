@@ -1,6 +1,6 @@
 <div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
     {{-- @include('livewire.staff.kelas-management.kelas-toolbar') --}}
-    {{-- @include('livewire.staff.kelas-management.kelas-switch-table') --}}
+    @include('livewire.staff.kelas-management.kelas-switch-table')
 
     @include('livewire.staff.kelas-management.kelas-search-and-filters')
 

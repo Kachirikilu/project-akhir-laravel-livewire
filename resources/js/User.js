@@ -29,6 +29,7 @@ document.addEventListener("alpine:init", () => {
         nidn: "",
         nidk: "",
         nim: "",
+        nik: "",
         angkatan: "",
         status: "",
 
@@ -46,6 +47,7 @@ document.addEventListener("alpine:init", () => {
             nidn,
             nidk,
             nim,
+            nik,
             angkatan,
             status,
             idPr,
@@ -63,6 +65,7 @@ document.addEventListener("alpine:init", () => {
             this.nidn = nidn;
             this.nidk = nidk;
             this.nim = nim;
+            this.nik = nik;
             this.angkatan = angkatan;
             this.status = status;
 

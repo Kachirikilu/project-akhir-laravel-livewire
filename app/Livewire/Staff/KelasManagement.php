@@ -146,10 +146,10 @@ class KelasManagement extends Component
             // MAP TAB
             // =========================
             $mapTipe = [
-                'tatap_muka' => 1,
-                'praktikum' => 2,
-                'praktek_lapangan' => 3,
-                'simulasi' => 4,
+                'kelas-tatap-muka' => 1,
+                'kelas-praktikum' => 2,
+                'kelas-praktek-lapangan' => 3,
+                'kelas-simulasi' => 4,
             ];
 
             $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
@@ -177,7 +177,9 @@ class KelasManagement extends Component
             $tabQuery = clone $countKelas;
 
             if ($currentTabTipe) {
-                $tabQuery->where('tipe_sks', $currentTabTipe);
+                $tabQuery->whereHas('rps_rel.mk_rel', function ($q) use ($currentTabTipe) {
+                    $q->where('mata_kuliahs.tipe_sks', $currentTabTipe);
+                });
             }
 
             if (Auth::user()->dosen) {
@@ -190,6 +192,12 @@ class KelasManagement extends Component
                         });
                 })->count();
             }
+
+            $totalKelasProdi = (clone $tabQuery)->where(function ($mainQuery) {
+                $mainQuery->whereHas('pr_rel', function ($q) {
+                    $q->where('prodis.id', Auth::user()->pr_id);
+                });
+            })->count();
 
             $totalWajib = (clone $tabQuery)->whereHas('rps_rel.mk_rel', function ($q) {
                 $q->where('mata_kuliahs.is_wajib', true);
@@ -205,7 +213,9 @@ class KelasManagement extends Component
             // QUERY FINAL TABLE
             // =========================
             if ($currentTabTipe) {
-                $queryKelas->where('tipe_sks', $currentTabTipe);
+                $queryKelas->whereHas('rps_rel.mk_rel', function ($q) use ($currentTabTipe) {
+                    $q->where('mata_kuliahs.tipe_sks', $currentTabTipe);
+                });
             }
 
             $this->buttonKelasFilter($queryKelas);
@@ -218,6 +228,7 @@ class KelasManagement extends Component
                 'totalUni' => $totalUni,
 
                 'totalKelasSaya' => $totalKelasSaya ?? 0,
+                'totalKelasProdi' => $totalKelasProdi,
                 'totalKelas' => $totalKelas,
                 'totalTatapMuka' => $totalTatapMuka,
                 'totalPraktikum' => $totalPraktikum,
@@ -236,6 +247,8 @@ class KelasManagement extends Component
                 'totalPilihan' => '-',
                 'totalUni' => '-',
 
+                'totalKelasSaya' => '-',
+                'totalKelasProdi' => '-',
                 'totalKelas' => '-',
                 'totalTatapMuka' => '-',
                 'totalPraktikum' => '-',

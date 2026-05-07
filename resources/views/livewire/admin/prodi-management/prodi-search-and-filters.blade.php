@@ -1,5 +1,4 @@
 <div x-data="{ activeTab: @entangle('switchTable') }"
-    x-effect="activeTab; open = false"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     {{-- BAGIAN FILTER ATAS --}}

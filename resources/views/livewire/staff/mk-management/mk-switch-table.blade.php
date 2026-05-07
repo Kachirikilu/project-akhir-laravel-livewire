@@ -18,7 +18,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalTatapMuka,
-                'tabString' => 'tatap_muka',
+                'tabString' => 'mk-tatap-muka',
                 'tabNameString' => 'Tatap Muka'
             ])
             {{-- Tab Praktikum --}}
@@ -26,7 +26,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktikum,
-                'tabString' => 'praktikum',
+                'tabString' => 'mk-praktikum',
                 'tabNameString' => 'Praktikum'
             ])
             {{-- Tab Praktek Lapangan --}}
@@ -34,7 +34,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktek,
-                'tabString' => 'praktek_lapangan',
+                'tabString' => 'mk-praktek-lapangan',
                 'tabNameString' => 'Praktek Lapangan'
             ])
             {{-- Tab Simulasi --}}
@@ -42,7 +42,7 @@
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalSimulasi,
-                'tabString' => 'simulasi',
+                'tabString' => 'mk-simulasi',
                 'tabNameString' => 'Simulasi'
             ])
         </div>

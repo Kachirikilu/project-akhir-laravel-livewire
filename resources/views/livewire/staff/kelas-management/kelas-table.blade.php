@@ -258,7 +258,7 @@
                 @else
                     <ul class="text-left text-sm whitespace-nowrap">
                         @foreach ($k->jadwals as $jadwal)
-                            <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
+                            <li class="text-center">{{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
                         @endforeach
                     </ul>
                 @endif
@@ -269,7 +269,7 @@
                 @else
                     <ul class="text-left text-sm whitespace-nowrap">
                         @foreach ($k->jadwals as $jadwal)
-                            <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->kapasitas ?? '-' }}</li>
+                            <li class="text-center">{{ $jadwal->kapasitas ?? '-' }}</li>
                         @endforeach
                     </ul>
                 @endif
@@ -280,8 +280,7 @@
                 @else
                     <ul class="text-left text-sm whitespace-nowrap">
                         @foreach ($k->jadwals as $jadwal)
-                            <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->tanggal_pelaksanaan ?? '-' }}
-                            </li>
+                            <li>{{ $jadwal->tanggal_pelaksanaan ?? '-' }}</li>
                         @endforeach
                     </ul>
                 @endif

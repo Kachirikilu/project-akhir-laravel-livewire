@@ -33,35 +33,36 @@
     </style>
 </head>
 
-<body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }" x-data="{
-    expanded: $persist(false).as('sidebar_expanded'),
-    expanded2: false,
-    isDesktop: window.matchMedia('(min-width: 1024px)').matches,
-
-    toggleExpanded() {
-        this.expanded = !this.expanded;
-        if (this.isDesktop) {
-            this.expanded2 = this.expanded;
-        }
-    },
-
-    init() {
-        const media = window.matchMedia('(min-width: 1024px)');
-        this.isDesktop = media.matches;
-
-        this.expanded2 = this.expanded;
-
-        media.addEventListener('change', (e) => {
-            this.isDesktop = e.matches;
-
-            if (!e.matches) {
-                this.expanded = false;
-            } else {
-                this.expanded = this.expanded2;
+<body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }"
+    x-data="{
+        expanded: $persist(false).as('sidebar_expanded'),
+        expanded2: false,
+        isDesktop: window.matchMedia('(min-width: 1024px)').matches,
+    
+        toggleExpanded() {
+            this.expanded = !this.expanded;
+            if (this.isDesktop) {
+                this.expanded2 = this.expanded;
             }
-        });
-    }
-}">
+        },
+    
+        init() {
+            const media = window.matchMedia('(min-width: 1024px)');
+            this.isDesktop = media.matches;
+    
+            this.expanded2 = this.expanded;
+    
+            media.addEventListener('change', (e) => {
+                this.isDesktop = e.matches;
+    
+                if (!e.matches) {
+                    this.expanded = false;
+                } else {
+                    this.expanded = this.expanded2;
+                }
+            });
+        }
+    }">
 
     {{-- Sidebar --}}
     <div x-show="isDesktop || (expanded && !isDesktop)" x-cloak
@@ -86,27 +87,57 @@
 
             {{-- Navigasi --}}
             <nav class="flex-1 space-y-1 no-scrollbar">
-            @php
-                $user = Auth::user();
-                
-                $allNavItems = [
-                    ['icon' => 'home', 'route' => 'dashboard', 'label' => 'Dashboard', 'roles' => ['admin', 'dosen', 'mahasiswa']],
-                    ['icon' => 'users', 'route' => 'user-management', 'label' => 'User Management', 'roles' => ['admin']],
-                    ['icon' => 'academic-cap', 'route' => 'program-studi-management', 'label' => 'Study Program', 'roles' => ['admin']],
-                    ['icon' => 'rectangle-stack', 'route' => 'mata-kuliah-management', 'label' => 'Mata Kuliah', 'roles' => ['admin', 'dosen']],
-                    ['icon' => 'clipboard-document-list', 'route' => 'rps-management', 'label' => 'RPS Management', 'roles' => ['admin', 'dosen']],
-                    ['icon' => 'rectangle-group', 'route' => 'kelas-management', 'label' => 'Kelas Management', 'roles' => ['admin', 'dosen']],
-                ];
+                @php
+                    $user = Auth::user();
 
-                $navItems = array_filter($allNavItems, function($item) use ($user) {
-                    if ($user->admin) {
-                        return in_array('admin', $item['roles']);
-                    } elseif ($user->dosen) {
-                        return in_array('dosen', $item['roles']);
-                    }
-                    return false;
-                });
-            @endphp
+                    $allNavItems = [
+                        [
+                            'icon' => 'home',
+                            'route' => 'dashboard',
+                            'label' => 'Dashboard',
+                            'roles' => ['admin', 'dosen', 'mahasiswa'],
+                        ],
+                        [
+                            'icon' => 'users',
+                            'route' => 'user-management',
+                            'label' => 'User Management',
+                            'roles' => ['admin'],
+                        ],
+                        [
+                            'icon' => 'academic-cap',
+                            'route' => 'program-studi-management',
+                            'label' => 'Study Program',
+                            'roles' => ['admin'],
+                        ],
+                        [
+                            'icon' => 'rectangle-stack',
+                            'route' => 'mata-kuliah-management',
+                            'label' => 'Mata Kuliah',
+                            'roles' => ['admin', 'dosen'],
+                        ],
+                        [
+                            'icon' => 'clipboard-document-list',
+                            'route' => 'rps-management',
+                            'label' => 'RPS Management',
+                            'roles' => ['admin', 'dosen'],
+                        ],
+                        [
+                            'icon' => 'rectangle-group',
+                            'route' => 'kelas-management',
+                            'label' => 'Kelas Management',
+                            'roles' => ['admin', 'dosen'],
+                        ],
+                    ];
+
+                    $navItems = array_filter($allNavItems, function ($item) use ($user) {
+                        if ($user->admin) {
+                            return in_array('admin', $item['roles']);
+                        } elseif ($user->dosen) {
+                            return in_array('dosen', $item['roles']);
+                        }
+                        return false;
+                    });
+                @endphp
 
                 @foreach ($navItems as $item)
                     <a href="{{ route($item['route']) }}" wire:navigate
@@ -144,14 +175,17 @@
 
             <div class="relative h-16 w-full flex items-center">
                 {{-- Container Induk dengan posisi relatif untuk mengunci anak-anaknya --}}
-                
-                <div class="absolute transition-all duration-500 ease-in-out"
-                    :class="expanded ? '-translate-y-8 opacity-100' : 'translate-y-0 opacity-100'">
+
+                <div class="absolute transition-all duration-400 ease-in-out"
+                    :style="expanded ? 'transition-delay: 0ms' : 'transition-delay: 200ms'"
+                    :class="expanded ? '-translate-y-15 opacity-100' : 'translate-y-0 opacity-100'">
                     <livewire:navigation.dark-mode />
                 </div>
 
-                <div class="absolute transition-all duration-500 ease-in-out"
-                    :class="expanded ? 'translate-y-4 translate-x-0 opacity-100' : 'translate-x-12 opacity-0 pointer-events-none'">
+                <div class="absolute transition-all duration-400 ease-in-out"
+                    :style="expanded ? 'transition-delay: 200ms' : 'transition-delay: 0ms'"
+                    :class="expanded ? 'translate-y-4 translate-x-0 opacity-100' :
+                        'translate-x-12 opacity-0 pointer-events-none'">
                     <livewire:navigation.color-mode />
                 </div>
             </div>

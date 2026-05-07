@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data-user.window="$store.user.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+<flux:modal name="user-modal" wire:model="showUserModal" @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()" class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
@@ -31,6 +31,11 @@
                 <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
                     <flux:badge icon="cog-6-tooth" color="cyan" size="lg">
                         <span x-text="$store.user?.isEdit ? 'Edit Pengguna - Mahasiswa' : 'Tambah Pengguna - Mahasiswa'"></span>
+                    </flux:badge>
+                </template>
+                <template x-if="$store.user?.typeModal == 'file'" x-cloak>
+                    <flux:badge icon="cog-6-tooth" color="green" size="lg">
+                        <span>Input Pengguna - Excel</span>
                     </flux:badge>
                 </template>
             </h3>

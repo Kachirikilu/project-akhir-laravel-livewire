@@ -10,19 +10,19 @@
     @if ($withRPS ?? false)
         <template x-if="$store.user.isEdit" x-cloak>
             @include('livewire.global.modal-form.paginate.tab-form', [
-                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'RPS Terkait'],
+                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas', 4 => 'RPS Terkait'],
                 'errorsCount' => $this->getUserErrorSections(),
             ])
         </template>
         <template x-if="$store.user.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.paginate.tab-form', [
-                'tabs' => [1 => 'Akun', 2 => 'Personal'],
+                'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas'],
                 'errorsCount' => $this->getUserErrorSections(),
             ])
         </template>
     @else
         @include('livewire.global.modal-form.paginate.tab-form', [
-            'tabs' => [1 => 'Akun', 2 => 'Personal'],
+            'tabs' => [1 => 'Akun', 2 => 'Personal', 3 => 'ID Identitas'],
             'errorsCount' => $this->getUserErrorSections(),
         ])
     @endif
@@ -34,18 +34,13 @@
 
         </div>
         <div x-show="step === 2">
-            <template x-if="$store.user?.typeModal == 'admin'" x-cloak>
-                @include('livewire.admin.user-management.user-modal-form.user-input-partial.admin-input')
-            </template>
-            <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
-                @include('livewire.admin.user-management.user-modal-form.user-input-partial.dosen-input')
-            </template>
-            <template x-if="$store.user?.typeModal == 'mahasiswa'" x-cloak>
-                @include('livewire.admin.user-management.user-modal-form.user-input-partial.mahasiswa-input')
-            </template>
+            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-personal-input')
+        </div>
+        <div x-show="step === 3">
+            @include('livewire.admin.user-management.user-modal-form.user-input-partial.user-identitas-input')
         </div>
         @if ($withRPS ?? false)
-            <div x-show="step === 3">
+            <div x-show="step === 4">
                 <template x-if="$store.user.isEdit && $store.user?.typeModal == 'dosen'" x-cloak>
                     @include('livewire.staff.obe-management.obe-partial.rps-list', [
                         'alpine' => 'dosen',
@@ -62,17 +57,17 @@
     @if ($withRPS ?? false)
         <template x-if="$store.user.isEdit" x-cloak>
             @include('livewire.global.modal-form.paginate.stepper-form', [
-                'maxStep' => 3,
+                'maxStep' => 4,
             ])
         </template>
         <template x-if="$store.user.isEdit == 0" x-cloak>
             @include('livewire.global.modal-form.paginate.stepper-form', [
-                'maxStep' => 2,
+                'maxStep' => 3,
             ])
         </template>
     @else
         @include('livewire.global.modal-form.paginate.stepper-form', [
-            'maxStep' => 2,
+            'maxStep' => 3,
         ])
     @endif
 </div>

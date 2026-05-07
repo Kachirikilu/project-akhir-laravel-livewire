@@ -358,6 +358,7 @@ class RPSManagement extends Component
             }
 
             $stats = [
+                'rps-prodi' => '🏦',
                 'rps-akademik' => '📘',
                 'rps-rev-new' => '✨',
                 'rps-aktif' => '✅',
@@ -396,6 +397,11 @@ class RPSManagement extends Component
             // =========================
             switch ($this->switchTable) {
                 case 'rps':
+                    $stats['rps-prodi'] = (clone $countRPS)
+                        ->whereHas('mk_rel.prodis', function ($q) {
+                            $q->where('prodis.id', Auth::user()->pr_id);
+                        })->count();
+
                     $stats['rps-akademik'] = (clone $countRPS)
                         ->where('akademik', 'like', "%$currentYear%")
                         ->count();
@@ -567,6 +573,7 @@ class RPSManagement extends Component
                 'dosen_rps_modal_paginator' => collect(),
 
                 'stats' => [
+                    'rps-prodi' => '-',
                     'rps-akademik' => '-',
                     'rps-rev-new' => '-',
                     'rps-aktif' => '-',

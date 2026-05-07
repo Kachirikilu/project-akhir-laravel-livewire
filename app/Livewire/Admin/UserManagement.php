@@ -12,9 +12,9 @@ use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
 use App\Models\Auth\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class UserManagement extends Component
 {
@@ -234,7 +234,7 @@ class UserManagement extends Component
                 'totalUsers' => '-',
                 'totalAdmins' => '-',
                 'totalDosens' => '-',
-                'totalMahasiswas' => '-'
+                'totalMahasiswas' => '-',
             ]);
         }
     }

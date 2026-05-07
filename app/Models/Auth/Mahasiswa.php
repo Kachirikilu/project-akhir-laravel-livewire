@@ -14,21 +14,30 @@ class Mahasiswa extends Model
     protected $table = 'mahasiswas';
 
     protected $fillable = [
-        'nim',
         'user_id',
         'pr_id',
+        'kode_wilayah',
         'name',
+        'nim',
+        'nik',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'no_hp',
         'angkatan',
-        'yudisium',
-        'wisuda',
+        'tanggal_yudisium',
+        'tanggal_wisuda',
         'status',
     ];
 
     protected $casts = [
-        'yudisium' => 'date',
-        'wisuda' => 'date',
+        'tanggal_lahir' => 'date',
+        'tanggal_yudisium' => 'date',
+        'tanggal_wisuda' => 'date',
         'angkatan' => 'integer',
     ];
+
 
     public function user(): BelongsTo
     {

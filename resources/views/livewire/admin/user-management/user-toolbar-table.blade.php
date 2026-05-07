@@ -54,6 +54,7 @@
                         '{{ $detail->nidn ?? '' }}',
                         '{{ $detail->nidk ?? '' }}',
                         '{{ $detail->nim ?? '' }}',
+                        '{{ $x->nik ?? '' }}',
                         '{{ $detail->angkatan ?? '' }}',
                         '{{ $x->status ?? '' }}',
                         '{{ $x->pr_id ?? '' }}',

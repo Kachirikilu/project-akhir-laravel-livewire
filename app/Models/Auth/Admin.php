@@ -18,11 +18,24 @@ class Admin extends Model
     protected $fillable = [
         'user_id',
         'pr_id',
+        'kode_wilayah',
         'nip',
         'nitk',
+        'nik',
         'name',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'no_hp',
+        'pangkat',
+        'golongan_awal',
+        'golongan_akhir',
+        'tmt_cp_blu',
+        'tmt_blu',
         'status',
     ];
+
 
     public function user(): BelongsTo
     {

@@ -25,8 +25,21 @@ class Dosen extends Model
         'nip',
         'nidn',
         'nidk',
+        'nik',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'no_hp',
+        'no_karpeg',
+        'pangkat_terakhir',
+        'golongan_terakhir',
+        'tmt_golongan',
+        'jabatan_fungsional',
+        'tmt_jabatan',
         'status',
     ];
+
 
     public function rps(): BelongsToMany
     {

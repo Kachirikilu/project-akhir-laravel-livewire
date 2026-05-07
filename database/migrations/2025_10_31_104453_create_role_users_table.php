@@ -13,17 +13,33 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->string('nip')->nullable()->unique();
-            $table->string('nitk')->nullable()->unique();
-
             $table->foreignId('user_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
                 ->unique();
-
             $table->foreignId('pr_id')->nullable();
+            $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
+
+            // Data Identitas
             $table->string('name');
+            $table->string('nip')->nullable()->unique();
+            $table->string('nitk')->nullable()->unique();
+            $table->string('nik')->unique();
+
+            // Data Personal
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+            $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
+            $table->string('no_hp', 20)->nullable();
+
+            // Data Kepegawaian BLU
+            $table->string('pangkat')->nullable();
+            $table->string('golongan_awal')->nullable();
+            $table->string('golongan_akhir')->nullable();
+            $table->date('tmt_cp_blu')->nullable();
+            $table->date('tmt_blu')->nullable();
 
             $table->enum('status', [
                 'Aktif',                  // Hijau (Produktif)
@@ -41,10 +57,6 @@ return new class extends Migration
 
         Schema::create('dosens', function (Blueprint $table) {
             $table->id();
-            $table->string('nip')->nullable()->unique();
-            $table->string('nidn')->nullable()->unique();
-            $table->string('nidk')->nullable()->unique();
-
             $table->foreignId('user_id')
                 ->constrained()
                 ->onUpdate('cascade')
@@ -52,7 +64,27 @@ return new class extends Migration
                 ->unique();
             $table->foreignId('pr_id')->nullable();
 
+            // Data Identitas
             $table->string('name');
+            $table->string('nip')->nullable()->unique();
+            $table->string('nidn')->nullable()->unique();
+            $table->string('nidk')->nullable()->unique();
+            $table->string('nik')->unique();
+
+            // Data Personal & Fisik (Sama seperti Admin)
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+            $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
+            $table->string('no_hp', 20)->nullable();
+            $table->string('no_karpeg')->nullable();
+
+            // Data Kepangkatan & Jabatan (AK)
+            $table->string('pangkat_terakhir')->nullable();
+            $table->string('golongan_terakhir')->nullable();
+            $table->date('tmt_golongan')->nullable();
+            $table->string('jabatan_fungsional')->nullable();
+            $table->date('tmt_jabatan')->nullable();
 
             $table->enum('status', [
                 'Aktif',                  // Hijau (Produktif)
@@ -65,26 +97,36 @@ return new class extends Migration
                 'Diberhentikan',          // Merah (Masalah/Sanksi)
                 'Meninggal Dunia',        // Merah (Permanen)
             ])->default('Aktif');
+
             $table->timestamps();
         });
 
         Schema::create('mahasiswas', function (Blueprint $table) {
             $table->id();
-
-            $table->string('nim')->unique();
-
             $table->foreignId('user_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade')
                 ->unique();
-
             $table->foreignId('pr_id')->nullable();
+            $table->enum('kode_wilayah', ['IDL', 'PLG'])->nullable();
 
+            // Data Identitas
             $table->string('name');
+            $table->string('nim')->unique();
+            $table->string('nik')->unique();
+
+            // Data Personal & Fisik
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+            $table->enum('agama', ['Islam', 'Kristen', 'Hindu', 'Buddha', 'Katolik', 'Khonghucu', 'Lainnya'])->nullable();
+            $table->string('no_hp')->nullable();
+
+            // Data Akademik
             $table->year('angkatan');
-            $table->date('yudisium')->nullable();
-            $table->date('wisuda')->nullable();
+            $table->date('tanggal_yudisium')->nullable();
+            $table->date('tanggal_wisuda')->nullable();
             $table->enum('status', [
                 'Aktif',                  // Hijau (Aktif Kuliah)
                 'Lulus',                  // Biru (Output Positif)
@@ -96,6 +138,29 @@ return new class extends Migration
                 'Hilang',                 // Merah (Tanpa Kabar/Ghaib)
                 'Meninggal Dunia',        // Merah (Permanen)
             ])->default('Aktif');
+            $table->timestamps();
+        });
+
+        Schema::create('pendidikans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+
+            $table->string('institusi');
+            $table->string('negara')->default('Indonesia');
+            $table->year('tahun_lulus');
+
+            $table->enum('jenjang_pendidikan', [
+                'SMA', 'SMK', 'MAN',
+                'D1', 'D2', 'D3', 'D4',
+                'S1', 'S2', 'S3', 'Profesi',
+                'Spesialis',
+            ]);
+
+            $table->string('bidang_ilmu')->nullable();
+            $table->string('gelar')->nullable();
+
+            $table->boolean('is_pendidikan_blu')->default(false);
+
             $table->timestamps();
         });
     }

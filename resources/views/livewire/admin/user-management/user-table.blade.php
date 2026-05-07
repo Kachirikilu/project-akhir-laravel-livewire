@@ -81,7 +81,7 @@
                 'rowSpan' => 2,
             ])
 
-            <th colspan="{{ $switchTable == 'mahasiswa' ? 1 : ($switchTable == 'admin' ? 2 : 3) }}"
+            <th colspan="{{ $switchTable == 'mahasiswa' ? 2 : ($switchTable == 'admin' ? 3 : 4) }}"
                 class="{{ $headSubKolom }}">
                 Identitas (ID)
             </th>
@@ -139,7 +139,7 @@
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'identity2',
                     'headString' =>
-                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NIDK'),
+                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
                     // 'isSubHeader' => 1,
                     'isCenter' => 1,
                     'isBorderR' => $switchTable == 'admin' ? 1 : 0,
@@ -150,10 +150,16 @@
                         'headString' => 'NIDK',
                         // 'isSubHeader' => 1,
                         'isCenter' => 1,
-                        'isBorderR' => 1,
                     ])
                 @endif
             @endif
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'nik',
+                'headString' => 'NIK',
+                // 'isSubHeader' => 1,
+                'isCenter' => 1,
+                'isMain' => 1,
+            ])
         </tr>
     </x-slot:header>
 
@@ -213,12 +219,15 @@
                     {{ $user->identity2 ?? '-' }}
                 </td>
             @endif
+
             @if ($switchTable == 'dosen' || $switchTable == '')
                 <td
                     class="{{ $subKolom }} {{ $switchTable == '' || $switchTable == 'dosen' ? 'border-r' : '' }} text-center">
                     {{ $user->identity3 ?? '-' }}
                 </td>
             @endif
+            <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $user->nik ?? '-' }}</td>
+
             @if ($switchTable == 'mahasiswa')
                 <td class="{{ $secondKolom }} text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
@@ -309,10 +318,10 @@
         @empty
             <tr>
                 <td colspan="{{ match ($switchTable) {
-                    'admin' => 12,
-                    'dosen' => 13,
-                    'mahasiswa' => 12,
-                    default => 12,
+                    'admin' => 13,
+                    'dosen' => 14,
+                    'mahasiswa' => 13,
+                    default => 13,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
                     Tidak ada data Pengguna ditemukan!

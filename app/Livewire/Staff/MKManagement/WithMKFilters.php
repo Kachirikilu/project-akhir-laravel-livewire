@@ -56,11 +56,11 @@ trait WithMKFilters
             $totalMKSaya = $queryMK->whereHas('prodis', function ($q) {
                 $q->where('prodis.id', Auth::user()->pr_id);
             });
-        } elseif ($this->filterMK === 'wajib') {
+        } elseif ($this->filterMK === 'mk-wajib') {
             $queryMK->where('is_wajib', true);
-        } elseif ($this->filterMK === 'pilihan') {
+        } elseif ($this->filterMK === 'mk-pilihan') {
             $queryMK->where('is_wajib', false);
-        } elseif ($this->filterMK === 'universitas') {
+        } elseif ($this->filterMK === 'mk-universitas') {
             $queryMK->where('level_mk', 4);
         }
     }

@@ -109,6 +109,7 @@
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIDN</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIDK</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIM</th>
+                            <th class="px-3 py-2 border whitespace-nowrap text-center">NIK</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Thn Masuk</th>
                             {{-- <th class="px-3 py-2 border whitespace-nowrap text-center">Program Studi</th> --}}
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Role</th>
@@ -129,64 +130,101 @@
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="email" wire:model.lazy="parsedRows.{{ $i }}.email"
-                                        class="w-48 border rounded px-2 py-1 text-xs outline-none">
+                                    <input type="email" wire:model="parsedRows.{{ $i }}.email"
+                                        class="w-48 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['email']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['email']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['email'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.password"
-                                        class="w-48 border rounded px-2 py-1 text-xs outline-none"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.password"
+                                        class="w-48 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['password']) ? 'border-red-500 bg-red-50' : '' }}"
                                         placeholder="Default / custom">
+                                    @if(isset($rowErrors[$i]['password']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['password'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.name"
-                                        class="w-56 border rounded px-2 py-1 text-xs outline-none">
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.name"
+                                        class="w-56 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['name']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['name']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['name'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nip"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nip"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nip']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nip']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nip'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nitk"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nitk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nitk']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nitk']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nitk'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidn"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nidn"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nidn']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nidn']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nidn'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nidk"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nidk"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nidk']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nidk']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nidk'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="text" wire:model.lazy="parsedRows.{{ $i }}.nim"
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nim"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
-                                        class="w-40 border rounded px-2 py-1 text-xs">
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nim']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nim']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nim'][0] }}</p>
+                                    @endif
+                                </td>
+
+                                <td class="{{ $kolomExcel }}">
+                                    <input type="text" wire:model="parsedRows.{{ $i }}.nik"
+                                        inputmode="numeric" pattern="[0-9]*" maxlength="16"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)"
+                                        class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nik']) ? 'border-red-500 bg-red-50' : '' }}">
+                                    @if(isset($rowErrors[$i]['nik']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nik'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 {{-- Tahun Masuk: Input dikecilkan --}}
                                 <td class="{{ $kolomExcel }}">
                                     <input type="number"
-                                        wire:model.lazy="parsedRows.{{ $i }}.angkatan"
-                                        class="w-full border rounded px-1 py-1 text-xs text-center appearance-none"
+                                        wire:model="parsedRows.{{ $i }}.angkatan"
+                                        class="w-full border rounded px-1 py-1 text-xs text-center appearance-none {{ isset($rowErrors[$i]['angkatan']) ? 'border-red-500 bg-red-50' : '' }}"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="4"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
                                         placeholder="YYYY">
+                                    @if(isset($rowErrors[$i]['angkatan']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['angkatan'][0] }}</p>
+                                    @endif
                                 </td>
 
                                 {{-- <td class="{{ $kolomExcel }}">
@@ -198,14 +236,18 @@
                                 {{-- Role: Diberi styling Select yang lebih jelas --}}
                                 <td class="{{ $kolomExcel }}">
                                     <div class="relative">
-                                        <select wire:model.lazy="parsedRows.{{ $i }}.role"
+                                        <select wire:model="parsedRows.{{ $i }}.role"
                                             class="w-24 border rounded pl-2 pr-4 py-1 text-xs cursor-pointer appearance-none transition-colors
-                   bg-gray-50 text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
+                                            {{ isset($rowErrors[$i]['role']) ? 'border-red-500 bg-red-50' : 'bg-gray-50' }}
+                   text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
                    dark:bg-neutral-700 dark:text-gray-200 dark:border-neutral-600 dark:focus:bg-gray-600 dark:focus:ring-blue-400">
                                             <option value="admin" class="dark:bg-neutral-800">Admin</option>
                                             <option value="dosen" class="dark:bg-neutral-800">Dosen</option>
                                             <option value="mahasiswa" class="dark:bg-neutral-800">Mahasiswa</option>
                                         </select>
+                                        @if(isset($rowErrors[$i]['role']))
+                                            <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['role'][0] }}</p>
+                                        @endif
 
                                         {{-- Ikon Panah Dropdown --}}
                                         <div
@@ -235,7 +277,12 @@
                                 <tr>
                                     <td colspan="13"
                                         class="px-4 py-1 bg-red-50 text-red-600 text-[10px] border italic">
-                                        ⚠️ {{ $rowErrors[$i] }}
+                                        ⚠️ 
+                                        @foreach($rowErrors[$i] as $fieldErrors)
+                                            @foreach($fieldErrors as $error)
+                                                {{ $error }}@if(!$loop->parent->last || !$loop->last) | @endif
+                                            @endforeach
+                                        @endforeach
                                     </td>
                                 </tr>
                             @endif
