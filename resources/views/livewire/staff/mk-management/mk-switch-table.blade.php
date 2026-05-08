@@ -1,17 +1,27 @@
-<div x-data="{ activeTab: @entangle('switchTable') }" 
-     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-2 p-4 rounded-lg shadow-md border">
+<div x-data="{ activeTab: @entangle('switchTable') }"
+    class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-2 p-4 rounded-lg shadow-md border">
 
-    <div class="border-[var(--border-table-color)] flex flex-col-reverse border-b">
+    <div
+        class="border-[var(--border-table-color)] flex flex-col md:flex-row md:justify-between md:items-end border-b gap-3">
 
-        {{-- Bagian Tab / Link (Kiri) --}}
-        <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1">
+        <div class="flex justify-end md:order-2 pb-2">
+            <flux:button @click="$wire.exportMKExcel()" size="sm"
+                class="cursor-pointer h-8 !text-xs !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 border border-emerald-200 transition-colors">
+                <flux:icon name="printer" class="mr-1 h-3.5 w-3.5" />
+                <span>Export Excel</span>
+                <flux:icon wire:loading wire:target="exportMKExcel" name="arrow-path"
+                    class="animate-spin h-3.5 w-3.5 ml-2 dark:!text-emerald-600" />
+            </flux:button>
+        </div>
+
+        <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1 w-full">
             {{-- Mata Kuliah --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalMK,
                 'tabString' => '',
-                'tabNameString' => 'Semua Mata Kuliah'
+                'tabNameString' => 'Semua Mata Kuliah',
             ])
             {{-- Tab Tatap Muka --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
@@ -19,7 +29,7 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalTatapMuka,
                 'tabString' => 'mk-tatap-muka',
-                'tabNameString' => 'Tatap Muka'
+                'tabNameString' => 'Tatap Muka',
             ])
             {{-- Tab Praktikum --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
@@ -27,7 +37,7 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktikum,
                 'tabString' => 'mk-praktikum',
-                'tabNameString' => 'Praktikum'
+                'tabNameString' => 'Praktikum',
             ])
             {{-- Tab Praktek Lapangan --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
@@ -35,7 +45,7 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalPraktek,
                 'tabString' => 'mk-praktek-lapangan',
-                'tabNameString' => 'Praktek Lapangan'
+                'tabNameString' => 'Praktek Lapangan',
             ])
             {{-- Tab Simulasi --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
@@ -43,9 +53,11 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalSimulasi,
                 'tabString' => 'mk-simulasi',
-                'tabNameString' => 'Simulasi'
+                'tabNameString' => 'Simulasi',
             ])
         </div>
-
     </div>
+
+
+
 </div>

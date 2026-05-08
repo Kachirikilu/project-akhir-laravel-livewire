@@ -7,6 +7,7 @@ use App\Livewire\Admin\ProdiManagement\WithDepartemenFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiDelete;
 use App\Livewire\Admin\ProdiManagement\WithProdiFilters;
 use App\Livewire\Admin\ProdiManagement\WithProdiModal;
+use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Models\ProgramStudi\Fakultas;
@@ -25,6 +26,7 @@ class ProgramStudiManagement extends Component
     use WithProdiDelete;
     use WithProdiFilters;
     use WithProdiModal;
+    use WithProdiExcel;
 
     public $showModal = false;
 
@@ -128,8 +130,8 @@ class ProgramStudiManagement extends Component
     //     $this->inputDpFilter();
     //     $this->inputFkFilter();
 
-    //     $queryProdi = $this->inputProdiSearch();
-    //     $queryDepartemen = $this->inputDepartemenSearch();
+    //     $queryProdi = $this->inputPrSearch();
+    //     $queryDepartemen = $this->inputDpSearch();
     //     $queryFakultas = $this->inputFkSearch();
 
     //     try {
@@ -198,8 +200,8 @@ class ProgramStudiManagement extends Component
         $this->inputDpFilter();
         $this->inputFkFilter();
 
-        $queryPr = $this->inputProdiSearch();
-        $queryDp = $this->inputDepartemenSearch();
+        $queryPr = $this->inputPrSearch();
+        $queryDp = $this->inputDpSearch();
         $queryFk = $this->inputFkSearch();
 
         try {

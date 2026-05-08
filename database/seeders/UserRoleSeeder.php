@@ -19,7 +19,7 @@ class UserRoleSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
-        $totalUsers = 2000;
+        $totalUsers = 800;
 
         DB::transaction(function () use ($faker, $defaultPw, $totalUsers) {
             

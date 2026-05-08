@@ -82,7 +82,7 @@
                     'nameXString' => 'Penerbit',
                     'modelString' => 'penerbit',
                     'iconString' => 'building-office-2',
-                    'placeholder' => 'Contoh: IEEE atau Universitas Sriwijaya',
+                    'placeholder' => 'Contoh: IEEE atau '.env('UNIVERSITAS'),
                     'message' => $errors->first('penerbit'),
                 ])
 

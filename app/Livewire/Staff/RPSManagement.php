@@ -346,7 +346,7 @@ class RPSManagement extends Component
                     $data['ref'] = $queryRef->paginate($this->perPage);
                     break;
                 case 'dosen':
-                    $this->buttonRoleFilter($queryUser);
+                    $this->buttonUserFilter($queryUser);
                     $users = $queryUser->paginate($this->perPage);
                     break;
             }

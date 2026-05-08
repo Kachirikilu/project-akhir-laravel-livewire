@@ -112,11 +112,11 @@
 
             @if ($switchTable === 'prodi' || $switchTable === 'departemen')
                 <td class="{{ $secondKolom }} whitespace-nowrap">
-                    {{ $switchTable === 'departemen' ? 'Departemen ' . $x->departemen : $x->departemen . ' (' . $x->kode_dp . ')' }}</td>
+                    {{ $switchTable === 'departemen' ? $x->departemen_dp : $x->departemen . ' (' . $x->kode_dp . ')' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} whitespace-nowrap">
-                    {{ $switchTable === 'fakultas' ? 'Fakultas ' . $x->fakultas : $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
+                    {{ $switchTable === 'fakultas' ? $x->fakultas_fk : $x->fakultas . ' (' . $x->kode_fk . ')' }}</td>
 
 
             @if ($switchTable === 'prodi')

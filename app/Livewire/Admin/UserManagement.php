@@ -147,7 +147,7 @@ class UserManagement extends Component
             // =========================
             $baseUser = User::query();
 
-            $this->buttonRoleFilter($queryUser);
+            $this->buttonUserFilter($queryUser);
 
             if (! empty($this->switchTable)) {
                 $queryUser->whereHas($this->switchTable);

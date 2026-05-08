@@ -4,8 +4,8 @@ namespace App\Livewire\Staff\MKManagement;
 
 use App\Livewire\Global\HasSortir;
 use App\Models\Akademik\MataKuliah;
-use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithPagination;
 
 trait WithMKFilters
 {
@@ -62,6 +62,22 @@ trait WithMKFilters
             $queryMK->where('is_wajib', false);
         } elseif ($this->filterMK === 'mk-universitas') {
             $queryMK->where('level_mk', 4);
+        }
+    }
+
+    public function buttonMKSwitch($queryMK)
+    {
+        $mapTipe = [
+            'mk-tatap-muka' => 1,
+            'mk-praktikum' => 2,
+            'mk-praktek-lapangan' => 3,
+            'mk-simulasi' => 4,
+        ];
+
+        $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
+
+        if ($currentTabTipe) {
+            $queryMK->where('tipe_sks', $currentTabTipe);
         }
     }
 

@@ -486,7 +486,7 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }}">{{ $x->revisi_day ?? '-' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap">{{ $x->revisi_day ?? '-' }}</td>
             @endif
 
             @if ($switchTable === 'cpmk')

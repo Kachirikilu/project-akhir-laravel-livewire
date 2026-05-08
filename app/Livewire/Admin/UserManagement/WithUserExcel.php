@@ -8,7 +8,10 @@ use App\Models\Auth\Admin;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\Mahasiswa;
 use App\Models\Auth\User;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -31,148 +34,53 @@ trait WithUserExcel
 
     public function exportUserExcel()
     {
-        $fileName = 'Data_User_'.now()->format('Y-m-d').'.xlsx';
+        $queryUser = $this->inputUserSearch();
+        $this->buttonUserFilter($queryUser);
 
-        $query = $this->inputUserSearch();
-        $this->buttonRoleFilter($query);
-
+        $queryUser->with(['pendidikans' => fn ($q) => $q->orderByJenjang()]);
         if (! empty($this->switchTable)) {
-            $query->whereHas($this->switchTable);
+            $queryUser->whereHas($this->switchTable);
         }
 
-        return Excel::download(new UserExport($query, $this->switchTable), $fileName);
+        $univ = env('UNIVERSITAS');
+        $UNIV = strtoupper(env('UNIVERSITAS'));
+
+        $filter = '';
+        if ($this->filterStatus == 'aktif') {
+            $filter = ' '.ucwords($this->filterStatus);
+        } elseif ($this->filterStatus == 'non-aktif') {
+            $filter = ' Tidak Aktif';
+        }
+
+        $tag = ucwords($this->switchTable ?? 'User').$filter;
+        $TAG = strtoupper($tag);
+
+        $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $title = 'DATA '.$TAG.' '.$UNIV;
+
+        if ($this->filterStatus !== '') {
+            if ($this->selectedFkId) {
+                $fk = Fakultas::find($this->selectedFkId);
+                $fileName = 'Data_'.$tag.'_'.$fk->fakultas_fk.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+                $title = 'DATA '.$TAG.' '.strtoupper($fk->fakultas_fk).' '.$UNIV;
+            } elseif ($this->selectedDpId) {
+                $dp = Departemen::find($this->selectedDpId);
+                $fileName = 'Data_'.$tag.'_'.$dp->departemen_dp.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+                $title = 'DATA '.$TAG.' '.strtoupper($dp->departemen_dp).' '.$UNIV;
+            } elseif ($this->selectedPrId) {
+                $pr = Prodi::find($this->selectedPrId);
+                $fileName = 'Data_'.$tag.'_'.$pr->prodi.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+                $title = 'DATA '.$TAG.' '.strtoupper($pr->prodi).' '.$UNIV;
+            }
+        } else {
+            $pr = Auth::user()->prodi;
+            $fileName = 'Data_'.$tag.'_'.$pr.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+            $title = 'DATA '.$TAG.' '.strtoupper($pr).' '.$UNIV;
+        }
+
+
+        return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileName);
     }
-
-    // public function exportUserExcel()
-    // {
-    //     $fileName = 'Data_User_'.now()->format('Y-m-d').'.csv';
-
-    //     return response()->streamDownload(function () {
-    //         $handle = fopen('php://output', 'w');
-
-    //         if ($this->switchTable == '') {
-    //             fputcsv($handle, [
-    //                 'ID',
-    //                 'Role',
-    //                 'Nama',
-    //                 'Email',
-    //                 'NIP',
-    //                 'NIM',
-    //                 'NIDN',
-    //                 'NITK',
-    //                 'NIDK',
-    //                 'NIK',
-    //                 'Status',
-    //                 'Program Studi',
-    //             ]);
-    //         } elseif ($this->switchTable == 'admin') {
-    //             fputcsv($handle, [
-    //                 'ID',
-    //                 'Role',
-    //                 'Nama',
-    //                 'Email',
-    //                 'NIP',
-    //                 'NITK',
-    //                 'Status',
-    //                 'Program Studi',
-    //             ]);
-    //         } elseif ($this->switchTable == 'dosen') {
-    //             fputcsv($handle, [
-    //                 'ID',
-    //                 'Role',
-    //                 'Nama',
-    //                 'Email',
-    //                 'NIP',
-    //                 'NIDN',
-    //                 'NIDK',
-    //                 'NIK',
-    //                 'Status',
-    //                 'Program Studi',
-    //             ]);
-    //         } elseif ($this->switchTable == 'mahasiswa') {
-    //             fputcsv($handle, [
-    //                 'ID',
-    //                 'Role',
-    //                 'Nama',
-    //                 'Email',
-    //                 'NIM',
-    //                 'NIK',
-    //                 'Angkatan',
-    //                 'Status',
-    //                 'Program Studi',
-    //             ]);
-    //         }
-
-    //         $query = $this->inputUserSearch();
-    //         $this->buttonRoleFilter($query);
-    //         if (! empty($this->switchTable)) {
-    //             $query->whereHas($this->switchTable);
-    //         }
-
-    //         $query->chunk(100, function ($users) use ($handle) {
-    //             foreach ($users as $s) {
-
-    //                 if ($this->switchTable == '' || $this->switchTable == 'dosen') {
-    //                     fputcsv($handle, [
-    //                         $s->id,
-    //                         $s->role,
-    //                         $s->name,
-    //                         $s->email,
-    //                         $s->admin->nip ?? $s->dosen->nip ?? null,
-    //                         $s->mahasiswa->nim ?? null,
-    //                         $s->dosen->nidn ?? null,
-    //                         $s->admin->nitk ?? null,
-    //                         $s->dosen->nidk ?? null,
-    //                         $s->nik,
-    //                         $s->status,
-    //                         $s->prodi,
-    //                     ]);
-    //                 } elseif ($this->switchTable == 'admin') {
-    //                     fputcsv($handle, [
-    //                         $s->id,
-    //                         $s->role,
-    //                         $s->name,
-    //                         $s->email,
-    //                         $s->identity1,
-    //                         $s->identity2,
-    //                         $s->nik,
-    //                         $s->status,
-    //                         $s->prodi,
-    //                     ]);
-    //                 } elseif ($this->switchTable == 'dosen') {
-    //                     fputcsv($handle, [
-    //                         $s->id,
-    //                         $s->role,
-    //                         $s->name,
-    //                         $s->email,
-    //                         $s->identity1,
-    //                         $s->identity2,
-    //                         $s->identity3,
-    //                         $s->nik,
-    //                         $s->status,
-    //                         $s->prodi,
-    //                     ]);
-    //                 } elseif ($this->switchTable == 'mahasiswa') {
-    //                     fputcsv($handle, [
-    //                         $s->id,
-    //                         $s->role,
-    //                         $s->name,
-    //                         $s->email,
-    //                         $s->identity1,
-    //                         $s->nik,
-    //                         $s->mahasiswa->angkatan,
-    //                         $s->status,
-    //                         $s->prodi,
-    //                     ]);
-    //                 }
-
-    //             }
-
-    //         });
-
-    //         fclose($handle);
-    //     }, $fileName);
-    // }
 
     public function importUserExcel()
     {

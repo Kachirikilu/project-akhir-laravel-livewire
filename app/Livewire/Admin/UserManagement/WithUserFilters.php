@@ -72,7 +72,7 @@ trait WithUserFilters
         return $queryUser;
     }
 
-    public function buttonRoleFilter($queryUser)
+    public function buttonUserFilter($queryUser)
     {
         $queryUser->when(in_array($this->switchTable, ['admin', 'dosen', 'mahasiswa']), function ($q) {
             $q->whereHas($this->switchTable);

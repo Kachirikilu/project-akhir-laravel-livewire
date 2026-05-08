@@ -9,7 +9,7 @@ trait WithDepartemenFilters
 {
     use WithPagination;
 
-    public function inputDepartemenSearch()
+    public function inputDpSearch()
     {
         $queryDp = Departemen::query()->with(['fk_rel', 'prodis']);
         $search = $this->search;

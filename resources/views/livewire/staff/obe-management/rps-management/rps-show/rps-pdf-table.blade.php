@@ -47,7 +47,7 @@
             </td>
             <td class="w-[76%] !border-r-0 text-center font-bold text-lg leading-tight uppercase">
                 <div>
-                    <div>UNIVERSITAS SRIWIJAYA</div>
+                    <div>{{ strtoupper(env('UNIVERSITAS')) }}</div>
                     <div>Fakultas {{ $data['fakultas'] ?? '' }}</div>
                     <div>Departemen {{ $data['departemen'] ?? '' }}</div>
                     <div>Program Studi {{ $data['prodi'] ?? '' }}</div>

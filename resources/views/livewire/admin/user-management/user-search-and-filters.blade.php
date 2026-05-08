@@ -15,7 +15,7 @@
             'tab2String' => 'aktif',
             'tab3String' => 'non-aktif',
             'tabName' => Auth::user()->prodi,
-            'tab1Name' => 'Semua Pengguna',
+            'tab1Name' => 'Semua Status',
             'tab3Name' => 'Tidak Aktif',
         ])
 

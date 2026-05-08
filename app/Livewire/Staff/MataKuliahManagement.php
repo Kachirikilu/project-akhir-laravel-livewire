@@ -8,6 +8,7 @@ use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
+use App\Livewire\Staff\MKManagement\WithMKExcel;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,7 @@ class MataKuliahManagement extends Component
     use WithMKDelete;
     use WithMKFilters;
     use WithMKModal;
+    use WithMKExcel;
     use WithPagination;
     use WithProdiSearchFilters;
 
@@ -218,17 +220,17 @@ class MataKuliahManagement extends Component
                 $countMK->onlyTrashed();
             }
 
-            // =========================
-            // MAP TAB
-            // =========================
-            $mapTipe = [
-                'mk-tatap-muka' => 1,
-                'mk-praktikum' => 2,
-                'mk-praktek-lapangan' => 3,
-                'mk-simulasi' => 4,
-            ];
+            // // =========================
+            // // MAP TAB
+            // // =========================
+            // $mapTipe = [
+            //     'mk-tatap-muka' => 1,
+            //     'mk-praktikum' => 2,
+            //     'mk-praktek-lapangan' => 3,
+            //     'mk-simulasi' => 4,
+            // ];
 
-            $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
+            // $currentTabTipe = $mapTipe[$this->switchTable] ?? null;
 
             // =========================
             // STATS GLOBAL (FULL DATA)
@@ -243,10 +245,7 @@ class MataKuliahManagement extends Component
             // STATS PER TAB
             // =========================
             $tabQuery = clone $countMK;
-
-            if ($currentTabTipe) {
-                $tabQuery->where('tipe_sks', $currentTabTipe);
-            }
+            $this->buttonMKSwitch($tabQuery);
 
             $totalMKProdi = (clone $tabQuery)->whereHas('prodis', function ($q) {
                 $q->where('prodis.id', Auth::user()->pr_id);
@@ -259,10 +258,7 @@ class MataKuliahManagement extends Component
             // =========================
             // QUERY FINAL TABLE
             // =========================
-            if ($currentTabTipe) {
-                $queryMK->where('tipe_sks', $currentTabTipe);
-            }
-
+            $this->buttonMKSwitch($queryMK);
             $this->buttonMKFilter($queryMK);
 
             return view('livewire.staff.mk-management', [

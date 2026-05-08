@@ -15,7 +15,7 @@ trait WithProdiFilters
 
     public $filterPr = '';
 
-    public function inputProdiSearch()
+    public function inputPrSearch()
     {
         if ($this->switchTable == 'prodi') {
             $queryPr = Prodi::query()->with(['dp_rel', 'dp_rel.fk_rel']);

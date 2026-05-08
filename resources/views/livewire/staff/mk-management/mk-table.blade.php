@@ -89,7 +89,7 @@
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
-            @if ($switchTable == 'tatap_muka' || $switchTable == '')
+            @if ($switchTable == 'mk-tatap-muka' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'sks_tm',
                     'headString' => 'Tatap Muka',
@@ -98,7 +98,7 @@
                     'isBorderR' => $isBorderRight,
                 ])
             @endif
-            @if ($switchTable == 'praktikum' || $switchTable == '')
+            @if ($switchTable == 'mk-praktikum' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'sks_pr',
                     'headString' => 'Praktikum',
@@ -107,7 +107,7 @@
                     'isBorderR' => $isBorderRight,
                 ])
             @endif
-            @if ($switchTable == 'praktek_lapangan' || $switchTable == '')
+            @if ($switchTable == 'mk-praktek-lapangan' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'sks_pl',
                     'headString' => 'Praktek Lapangan',
@@ -116,7 +116,7 @@
                     'isBorderR' => $isBorderRight,
                 ])
             @endif
-            @if ($switchTable == 'simulasi' || $switchTable == '')
+            @if ($switchTable == 'mk-simulasi' || $switchTable == '')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'sks_sm',
                     'headString' => 'Simulasi',
