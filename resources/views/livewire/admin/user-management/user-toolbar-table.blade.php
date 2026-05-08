@@ -19,10 +19,10 @@
             }
         @endphp
 
-            
+
         @include('livewire.global.table.text-copy', [
             'xType' => $user->identity1,
-            'typeXString' => $typeXString . ' ' . $user->role
+            'typeXString' => $typeXString . ' ' . $user->role,
         ])
 
         <flux:menu.separator />
@@ -60,8 +60,8 @@
                         '{{ $x->pr_id ?? '' }}',
                         '{{ $x->kode_pr ?? '' }}',
                         '{{ $x->prodi ?? '' }}',
-                        '{{ $detail->pr_rel->departemen_dp ?? '' }}',
-                        '{{ $detail->pr_rel->fakultas_fk ?? '' }}',
+                        '{{ $detail->pr_rel?->departemen_dp ?? '' }}',
+                        '{{ $detail->pr_rel?->fakultas_fk ?? '' }}',
                     );
                     $flux.modal('user-modal').show();
             "

@@ -52,6 +52,7 @@ trait WithUserDelete
             $user = User::withTrashed()->findOrFail($this->userIdToDelete);
 
             if ($this->isPermanentDelete) {
+                $this->checkUserSafety($user);
                 $type = 'permanent';
                 $user->forceDelete();
             } else {
@@ -71,6 +72,36 @@ trait WithUserDelete
             $this->dispatch('refresh-data-user');
             $this->showUserDelete = false;
             $this->toast(text: $e->getMessage(), variant: 'danger');
+        }
+    }
+
+    private function checkUserSafety($user)
+    {
+        // 1. Cek Dosen
+        if ($user->dosen) {
+            $dosen = $user->dosen;
+            
+            if ($dosen->rps()->exists()) {
+                throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data RPS!');
+            }
+
+            if ($dosen->scpmks()->exists()) {
+                throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke data Sub-CPMK!');
+            }
+
+            if ($dosen->sesiMengajars()->exists()) {
+                throw new \Exception('Gagal hapus permanen: User (Dosen) masih terhubung ke jadwal Kelas!');
+            }
+        }
+
+        // 2. Cek Mahasiswa
+        if ($user->mahasiswa) {
+            $mahasiswa = $user->mahasiswa;
+
+            // Cek keterhubungan ke Kelas (via kehadiran)
+            if (\App\Models\Kelas\MahasiswaKehadiran::where('mahasiswa_id', $mahasiswa->id)->exists()) {
+                throw new \Exception('Gagal hapus permanen: User (Mahasiswa) masih terhubung ke data Kelas!');
+            }
         }
     }
 

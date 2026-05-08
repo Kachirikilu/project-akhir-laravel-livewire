@@ -29,7 +29,7 @@ class KelasSeeder extends Seeder
                 continue;
             }
 
-            $prodis = $rps->mk_rel->prodis;
+            $prodis = $rps->mk_rel?->prodis;
 
             foreach ($prodis as $prodi) {
                 DB::transaction(function () use ($rps, $scpmkList, $totalScpmk, $prodi) {

@@ -15,7 +15,7 @@ trait WithDepartemenFilters
         $search = $this->search;
 
         if (! empty($search)) {
-            $queryDp->searchDepartemen($search)->get();
+            $queryDp->searchDepartemen($search);
         }
 
         if (! empty($this->selectedFkId)) {
@@ -33,7 +33,7 @@ trait WithDepartemenFilters
 
     public function sortFieldOrderDepartemen($queryDp)
     {
-        $queryDp->select('departemens.*')->join('fakultas', 'departemens.fk_id', '=', 'fakultas.id');;
+        $queryDp->select('departemens.*')->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
 
         return match ($this->sortField) {
             'kode'  => $queryDp->orderBy('kode_dp', $this->sortDirection)

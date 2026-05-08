@@ -154,9 +154,11 @@ class Departemen extends Model
 
             // 2. Filter berdasarkan Fakultas (Relasi)
             $q->orWhereHas('fk_rel', function ($sq) use ($searchTerm) {
-                $sq->where('nama_fk', 'like', $searchTerm)
-                    ->orWhere('kode_fk', 'like', $searchTerm)
-                    ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+                $sq->withTrashed()->where(function($ssf) use ($searchTerm) {
+                    $ssf->where('nama_fk', 'like', $searchTerm)
+                        ->orWhere('kode_fk', 'like', $searchTerm)
+                        ->orWhereRaw("CONCAT('Fakultas ', nama_fk) LIKE ?", [$searchTerm]);
+                });
             });
         });
     }

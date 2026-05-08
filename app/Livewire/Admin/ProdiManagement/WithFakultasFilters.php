@@ -15,7 +15,7 @@ trait WithFakultasFilters
         $search = $this->search;
 
         if (! empty($search)) {
-            $queryFk->searchFakultas($search)->get();
+            $queryFk->searchFakultas($search);
         }
 
         if (! empty($this->selectedFkId)) {

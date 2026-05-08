@@ -3,8 +3,12 @@
 namespace App\Livewire\Admin\ProdiManagement;
 
 use App\Livewire\Global\HasToast;
-use App\Models\ProgramStudi\Fakultas;
+use App\Models\Auth\Admin;
+use App\Models\Auth\Dosen;
+use App\Models\Auth\Mahasiswa;
+use App\Models\Kelas\Kelas;
 use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
 
 trait WithProdiDelete
@@ -35,7 +39,7 @@ trait WithProdiDelete
     public function deleteProdi($id, $type, $isTrashed = false)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         $modelClass = $this->getModels()[$type] ?? null;
 
@@ -45,6 +49,7 @@ trait WithProdiDelete
 
         if (! $data) {
             $this->toast(type: 'unfound', variant: 'warning');
+
             return;
         }
 
@@ -80,7 +85,7 @@ trait WithProdiDelete
     public function destroyProdi()
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         if (! $this->prodiIdToDelete) {
             return;
@@ -92,9 +97,8 @@ trait WithProdiDelete
             $modelClass = $this->getModels()[$this->prodiForDelete] ?? null;
             $data = $modelClass::withTrashed()->findOrFail($this->prodiIdToDelete);
 
-            $this->toast(variant: 'warning');
-
             if ($this->isPermanentDelete) {
+                $this->checkSafety($data, $this->prodiForDelete);
                 $type = 'permanent';
                 $data->forceDelete();
             } else {
@@ -113,10 +117,43 @@ trait WithProdiDelete
         }
     }
 
+    private function checkSafety($data, $type)
+    {
+        if ($type === 'fakultas') {
+            if ($data->departemens()->exists()) {
+                throw new \Exception('Gagal hapus permanen: Fakultas masih memiliki Departemen!');
+            }
+        }
+
+        if ($type === 'departemen') {
+            if ($data->prodis()->exists()) {
+                throw new \Exception('Gagal hapus permanen: Departemen masih memiliki Program Studi!');
+            }
+        }
+
+        if ($type === 'prodi') {
+            $hasUsers = Admin::where('pr_id', $data->id)->exists() ||
+                       Dosen::where('pr_id', $data->id)->exists() ||
+                       Mahasiswa::where('pr_id', $data->id)->exists();
+
+            if ($hasUsers) {
+                throw new \Exception('Gagal hapus permanen: Prodi masih memiliki User (Admin/Dosen/Mahasiswa)!');
+            }
+
+            if ($data->mata_kuliahs()->exists()) {
+                throw new \Exception('Gagal hapus permanen: Prodi masih memiliki Mata Kuliah!');
+            }
+
+            if (Kelas::where('pr_id', $data->id)->exists()) {
+                throw new \Exception('Gagal hapus permanen: Prodi masih memiliki Kelas!');
+            }
+        }
+    }
+
     public function restoreProdi($id, $type)
     {
         if (! $this->AuthCheck()) {
-            return; 
+            return;
         }
         try {
             $modelClass = $this->getModels()[$type] ?? null;

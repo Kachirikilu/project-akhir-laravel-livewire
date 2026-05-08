@@ -46,7 +46,8 @@
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
             </div>
-            <flux:icon wire:loading wire:target="printPDF({{ $x->id }})" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
+            <flux:icon wire:loading wire:target="printPDF({{ $x->id }})" name="arrow-path"
+                class="animate-spin h-4 w-4 ml-2" />
         </div>
 
         <flux:menu.separator />
@@ -73,7 +74,7 @@
                         '{{ $x->bobot_uts ?? '' }}',
                         '{{ $x->bobot_uas ?? '' }}',
                         '{{ $x->total_bobot ?? '' }}',
-                        '{{ $x->mk_rel->kode_semester ?? '' }}'
+                        '{{ $x->mk_rel?->kode_semester ?? '' }}'
                     );
 
                     $flux.modal('rps-modal').show();
@@ -95,11 +96,12 @@
             @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.rps?.setDeleteProdi(
+                        $store.rps?.setDeleteRPS(
                             '{{ $x->mk ?? '' }}',
-                            '{{ $x->kode ?? '' }}'
+                            '{{ $x->kode ?? '' }}',
+                            {{ $isTrashed ? 1 : 0 }}
                         );
-                        $flux.modal('mk-delete').show();
+                        $flux.modal('rps-delete').show();
                 "
             wire:click="{{ $deleteCall }}"
             class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
@@ -111,7 +113,40 @@
                     class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>
-    @else
-    @endif
+        @else
+            {{-- Tombol Restore --}}
+            <flux:menu.item wire:click="{{ $restoreCall }}"
+                class="!cursor-pointer !text-yellow-700 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                <flux:icon name="arrow-path" class="mr-2 h-4 w-4" />
 
-    </div>
+                <div class="flex justify-between items-center w-full">
+                    <span>Restore {{ $nameXString ?? 'Data' }}</span>
+                    <flux:icon wire:loading wire:target="{{ $restoreCall }}" name="arrow-path"
+                        class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+
+            <flux:menu.separator />
+
+            {{-- Tombol Delete Permanent --}}
+            <flux:menu.item
+                @click="
+                        $store.rps?.setDeleteRPS(
+                            '{{ $x->mk ?? '' }}',
+                            '{{ $x->kode ?? '' }}',
+                            {{ $isTrashed ? 1 : 0 }}
+                        );
+                        $flux.modal('rps-delete').show();
+                "
+                wire:click="{{ $deleteCall }}"
+                class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
+                <flux:icon name="trash" class="mr-2 h-4 w-4" />
+
+                <div class="flex justify-between items-center w-full">
+                    <span>Hapus Permanen {{ $nameXString ?? 'Data' }}</span>
+                    <flux:icon wire:loading wire:target="{{ $deleteCall }}" name="arrow-path"
+                        class="animate-spin h-4 w-4 ml-2" />
+                </div>
+            </flux:menu.item>
+        @endif
+

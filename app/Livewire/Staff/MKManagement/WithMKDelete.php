@@ -51,19 +51,20 @@ trait WithMKDelete
         $type = 'delete';
 
         try {
-            DB::transaction(function () {
-                $mk = MataKuliah::withTrashed()->findOrFail($this->mkIdToDelete);
-
-                if ($this->isPermanentDelete) {
-                    $mk->prodis()->detach();
-                    $mk->forceDelete();
-                } else {
-                    $mk->delete();
-                }
-            });
+            $mk = MataKuliah::withTrashed()->findOrFail($this->mkIdToDelete);
 
             if ($this->isPermanentDelete) {
+                if ($mk->rps()->exists()) {
+                    throw new \Exception('Gagal hapus permanen: Mata Kuliah masih memiliki RPS!');
+                }
+
+                DB::transaction(function () use ($mk) {
+                    $mk->prodis()->detach();
+                    $mk->forceDelete();
+                });
                 $type = 'permanent';
+            } else {
+                $mk->delete();
             }
 
             $this->toast(message: 'Mata Kuliah ' . $this->mkNamaToDelete, type: $type);

@@ -30,7 +30,10 @@ class MataKuliah extends Model
             ->withPivot('sort_order')
             ->orderBy('prodi_pivot_mk.sort_order', 'asc');
     }
-    
+    public function rps()
+    {
+        return $this->hasMany(RPS::class, 'mk_id');
+    }
 
     // protected function tingkatanMode(): Attribute
     // {

@@ -43,16 +43,16 @@ class Kelas extends Model
 
     protected function kodeRps(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->kode);
+        return Attribute::get(fn () => $this->rps_rel?->kode);
     }
 
     protected function kodeMK(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->kode_mk);
+        return Attribute::get(fn () => $this->rps_rel?->kode_mk);
     }
     protected function kodePr(): Attribute
     {
-        return Attribute::get(fn () => $this->pr_rel->kode);
+        return Attribute::get(fn () => $this->pr_rel?->kode);
     }
 
     protected function kelas(): Attribute
@@ -61,37 +61,37 @@ class Kelas extends Model
     }
     protected function prodi(): Attribute
     {
-        return Attribute::get(fn () => $this->pr_rel->prodi);
+        return Attribute::get(fn () => $this->pr_rel?->prodi);
     }
 
     protected function semester(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->semester);
+        return Attribute::get(fn () => $this->rps_rel?->semester);
     }
 
     protected function sks(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->sks);
+        return Attribute::get(fn () => $this->rps_rel?->sks);
     }
 
     protected function sksText(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->sks_text);
+        return Attribute::get(fn () => $this->rps_rel?->sks_text);
     }
 
     protected function wajib(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->wajib);
+        return Attribute::get(fn () => $this->rps_rel?->wajib);
     }
 
     protected function wajibText(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->wajib_text);
+        return Attribute::get(fn () => $this->rps_rel?->wajib_text);
     }
 
     protected function mk(): Attribute
     {
-        return Attribute::get(fn () => $this->rps_rel->mk);
+        return Attribute::get(fn () => $this->rps_rel?->mk);
     }
 
     protected function createdDay(): Attribute

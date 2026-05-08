@@ -37,8 +37,8 @@ trait WithDosenSearchFilters
             'nidn' => $d->nidn ?? null,
             'nidk' => $d->nidk ?? null,
             'name' => $d->name,
-            'prodi' => $d->pr_rel->prodi,
-            'fakultas' => $d->pr_rel->fakultasFk,
+            'prodi' => $d->pr_rel?->prodi,
+            'fakultas' => $d->pr_rel?->fakultasFk,
             'status' => $d->status
         ])->toArray();
     }
@@ -50,10 +50,10 @@ trait WithDosenSearchFilters
             'kode' => $d->nip,
             'nip_full' => 'NIP: '.$d->nip,
             'name' => $d->name,
-            'prodi' => $d->pr_rel->prodi,
-            'departemen' => $d->pr_rel->departemenDp,
-            'fakultas' => $d->pr_rel->fakultasFk,
-            'kode_pr' => $d->pr_rel->kode,
+            'prodi' => $d->pr_rel?->prodi,
+            'departemen' => $d->pr_rel?->departemenDp,
+            'fakultas' => $d->pr_rel?->fakultasFk,
+            'kode_pr' => $d->pr_rel?->kode,
             'status' => $d->status
         ])->toArray();
     }

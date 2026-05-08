@@ -42,5 +42,9 @@
 
     @include('livewire.admin.user-management.user-modal-form', ['withRPS' => true])
     
-    {{-- @include('livewire.staff.obe-management.rps-management.rps-modal-delete') --}}
+    @include('livewire.staff.obe-management.rps-management.rps-modal-delete')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-delete')
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-delete')
+    @include('livewire.staff.obe-management.cpl-management.cpl-modal-delete')
+    @include('livewire.staff.obe-management.ref-management.ref-modal-delete')
 </div>

@@ -153,7 +153,7 @@
             <td class="{{ $mainKolom }}">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($k->rps_rel->mk_rel->level_mk)
+                        @switch($k->rps_rel?->mk_rel?->level_mk)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $k->kode ?? '-' }}
                                 </flux:badge>
@@ -289,7 +289,7 @@
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($k->rps_rel->mk_rel->level_mk)
+                        @switch($k->rps_rel?->mk_rel?->level_mk)
                             @case(1)
                                 <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $k->kode_mk ?? '---' }}
                                 </flux:badge>

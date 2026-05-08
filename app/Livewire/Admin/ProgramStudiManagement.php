@@ -125,76 +125,6 @@ class ProgramStudiManagement extends Component
         }
     }
 
-    // public function render()
-    // {
-    //     $this->inputDpFilter();
-    //     $this->inputFkFilter();
-
-    //     $queryProdi = $this->inputPrSearch();
-    //     $queryDepartemen = $this->inputDpSearch();
-    //     $queryFakultas = $this->inputFkSearch();
-
-    //     try {
-
-    //         $queryPr = clone $queryProdi;
-    //         $queryDp = clone $queryDepartemen;
-    //         $queryFk = clone $queryFakultas;
-
-    //         $prodis = collect();
-    //         $departemens = collect();
-    //         $fakultas = collect();
-
-    //         if ($this->showDeleted) {
-    //             $queryProdi->onlyTrashed();
-    //             $queryDepartemen->onlyTrashed();
-    //             $queryFakultas->onlyTrashed();
-
-    //             $queryPr->onlyTrashed();
-    //             $queryDp->onlyTrashed();
-    //             $queryFk->onlyTrashed();
-    //         }
-
-    //         if ($this->switchTable === 'prodi') {
-    //             $this->buttonStrataFilter($queryPr);
-    //             $prodis = $queryPr->paginate($this->perPage);
-    //         } elseif ($this->switchTable === 'departemen') {
-    //             $departemens = $queryDp->paginate($this->perPage);
-    //         } elseif ($this->switchTable === 'fakultas') {
-    //             $fakultas = $queryFk->paginate($this->perPage);
-    //         }
-
-    //         return view('livewire.admin.prodi-management', [
-    //             'prodis' => $prodis,
-    //             'departemens' => $departemens,
-    //             'fakultas' => $fakultas,
-    //             'totalProdis' => Prodi::count(),
-    //             'totalSarjanas' => Prodi::where('strata', 'Sarjana')->count(),
-    //             'totalMagisters' => Prodi::where('strata', 'Magister')->count(),
-    //             'totalDoktors' => Prodi::where('strata', 'Doktor')->count(),
-    //             'totalDepartemen' => Departemen::count(),
-    //             'totalFakultas' => Fakultas::count(),
-    //         ]);
-
-    //     } catch (QueryException $e) {
-
-    //         $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
-
-    //         return view('livewire.admin.prodi-management', [
-    //             'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),
-    //             'departemens' => Departemen::whereRaw('1=0')->paginate($this->perPage),
-    //             'fakultas' => Fakultas::whereRaw('1=0')->paginate($this->perPage),
-
-    //             'totalProdis' => '-',
-    //             'totalSarjanas' => '-',
-    //             'totalMagisters' => '-',
-    //             'totalDoktors' => '-',
-
-    //             'totalDepartemen' => '-',
-    //             'totalFakultas' => '-',
-    //         ]);
-    //     }
-    // }
-
     public function render()
     {
         $this->inputDpFilter();
@@ -214,9 +144,9 @@ class ProgramStudiManagement extends Component
             // SOFT DELETE
             // =========================
             if ($this->showDeleted) {
-                $queryPr->onlyTrashed();
-                $queryDp->onlyTrashed();
-                $queryFk->onlyTrashed();
+                $queryPr = $queryPr->onlyTrashed();
+                $queryDp = $queryDp->onlyTrashed();
+                $queryFk = $queryFk->onlyTrashed();
             }
 
             // =========================

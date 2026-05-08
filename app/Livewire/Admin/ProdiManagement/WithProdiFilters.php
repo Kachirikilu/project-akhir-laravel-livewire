@@ -17,12 +17,13 @@ trait WithProdiFilters
 
     public function inputPrSearch()
     {
+        $queryPr = Prodi::query()->with(['dp_rel', 'dp_rel.fk_rel']);
+
         if ($this->switchTable == 'prodi') {
-            $queryPr = Prodi::query()->with(['dp_rel', 'dp_rel.fk_rel']);
             $search = $this->search;
 
             if (! empty($search)) {
-                $queryPr->searchProdi($search)->get();
+                $queryPr->searchProdi($search);
             }
 
             if (! empty($this->selectedDpId)) {
@@ -35,9 +36,9 @@ trait WithProdiFilters
             }
 
             $this->sortFieldOrderProdi($queryPr);
-
-            return $queryPr;
         }
+
+        return $queryPr;
     }
 
     public function filterByStrata($strata)
@@ -54,8 +55,7 @@ trait WithProdiFilters
             $queryPr->whereHas('dp_rel.fakultas');
         }
 
-        $primaryTable = $this->switchTable.'s';
-        $queryPr->select("$primaryTable.*");
+        $queryPr->select("prodis.*");
 
         return match ($this->sortField) {
             'prodi' => $this->applyProdiSort($queryPr),
@@ -73,8 +73,8 @@ trait WithProdiFilters
     private function applyProdiKodeSort($queryPr)
     {
         $queryPr->select('prodis.*')
-            ->join('departemens', 'prodis.dp_id', '=', 'departemens.id')
-            ->join('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
+            ->leftJoin('departemens', 'prodis.dp_id', '=', 'departemens.id')
+            ->leftJoin('fakultas', 'departemens.fk_id', '=', 'fakultas.id');
 
         return match ($this->sortField) {
             'kode' => $queryPr->orderBy('kode_pr', $this->sortDirection)

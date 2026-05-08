@@ -5,6 +5,7 @@ namespace App\Models\Auth;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,7 +13,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -326,7 +326,7 @@ class User extends Authenticatable
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->prodi;
+            return $profile?->pr_rel?->prodi;
         });
     }
 
@@ -335,7 +335,7 @@ class User extends Authenticatable
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->kode;
+            return $profile?->pr_rel?->kode;
         });
     }
 
@@ -344,7 +344,7 @@ class User extends Authenticatable
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->dp_id;
+            return $profile?->pr_rel?->dp_id;
         });
     }
 
@@ -353,7 +353,7 @@ class User extends Authenticatable
         return Attribute::get(function () {
             $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
 
-            return $profile?->pr_rel->dp_rel->fk_id;
+            return $profile?->pr_rel?->dp_rel?->fk_id;
         });
     }
     // / Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas /// Attribute Prodi/Departemen/Fakultas

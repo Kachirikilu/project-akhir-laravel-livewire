@@ -26,6 +26,13 @@ use App\Livewire\Staff\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
+
+use App\Livewire\Staff\RPSManagement\WithRPSDelete;
+use App\Livewire\Staff\CPMKManagement\WithCPMKDelete;
+use App\Livewire\Staff\CPMKManagement\WithSubCPMKDelete;
+use App\Livewire\Staff\CPLManagement\WithCPLDelete;
+use App\Livewire\Staff\ReferensiManagement\WithRefDelete;
+
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
@@ -64,6 +71,12 @@ class RPSManagement extends Component
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
+
+    use WithRPSDelete;
+    use WithCPMKDelete;
+    use WithSubCPMKDelete;
+    use WithCPLDelete;
+    use WithRefDelete;
 
     public $switchTable = 'rps';
 
