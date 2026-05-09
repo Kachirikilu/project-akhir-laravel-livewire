@@ -1,4 +1,4 @@
-<div x-data="{ activeTab: @entangle('switchTable'), activeFilter: @entangle('filterRPS') }"
+<div x-data="{ activeTab: @entangle('switchTable'), activeFilterDosen: @entangle('filterStatus') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
 
@@ -41,13 +41,13 @@
                     'tab4Name' => 'Baru Direvisi',
                     'tab5Name' => 'Aktif',
                     'tab6Name' => 'Draf',
-                    'tab7Name' => '>5 Tahun Lalu'
+                    'tab7Name' => '>5 Tahun Lalu',
                 ])
             @else
                 @include('livewire.global.search-and-filters.filter-mode', [
                     'filterByFunc' => 'filterByRPS',
                     'filterString' => 'filterRPS',
-                    'totalTab' =>  $stats['rps-prodi'],
+                    'totalTab' => $stats['rps-prodi'],
                     'totalTab1' => $totalRPS,
                     'totalTab2' => $stats['rps-akademik'],
                     'totalTab3' => $stats['rps-rev-new'],
@@ -67,7 +67,7 @@
                     'tab3Name' => 'Baru Direvisi',
                     'tab4Name' => 'Aktif',
                     'tab5Name' => 'Draf',
-                    'tab6Name' => '>5 Tahun Lalu'
+                    'tab6Name' => '>5 Tahun Lalu',
                 ])
             @endif
 
@@ -180,7 +180,7 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-100 -translate-y-4"
-            class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse md:flex-row md:justify-between md:items-end border-b mb-4 gap-4">
+            class="col-start-1 row-start-1 w-full border-[var(--border-table-color)] flex flex-col-reverse lg:flex-row lg:justify-between lg:items-end border-b mb-4 gap-4 lg:gap-6">
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByDosen',
                 'filterString' => 'filterDosen',
@@ -196,13 +196,16 @@
             @include('livewire.global.search-and-filters.filter-mode', [
                 'filterByFunc' => 'filterByStatus',
                 'filterString' => 'filterStatus',
-                'totalTab' => $totalDosen,
-                'totalTab1' => $stats['dosen-aktif'],
-                'totalTab2' => $stats['dosen-non-aktif'],
-                'tab1String' => 'aktif',
-                'tab2String' => 'non-aktif',
-                'tabName' => 'Semua Status',
-                'tab2Name' => 'Tidak Aktif',
+                'totalTab' => $stats['dosen-prodi'],
+                'totalTab1' => $stats['dosen-all'],
+                'totalTab2' => $stats['dosen-aktif'],
+                'totalTab3' => $stats['dosen-non-aktif'],
+                'tab1String' => 'dosen-all',
+                'tab2String' => 'dosen-aktif',
+                'tab3String' => 'dosen-non-aktif',
+                'tabName' => Auth::user()->prodi,
+                'tab1Name' => 'Semua Status',
+                'tab3Name' => 'Tidak Aktif',
             ])
 
 
@@ -254,16 +257,31 @@
     {{-- BAGIAN SEARCH UTAMA --}}
     <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 z-20">
 
-        {{-- Tab RPS --}}
-        <div class="sm:col-span-4 w-full row-start-1 col-start-1">
+        {{-- @if (((Auth::user()->admin && $this->filterRPS == '') || $this->filterRPS == 'rps-prodi') && $this->switchTable == 'rps')
+            <div class="sm:col-span-7 w-full row-start-1 col-start-1">
+            @else
+                <div class="sm:col-span-4 w-full row-start-1 col-start-1">
+        @endif
+        @include('livewire.global.search-and-filters.main-search', [
+            'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
+        ])
+    </div> --}}
+
+
+        <div x-show="activeTab == 'dosen' && activeFilterDosen == ''" class="sm:col-span-7 w-full row-start-1 col-start-1">
+            @include('livewire.global.search-and-filters.main-search', [
+                'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
+            ])
+        </div>
+        <div x-show="activeTab !== 'dosen' || activeFilterDosen !== ''" class="sm:col-span-4 w-full row-start-1 col-start-1">
             @include('livewire.global.search-and-filters.main-search', [
                 'placeholder' => 'Cari RPS, CPMK, Sub-CPMK, CPL, Referensi, dan Dosen...',
             ])
         </div>
 
-
         {{-- 🔹 PRODI --}}
-        <div x-show="activeTab !== 'ref'" class="sm:col-span-3 relative row-start-1 col-start-2">
+        <div x-show="activeTab !== 'ref' && (activeTab !== 'dosen' || activeFilterDosen !== '')"
+            class="sm:col-span-3 relative row-start-1 col-start-2">
             @include('livewire.global.search-and-filters.secondary-search', [
                 'inputXFilterString' => 'inputPrFilter',
                 'xSearchResultsString' => 'prSearchResults',
@@ -283,170 +301,172 @@
             ])
         </div>
 
+
+
         {{-- 🔹 MK --}}
         @if (Auth::user()->admin || $this->filterRPS !== '')
             <div x-show="activeTab == 'rps'" class="sm:col-span-3 relative grid row-start-2 col-start-1">
-        @else
-            <div x-show="activeTab == 'rps'" class="sm:col-span-7 relative grid row-start-2 col-start-1">
+            @else
+                <div x-show="activeTab == 'rps'" class="sm:col-span-7 relative grid row-start-2 col-start-1">
         @endif
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputMKFilter',
-                'xSearchResultsString' => 'mkSearchResults',
-                'iconString' => 'rectangle-stack',
-                'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
-                'xSearchQueryString' => 'mkSearchQuery',
-                'selectedXId' => $selectedMKId,
-                'selectedXName' => $mk_name,
-                'resetXFilter' => 'resetMKFilter()',
-                'xSearchQuery' => $mkSearchQuery,
-                'xSearchResults' => $mkSearchResults,
-                'selectXForFilterString' => 'selectMKForFilter',
-                'typeXString' => 'mk',
-                'typeX2String' => 'sks_full',
-                'typeX3String' => 'semester_text',
-                'typeX4String' => 'wajib_text',
-                'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
-            ])
-        </div>
-
-        @if (Auth::user()->admin || $this->filterRPS !== '')
-            {{-- 🔹 Dosen --}}
-            <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative row-start-2 col-start-2">
-                @include('livewire.global.search-and-filters.secondary-search', [
-                    'inputXFilterString' => 'inputDosenFilter',
-                    'xSearchResultsString' => 'dosenSearchResults',
-                    'iconString' => 'user',
-                    'placeholderString' => 'Filter berdasarkan Dosen...',
-                    'xSearchQueryString' => 'dosenSearchQuery',
-                    'selectedXId' => $selectedDosenId,
-                    'selectedXName' => $dosen_name,
-                    'resetXFilter' => 'resetDosenFilter()',
-                    'xSearchQuery' => $dosenSearchQuery,
-                    'xSearchResults' => $dosenSearchResults,
-                    'selectXForFilterString' => 'selectDosenForFilter',
-                    'typeXString' => 'name',
-                    'typeX2String' => 'nip_full',
-                    'typeX3String' => 'status',
-                    'typeKodeString' => 'kode_pr',
-                    'unfoundString' => 'Tidak ada Dosen ditemukan!',
-                ])
-
-            </div>
-        @endif
-
-
-        {{-- 🔹 RPS --}}
-        <div x-show="activeTab !== 'rps'"
-            x-bind:class="activeTab !== 'ref' ? 'row-start-2 col-start-1' : 'row-start-1 col-start-2'"
-            class="sm:col-span-3 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputRPSFilter',
-                'xSearchResultsString' => 'rpsSearchResults',
-                'iconString' => 'clipboard-document-list',
-                'placeholderString' => 'Filter berdasarkan RPS...',
-                'xSearchQueryString' => 'rpsSearchQuery',
-                'selectedXId' => $selectedRPSId,
-                'selectedXName' => $rps_name,
-                'resetXFilter' => 'resetRPSFilter()',
-                'xSearchQuery' => $rpsSearchQuery,
-                'xSearchResults' => $rpsSearchResults,
-                'selectXForFilterString' => 'selectRPSForFilter',
-                'typeXString' => 'rps',
-                'typeX2String' => 'sks_full',
-                'typeX3String' => 'wajib_text',
-                'typeX4String' => 'draf_text',
-                'unfoundString' => 'Tidak ada RPS ditemukan!',
-            ])
-        </div>
-
-        {{-- 🔹 CPL --}}
-        <div x-show="activeTab == 'cpmk'"
-            x-bind:class="activeTab !== 'ref' ? 'sm:col-span-3 row-start-2 col-start-2' : 'sm:col-span-4 row-start-2 col-start-1'"
-            class="sm:col-span-4 relative">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputCPLFilter',
-                'xSearchResultsString' => 'cplSearchResults',
-                'iconString' => 'document-text',
-                'placeholderString' => 'Filter berdasarkan CPL...',
-                'xSearchQueryString' => 'cplSearchQuery',
-                'selectedXId' => $selectedCPLId,
-                'selectedXName' => $cpl_name,
-                'resetXFilter' => 'resetCPLFilter()',
-                'xSearchQuery' => $cplSearchQuery,
-                'xSearchResults' => $cplSearchResults,
-                'selectXForFilterString' => 'selectCPLForFilter',
-                'typeXString' => 'deskripsi',
-                'typeX2String' => 'kode',
-                'unfoundString' => 'Tidak ada CPL ditemukan!',
-            ])
-        </div>
-
-        {{-- 🔹 CPMK --}}
-        <div x-show="activeTab == 'scpmk' || activeTab == 'cpl' || activeTab == 'ref'"
-            x-bind:class="activeTab !== 'ref' ? 'sm:col-span-4' : 'sm:col-span-3'"
-            class="relative row-start-2 col-start-2">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputCPMKFilter',
-                'xSearchResultsString' => 'cpmkSearchResults',
-                'iconString' => 'academic-cap',
-                'placeholderString' => 'Filter berdasarkan CPMK...',
-                'xSearchQueryString' => 'cpmkSearchQuery',
-                'selectedXId' => $selectedCPMKId,
-                'selectedXName' => $cpmk_name,
-                'resetXFilter' => 'resetCPMKFilter()',
-                'xSearchQuery' => $cpmkSearchQuery,
-                'xSearchResults' => $cpmkSearchResults,
-                'selectXForFilterString' => 'selectCPMKForFilter',
-                'typeXString' => 'deskripsi',
-                'typeX2String' => 'kode',
-                'typeX3String' => 'total_bobot_text',
-                'typeX4String' => 'total_pertemuan',
-                'unfoundString' => 'Tidak ada CPMK ditemukan!',
-            ])
-        </div>
-
-        {{-- 🔹 Sub-CPMK --}}
-        <div x-show="activeTab == 'ref'" class="sm:col-span-4 relative row-start-2 col-start-2">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputSCPMKFilter',
-                'xSearchResultsString' => 'scpmkSearchResults',
-                'iconString' => 'academic-cap',
-                'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
-                'xSearchQueryString' => 'scpmkSearchQuery',
-                'selectedXId' => $selectedSCPMKId,
-                'selectedXName' => $scpmk_name,
-                'resetXFilter' => 'resetSCPMKFilter()',
-                'xSearchQuery' => $scpmkSearchQuery,
-                'xSearchResults' => $scpmkSearchResults,
-                'selectXForFilterString' => 'selectSCPMKForFilter',
-                'typeXString' => 'deskripsi',
-                'typeX2String' => 'kode',
-                'typeX3String' => 'metode',
-                'typeX4String' => 'bobot_text',
-                'unfoundString' => 'Tidak ada Sub-CPMK ditemukan!',
-            ])
-        </div>
-
-        <div x-show="activeTab == 'dosen'" class="sm:col-span-4 relative row-start-2 col-start-2">
-            @include('livewire.global.search-and-filters.secondary-search', [
-                'inputXFilterString' => 'inputFkFilter',
-                'xSearchResultsString' => 'fkSearchResults',
-                'iconString' => 'building-library',
-                'placeholderString' => 'Filter berdasarkan Fakultas...',
-                'xSearchQueryString' => 'fkSearchQuery',
-                'selectedXId' => $selectedFkId,
-                'selectedXName' => $fk_name,
-                'resetXFilter' => 'resetFkFilter()',
-                'xSearchQuery' => $fkSearchQuery,
-                'xSearchResults' => $fkSearchResults,
-                'selectXForFilterString' => 'selectFkForFilter',
-                'typeXString' => 'fakultas',
-                'typeX2String' => 'kode_text',
-                'unfoundString' => 'Tidak ada Fakultas ditemukan!',
-            ])
-        </div>
-
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputMKFilter',
+            'xSearchResultsString' => 'mkSearchResults',
+            'iconString' => 'rectangle-stack',
+            'placeholderString' => 'Filter berdasarkan Mata Kuliah...',
+            'xSearchQueryString' => 'mkSearchQuery',
+            'selectedXId' => $selectedMKId,
+            'selectedXName' => $mk_name,
+            'resetXFilter' => 'resetMKFilter()',
+            'xSearchQuery' => $mkSearchQuery,
+            'xSearchResults' => $mkSearchResults,
+            'selectXForFilterString' => 'selectMKForFilter',
+            'typeXString' => 'mk',
+            'typeX2String' => 'sks_full',
+            'typeX3String' => 'semester_text',
+            'typeX4String' => 'wajib_text',
+            'unfoundString' => 'Tidak ada Mata Kuliah ditemukan!',
+        ])
     </div>
+
+    @if (Auth::user()->admin || $this->filterRPS !== '')
+        {{-- 🔹 Dosen --}}
+        <div x-show="activeTab == 'rps'" class="sm:col-span-4 relative row-start-2 col-start-2">
+            @include('livewire.global.search-and-filters.secondary-search', [
+                'inputXFilterString' => 'inputDosenFilter',
+                'xSearchResultsString' => 'dosenSearchResults',
+                'iconString' => 'user',
+                'placeholderString' => 'Filter berdasarkan Dosen...',
+                'xSearchQueryString' => 'dosenSearchQuery',
+                'selectedXId' => $selectedDosenId,
+                'selectedXName' => $dosen_name,
+                'resetXFilter' => 'resetDosenFilter()',
+                'xSearchQuery' => $dosenSearchQuery,
+                'xSearchResults' => $dosenSearchResults,
+                'selectXForFilterString' => 'selectDosenForFilter',
+                'typeXString' => 'name',
+                'typeX2String' => 'nip_full',
+                'typeX3String' => 'status',
+                'typeKodeString' => 'kode_pr',
+                'unfoundString' => 'Tidak ada Dosen ditemukan!',
+            ])
+
+        </div>
+    @endif
+
+
+    {{-- 🔹 RPS --}}
+    <div x-show="activeTab !== 'rps'"
+        x-bind:class="activeTab !== 'ref' ? 'row-start-2 col-start-1' : 'row-start-1 col-start-2'"
+        class="sm:col-span-3 relative">
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputRPSFilter',
+            'xSearchResultsString' => 'rpsSearchResults',
+            'iconString' => 'clipboard-document-list',
+            'placeholderString' => 'Filter berdasarkan RPS...',
+            'xSearchQueryString' => 'rpsSearchQuery',
+            'selectedXId' => $selectedRPSId,
+            'selectedXName' => $rps_name,
+            'resetXFilter' => 'resetRPSFilter()',
+            'xSearchQuery' => $rpsSearchQuery,
+            'xSearchResults' => $rpsSearchResults,
+            'selectXForFilterString' => 'selectRPSForFilter',
+            'typeXString' => 'rps',
+            'typeX2String' => 'sks_full',
+            'typeX3String' => 'wajib_text',
+            'typeX4String' => 'draf_text',
+            'unfoundString' => 'Tidak ada RPS ditemukan!',
+        ])
+    </div>
+
+    {{-- 🔹 CPL --}}
+    <div x-show="activeTab == 'cpmk'"
+        x-bind:class="activeTab !== 'ref' ? 'sm:col-span-3 row-start-2 col-start-2' : 'sm:col-span-4 row-start-2 col-start-1'"
+        class="sm:col-span-4 relative">
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputCPLFilter',
+            'xSearchResultsString' => 'cplSearchResults',
+            'iconString' => 'document-text',
+            'placeholderString' => 'Filter berdasarkan CPL...',
+            'xSearchQueryString' => 'cplSearchQuery',
+            'selectedXId' => $selectedCPLId,
+            'selectedXName' => $cpl_name,
+            'resetXFilter' => 'resetCPLFilter()',
+            'xSearchQuery' => $cplSearchQuery,
+            'xSearchResults' => $cplSearchResults,
+            'selectXForFilterString' => 'selectCPLForFilter',
+            'typeXString' => 'deskripsi',
+            'typeX2String' => 'kode',
+            'unfoundString' => 'Tidak ada CPL ditemukan!',
+        ])
+    </div>
+
+    {{-- 🔹 CPMK --}}
+    <div x-show="activeTab == 'scpmk' || activeTab == 'cpl' || activeTab == 'ref'"
+        x-bind:class="activeTab !== 'ref' ? 'sm:col-span-4' : 'sm:col-span-3'"
+        class="relative row-start-2 col-start-2">
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputCPMKFilter',
+            'xSearchResultsString' => 'cpmkSearchResults',
+            'iconString' => 'academic-cap',
+            'placeholderString' => 'Filter berdasarkan CPMK...',
+            'xSearchQueryString' => 'cpmkSearchQuery',
+            'selectedXId' => $selectedCPMKId,
+            'selectedXName' => $cpmk_name,
+            'resetXFilter' => 'resetCPMKFilter()',
+            'xSearchQuery' => $cpmkSearchQuery,
+            'xSearchResults' => $cpmkSearchResults,
+            'selectXForFilterString' => 'selectCPMKForFilter',
+            'typeXString' => 'deskripsi',
+            'typeX2String' => 'kode',
+            'typeX3String' => 'total_bobot_text',
+            'typeX4String' => 'total_pertemuan',
+            'unfoundString' => 'Tidak ada CPMK ditemukan!',
+        ])
+    </div>
+
+    {{-- 🔹 Sub-CPMK --}}
+    <div x-show="activeTab == 'ref'" class="sm:col-span-4 relative row-start-2 col-start-2">
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputSCPMKFilter',
+            'xSearchResultsString' => 'scpmkSearchResults',
+            'iconString' => 'academic-cap',
+            'placeholderString' => 'Filter berdasarkan Sub-CPMK...',
+            'xSearchQueryString' => 'scpmkSearchQuery',
+            'selectedXId' => $selectedSCPMKId,
+            'selectedXName' => $scpmk_name,
+            'resetXFilter' => 'resetSCPMKFilter()',
+            'xSearchQuery' => $scpmkSearchQuery,
+            'xSearchResults' => $scpmkSearchResults,
+            'selectXForFilterString' => 'selectSCPMKForFilter',
+            'typeXString' => 'deskripsi',
+            'typeX2String' => 'kode',
+            'typeX3String' => 'metode',
+            'typeX4String' => 'bobot_text',
+            'unfoundString' => 'Tidak ada Sub-CPMK ditemukan!',
+        ])
+    </div>
+
+    <div x-show="activeTab == 'dosen'" class="sm:col-span-4 relative row-start-2 col-start-2">
+        @include('livewire.global.search-and-filters.secondary-search', [
+            'inputXFilterString' => 'inputFkFilter',
+            'xSearchResultsString' => 'fkSearchResults',
+            'iconString' => 'building-library',
+            'placeholderString' => 'Filter berdasarkan Fakultas...',
+            'xSearchQueryString' => 'fkSearchQuery',
+            'selectedXId' => $selectedFkId,
+            'selectedXName' => $fk_name,
+            'resetXFilter' => 'resetFkFilter()',
+            'xSearchQuery' => $fkSearchQuery,
+            'xSearchResults' => $fkSearchResults,
+            'selectXForFilterString' => 'selectFkForFilter',
+            'typeXString' => 'fakultas',
+            'typeX2String' => 'kode_text',
+            'unfoundString' => 'Tidak ada Fakultas ditemukan!',
+        ])
+    </div>
+
+</div>
 
 
 

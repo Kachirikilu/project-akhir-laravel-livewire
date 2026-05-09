@@ -148,19 +148,20 @@ class MKExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, 
         }
         // Horizontal Kolom
 
-        // Format Alignment Kolom
         $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        // Format Alignment Kolom
         $alignmentMerges = ['A', 'B', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
         foreach ($alignmentMerges as $c) {
-            $sheet->getStyle($c.'4:'.$c.$highestRow)->getAlignment()->applyFromArray([
+            $sheet->getStyle("{$c}4:{$c}{$highestRow}")->getAlignment()->applyFromArray([
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical' => Alignment::VERTICAL_CENTER,
             ]);
         }
         // Format Alignment Kolom
 
-        $sheet->getStyle('A4:M5')->applyFromArray($styleArray);
-        $highestColumn = $sheet->getHighestColumn();
+        $sheet->getStyle("A4:{$highestColumn}5")->applyFromArray($styleArray);
         $sheet->getStyle("A4:$highestColumn$highestRow")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
         return [];
@@ -174,7 +175,7 @@ class MKExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, 
 
                 $title = $this->title;
 
-                $highestColumn = 'M';
+                $highestColumn = $sheet->getHighestColumn();
 
                 $sheet->mergeCells("A2:{$highestColumn}2");
                 $sheet->setCellValue('A2', $title);

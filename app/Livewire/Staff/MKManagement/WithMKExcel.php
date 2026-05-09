@@ -14,35 +14,65 @@ trait WithMKExcel
     public function exportMKExcel()
     {
         $univ = env('UNIVERSITAS');
-        $UNIV = strtoupper(env('UNIVERSITAS'));
-        $tag = 'Mata Kulliah';
-        $TAG = strtoupper($tag);
+        $UNIV = strtoupper($univ);
 
-        $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $filter = '';
+        $FILTER = '';
+        if ($this->filterMK == 'mk-wajib') {
+            $filter = ' Wajib';
+            $FILTER = strtoupper($filter);
+        } elseif ($this->filterMK == 'mk-pilihan') {
+            $filter = ' Pilihan';
+            $FILTER = strtoupper($filter);
+        }
+        $filter2 = '';
+        $FILTER2 = '';
+        if ($this->switchTable == 'mk-tatap-muka') {
+            $filter2 = '_Tatap Muka';
+            $FILTER2 = ' TATAP MUKA';
+        } elseif ($this->switchTable == 'mk-praktikum') {
+            $filter2 = '_Praktikum';
+            $FILTER2 = ' PRAKTIKUM';
+        } elseif ($this->switchTable == 'mk-praktek-lapangan') {
+            $filter2 = '_Praktek Lapangan';
+            $FILTER2 = ' PRAKTEK LAPANGAN';
+        } elseif ($this->switchTable == 'mk-simulasi') {
+            $filter2 = '_Simulasi';
+            $FILTER2 = ' SIMULASI';
+        }
+
+        $tag = 'Mata Kulliah'.$filter.$filter2;
+        $TAG = strtoupper($tag).$FILTER.$FILTER2;
 
         $queryMK = $this->inputMKSearch();
         $this->buttonMKSwitch($queryMK);
         $this->buttonMKFilter($queryMK);
 
-        if ($this->selectedFkId) {
-            $fk = Fakultas::find($this->selectedFkId);
-            $fileName = 'Data_'.$tag.'_'.$fk->fakultas_fk.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' '.strtoupper($fk->fakultas_fk). ' ' . $UNIV;
-        } elseif ($this->selectedDpId) {
-            $dp = Departemen::find($this->selectedDpId);
-            $fileName = 'Data_'.$tag.'_'.$dp->departemen_dp.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' '.strtoupper($dp->departemen_dp). ' ' . $UNIV;
-        } elseif ($this->selectedPrId && $this->filterMK !== '') {
-            $pr = Prodi::find($this->selectedPrId);
-            $fileName = 'Data_'.$tag.'_'.$pr->prodi.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' PROGRAM STUDI '.strtoupper($pr->prodi). ' ' . $UNIV;
-        } elseif ($this->filterMK == '') {
-            $pr = Auth::user()->prodi;
-            $fileName = 'Data_'.$tag.'_'.$pr.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' PROGRAM STUDI '.strtoupper($pr). ' ' . $UNIV;
-        } else {
-            $title = 'DATA '.$TAG.' '.$UNIV;
+        $sInput = '';
+        $sINPUT = '';
+        if ($this->filterMK !== 'mk-universitas') {
+            if ($this->selectedFkId) {
+                $fk = Fakultas::find($this->selectedFkId);
+                $sInput = $fk->fakultas_fk.' ';
+                $sINPUT = strtoupper($fk->fakultas_fk.' ');
+            } elseif ($this->selectedDpId) {
+                $dp = Departemen::find($this->selectedDpId);
+                $sInput = $dp->departemen_dp.' ';
+                $sINPUT = strtoupper($dp->departemen_dp.' ');   
+            } elseif ($this->selectedPrId && $this->filterMK !== '') {
+                $pr = Prodi::find($this->selectedPrId);
+                $sInput = $pr->prodi.'_';
+                $sINPUT = strtoupper($pr->prodi_pr.' ');
+            } elseif ($this->filterMK == '') {
+                $pr = Auth::user()->prodi;
+                $pr_pr = Auth::user()->prodi_pr;
+                $sInput = $pr.'_';
+                $sINPUT = strtoupper($pr_pr.' ');
+            }
         }
+
+        $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
         return Excel::download(new MKExport($queryMK, $this->switchTable, $this->filterMK, $this->selectedPrId, $this->selectedDpId, $this->selectedFkId, $title), $fileName);
     }

@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Admin\UserManagement;
 
-use App\Models\Auth\User;
 use App\Livewire\Global\HasSortir;
+use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
-
 use Livewire\WithPagination;
 
 trait WithUserFilters
@@ -36,6 +35,7 @@ trait WithUserFilters
             ->with([
                 'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
                 'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+                'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
                 'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
             ]);
 
@@ -49,16 +49,18 @@ trait WithUserFilters
             $queryUser->searchUser($search, true);
         }
 
-        if ($this->selectedPrId) {
-            $queryUser->inLocationUser('prodi', $this->selectedPrId);
-        }
+        if ($this->filterStatus !== '') {
+            if ($this->selectedPrId) {
+                $queryUser->inLocationUser('prodi', $this->selectedPrId);
+            }
 
-        if ($this->selectedDpId) {
-            $queryUser->inLocationUser('departemen', $this->selectedDpId);
-        }
+            if ($this->selectedDpId) {
+                $queryUser->inLocationUser('departemen', $this->selectedDpId);
+            }
 
-        if ($this->selectedFkId) {
-            $queryUser->inLocationUser('fakultas', $this->selectedFkId);
+            if ($this->selectedFkId) {
+                $queryUser->inLocationUser('fakultas', $this->selectedFkId);
+            }
         }
 
         if (! empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
@@ -89,23 +91,33 @@ trait WithUserFilters
         }
 
         // Filter by status
-        if ($this->filterStatus === '') {
+        if ($this->filterStatus === 'dosen-prodi') {
+            $queryUser->whereHas('pr_rel', fn ($q) => $q->where('prodis.id', Auth::user()->pr_id));
+        } elseif ($this->filterStatus === 'dosen-aktif') {
             $queryUser->where(function ($q) {
-                $q->whereHas('admin.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
-                    ->orWhereHas('dosen.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
-                    ->orWhereHas('mahasiswa.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id));
+                $q->whereHas('dosen', fn ($sub) => $sub->where('status', 'Aktif'));
             });
-        } elseif ($this->filterStatus === 'aktif') {
+        } elseif ($this->filterStatus === 'dosen-non-aktif') {
+            $queryUser->where(function ($q) {
+                $q->whereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+            });
+        } elseif ($this->filterStatus === 'user-aktif') {
             $queryUser->where(function ($q) {
                 $q->whereHas('admin', fn ($sub) => $sub->where('status', 'Aktif'))
                     ->orWhereHas('dosen', fn ($sub) => $sub->where('status', 'Aktif'))
                     ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', 'Aktif'));
             });
-        } elseif ($this->filterStatus === 'non-aktif') {
+        } elseif ($this->filterStatus === 'user-non-aktif') {
             $queryUser->where(function ($q) {
                 $q->whereHas('admin', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
                     ->orWhereHas('dosen', fn ($sub) => $sub->where('status', '!=', 'Aktif'))
                     ->orWhereHas('mahasiswa', fn ($sub) => $sub->where('status', '!=', 'Aktif'));
+            });
+        } elseif ($this->filterStatus === '') {
+            $queryUser->where(function ($q) {
+                $q->whereHas('admin.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('dosen.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id))
+                    ->orWhereHas('mahasiswa.pr_rel', fn ($sub) => $sub->where('prodis.id', Auth::user()->pr_id));
             });
         }
 
@@ -127,15 +139,15 @@ trait WithUserFilters
     public function sortFieldOrderUser($queryUser)
     {
         $profileFields = [
-            'role', 'admin_id', 'dosen_id', 'mahasiswa_id', 
+            'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
             'name', 'identity1', 'identity2', 'identity3', 'nik',
-            'prodi', 'status', 'angkatan'
+            'prodi', 'status', 'angkatan',
         ];
 
         if (in_array($this->sortField, $profileFields)) {
             return $this->applyUserCombinedSort($queryUser);
         }
-        
+
         $field = ($this->sortField === 'id') ? 'users.id' : $this->sortField;
 
         return $queryUser->orderBy($field, $this->sortDirection);
@@ -157,25 +169,25 @@ trait WithUserFilters
         }
 
         $orderByRaw = match ($this->sortField) {
-            'admin_id'      => 'admins.id',
-            'dosen_id'      => 'dosens.id',
-            'mahasiswa_id'  => 'mahasiswas.id',
+            'admin_id' => 'admins.id',
+            'dosen_id' => 'dosens.id',
+            'mahasiswa_id' => 'mahasiswas.id',
             'role' => 'CASE 
                         WHEN admins.id IS NOT NULL THEN 1
                         WHEN dosens.id IS NOT NULL THEN 2
                         WHEN mahasiswas.id IS NOT NULL THEN 3
                         ELSE 4
                     END',
-            'name'      => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
+            'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
             'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
             'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
             'identity3' => 'dosens.nidk',
             'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
-            'status'    => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
-            'angkatan'  => 'mahasiswas.angkatan',
+            'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
+            'angkatan' => 'mahasiswas.angkatan',
             'created_at' => 'users.created_at',
             'updated_at' => 'users.updated_at',
-            default      => 'users.id'
+            default => 'users.id'
         };
 
         return $queryUser->orderByRaw("$orderByRaw {$this->sortDirection}");

@@ -43,40 +43,41 @@ trait WithUserExcel
         }
 
         $univ = env('UNIVERSITAS');
-        $UNIV = strtoupper(env('UNIVERSITAS'));
+        $UNIV = strtoupper($univ);
 
         $filter = '';
-        if ($this->filterStatus == 'aktif') {
-            $filter = ' '.ucwords($this->filterStatus);
-        } elseif ($this->filterStatus == 'non-aktif') {
+        if ($this->filterStatus == 'user-aktif') {
+            $filter = ' Aktif';
+        } elseif ($this->filterStatus == 'user-non-aktif') {
             $filter = ' Tidak Aktif';
         }
 
-        $tag = ucwords($this->switchTable ?? 'User').$filter;
+        $tag = ucwords(empty($this->switchTable) ? 'Pengguna' : $this->switchTable).$filter;
         $TAG = strtoupper($tag);
 
-        $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-        $title = 'DATA '.$TAG.' '.$UNIV;
-
+        $sInput = '';
+        $sINPUT = '';
         if ($this->filterStatus !== '') {
             if ($this->selectedFkId) {
                 $fk = Fakultas::find($this->selectedFkId);
-                $fileName = 'Data_'.$tag.'_'.$fk->fakultas_fk.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($fk->fakultas_fk).' '.$UNIV;
+                $sInput = $fk->fakultas_fk.'_';
+                $sINPUT = strtoupper($fk->fakultas_fk.' ');
             } elseif ($this->selectedDpId) {
                 $dp = Departemen::find($this->selectedDpId);
-                $fileName = 'Data_'.$tag.'_'.$dp->departemen_dp.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($dp->departemen_dp).' '.$UNIV;
+                $sInput = $dp->departemen_dp.'_';
+                $sINPUT = strtoupper($dp->departemen_dp.' ');
             } elseif ($this->selectedPrId) {
                 $pr = Prodi::find($this->selectedPrId);
-                $fileName = 'Data_'.$tag.'_'.$pr->prodi.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($pr->prodi).' '.$UNIV;
+                $sInput = $pr->prodi.'_';
+                $sINPUT = strtoupper($pr->prodi_pr.' ');
             }
         } else {
-            $pr = Auth::user()->prodi;
-            $fileName = 'Data_'.$tag.'_'.$pr.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' '.strtoupper($pr).' '.$UNIV;
+            $sInput = Auth::user()->prodi.'_';
+            $sINPUT = strtoupper(Auth::user()->prodi_pr.' ');
         }
+
+        $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
 
         return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileName);

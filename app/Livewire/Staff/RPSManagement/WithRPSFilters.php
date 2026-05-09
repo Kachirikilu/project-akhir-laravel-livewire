@@ -34,7 +34,12 @@ trait WithRPSFilters
     public function inputRPSSearch()
     {
         $queryRPS = RPS::query()
-            ->with(['mk_rel.prodis', 'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel']);
+            ->with([
+                'mk_rel.prodis', 'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel',
+                'cpls', 'refs', 
+                'cpmks', 'cpmks.cpls', 'cpmks.refs',
+                'cpmks.scpmks', 'cpmks.scpmks.refs'
+            ]);
 
         if ($this->switchTable === 'rps') {
             $search = $this->search;
@@ -128,9 +133,9 @@ trait WithRPSFilters
 
             'kode' => $this->applyRPSKodeSort($queryRPS),
 
-            'kode_mk' => $this->applyMKKodeSort($queryRPS, 'rps.mk_id'),
-
             'akademik' => $queryRPS->orderBy('akademik', $this->sortDirection),
+
+            'kode_mk' => $this->applyMKKodeSort($queryRPS, 'rps.mk_id'),
 
             'is_wajib' => $queryRPS->orderBy(
                 MataKuliah::select('is_wajib')

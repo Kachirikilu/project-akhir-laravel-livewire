@@ -15,24 +15,23 @@ use App\Livewire\Global\WithProdiSearchFilters;
 use App\Livewire\Global\WithReferensiSearchFilters;
 use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Global\WithSubCPMKSearchFilters;
+use App\Livewire\Staff\CPLManagement\WithCPLDelete;
 use App\Livewire\Staff\CPLManagement\WithCPLFilters;
 use App\Livewire\Staff\CPLManagement\WithCPLModal;
+use App\Livewire\Staff\CPMKManagement\WithCPMKDelete;
 use App\Livewire\Staff\CPMKManagement\WithCPMKFilters;
 use App\Livewire\Staff\CPMKManagement\WithCPMKModal;
+use App\Livewire\Staff\CPMKManagement\WithSubCPMKDelete;
 use App\Livewire\Staff\CPMKManagement\WithSubCPMKFilters;
 use App\Livewire\Staff\CPMKManagement\WithSubCPMKModal;
+use App\Livewire\Staff\ReferensiManagement\WithRefDelete;
 use App\Livewire\Staff\ReferensiManagement\WithRefFilters;
 use App\Livewire\Staff\ReferensiManagement\WithRefModal;
 use App\Livewire\Staff\RPSManagement\WithDosenFilters;
+use App\Livewire\Staff\RPSManagement\WithOBEExcel;
+use App\Livewire\Staff\RPSManagement\WithRPSDelete;
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
-
-use App\Livewire\Staff\RPSManagement\WithRPSDelete;
-use App\Livewire\Staff\CPMKManagement\WithCPMKDelete;
-use App\Livewire\Staff\CPMKManagement\WithSubCPMKDelete;
-use App\Livewire\Staff\CPLManagement\WithCPLDelete;
-use App\Livewire\Staff\ReferensiManagement\WithRefDelete;
-
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
@@ -40,15 +39,17 @@ use App\Models\Akademik\RPS;
 use App\Models\Akademik\SubCPMK;
 use App\Models\Auth\Dosen;
 use App\Models\Auth\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class RPSManagement extends Component
 {
+    use WithCPLDelete;
     use WithCPLFilters;
     use WithCPLModal;
     use WithCPLSearchFilters;
+    use WithCPMKDelete;
     use WithCPMKFilters;
     use WithCPMKModal;
     use WithCPMKSearchFilters;
@@ -57,26 +58,24 @@ class RPSManagement extends Component
     use WithDosenSearchFilters;
     use WithFakultasSearchFilters;
     use WithMKSearchFilters;
+    use WithOBEExcel;
     use WithPagination;
     use WithProdiSearchFilters;
+    use WithRefDelete;
     use WithReferensiSearchFilters;
     use WithRefFilters;
     use WithRefModal;
+    use WithRPSDelete;
     use WithRPSFilters;
     use WithRPSModal;
     use WithRPSSearchFilters;
+    use WithSubCPMKDelete;
     use WithSubCPMKFilters;
     use WithSubCPMKModal;
     use WithSubCPMKSearchFilters;
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
-
-    use WithRPSDelete;
-    use WithCPMKDelete;
-    use WithSubCPMKDelete;
-    use WithCPLDelete;
-    use WithRefDelete;
 
     public $switchTable = 'rps';
 
@@ -102,6 +101,7 @@ class RPSManagement extends Component
         'filterCPL' => ['except' => ''],
         'filterRef' => ['except' => ''],
         'filterDosen' => ['except' => ''],
+        'filterStatus' => ['except' => ''],
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
     ];
@@ -177,7 +177,7 @@ class RPSManagement extends Component
     private function syncSortField($table, $sortField)
     {
         $columns = [
-            'rps' => [1 => 'id', 2 => 'kode', 3 => 'kode_mk', 4 => 'akademik', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
+            'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'kode_mk', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
             'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'metodologi', 6 => 'indikator', 7 => 'metode', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
@@ -401,6 +401,9 @@ class RPSManagement extends Component
 
                 'dosen-rps' => '✅',
                 'dosen-non-rps' => '❌',
+
+                'dosen-prodi' => '🏛️',
+                'dosen-all' => '👥',
                 'dosen-aktif' => '🟢',
                 'dosen-non-aktif' => '🔴',
             ];
@@ -524,14 +527,24 @@ class RPSManagement extends Component
                         ->whereDoesntHave('dosen.rps')
                         ->count();
 
+                    $stats['dosen-prodi'] = (clone $countDosen)
+                        ->whereHas('dosen.pr_rel', function($q) {
+                            $q->where('prodis.id', Auth::user()->pr_id);
+                        })
+                        ->count();
+
+                    $stats['dosen-all'] = (clone $countDosen)
+                        ->whereHas('dosen')
+                        ->count();
+
                     $stats['dosen-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function ($q) {
+                        ->whereHas('dosen', function($q) {
                             $q->where('status', 'aktif');
                         })
                         ->count();
 
                     $stats['dosen-non-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function ($q) {
+                        ->whereHas('dosen', function($q) {
                             $q->where('status', '!=', 'aktif');
                         })
                         ->count();
@@ -577,6 +590,7 @@ class RPSManagement extends Component
                 'totalSCPMK' => '-',
                 'totalCPL' => '-',
                 'totalRef' => '-',
+                'totalDosenProdi' => '-',
                 'totalDosen' => '-',
 
                 'cpmk_rps_modal_paginator' => collect(),
@@ -616,6 +630,8 @@ class RPSManagement extends Component
 
                     'dosen-rps' => '-',
                     'dosen-non-rps' => '-',
+                    'dosen-prodi' => '-',
+                    'dosen-all' => '-',
                     'dosen-aktif' => '-',
                     'dosen-non-aktif' => '-',
                 ],

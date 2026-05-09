@@ -451,6 +451,7 @@ class UserExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize
         ];
 
         $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
 
         if ($this->switchTable == 'admin') {
             $verticalMerges = ['A', 'B', 'C', 'D', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
@@ -495,7 +496,6 @@ class UserExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize
         }
 
         $sheet->getStyle($headerRange)->applyFromArray($styleArray);
-        $highestColumn = $sheet->getHighestColumn();
         $sheet->getStyle("A4:$highestColumn$highestRow")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
         return [];

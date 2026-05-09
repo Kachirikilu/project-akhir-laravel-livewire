@@ -11,11 +11,12 @@
             'totalTab1' => $totalAllOpsi,
             'totalTab2' => $totalAktif,
             'totalTab3' => $totalNonAktif,
-            'tab1String' => 'status-all',
-            'tab2String' => 'aktif',
-            'tab3String' => 'non-aktif',
+            'tab1String' => 'user-all',
+            'tab2String' => 'user-aktif',
+            'tab3String' => 'user-non-aktif',
             'tabName' => Auth::user()->prodi,
             'tab1Name' => 'Semua Status',
+            'tab2Name' => 'Aktif',
             'tab3Name' => 'Tidak Aktif',
         ])
 

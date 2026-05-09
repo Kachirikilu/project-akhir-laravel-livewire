@@ -1,6 +1,6 @@
 <th rowspan="{{ $rowSpan ?? 1 }}" rowspan="{{ $rowspan ?? 1 }}" colspan="{{ $colspan ?? 1 }}"
     class="px-6 py-3 {{ $isSubHeader ?? false ? 'bg-gray-100/50' : '' }}
-        {{ ($isBorderX ?? false) || ($isMain ?? false) }}
+        {{ ($isBorderX ?? false) || ($isMain ?? false) ? 'border-x' : '' }}
         {{ $isBorderL ?? false ? 'border-l' : '' }}
         {{ $isBorderR ?? false ? 'border-r' : '' }}
         {{ $pTop ?? false ? 'pt-' . $pTop . ' pb-3' : 'py-3' }}

@@ -50,16 +50,25 @@ class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
             return [
                 [
                     'ID', 'Kode FK', 'Fakultas',
+                    'Program Studi', '',
+                    'Departemen', '',
+                ],
+                [
+                    '', '', '',
+                    'Kode PR', 'Jumlah Program Studi',
+                    'Kode DP', 'Jumlah Departemen',
                 ],
             ];
         } elseif ($this->switchTable == 'departemen') {
             return [
                 [
                     'ID', 'Kode DP', 'Departemen',
+                    'Program Studi', '',
                     'Fakultas', '',
                 ],
                 [
                     '', '', '',
+                    'Kode PR', 'Jumlah Program Studi',
                     'Kode FK', 'Nama Fakultas',
                 ],
             ];
@@ -86,14 +95,20 @@ class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
                 $pr->id ?? '', // A
                 $pr->kode ?? '', // B
                 $pr->fakultas_fk ?? '', // C
+                $pr->prodis->pluck('kode')->unique()->implode(' / ') ?: '-', // D: Kode PR
+                $pr->prodis->count(), // E: Jumlah PR
+                $pr->departemens->pluck('kode')->unique()->implode(' / ') ?: '-', // F: Kode DP
+                $pr->departemens->count(), // G: Jumlah DP
             ];
         } elseif ($this->switchTable == 'departemen') {
             return [
                 $pr->id ?? '', // A
                 $pr->kode ?? '', // B
                 $pr->departemen ?? '', // C
-                $pr->kode_fk ?? '', // D
-                $pr->fakultas_fk ?? '', // E
+                $pr->prodis->pluck('kode')->unique()->implode(' / ') ?: '-', // D: Kode PR
+                $pr->prodis->count(), // E: Jumlah PR
+                $pr->kode_fk ?? '', // F: Kode FK
+                $pr->fakultas_fk ?? '', // G: Nama Fakultas
             ];
         } else {
             return [
@@ -122,40 +137,33 @@ class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
             ],
         ];
 
-        if ($this->switchTable !== 'fakultas') {
-            $verticalMerges = ['A', 'B', 'C'];
-            foreach ($verticalMerges as $col) {
-                $sheet->mergeCells("{$col}4:{$col}5");
-            }
-            $sheet->mergeCells('D4:E4');
-            if ($this->switchTable !== 'departemen') {
-                $sheet->mergeCells('F4:G4');
-                $alignmentMerges = ['A', 'B', 'D', 'F'];
-            } else {
-                $alignmentMerges = ['A', 'B', 'D'];
-            }
+        $verticalMerges = ['A', 'B', 'C'];
+        foreach ($verticalMerges as $col) {
+            $sheet->mergeCells("{$col}4:{$col}5");
+        }
+
+        $sheet->mergeCells('D4:E4');
+        $sheet->mergeCells('F4:G4');
+
+        if ($this->switchTable == 'fakultas') {
+            $alignmentMerges = ['A', 'B', 'E'];
+        } elseif ($this->switchTable == 'departemen') {
+            $alignmentMerges = ['A', 'B', 'D', 'E', 'F'];
         } else {
-            $alignmentMerges = ['A', 'B'];
+            $alignmentMerges = ['A', 'B', 'D', 'F'];
         }
 
         $highestRow = $sheet->getHighestRow();
-        foreach ($alignmentMerges as $c) {
-            $sheet->getStyle($c . '4:' . $c . $highestRow)
-                ->getAlignment()->applyFromArray([
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                ]);
-        }
-
-        if ($this->switchTable == 'fakultas') {
-            $sheet->getStyle('A4:C4')->applyFromArray($styleArray);
-        } elseif ($this->switchTable == 'departemen') {
-            $sheet->getStyle('A4:E5')->applyFromArray($styleArray);
-        } else {
-            $sheet->getStyle('A4:G5')->applyFromArray($styleArray);
-        }
-
         $highestColumn = $sheet->getHighestColumn();
+
+        foreach ($alignmentMerges as $c) {
+            $sheet->getStyle("{$c}4:{$c}{$highestRow}")->getAlignment()->applyFromArray([
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ]);
+        }
+
+        $sheet->getStyle("A4:{$highestColumn}5")->applyFromArray($styleArray);
         $sheet->getStyle("A4:$highestColumn$highestRow")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
         return [];
@@ -167,13 +175,7 @@ class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                if ($this->switchTable == 'fakultas') {
-                    $highestColumn = 'C';
-                } elseif ($this->switchTable == 'departemen') {
-                    $highestColumn = 'E';
-                } else {
-                    $highestColumn = 'G';
-                }
+                $highestColumn = $sheet->getHighestColumn();
 
                 $title = $this->title;
 

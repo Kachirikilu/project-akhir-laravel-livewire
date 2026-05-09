@@ -24,6 +24,7 @@
             top: 0;
             bottom: 0;
             z-index: 50;
+            overflow-x: hidden !important;
         }
 
         .main-content {
@@ -36,6 +37,10 @@
 <body class="scrollbar-large min-h-screen bg-white dark:bg-zinc-900" :class="{ 'sidebar-expanded': expanded }"
     x-data="{
         expanded: $persist(false).as('sidebar_expanded'),
+        init() {
+            $watch('expanded', value => window.sidebarExpanded = value);
+            window.sidebarExpanded = this.expanded;
+        },
         expanded2: false,
         isDesktop: window.matchMedia('(min-width: 1024px)').matches,
     

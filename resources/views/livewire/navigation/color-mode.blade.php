@@ -1,6 +1,6 @@
 <div x-data="{
     currentTheme: localStorage.getItem('app-theme') || 'blue',
-    expanded: true,
+    isInternalOpen: true,
     isAutoPlaying: localStorage.getItem('auto-play-mode') === 'true',
     get autoPlayInterval() { return window.themeInterval || null },
     set autoPlayInterval(val) { window.themeInterval = val },
@@ -40,6 +40,8 @@
             this.setTheme(this.allThemes[nextIndex].id);
             
             this.$nextTick(() => {
+                if (window.sidebarExpanded === false) return;
+
                 const buttons = this.$refs.themeContainer?.querySelectorAll('button');
                 if (buttons && buttons[nextIndex]) {
                     buttons[nextIndex].scrollIntoView({
@@ -88,8 +90,9 @@ x-init="
 class="flex flex-col items-center gap-1 mb-6">
 
     {{-- Container Scrollable --}}
-    <div x-show="expanded" x-cloak x-ref="themeContainer"
-        class="w-[220px] gap-3 p-1 flex items-center bg-gray-100 dark:bg-white/90 rounded-full border border-gray-200 dark:border-white/10 overflow-x-auto no-scrollbar snap-x">
+    <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.400ms x-cloak x-ref="themeContainer"
+        class="w-[220px] gap-3 p-1 flex items-center bg-gray-100 dark:bg-white/90 rounded-full border border-gray-200 dark:border-white/10 overflow-x-auto no-scrollbar snap-x"
+        :style="!(typeof expanded === 'undefined' ? true : expanded) ? 'scroll-behavior: auto !important' : ''">
         <template x-for="theme in allThemes" :key="theme.id">
             <button type="button" @click="setTheme(theme.id); if(isAutoPlaying) toggleAutoPlay();"
                 class="relative flex-shrink-0 w-5 h-5 rounded-full transition-all duration-500 hover:scale-110 focus:outline-none snap-center"
@@ -103,7 +106,7 @@ class="flex flex-col items-center gap-1 mb-6">
     </div>
 
     {{-- PIL NAVIGASI DENGAN PREVIEW WARNA --}}
-    <div x-show="expanded"
+    <div x-show="typeof expanded === 'undefined' ? true : expanded" x-transition:leave.duration.400ms
         class="w-[220px] flex justify-between items-center bg-gray-900/80 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg overflow-hidden">
 
         <button @click="scrollThemes('left')" type="button"

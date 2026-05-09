@@ -48,20 +48,13 @@
 
             @if ($switchTable === 'rps')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'kode_mk',
-                    'isMain' => 1,
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                    'headString' => 'Kode MK',
-                ])
-                @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'akademik',
                     'headString' => 'Tahun Akademik',
                     'isCenter' => 1,
                     'rowSpan' => 2,
                 ])
 
-                <th colspan="4" class="{{ $headSubKolom }}">
+                <th colspan="5" class="{{ $headSubKolom }}">
                     Mata Kuliah
                 </th>
                 <th colspan="3" class="{{ $headSubKolom }}">
@@ -161,10 +154,15 @@
 
         <tr class="bg-gray-50">
             @if ($switchTable === 'rps')
+                 @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'kode_mk',
+                    'isMain' => 1,
+                    'isCenter' => 1,
+                    'headString' => 'Kode MK',
+                ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
                     'headString' => 'Mata Kuliah',
-                    'isBorderL' => 1,
                 ])
 
                 @include('livewire.global.table.head-table', [
@@ -296,7 +294,8 @@
                                     @break
 
                                     @case(3)
-                                        <flux:badge icon="building-library" color="indigo" size="sm">{{ $x->kode ?? '---' }}
+                                        <flux:badge icon="building-library" color="indigo" size="sm">
+                                            {{ $x->kode ?? '---' }}
                                         </flux:badge>
                                     @break
 
@@ -339,7 +338,8 @@
 
 
             @if ($switchTable === 'rps')
-                <td class="{{ $secondKolom }} {{ $borderR }} text-center">
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->akademik ?? '-' }}</td>
+                <td class="{{ $secondKolom }} {{ $borderR }} {{ $borderL }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->level_mk)
@@ -373,10 +373,9 @@
                         ])
                     </flux:dropdown>
                 </td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->akademik ?? '-' }}</td>
-                <td class="{{ $secondKolom }} {{ $borderL }} whitespace-nowrap">{{ $x->mk ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->sks ?? '-' }} SKS</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->sks_text ?? '-' }}</td>
+                <td class="{{ $subKolom }} whitespace-nowrap">{{ $x->mk ?? '-' }}</td>
+                <td class="{{ $subKolom }} whitespace-nowrap text-center">{{ $x->sks ?? '-' }} SKS</td>
+                <td class="{{ $subKolom }} whitespace-nowrap text-center">{{ $x->sks_text ?? '-' }}</td>
                 <td class="{{ $mainKolom }} {{ $borderR }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
@@ -500,7 +499,8 @@
             @endif
 
             @if ($switchTable === 'cpmk')
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">
+                    {{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
                 <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot . '%' ?? '-' }}</td>
             @endif
 

@@ -330,6 +330,15 @@ class User extends Authenticatable
         });
     }
 
+    protected function prodiPr(): Attribute
+    {
+        return Attribute::get(function () {
+            $profile = $this->admin ?: ($this->dosen ?: $this->mahasiswa);
+
+            return $profile?->pr_rel?->prodi_pr;
+        });
+    }
+
     protected function kodePr(): Attribute
     {
         return Attribute::get(function () {

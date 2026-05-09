@@ -12,7 +12,7 @@ trait WithProdiExcel
     public function exportProdiExcel()
     {
         $univ = env('UNIVERSITAS');
-        $UNIV = strtoupper(env('UNIVERSITAS'));
+        $UNIV = strtoupper($univ);
 
         $filter = '';
         if ($this->filterPr !== '') {
@@ -21,9 +21,6 @@ trait WithProdiExcel
 
         $tag = 'Program Studi'.$filter;
         $TAG = strtoupper($tag);
-
-        $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-        $title = 'DATA '.$TAG.' '.$UNIV;
 
         if ($this->switchTable == 'fakultas') {
             $queryProdi = $this->inputFkSearch();
@@ -36,29 +33,23 @@ trait WithProdiExcel
             $this->buttonStrataFilter($queryProdi);
         }
 
-        if ($this->switchTable == 'fakultas') {
-            $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-            $title = 'DATA '.$TAG.' '.$UNIV;
-        } elseif ($this->switchTable == 'departemen') {
+        $sInput = '';
+        $sINPUT = '';
+        if ($this->switchTable == 'departemen' || $this->switchTable == 'prodi') {
             if ($this->selectedFkId) {
                 $fk = Fakultas::find($this->selectedFkId);
-                $fileName = 'Data_'.$tag.'_'.$fk->fakultas_fk.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($fk->fakultas_fk).' '.$UNIV;
-            } else {
-                $fileName = 'Data_'.$tag.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.$UNIV;
+                $sInput = $fk->fakultas_fk.'_';
+                $sINPUT = strtoupper($fk->fakultas_fk.' ');
             }
-        } else {
-            if ($this->selectedFkId) {
-                $fk = Fakultas::find($this->selectedFkId);
-                $fileName = 'Data_'.$tag.'_'.$fk->fakultas_fk.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($fk->fakultas_fk).' '.$UNIV;
-            } elseif ($this->selectedDpId) {
+            if ($this->selectedDpId && $this->switchTable == 'prodi') {
                 $dp = Departemen::find($this->selectedDpId);
-                $fileName = 'Data_'.$tag.'_'.$dp->departemen_dp.'_'.$univ.'_'.now()->format('Y-m-d').'.xlsx';
-                $title = 'DATA '.$TAG.' '.strtoupper($dp->departemen_dp).' '.$UNIV;
+                $sInput = $dp->departemen_dp.'_';
+                $sINPUT = strtoupper($dp->departemen_dp.' ');
             }
         }
+
+        $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
+        $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
         return Excel::download(new ProdiExport($queryProdi, $this->switchTable, $title), $fileName);
     }

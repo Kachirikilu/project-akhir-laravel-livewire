@@ -14,7 +14,7 @@ trait WithDosenFilters
 
     public function inputDosenSearch()
     {
-        $queryDosen = Dosen::query();
+        $queryDosen = Dosen::query()->with(['user', 'pr_rel', 'rps', 'scpmks', 'sesiMengajars.jadwal.kelas_rel']);
 
         if ($this->switchTable === 'dosen') {
 
@@ -36,7 +36,7 @@ trait WithDosenFilters
 
     public function buttonDosenFilter($queryDosen)
     {
-        if ($this->filterDosen === 'dosen-rps') {
+       if ($this->filterDosen === 'dosen-rps') {
             $queryDosen->whereHas('rps');
         } elseif ($this->filterDosen === 'dosen-non-rps') {
             $queryDosen->whereDoesntHave('rps');

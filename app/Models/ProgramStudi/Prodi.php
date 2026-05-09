@@ -59,6 +59,13 @@ class Prodi extends Model
         });
     }
 
+    protected function prodiPr(): Attribute
+    {
+        return Attribute::get(function () {
+            return 'Program Studi '.$this->prodi;
+        });
+    }
+
     protected function kode(): Attribute
     {
         return Attribute::get(function () {
