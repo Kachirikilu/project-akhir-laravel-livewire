@@ -18,16 +18,7 @@
     },
     value: ''
 }"
-    x-init="
-    value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }});
-
-    $watch(
-        () => $store.{{ $alpine ?? 'config' }}?.{{ $modelString }},
-        (val) => {
-            value = getLabel(val);
-        }
-    );
-"
+    x-init="value = getLabel($store.{{ $alpine ?? 'config' }}?.{{ $modelString }})"
     x-effect="
         options = @js($xOptions);
         values = @js($xValues ?? $xOptions);

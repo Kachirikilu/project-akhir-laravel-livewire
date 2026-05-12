@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -15,7 +16,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PendidikanExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
+class PendidikanExport implements FormCollection, FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
 {
     protected $query;
     protected $userName;
@@ -26,9 +27,9 @@ class PendidikanExport implements FromQuery, ShouldAutoSize, WithHeadings, WithM
         $this->userName = $userName;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->query;
+        return $this->query->cursor();
     }
 
     public function startCell(): string

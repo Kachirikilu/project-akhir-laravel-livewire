@@ -5,7 +5,7 @@
         <template x-if="$store.{{ $alpine ?? 'config' }}?.typeModal == 'file'" x-cloak>
             <flux:button type="submit" variant="primary"
                 wire:loading.attr="disabled" 
-                wire:target="excel_file, parseExcelFile, processImport, saveAllRows, saveUserInternal"
+                wire:target="excel_file, parseExcelFile, processImport, saveAllRows"
                 class="cursor-pointer w-full sm:w-auto bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white border-none transition-all duration-200 shadow-sm dark:shadow-green-500/20">
                 
                 <span wire:loading.remove wire:target="saveAllRows" class="text-white">

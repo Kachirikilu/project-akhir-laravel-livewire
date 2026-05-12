@@ -257,6 +257,7 @@ trait WithMKModal
 
             $this->resetInputMK();
             $this->dispatch('refresh-data-mk');
+
             $this->showMKModal = false;
             $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']));
 
@@ -399,17 +400,15 @@ trait WithMKModal
 
     private function resetInputMK()
     {
-        $this->prNameSearch = '';
-        $this->dpNameSearch = '';
-        $this->fkNameSearch = '';
+        $fields = [
+            'selected_id_mk',
+            'pr_id', 'dp_id', 'fk_id',
+            'pr_items', 'dp_items', 'fk_items',
+            'pr_id_array', 'pr_items_array',
+            'prNameSearch', 'dpNameSearch', 'fkNameSearch'
+        ];
 
-        $this->pr_id = null;
-        $this->dp_id = null;
-        $this->fk_id = null;
-
-        $this->pr_id_array = [];
-        $this->pr_items_array = [];
-
+        $this->reset($fields);
         $this->resetErrorBag();
     }
 }

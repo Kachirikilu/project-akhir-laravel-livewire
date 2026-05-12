@@ -10,11 +10,11 @@
         {{-- KIRI: Badge nama & status --}}
         <div class="flex items-center gap-2">
             <flux:button @click="$wire.printPDF($store.rps?.id ?? null)"
-                class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 border border-emerald-200 transition-colors">
+                class="cursor-pointer !text-rose-600 dark:!text-rose-400 hover:!bg-rose-100 dark:hover:!bg-rose-900/30 border border-rose-200 transition-colors">
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
                 <flux:icon wire:loading wire:target="printPDF" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-3 dark:!text-emerald-600" />
+                    class="animate-spin h-4 w-4 ml-3 dark:!text-rose-600" />
             </flux:button>
 
             <flux:button

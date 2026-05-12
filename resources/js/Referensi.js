@@ -62,9 +62,9 @@ document.addEventListener("alpine:init", () => {
             this.isForceDelete = 0,
             this.colorIcon = "",
 
-            this.kode_ref = "";
-            this.kode_ref_1 = "";
-            this.kode_ref_2 = "";
+            this.kode_ref = "",
+            this.kode_ref_1 = "",
+            this.kode_ref_2 = "",
 
             this.judul = ""
             this.penulis = ""

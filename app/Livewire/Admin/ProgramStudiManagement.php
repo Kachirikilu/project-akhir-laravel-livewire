@@ -108,11 +108,15 @@ class ProgramStudiManagement extends Component
         $this->switchTable = $table;
         $this->syncSortField($table, $this->sortField);
 
-        if ($table == 'fakultas' && $this->perPage > 10) {
-            $this->perPage = 10;
-        }
-        if ($table == 'departemen' && $this->perPage > 50) {
-            $this->perPage = 50;
+
+        $limits = [
+            'prodi' => 75,
+            'departemen' => 50,
+            'fakultas' => 10,
+        ];
+
+        if (isset($limits[$table])) {
+            $this->perPage = min((int) $this->perPage, $limits[$table]);
         }
 
         $this->resetPage();

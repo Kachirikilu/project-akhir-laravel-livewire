@@ -194,7 +194,13 @@ trait WithRPSModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $mk = MataKuliah::find($data['mk_id'] ?? null);
+        $mkId = $data['mk_id'] ?? null;
+
+        Validator::make(['mk_id' => $mkId], [
+            'mk_id' => 'required|exists:mata_kuliahs,id',
+        ], $this->validationMessagesRPS())->validate();
+
+        $mk = MataKuliah::find($mkId ?? null);
         $desMK = $mk?->deskripsi ?? '';
         if (! str_ends_with($desMK, '.') && ! empty($desMK)) {
             $desMK .= '.';

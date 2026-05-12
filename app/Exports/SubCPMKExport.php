@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -16,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SubCPMKExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
+class SubCPMKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $querySCPMK;
 
@@ -31,9 +32,9 @@ class SubCPMKExport extends DefaultValueBinder implements FromQuery, ShouldAutoS
         $this->title = $title;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->querySCPMK;
+        return $this->querySCPMK->cursor();
     }
 
     public function startCell(): string

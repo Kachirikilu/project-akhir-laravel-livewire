@@ -33,7 +33,6 @@ document.addEventListener("alpine:init", () => {
         dp_id: "",
         nama_fakulas_search: "",
         kodeDp: "",
-        strata: "",
 
         // Fakultas
         nama_fk: "",
@@ -103,11 +102,11 @@ document.addEventListener("alpine:init", () => {
         // },
         
         reset() {
-            this.typeModal = "",
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+            this.typeModal = "";
+            this.typeModal_delete = "";
+            this.isEdit = 0;
+            this.isForceDelete = 0;
+            this.colorIcon = "";
 
             this.nama_pr = "";
             this.dp_id = "";
@@ -126,10 +125,10 @@ document.addEventListener("alpine:init", () => {
             this.dp_items = "";
             this.fk_items = "";
 
-            this.nama_pr_delete = "",
-            this.nama_dp_delete = "",
-            this.nama_fk_delete = "",
-            this.kode_delete = ""
+            this.nama_pr_delete = "";
+            this.nama_dp_delete = "";
+            this.nama_fk_delete = "";
+            this.kode_delete = "";
         }
     });
 });

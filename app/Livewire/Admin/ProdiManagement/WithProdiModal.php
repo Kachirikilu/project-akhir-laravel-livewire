@@ -474,6 +474,7 @@ trait WithProdiModal
     private function resetInputProdi()
     {
         $fields = [
+            'selected_id_pr',
             // 'nama_pr', 'strata', 'nama_dp', 'nama_fk',
             'dp_id', 'dp_id_2', 'fk_id', 'fk_id_2', 'dpNameSearch', 'fkNameSearch',
         ];
@@ -484,7 +485,6 @@ trait WithProdiModal
         //     ]);
         // }
 
-        $this->selected_id_pr = null;
         $this->reset($fields);
         $this->resetErrorBag();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -16,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ReferensiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
+class ReferensiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithCustomStartCell, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $queryRef;
 
@@ -31,9 +32,9 @@ class ReferensiExport extends DefaultValueBinder implements FromQuery, ShouldAut
         $this->title = $title;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->queryRef;
+        return $this->queryRef->cursor();
     }
 
     public function startCell(): string

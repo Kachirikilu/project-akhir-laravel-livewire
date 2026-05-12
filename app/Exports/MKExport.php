@@ -6,6 +6,8 @@ use App\Models\ProgramStudi\Prodi;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use Auth;
+
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -25,7 +27,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class MKExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
+class MKExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $queryMK;
 
@@ -52,9 +54,9 @@ class MKExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, 
         $this->title = $title;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->queryMK;
+        return $this->queryMK->cursor();
     }
 
     public function startCell(): string

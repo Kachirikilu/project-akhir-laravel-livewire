@@ -1,4 +1,4 @@
-<flux:modal name="mk-modal" wire:model="showMKModal" x-data  @refresh-data-mk.window="$store.mk.reset()" x-bind:flyout="$store.mk.isEdit == 1"
+<flux:modal name="mk-modal" wire:model="showMKModal" x-data @refresh-data-mk.window="$store.mk.reset()" x-bind:flyout="$store.mk.isEdit == 1"
     class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}

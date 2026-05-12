@@ -57,8 +57,8 @@ class RPSSeeder extends Seeder
         shuffle($kombinasi);
 
         // 🔥 BUKAN 24 LAGI, tapi minimal 64 CPL
-        $totalCPL = min(80, count($kombinasi));
-
+        $totalCPL = min(300, count($kombinasi));
+        $this->command->info("Generating $totalCPL CPL records...");
         for ($i = 1; $i <= $totalCPL; $i++) {
             $cpls[] = CPL::updateOrCreate([
                 'kode_cpl' => sprintf('CPL%02d', $i),
@@ -70,7 +70,7 @@ class RPSSeeder extends Seeder
         // =========================
         // DATA AWAL
         // =========================
-        $mks = MataKuliah::take(32)->get();
+        $mks = MataKuliah::take(64)->get();
 
         $tahunAkademik = [
             '2011/2012', '2012/2013', '2013/2014',
@@ -80,13 +80,15 @@ class RPSSeeder extends Seeder
             '2023/2024', '2024/2025', '2025/2026',
         ];
 
-        $targetRps = 32;
+        $targetRps = 512;
         $batchSize = 256;
 
         $rpsCreated = 0;
 
         // 🔥 pindahkan ke luar closure (INI PENTING)
         $cplUsage = [];
+
+        $this->command->info("Seeding $targetRps RPS records in batches of $batchSize...");
 
         while ($rpsCreated < $targetRps) {
 
@@ -97,7 +99,7 @@ class RPSSeeder extends Seeder
                 $mks,
                 $cpls,
                 $tahunAkademik,
-                &$cplUsag
+                &$cplUsage
             ) {
 
                 $limit = min($batchSize, $targetRps - $rpsCreated);
@@ -170,9 +172,13 @@ class RPSSeeder extends Seeder
                 }
             });
 
+            $this->command->info("Created $rpsCreated/$targetRps RPS records...");
+
             // jeda kecil
             usleep(200000);
         }
+
+        $this->command->info("RPSSeeder finished successfully.");
     }
 
     private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)

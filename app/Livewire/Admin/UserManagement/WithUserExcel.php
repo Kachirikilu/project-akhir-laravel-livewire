@@ -11,10 +11,12 @@ use App\Models\Auth\User;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Prodi;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 // use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
@@ -31,6 +33,8 @@ trait WithUserExcel
     public array $parsedRows = [];
 
     public array $rowErrors = [];
+
+    public $excelPerPage = 20;
 
     public function exportUserExcel()
     {
@@ -79,9 +83,80 @@ trait WithUserExcel
         $fileName = 'Data_'.$tag.'_'.$sInput.$univ.'_'.now()->format('Y-m-d').'.xlsx';
         $title = 'DATA '.$TAG.' '.$sINPUT.$UNIV;
 
-
         return Excel::download(new UserExport($queryUser, $this->switchTable, $title), $fileName);
     }
+
+    // public function getPaginatedRowsProperty()
+    // {
+    //     return collect($this->parsedRows)
+    //         ->slice(($this->excelPage - 1) * $this->excelPerPage, $this->excelPerPage)
+    //         ->all();
+    // }
+
+    public function getPaginatedRowsProperty()
+    {
+        $items = collect($this->parsedRows)
+            ->map(function ($row, $index) {
+
+                return array_merge($row, [
+                    '_index' => $index,
+                ]);
+            });
+
+        $page = $this->getPage('excelPage');
+
+        return new LengthAwarePaginator(
+            $items->forPage($page, $this->excelPerPage)->values()->toArray(),
+            $items->count(),
+            $this->excelPerPage,
+            $page,
+            [
+                'path' => request()->url(),
+                'pageName' => 'excelPage',
+            ]
+        );
+    }
+
+    // public function getExcelTotalPagesProperty()
+    // {
+    //     return ceil(count($this->parsedRows) / $this->excelPerPage);
+    // }
+
+    // public function setExcelPage($page)
+    // {
+    //     $this->excelPage = max(1, min($page, $this->excelTotalPages));
+    // }
+
+    // public function getExcelPaginationElementsProperty()
+    // {
+    //     $total = $this->excelTotalPages;
+    //     $current = $this->excelPage;
+    //     $onEachSide = 1;
+
+    //     if ($total <= 7) {
+    //         return [range(1, $total)];
+    //     }
+
+    //     $elements = [];
+
+    //     if ($current <= $onEachSide + 4) {
+    //         $elements[] = range(1, $onEachSide + 4);
+    //         $elements[] = '...';
+    //         $elements[] = [$total - 1, $total];
+    //     } elseif ($current > $total - ($onEachSide + 4)) {
+    //         $elements[] = [1, 2];
+    //         $elements[] = '...';
+    //         $elements[] = range($total - ($onEachSide + 4), $total);
+    //     } else {
+    //         $elements[] = [1, 2];
+    //         $elements[] = '...';
+    //         $elements[] = range($current - $onEachSide, $current + $onEachSide);
+    //         $elements[] = '...';
+    //         $elements[] = [$total - 1, $total];
+    //     }
+
+    //     return $elements;
+    // }
 
     public function importUserExcel()
     {
@@ -107,37 +182,59 @@ trait WithUserExcel
         }
 
         /** ===============================
-         *  CARI HEADER
+         *  CARI HEADER (Robust Search)
          *  =============================== */
         $headerRowIndex = null;
+        $secondHeaderRowIndex = null;
 
         foreach ($allData as $i => $row) {
-            if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() > 0) {
+            $rowValues = collect($row)->map(fn ($v) => Str::lower(trim((string) $v)))->filter()->values();
+
+            // Cari baris yang mengandung kata kunci utama (Email/Role/Nama)
+            // Lewati judul (biasanya cuma 1 cell besar)
+            if ($rowValues->contains('email') || $rowValues->contains('role') || $rowValues->contains('nama')) {
                 $headerRowIndex = $i;
+                // Jika baris berikutnya juga punya konten (untuk handle double header)
+                if (isset($allData[$i + 1])) {
+                    $nextRow = collect($allData[$i + 1])->filter(fn ($v) => trim((string) $v) !== '');
+                    if ($nextRow->count() > 0) {
+                        $secondHeaderRowIndex = $i + 1;
+                    }
+                }
                 break;
             }
         }
 
         if ($headerRowIndex === null) {
-            throw new \Exception('Header tidak ditemukan');
+            throw new \Exception('Header tidak ditemukan. Pastikan file memiliki kolom Email/Nama/Role.');
         }
 
-        $rawHeader = $allData[$headerRowIndex];
+        $rawHeader1 = $allData[$headerRowIndex];
+        $rawHeader2 = $secondHeaderRowIndex !== null ? $allData[$secondHeaderRowIndex] : [];
 
         $headers = [];
-        foreach ($rawHeader as $idx => $value) {
-            if (trim((string) $value) !== '') {
-                $headers[$idx] = Str::lower(trim($value));
+        foreach ($rawHeader1 as $idx => $value) {
+            $val1 = Str::lower(trim((string) $value));
+            $val2 = isset($rawHeader2[$idx]) ? Str::lower(trim((string) $rawHeader2[$idx])) : '';
+
+            // Gabungkan atau pilih header yang lebih spesifik
+            $finalHeader = $val1;
+            if ($val2 !== '' && ($val1 === '' || $val1 === 'identitas (id)' || str_contains($val1, 'pendidikan') || str_contains($val1, 'pangkat'))) {
+                $finalHeader = $val2;
+            }
+
+            if ($finalHeader !== '') {
+                $headers[$idx] = $finalHeader;
             }
         }
 
         /** ===============================
          *  PARSE DATA KE TABLE PREVIEW
          *  =============================== */
-        $dataRows = array_slice($allData, $headerRowIndex + 1);
+        $startDataIndex = ($secondHeaderRowIndex ?? $headerRowIndex) + 1;
+        $dataRows = array_slice($allData, $startDataIndex);
 
         foreach ($dataRows as $excelIndex => $row) {
-
             if (collect($row)->filter(fn ($v) => trim((string) $v) !== '')->count() === 0) {
                 continue;
             }
@@ -147,18 +244,18 @@ trait WithUserExcel
                 $data[$header] = trim((string) ($row[$col] ?? ''));
             }
 
+            // Mapping yang lebih fleksibel untuk mendukung berbagai format header
             $this->parsedRows[] = [
                 'email' => $data['email'] ?? '',
                 'password' => $data['password'] ?? 'password123',
-                'name' => $data['name'] ?? '',
+                'name' => $data['name'] ?? $data['nama'] ?? '',
                 'nip' => $data['nip'] ?? '',
                 'nitk' => $data['nitk'] ?? '',
                 'nidn' => $data['nidn'] ?? '',
                 'nidk' => $data['nidk'] ?? '',
                 'nim' => $data['nim'] ?? '',
                 'nik' => $data['nik'] ?? '',
-                'angkatan' => $data['tahun angkatan'] ?? '',
-                // 'program_id'    => $this->pr_id ?? '',
+                'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
                 'role' => strtolower($data['role'] ?? ''),
             ];
         }
@@ -208,6 +305,7 @@ trait WithUserExcel
         }
 
         try {
+            $this->stream('import-progress', 'Inisialisasi pemrosesan...');
             $this->processImport();
         } catch (\Throwable $e) {
             $this->dispatch('toast', message: '❌ '.$e->getMessage());
@@ -221,51 +319,51 @@ trait WithUserExcel
         $successfulIndices = [];
         $originalRoleType = $this->roleType;
 
-        foreach ($this->parsedRows as $index => $row) {
-            try {
-                // Set roleType and selected_id_user temporarily for inputModalUser validation
-                $this->roleType = $row['role'];
-                $this->selected_id_user = null;
+        $total = count($this->parsedRows);
 
-                // Prepare data for validation
-                $dataToValidate = $row;
-                $dataToValidate['pr_id'] = $this->pr_id;
-                // Excel doesn't have status usually, default to 'Aktif'
-                if (empty($dataToValidate['status'])) {
-                    $dataToValidate['status'] = 'Aktif';
+        LazyCollection::make($this->parsedRows)
+            ->chunk(50)
+            ->each(function ($chunk) use (&$successCount, &$successfulIndices, $total) {
+                foreach ($chunk as $index => $row) {
+                    try {
+                        $this->roleType = $row['role'];
+                        $this->selected_id_user = null;
+
+                        $dataToValidate = $row;
+                        $dataToValidate['pr_id'] = $this->pr_id;
+                        if (empty($dataToValidate['status'])) {
+                            $dataToValidate['status'] = 'Aktif';
+                        }
+
+                        $validatedData = $this->inputModalUser(false, $dataToValidate);
+                        $this->saveUserFromExcel($validatedData, $row['role']);
+
+                        $successfulIndices[] = $index;
+                        $successCount++;
+                    } catch (ValidationException $e) {
+                        $this->rowErrors[$index] = $e->errors();
+                    } catch (\Throwable $e) {
+                        $this->rowErrors[$index] = ['general' => [$e->getMessage()]];
+                    }
                 }
+                $message = "Sedang memproses... $successCount dari $total data berhasil masuk.";
+                $this->stream(
+                    to: 'import-progress',
+                    content: $message,
+                    replace: true
+                );
 
-                // Reuse the validation logic from WithUserModal
-                $validatedData = $this->inputModalUser(false, $dataToValidate);
+            });
 
-                // If validation passes, save the user
-                $this->saveUserFromExcel($validatedData, $row['role']);
-
-                $successfulIndices[] = $index;
-                $successCount++;
-            } catch (ValidationException $e) {
-                // Store specific field errors for this row
-                $this->rowErrors[$index] = $e->errors();
-            } catch (\Throwable $e) {
-                // Store generic error if it's not a validation exception
-                $this->rowErrors[$index] = ['general' => [$e->getMessage()]];
-            }
-        }
-
-        // Restore roleType
         $this->roleType = $originalRoleType;
 
-        // Remove successful rows from parsedRows
         foreach (array_reverse($successfulIndices) as $idx) {
             unset($this->parsedRows[$idx]);
-            // Also remove any old errors for this row if they existed
             unset($this->rowErrors[$idx]);
         }
 
-        // Re-index arrays to keep them clean for the UI
         $this->parsedRows = array_values($this->parsedRows);
 
-        // Re-map errors to new indices
         $newRowErrors = [];
         $i = 0;
         foreach ($this->rowErrors as $oldIdx => $errors) {
@@ -280,7 +378,9 @@ trait WithUserExcel
         if ($failCount === 0) {
             $this->toast(text: $messageText);
             $this->reset('excel_file');
-            $this->showUserModal = false;
+            $this->resetInputUser();
+            $this->dispatch('refresh-data-user');
+            $this->showUserExcelModal = false;
         } else {
             $this->toast(text: $messageText, variant: 'warning');
         }
@@ -330,4 +430,6 @@ trait WithUserExcel
             }
         });
     }
+
+    public function loadingUserExcel() {}
 }

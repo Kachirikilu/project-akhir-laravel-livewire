@@ -242,23 +242,27 @@ class RPSManagement extends Component
         $this->syncSortField($table, $this->sortField);
         $this->resetPage();
 
-        if ($table == 'cpl' && $this->perPage > 100) {
-            $this->perPage = 100;
+
+        $allFilters = ['filterRPS', 'filterCPMK', 'filterSCPMK', 'filterCPL', 'filterRef', 'filterDosen', 'filterStatus'];
+
+        foreach ($allFilters as $filter) {
+            if ($filter !== 'filter' . strtoupper($this->switchTable)) {
+                $this->$filter = '';
+            }
         }
-        if ($table == 'ref' && $this->perPage > 150) {
-            $this->perPage = 150;
-        }
-        if ($table == 'rps' && $this->perPage > 200) {
-            $this->perPage = 200;
-        }
-        if ($table == 'dosen' && $this->perPage > 200) {
-            $this->perPage = 200;
-        }
-        if ($table == 'cpmk' && $this->perPage > 300) {
-            $this->perPage = 300;
-        }
-        if ($table == 'scpmk' && $this->perPage > 500) {
-            $this->perPage = 500;
+
+        $limits = [
+            'rps'   => 200,
+            'cpl'   => 100,
+            'ref'   => 150,
+            'rps'   => 200,
+            'dosen' => 200,
+            'cpmk'  => 300,
+            'scpmk' => 500,
+        ];
+
+        if (isset($limits[$table])) {
+            $this->perPage = min((int) $this->perPage, $limits[$table]);
         }
     }
 
@@ -528,7 +532,7 @@ class RPSManagement extends Component
                         ->count();
 
                     $stats['dosen-prodi'] = (clone $countDosen)
-                        ->whereHas('dosen.pr_rel', function($q) {
+                        ->whereHas('dosen.pr_rel', function ($q) {
                             $q->where('prodis.id', Auth::user()->pr_id);
                         })
                         ->count();
@@ -538,13 +542,13 @@ class RPSManagement extends Component
                         ->count();
 
                     $stats['dosen-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function($q) {
+                        ->whereHas('dosen', function ($q) {
                             $q->where('status', 'aktif');
                         })
                         ->count();
 
                     $stats['dosen-non-aktif'] = (clone $countDosen)
-                        ->whereHas('dosen', function($q) {
+                        ->whereHas('dosen', function ($q) {
                             $q->where('status', '!=', 'aktif');
                         })
                         ->count();

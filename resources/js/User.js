@@ -88,31 +88,33 @@ document.addEventListener("alpine:init", () => {
         //     this.status = "";
         // },
         reset() {
-            this.typeModal = "",
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+            this.typeModal = "";
+            this.typeModal_delete = "";
+            this.isEdit = 0;
+            this.isForceDelete = 0;
+            this.colorIcon = "";
 
-            this.email = "",
-            this.password = "",
+            this.email = "";
+            this.password = "";
 
             // Admin, Dosen, Mahasiswa
-            this.name = "",
-            this.nip = "",
-            this.nitk = "",
-            this.nidn = "",
-            this.nidk = "",
-            this.nim = "",
-            this.angkatan = "",
-            this.status = "",
+            this.name = "";
+            this.nip = "";
+            this.nitk = "";
+            this.nidn = "";
+            this.nidk = "";
+            this.nim = "";
+            this.nik = "";
+            this.angkatan = "";
+            this.status = "";
 
             // Prodi
-            this.nama_pr_search = "",
-            this.pr_items = "",
+            this.pr_id = "";
+            this.nama_pr_search = "";
+            this.pr_items = "";
 
             // Delete
-            this.email_delete = ""
+            this.email_delete = "";
         }
     });
 });

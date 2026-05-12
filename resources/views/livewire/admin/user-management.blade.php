@@ -9,5 +9,6 @@
     </div>
 
     @include('livewire.admin.user-management.user-modal-form')
+    @include('livewire.admin.user-management.user-excel-modal-form')
     @include('livewire.admin.user-management.user-modal-delete')
 </div>

@@ -49,10 +49,13 @@ trait WithProdiFilters
 
     public function sortFieldOrderProdi($queryPr)
     {
+        $primaryTable = 'prodis';
         if ($this->filterPr === 'departemen') {
             $queryPr->whereHas('dp_rel');
+            $primaryTable = 'departemens';
         } elseif ($this->filterPr === 'fakultas') {
             $queryPr->whereHas('dp_rel.fakultas');
+            $primaryTable = 'fakultas';
         }
 
         $queryPr->select("prodis.*");

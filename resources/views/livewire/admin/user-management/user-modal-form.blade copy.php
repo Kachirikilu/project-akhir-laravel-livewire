@@ -3,11 +3,11 @@
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
-    <div wire:loading wire:target="saveUser, updateUser">
+    <div wire:loading wire:target="saveUser, updateUser, saveAllRows, saveUserInternal">
         <div
             class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
-            <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
+            <p wire:stream="import-progress" class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
         </div>
     </div>
 
@@ -34,15 +34,30 @@
                             x-text="$store.user?.isEdit ? 'Edit Pengguna - Mahasiswa' : 'Tambah Pengguna - Mahasiswa'"></span>
                     </flux:badge>
                 </template>
+                <template x-if="$store.user?.typeModal == 'file'" x-cloak>
+                    <flux:badge icon="cog-6-tooth" color="green" size="lg">
+                        <span>Input Pengguna - Excel</span>
+                    </flux:badge>
+                </template>
             </h3>
         </div>
 
         {{-- 2. Konten Formulir (Bisa di-Scroll) --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
 
-            <form x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)" enctype="multipart/form-data" id="userForm">
+            <form
+                @if ($roleType == 'file') wire:submit.prevent="saveAllRows"
+                @else
+                    x-on:submit.prevent="$wire.{{ $isEditingUser ? 'updateUser' : 'saveUser' }}($store.user)" @endif
+                enctype="multipart/form-data" id="userForm">
 
-                @include('livewire.admin.user-management.user-modal-form.user-input')
+                <template x-if="$store.user?.typeModal == 'file'" x-cloak>
+                    @include('livewire.admin.user-management.user-modal-form.excel-input')
+                </template>
+
+                <template x-if="$store.user?.typeModal !== 'file'" x-cloak>
+                    @include('livewire.admin.user-management.user-modal-form.user-input')
+                </template>
 
                 {{-- 3. Footer/Tombol --}}
                 <div

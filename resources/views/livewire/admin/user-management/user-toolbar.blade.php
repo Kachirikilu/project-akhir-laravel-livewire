@@ -77,7 +77,7 @@
                         $store.user?.setType('file');
                         $store.user?.setEdit(0);
                         $store.user?.setColor('text-green-700 dark:text-green-400');
-                        $flux.modal('user-modal').show();
+                        $flux.modal('user-excel-modal').show();
                         $wire.addUser('file');
                     "
                     class="cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30">

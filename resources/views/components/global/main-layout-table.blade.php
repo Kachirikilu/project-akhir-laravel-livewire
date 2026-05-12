@@ -17,7 +17,7 @@
                 filterByRPS, filterByCPMK, filterBySCPMK, filterByCPL, filterByRef, filterByDosen,
                 filterByKelas,
                 showDeleted,
-                saveAllRows, processImport, saveUserInternal,
+                saveAllRows, processImport,
                 saveUser, updateUser, destroyUser, restoreUser,
                 saveProdi, updateProdi, destroyProdi, restoreProdi,
                 saveMK, updateMK, destroyMK, restoreMK,

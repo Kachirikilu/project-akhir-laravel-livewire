@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -19,7 +19,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
+class ProdiExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles, WithCustomStartCell, WithEvents
 {
     protected $queryProdi;
 
@@ -34,9 +34,9 @@ class ProdiExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
         $this->title = $title;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->queryProdi;
+        return $this->queryProdi->cursor();
     }
 
     public function startCell(): string

@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Akademik\RPS;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -22,7 +23,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class DosenExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
+class DosenExport extends DefaultValueBinder implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
     // class DosenExport extends DefaultValueBinder implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithCustomStartCell, WithCustomValueBinder, WithEvents, WithHeadings, WithMapping, WithStyles
 {
     protected $queryDosen;
@@ -38,9 +39,9 @@ class DosenExport extends DefaultValueBinder implements FromQuery, ShouldAutoSiz
         $this->title = $title;
     }
 
-    public function query()
+    public function collection()
     {
-        return $this->queryDosen;
+        return $this->queryDosen->cursor();
     }
 
     public function startCell(): string

@@ -28,20 +28,19 @@
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between sm:gap-4">
             <div>
                 <p class="text-sm text-gray-700 leading-5 dark:text-gray-400">
-                    {!! __('Showing') !!}
+                    {!! __('Menampilkan') !!}
                     @if ($paginator->firstItem())
                         <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->firstItem() }}</span>
-                        {!! __('to') !!}
+                        {!! __('sampai') !!}
                         <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->lastItem() }}</span>
                     @else
                         {{ $paginator->count() }}
                     @endif
-                    {!! __('of') !!}
+                    {!! __('dari') !!}
                     <span class="font-bold text-[var(--contrast-main-text)]">{{ $paginator->total() }}</span>
-                    {!! __('results') !!}
+                    {!! __('hasil') !!}
                 </p>
             </div>
-
             <div>
                 <span class="relative z-0 inline-flex shadow-sm rounded-md">
                     {{-- Previous Page Link --}}

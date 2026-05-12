@@ -19,17 +19,17 @@ class UserRoleSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         $defaultPw = Hash::make('12345678');
-        $totalUsers = 800;
+        
+        $totalUsers = 8192;
+        $batchSize = 512;
 
-        DB::transaction(function () use ($faker, $defaultPw, $totalUsers) {
-            
-            $prodiIds = Prodi::pluck('id')->toArray();
-            if (empty($prodiIds)) {
-                throw new \Exception("Tabel prodis kosong! Jalankan SilsilahSeeder terlebih dahulu.");
-            }
+        $prodiIds = Prodi::pluck('id')->toArray();
+        if (empty($prodiIds)) {
+            throw new \Exception("Tabel prodis kosong! Jalankan SilsilahSeeder terlebih dahulu.");
+        }
 
-            // --- 1. AKUN UTAMA ---
-            
+        // --- 1. AKUN UTAMA (Diproses sekali) ---
+        DB::transaction(function () use ($faker, $defaultPw, $prodiIds) {
             // Admin Utama
             $adminUser = User::create(['email' => 'muttaqien.wildan12@gmail.com', 'password' => $defaultPw]);
             $this->createAdminProfile($adminUser, 'Wildan Athif Muttaqien (Admin)', $faker, $prodiIds[0]);
@@ -41,36 +41,55 @@ class UserRoleSeeder extends Seeder
             // Mahasiswa Utama
             $mhsUser = User::create(['email' => 'muttaqien.wildan14@gmail.com', 'password' => $defaultPw]);
             $this->createMahasiswaProfile($mhsUser, 'Wildan Athif Muttaqien (Mahasiswa)', $faker, $prodiIds[0]);
-
-            // --- 2. DATA DUMMY (Distribusi 10/30/60) ---
-            
-            $countAdmin = (int) ($totalUsers * 0.10) - 1;
-            $countDosen = (int) ($totalUsers * 0.30) - 1;
-            $countMhs = $totalUsers - $countAdmin - $countDosen - 3; // Sisa dikurangi 3 akun utama
-
-            // Loop Admin
-            for ($i = 0; $i < $countAdmin; $i++) {
-                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
-                $this->createAdminProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
-            }
-
-            // Loop Dosen
-            for ($i = 0; $i < $countDosen; $i++) {
-                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
-                $this->createDosenProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
-            }
-
-            // Loop Mahasiswa
-            for ($i = 0; $i < $countMhs; $i++) {
-                $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
-                $this->createMahasiswaProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
-            }
         });
+
+        // --- 2. DATA DUMMY (Distribusi 10/30/60) ---
+        $countAdmin = (int) ($totalUsers * 0.10) - 1;
+        $countDosen = (int) ($totalUsers * 0.30) - 1;
+        $countMhs = $totalUsers - $countAdmin - $countDosen - 3;
+
+        // Progress Tracking
+        $this->command->info("Seeding $totalUsers users in batches of $batchSize...");
+
+        // Seed Admins
+        $this->seedInBatches($countAdmin, $batchSize, 'Admin', function() use ($faker, $defaultPw, $prodiIds) {
+            $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+            $this->createAdminProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
+        });
+
+        // Seed Dosens
+        $this->seedInBatches($countDosen, $batchSize, 'Dosen', function() use ($faker, $defaultPw, $prodiIds) {
+            $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+            $this->createDosenProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
+        });
+
+        // Seed Mahasiswas
+        $this->seedInBatches($countMhs, $batchSize, 'Mahasiswa', function() use ($faker, $defaultPw, $prodiIds) {
+            $user = User::create(['email' => $faker->unique()->safeEmail, 'password' => $defaultPw]);
+            $this->createMahasiswaProfile($user, $faker->name, $faker, $faker->randomElement($prodiIds));
+        });
+    }
+
+    private function seedInBatches($total, $batchSize, $label, $callback)
+    {
+        $created = 0;
+        while ($created < $total) {
+            $currentBatch = min($batchSize, $total - $created);
+            
+            DB::transaction(function () use ($currentBatch, $callback) {
+                for ($i = 0; $i < $currentBatch; $i++) {
+                    $callback();
+                }
+            });
+
+            $created += $currentBatch;
+            $this->command->info("Created $created/$total $label users...");
+        }
     }
 
     private function createAdminProfile($user, $name, $faker, $prodiId)
     {
-        $admin = Admin::create([
+        Admin::create([
             'user_id' => $user->id,
             'pr_id' => $prodiId,
             'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),
@@ -96,7 +115,7 @@ class UserRoleSeeder extends Seeder
 
     private function createDosenProfile($user, $name, $faker, $prodiId)
     {
-        $dosen = Dosen::create([
+        Dosen::create([
             'user_id' => $user->id,
             'pr_id' => $prodiId,
             'name' => $name,
@@ -123,7 +142,7 @@ class UserRoleSeeder extends Seeder
 
     private function createMahasiswaProfile($user, $name, $faker, $prodiId)
     {
-        $mhs = Mahasiswa::create([
+        Mahasiswa::create([
             'user_id' => $user->id,
             'pr_id' => $prodiId,
             'kode_wilayah' => $faker->randomElement(['IDL', 'PLG']),

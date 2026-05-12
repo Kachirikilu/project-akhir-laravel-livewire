@@ -182,11 +182,11 @@
                                             </button>
 
                                             <button type="button"
-                                                class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200"
+                                                class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-200"
                                                 wire:click="printPDF({{ $r['id'] }})"
                                             >
                                                 <div
-                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
+                                                    class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
                                                     <flux:icon name="printer" variant="micro" class="w-3.5 h-3.5" />
                                                 </div>
                                                 <span>Print PDF RPS</span>
@@ -240,12 +240,12 @@
 
                     @if (!empty($rps_modal_paginator) && $rps_modal_paginator->hasPages())
                         <div class="py-4" id="pagination-links-container">
-                            <div
-                                wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}">
+                            {{-- <div
+                                wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}"> --}}
                                 {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
                                     'typeXLoading' => 'loadingRPSList',
                                 ]) }}
-                            </div>
+                            {{-- </div> --}}
                         </div>
                     @endif
                 @endif

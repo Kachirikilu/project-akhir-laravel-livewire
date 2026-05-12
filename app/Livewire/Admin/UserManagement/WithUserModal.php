@@ -25,6 +25,8 @@ trait WithUserModal
 
     public $showUserModal = false;
 
+    public $showUserExcelModal = false;
+
     public $isEditingUser = false;
 
     public $roleType;
@@ -63,7 +65,12 @@ trait WithUserModal
         $this->resetErrorBag();
         $this->isEditingUser = false;
         $this->roleType = $role;
-        $this->showUserModal = true;
+
+        if ($role == 'file') {
+            $this->showUserExcelModal = true;
+        } else {
+            $this->showUserModal = true;
+        }
         $this->updatedPrNameSearch($this->prNameSearch);
     }
 
@@ -617,14 +624,11 @@ trait WithUserModal
     ) {
         $fields = [
             'selected_id_user',
+            'pr_id', 'pr_id_2', 'prNameSearch',
             // 'email', 'password', 'name', 'nip', 'nitk',
             // 'nidn', 'nidk', 'nim', 'angkatan',
             'roleType',
         ];
-
-        // if (! $keepProdi) {
-        //     $fields = array_merge($fields, ['pr_id', 'prNameSearch', 'prResults']);
-        // }
 
         $this->reset($fields);
         $this->resetErrorBag();

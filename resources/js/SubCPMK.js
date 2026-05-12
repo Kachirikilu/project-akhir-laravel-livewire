@@ -66,10 +66,10 @@ document.addEventListener("alpine:init", () => {
         },
 
         reset() {
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+            this.typeModal_delete = "";
+            this.isEdit = 0;
+            this.isForceDelete = 0;
+            this.colorIcon = "";
 
             this.deskripsi = "";
             this.materi = "";

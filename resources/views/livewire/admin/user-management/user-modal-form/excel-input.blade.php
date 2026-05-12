@@ -6,7 +6,9 @@
         class="px-4 py-6 mt-4 bg-[var(--main-table-color)] border-[var(--border-table-color)]
             shadow-sm rounded-lg border space-y-4 transition-colors duration-300">
 
-        <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">Upload
+        <h4
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+            Upload
             File Excel</h4>
 
         {{-- 📁 File Input --}}
@@ -21,23 +23,22 @@
                         wire:key="excel-input-field"
                         class="
                         bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)]
-                placeholder-[var(--contrast-third-text)]
-                
-                w-full border rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium
-                file:mr-4 file:py-1 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-green-600 file:text-white
-                hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600
-                transition-all cursor-pointer">
+                        placeholder-[var(--contrast-third-text)]
+                        
+                        w-full border rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 font-medium
+                        file:mr-4 file:py-1 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-green-600 file:text-white
+                        hover:file:bg-green-700 dark:file:bg-green-500 dark:hover:file:bg-green-600
+                        transition-all cursor-pointer">
 
                     {{-- Status Loading --}}
                     <div wire:loading.flex wire:target="excel_file, parseExcelFile"
                         class="absolute inset-y-0 right-3 items-center">
-                        <div
-                            class="text-[var(--focus-color)] flex items-center space-x-2 text-xs pl-2 rounded-r-lg">
-                            <svg class="animate-spin h-4 w-4"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <div class="text-[var(--focus-color)] flex items-center space-x-2 text-xs pl-2 rounded-r-lg">
+                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -69,23 +70,24 @@
             'xResults' => $prResults,
             'selectX' => 'selectPr',
             'modelString' => 'nama_pr',
-
+        
             'idString' => 'pr_id',
             'itemsAllString' => 'pr_items',
-
+        
             'resetXInput' => 'resetPrInput()',
             'typeXString' => 'prodi',
             'typeX2String' => 'departemen',
             'typeX3String' => 'fakultas',
-
+        
             'nameXString' => 'Program Studi',
             'nameSearchString' => 'prNameSearch',
             'fetchString' => 'fetchPr',
             'iconString' => 'academic-cap',
-            'wireLoading' => 'fetchPr'
+            'wireLoading' => 'fetchPr',
         ])
 
-        <h4 class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
+        <h4
+            class="text-[var(--contrast-main-text)] border-[var(--contrast-second-text)] text-lg font-medium border-b pb-2 mb-6">
             Preview & Edit Data Pengguna
         </h4>
 
@@ -118,21 +120,25 @@
                     </thead>
 
                     @php
-                        $kolomExcel = 'border bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] placeholder-[var(--contrast-third-text)] px-2 py-1 border'
+                        $kolomExcel =
+                            'border bg-[var(--second-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] placeholder-[var(--contrast-third-text)] px-2 py-1 border';
                     @endphp
 
-                    <tbody class="bg-white dark:bg-neutral-800">
-                        @foreach ($parsedRows as $i => $row)
+                    <tbody class="bg-white dark:bg-neutral-800" wire:loading.class="opacity-50 pointer-events-none"
+                        wire:target="loadingUserExcel">
+                        @foreach ($this->paginatedRows as $row)
+                            @php
+                                $i = $row['_index'] ?? 0;
+                            @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-neutral-700/50 transition-colors">
-                                <td
-                                    class="{{ $kolomExcel }} text-center font-semibold">
+                                <td class="{{ $kolomExcel }} text-center font-semibold">
                                     {{ $i + 1 }}
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
                                     <input type="email" wire:model="parsedRows.{{ $i }}.email"
                                         class="w-48 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['email']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['email']))
+                                    @if (isset($rowErrors[$i]['email']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['email'][0] }}</p>
                                     @endif
                                 </td>
@@ -141,15 +147,16 @@
                                     <input type="text" wire:model="parsedRows.{{ $i }}.password"
                                         class="w-48 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['password']) ? 'border-red-500 bg-red-50' : '' }}"
                                         placeholder="Default / custom">
-                                    @if(isset($rowErrors[$i]['password']))
-                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['password'][0] }}</p>
+                                    @if (isset($rowErrors[$i]['password']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['password'][0] }}
+                                        </p>
                                     @endif
                                 </td>
 
                                 <td class="{{ $kolomExcel }}">
                                     <input type="text" wire:model="parsedRows.{{ $i }}.name"
                                         class="w-56 border rounded px-2 py-1 text-xs outline-none {{ isset($rowErrors[$i]['name']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['name']))
+                                    @if (isset($rowErrors[$i]['name']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['name'][0] }}</p>
                                     @endif
                                 </td>
@@ -159,7 +166,7 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nip']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nip']))
+                                    @if (isset($rowErrors[$i]['nip']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nip'][0] }}</p>
                                     @endif
                                 </td>
@@ -169,7 +176,7 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nitk']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nitk']))
+                                    @if (isset($rowErrors[$i]['nitk']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nitk'][0] }}</p>
                                     @endif
                                 </td>
@@ -179,7 +186,7 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nidn']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nidn']))
+                                    @if (isset($rowErrors[$i]['nidn']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nidn'][0] }}</p>
                                     @endif
                                 </td>
@@ -189,7 +196,7 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nidk']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nidk']))
+                                    @if (isset($rowErrors[$i]['nidk']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nidk'][0] }}</p>
                                     @endif
                                 </td>
@@ -199,7 +206,7 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="20"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nim']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nim']))
+                                    @if (isset($rowErrors[$i]['nim']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nim'][0] }}</p>
                                     @endif
                                 </td>
@@ -209,21 +216,21 @@
                                         inputmode="numeric" pattern="[0-9]*" maxlength="16"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)"
                                         class="w-40 border rounded px-2 py-1 text-xs {{ isset($rowErrors[$i]['nik']) ? 'border-red-500 bg-red-50' : '' }}">
-                                    @if(isset($rowErrors[$i]['nik']))
+                                    @if (isset($rowErrors[$i]['nik']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nik'][0] }}</p>
                                     @endif
                                 </td>
 
                                 {{-- Tahun Masuk: Input dikecilkan --}}
                                 <td class="{{ $kolomExcel }}">
-                                    <input type="number"
-                                        wire:model="parsedRows.{{ $i }}.angkatan"
+                                    <input type="number" wire:model="parsedRows.{{ $i }}.angkatan"
                                         class="w-full border rounded px-1 py-1 text-xs text-center appearance-none {{ isset($rowErrors[$i]['angkatan']) ? 'border-red-500 bg-red-50' : '' }}"
                                         inputmode="numeric" pattern="[0-9]*" maxlength="4"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
                                         placeholder="YYYY">
-                                    @if(isset($rowErrors[$i]['angkatan']))
-                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['angkatan'][0] }}</p>
+                                    @if (isset($rowErrors[$i]['angkatan']))
+                                        <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['angkatan'][0] }}
+                                        </p>
                                     @endif
                                 </td>
 
@@ -239,14 +246,15 @@
                                         <select wire:model="parsedRows.{{ $i }}.role"
                                             class="w-24 border rounded pl-2 pr-4 py-1 text-xs cursor-pointer appearance-none transition-colors
                                             {{ isset($rowErrors[$i]['role']) ? 'border-red-500 bg-red-50' : 'bg-gray-50' }}
-                   text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
-                   dark:bg-neutral-700 dark:text-gray-200 dark:border-neutral-600 dark:focus:bg-gray-600 dark:focus:ring-blue-400">
+                                text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
+                                dark:bg-neutral-700 dark:text-gray-200 dark:border-neutral-600 dark:focus:bg-gray-600 dark:focus:ring-blue-400">
                                             <option value="admin" class="dark:bg-neutral-800">Admin</option>
                                             <option value="dosen" class="dark:bg-neutral-800">Dosen</option>
                                             <option value="mahasiswa" class="dark:bg-neutral-800">Mahasiswa</option>
                                         </select>
-                                        @if(isset($rowErrors[$i]['role']))
-                                            <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['role'][0] }}</p>
+                                        @if (isset($rowErrors[$i]['role']))
+                                            <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['role'][0] }}
+                                            </p>
                                         @endif
 
                                         {{-- Ikon Panah Dropdown --}}
@@ -262,7 +270,7 @@
 
                                 <td class="px-2 py-1 border text-center">
                                     <button wire:click="removeParsedRow({{ $i }})" type="button"
-                                        class="text-red-500 hover:text-red-700 p-1 transition-colors">
+                                        class="cursor-pointertext-red-500 hover:text-red-700 p-1 transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -277,10 +285,12 @@
                                 <tr>
                                     <td colspan="13"
                                         class="px-4 py-1 bg-red-50 text-red-600 text-[10px] border italic">
-                                        ⚠️ 
-                                        @foreach($rowErrors[$i] as $fieldErrors)
-                                            @foreach($fieldErrors as $error)
-                                                {{ $error }}@if(!$loop->parent->last || !$loop->last) | @endif
+                                        ⚠️
+                                        @foreach ($rowErrors[$i] as $fieldErrors)
+                                            @foreach ($fieldErrors as $error)
+                                                {{ $error }}@if (!$loop->parent->last || !$loop->last)
+                                                    |
+                                                @endif
                                             @endforeach
                                         @endforeach
                                     </td>
@@ -290,6 +300,22 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- 📄 Pagination Controls (Tailwind Style) --}}
+
+            @if ($this->paginatedRows->hasPages())
+                {{-- <div class="p-4" id="pagination-links-container"
+                    wire:target="{{ $this->paginatedRows->getPageName() }}">
+                    {{ $this->paginatedRows->links('vendor.pagination.tailwind') }}
+                </div> --}}
+
+                <div wire:target="gotoPage, previousPage, nextPage, {{ $this->paginatedRows->getPageName() }}">
+                    {{ $this->paginatedRows->links('vendor.pagination.tailwind', [
+                        'typeXLoading' => 'loadingUserExcel',
+                    ]) }}
+                </div>
+            @endif
+            {{-- {{ $this->paginatedRows->links('vendor.pagination.tailwind') }} --}}
         @endif
 
         <div wire:loading.flex wire:target="excel_file, parseExcelFile, removeParsedRow"

@@ -109,11 +109,11 @@ document.addEventListener("alpine:init", () => {
         // },
         
         reset() {
-            this.typeModal = "",
-            this.typeModal_delete = "",
-            this.isEdit = 0,
-            this.isForceDelete = 0,
-            this.colorIcon = "",
+            this.typeModal = "";
+            this.typeModal_delete = "";
+            this.isEdit = 0;
+            this.isForceDelete = 0;
+            this.colorIcon = "";
 
             this.nama_mk = "";
 
@@ -125,6 +125,9 @@ document.addEventListener("alpine:init", () => {
             this.sks_kuliah = "";
             this.tipe_sks = ""; 
             this.is_wajib = "";
+
+            this.pr_id = "";
+            this.pr_items = "";
 
             this.deskripsi = "";
             this.bahan_kajian = "";
