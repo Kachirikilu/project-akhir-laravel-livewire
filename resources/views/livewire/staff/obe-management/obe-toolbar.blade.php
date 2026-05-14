@@ -7,7 +7,7 @@
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus"
-                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
+                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
                 wire:target="addRPS">
                 Tambah
                 @if ($typeXString == 'rps')

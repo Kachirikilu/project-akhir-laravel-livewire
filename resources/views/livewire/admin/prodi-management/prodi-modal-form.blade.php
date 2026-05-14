@@ -3,7 +3,8 @@
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveProdi, updateProdi">
-        <div class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
+        <div
+            class="absolute inset-0 z-50 bg-[var(--second-table-color)]/60 backdrop-blur-[2px] flex flex-col items-center justify-center rounded-xl">
             <flux:icon name="arrow-path" class="animate-spin h-10 w-10 text-[var(--focus-color)]" />
             <p class="mt-4 text-sm font-medium text-gray-600 italic">Menyinkronkan...</p>
         </div>
@@ -61,11 +62,9 @@
                 </template>
 
                 {{-- 3. Footer / Button Action --}}
-                <div
+                <div <div
                     class="bg-[var(--sub-table-color)] border-[var(--border-table-color)]
-                    p-4 mt-4
-                    {{-- dark:bg-neutral-900/50 dark:border-neutral-700/50  --}}
-                    rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
+                    p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
                         @include('livewire.admin.prodi-management.prodi-modal-form.prodi-message-form')

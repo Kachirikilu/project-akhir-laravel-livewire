@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('pr_id')->nullable()->constrained('prodis')->onDelete('set null');
 
             $table->string('nama_kelas');
+            $table->text('deskripsi')->nullable();
 
             $table->softDeletes();
             $table->timestamps();
@@ -27,6 +28,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             
+            $table->string('kode_jadwal');
+            $table->string('password')->nullable();
+
             $table->enum('kode_wilayah', ['IDL', 'PLG']);
             $table->string('label_kelas');
             
@@ -47,7 +51,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kj_id')->constrained('kelas_jadwals')->onDelete('cascade');
 
-            $table->string('password')->nullable();
             $table->integer('pertemuan_ke');
             $table->date('tanggal');
             $table->text('catatan')->nullable();

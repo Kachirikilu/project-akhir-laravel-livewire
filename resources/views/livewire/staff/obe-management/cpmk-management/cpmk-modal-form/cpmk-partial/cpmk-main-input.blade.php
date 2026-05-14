@@ -30,7 +30,7 @@
                     'numberOnly' => 1,
                     'maxlength' => 6,
                     'iconString' => 'variable',
-                    'placeholder' => 'Contoh: 121104',
+                    'placeholder' => 'Contoh: 1211',
                     'isFocusSelect' => 1,
                 ])
             </div>

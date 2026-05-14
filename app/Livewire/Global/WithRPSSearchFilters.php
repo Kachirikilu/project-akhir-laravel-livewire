@@ -52,6 +52,7 @@ trait WithRPSSearchFilters
             'akademik' => $r->akademik,
             'draf' => $r->draf,
             'draf_text' => $r->draf_text,
+            'draf_full' => $r->draf_full,
             'revisi' => $r->revisi,
             'count_cpmk' => $r->count_cpmk,
             'count_scpmk' => $r->count_scpmk,
@@ -59,6 +60,7 @@ trait WithRPSSearchFilters
             'wajib_text' => $r->wajib_text,
             'sks' => $r->sks,
             'sks_text' => $r->sks_text,
+            'sks_full' => $r->sks_full,
             'bobot_uts' => $r->bobot_uts,
             'bobot_uas' => $r->bobot_uas,
             'total_bobot' => $r->total_bobot,
@@ -76,6 +78,7 @@ trait WithRPSSearchFilters
             'kode' => $r->kode,
             'rps' => $r->rps,
             'draf_text' => $r->draf_text,
+            'draf_full' => $r->draf_full,
             'wajib_text' => $r->wajib_text,
             'sks_full' => $r->sks_full,
         ])->toArray();
@@ -96,6 +99,9 @@ trait WithRPSSearchFilters
             'id' => $r->id,
             'kode' => $r->kode,
             'slot1' => $r->rps,
+            'slot2' => $r->sks_full,
+            'slot3' => $r->wajib_text,
+            'slot4' => $r->draf_full,
         ];
     }
 
@@ -141,7 +147,9 @@ trait WithRPSSearchFilters
         $this->rps_items = null;
         $this->resetErrorBag(['rps_id', 'rpsNameSearch']);
 
-        $query = $this->rpsQuery();
+        $query = $this->rpsQuery()->select('rps.*');
+
+        $this->haveRPSParent($query);
 
         if (trim(strlen($value)) > 0) {
             $results = $query->searchRPS($value)->limit(12)->get();
@@ -198,6 +206,8 @@ trait WithRPSSearchFilters
                 : $this->mapRPS($defaultRPS);
         }
 
+        $this->haveRPSParent($query);
+
         $mainResults = $query
             ->whereHas('mk_rel.prodis', function ($q) use ($prodiId) {
                 $q->where('prodis.id', $prodiId);
@@ -206,7 +216,7 @@ trait WithRPSSearchFilters
             ->get();
 
         if ($mainResults->count() < 12) {
-            $extra = RPS::whereNotIn('id', $mainResults->pluck('id'))
+            $extra = $this->rpsQuery()->whereNotIn('id', $mainResults->pluck('id'))
                 ->orderBy('id', 'desc')
                 ->limit(12 - $mainResults->count())
                 ->get();
@@ -266,5 +276,17 @@ trait WithRPSSearchFilters
         $this->rps_id_array = [];
         $this->rps_items_array = [];
         $this->rpsNameSearch = '';
+    }
+
+    public function haveRPSParent($query)
+    {
+        if (property_exists($this, 'showKelasModal')) {
+            if ($this->showKelasModal == true && filled($this->pr_id)) {
+                $query->whereHas('mk_rel.prodis', function ($q) {
+                    $q->where('prodis.id', $this->pr_id);
+                });
+            }
+        }
+        return $query;
     }
 }

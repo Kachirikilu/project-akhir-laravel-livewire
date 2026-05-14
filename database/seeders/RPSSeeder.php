@@ -80,7 +80,7 @@ class RPSSeeder extends Seeder
             '2023/2024', '2024/2025', '2025/2026',
         ];
 
-        $targetRps = 512;
+        $targetRps = 4;
         $batchSize = 256;
 
         $rpsCreated = 0;
@@ -152,7 +152,7 @@ class RPSSeeder extends Seeder
                     for ($r = 1; $r <= $jumlahRef; $r++) {
 
                         $ref = Referensi::create([
-                            'kode_ref' => strtoupper(str()->random(6)).rand(10, 9999999),
+                            'kode_ref' => $this->generateUniqueKode(Referensi::class, 'kode_ref'),
                             'judul' => "Studi {$mk->nama_mk} dan Aplikasinya",
                             'penulis' => $penulisList[array_rand($penulisList)],
                             'tahun' => rand(2000, 2026),

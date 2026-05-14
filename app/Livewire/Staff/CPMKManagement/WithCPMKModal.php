@@ -202,11 +202,7 @@ trait WithCPMKModal
         if (empty($inputDeskripsi) || $inputDeskripsi === trim($combinedCPLText)) {
             $data['deskripsi'] = null;
         } else {
-            $inputDeskripsi = trim($data['deskripsi'] ?? '');
-            if (! str_ends_with($inputDeskripsi, '.') && ! empty($inputDeskripsi)) {
-                $inputDeskripsi .= '.';
-            }
-            $data['deskripsi'] = $inputDeskripsi;
+            $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
         }
 
         $rules = [
@@ -323,8 +319,9 @@ trait WithCPMKModal
                 }
             });
 
-            $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']} berhasil disimpan!");
+            $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']}");
             $this->resetInputCPMK();
+
             $this->dispatch('refresh-data-cpmk');
             $this->showCPMKModal = false;
 
@@ -467,7 +464,9 @@ trait WithCPMKModal
                 $cpmk->refs()->sync($syncRef);
             });
 
-            $this->toast(message: 'CPMK Berhasil diperbarui', type: 'update');
+            $this->toast(message: "CPMK {$validated['kode_cpmk_1']}-{$validated['kode_cpmk_2']}", type: 'update');
+            $this->resetInputCPMK();
+
             $this->showCPMKModal = false;
             $this->dispatch('refresh-data-cpmk');
 

@@ -5,7 +5,7 @@
         $r = $detailRPSData ?? [];
     @endphp
 
-    <flux:button @click="$wire.printPDF($store.rps?.id ?? null)"
+    <flux:button @click="$wire.printPDFRPS($store.rps?.id ?? null)"
         class="mr-2 mb-8 cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30 border border-emerald-200">
 
         <flux:icon name="printer" class="mr-2 h-4 w-4" />
@@ -14,7 +14,7 @@
             <span>Print PDF RPS
                  {{-- - <span x-text="$store.rps?.nama_rps"></span> --}}
             </span>
-            <flux:icon wire:loading wire:target="printPDF" name="arrow-path"
+            <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"
                 class="animate-spin h-4 w-4 ml-3 dark:!text-emerald-600" />
         </div>
     </flux:button>

@@ -35,7 +35,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showCPMKModal])
+                    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form.cpmk-message-form', ['show' => $showCPMKModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addCPMK, saveCPMK, editCPMK, updateCPMK',
                     ])

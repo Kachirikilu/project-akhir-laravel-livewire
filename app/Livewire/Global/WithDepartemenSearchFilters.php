@@ -32,7 +32,7 @@ trait WithDepartemenSearchFilters
             'id' => $j->id,
             'kode' => $j->kode,
             'departemen' => $j->departemenDp,
-            'fakultas' => $j->fakultasFk
+            'fakultas' => $j->fakultasFk,
         ])->toArray();
     }
 
@@ -43,7 +43,7 @@ trait WithDepartemenSearchFilters
             'kode' => $j->kode,
             'kode_text' => 'Kode: '.$j->kode,
             'departemen' => $j->departemenDp,
-            'fakultas' => $j->fakultasFk
+            'fakultas' => $j->fakultasFk,
         ])->toArray();
     }
 
@@ -57,6 +57,7 @@ trait WithDepartemenSearchFilters
         if (! $j) {
             return null;
         }
+
         return [
             'id' => $j->id,
             'kode' => $j->kode,
@@ -155,10 +156,10 @@ trait WithDepartemenSearchFilters
 
         if (! $departemenId) {
             $defaultDepartemens = $this->dpQuery()
-                    ->orderBy('nama_dp', 'asc')
-                    ->limit(12)
-                    ->get();
-            
+                ->orderBy('nama_dp', 'asc')
+                ->limit(12)
+                ->get();
+
             return $type === 'search'
                 ? $this->mapDpSearch($defaultDepartemens)
                 : $this->mapDp($defaultDepartemens);
@@ -188,6 +189,7 @@ trait WithDepartemenSearchFilters
     {
         if (empty($query) || $this->dp_id) {
             $this->dpResults = $this->getDpbyUser();
+
             return;
         }
     }
@@ -203,11 +205,7 @@ trait WithDepartemenSearchFilters
             $this->dp_items = $this->itemsDp($data);
         }
 
-        if (property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->mkType == 2 || $this->mkType == 3) {
-                $this->resetPrArray();
-            }
-        }
+        $this->haveDpChild();
 
         if (method_exists($this, 'fetchDp')) {
             $this->fetchDp('');
@@ -222,13 +220,18 @@ trait WithDepartemenSearchFilters
         $this->dp_items = null;
         $this->dpNameSearch = '';
 
-        if (property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->mkType == 2 || $this->mkType == 3) {
-                $this->resetPrArray();
-            }
-        }
+        $this->haveDpChild();
 
         $this->updatedDpNameSearch('');
         $this->resetErrorBag(['dp_id', 'dpNameSearch']);
+    }
+
+    public function haveDpChild()
+    {
+        if (property_exists($this, 'showMKModal') && property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
+            if ($this->showMKModal == true && $this->mkType == 2) {
+                $this->resetPrArray();
+            }
+        }
     }
 }

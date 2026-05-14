@@ -16,7 +16,7 @@
         <h3 class="text-xl font-semibold">
 
             <flux:badge icon="clipboard-document-list" color="purple" size="lg">
-                <span x-text="$store.rps?.isEdit ? 'Edit OBE - Referensi' : 'Tambah OBE - Referensi'"></span>
+                <span x-text="$store.ref?.isEdit ? 'Edit OBE - Referensi' : 'Tambah OBE - Referensi'"></span>
             </flux:badge>
 
         </h3>
@@ -35,7 +35,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showRefModal])
+                    @include('livewire.staff.obe-management.ref-management.ref-modal-form.ref-message-form', ['show' => $showRefModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addRef, saveRef, editRef, updateRef',
                     ])

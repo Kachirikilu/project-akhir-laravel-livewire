@@ -30,6 +30,12 @@ document.addEventListener("alpine:init", () => {
         deskripsi: "",
         bahan_kajian: "",
 
+        pr_id: "",
+        pr_id_array: [],
+        nama_pr_search: "",
+        pr_items: "",
+        pr_items_array: [],
+
 
         // nama_pr_search_array: [],
         // pr_id: "",
@@ -127,7 +133,10 @@ document.addEventListener("alpine:init", () => {
             this.is_wajib = "";
 
             this.pr_id = "";
+            this.nama_pr_search = "";
             this.pr_items = "";
+            this.pr_id_array = [];
+            this.pr_items_array = [];
 
             this.deskripsi = "";
             this.bahan_kajian = "";

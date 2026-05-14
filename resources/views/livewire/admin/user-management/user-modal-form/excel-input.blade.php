@@ -270,7 +270,7 @@
 
                                 <td class="px-2 py-1 border text-center">
                                     <button wire:click="removeParsedRow({{ $i }})" type="button"
-                                        class="cursor-pointertext-red-500 hover:text-red-700 p-1 transition-colors">
+                                        class="cursor-pointer text-red-500 hover:text-red-700 p-1 transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

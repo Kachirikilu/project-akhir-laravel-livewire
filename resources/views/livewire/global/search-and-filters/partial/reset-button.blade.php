@@ -10,12 +10,9 @@
         @if ($xAlpine ?? null) $store.{{ $alpine ?? 'config' }}.{{ $xAlpine }} = ''; @endif
         @if ($xAlpine2 ?? null) $store.{{ $alpine ?? 'config' }}.{{ $xAlpine2 }} = '' @endif
     "
-    {{-- @if ($xLivewire ?? null) $wire.{{ $xLivewire }}; @endif --}}
-    {{-- @if ($dp_id ?? null) 
-        wire:loading.attr="disabled"
-        wire:target="{{ $dp_id }}"
-    @endif --}}
-    class="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-[var(--contrast-main-text)]' }} hover:text-red-500 dark:hover:text-red-400 transition duration-200"
+    class="cursor-pointer
+        @if (!($isRelative ?? false)) absolute inset-y-0 right-0 @endif
+         flex items-center pr-{{ $xPr ?? 3 }} {{ $xColor ?? 'text-[var(--contrast-main-text)]' }} hover:text-red-500 dark:hover:text-red-400 transition duration-200"
     @empty($xColor)
         x-bind:class="$store.{{ $alpine ?? 'config' }}?.colorIcon || 'text-[var(--contrast-main-text)]'"
     @endempty

@@ -2,17 +2,20 @@
 
 namespace App\Livewire\Staff\MKManagement;
 
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasErrorCount;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\MataKuliah;
+use App\Models\ProgramStudi\Departemen;
+use App\Models\ProgramStudi\Fakultas;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 trait WithMKModal
 {
-    use HasToast;
     use HasErrorCount;
+    use HasToast;
 
     public $selected_id_mk;
 
@@ -21,6 +24,8 @@ trait WithMKModal
     public $showEditMK = false;
 
     public $showMKModal = false;
+
+    public $mkType = '';
 
     public function addMK($tingkatan)
     {
@@ -78,11 +83,20 @@ trait WithMKModal
             $firstProdi = $mk->prodis->first();
 
             if ($firstProdi) {
-                $this->dp_id = $firstProdi->dp_id;
-                $this->dpNameSearch = $firstProdi->departemenDp;
-
-                $this->fk_id = $firstProdi->fk_id;
-                $this->fkNameSearch = $firstProdi->fakultasFk;
+                if ($tingkatan == 2) {
+                    $this->dp_id = $firstProdi->dp_id;
+                    $dataDp = Departemen::where('id', $this->dp_id)->first();
+                    $this->dp_items[] = $this->itemsDp($dataDp);
+                    $this->dpNameSearch = $firstProdi->departemen_dp;
+                }
+                if ($tingkatan == 3) {
+                    $this->fk_id = $firstProdi->fk_id;
+                    $dataFk = Fakultas::where('id', $this->fk_id)->first();
+                    if ($dataFk) {
+                        $this->fk_items = $this->itemsFk($dataFk);
+                        $this->fkNameSearch = $firstProdi->fakultas_fk;
+                    }
+                }
 
                 if ($tingkatan == 1 || $tingkatan == 4) {
                     $this->pr_id = $firstProdi->id;
@@ -118,22 +132,10 @@ trait WithMKModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $inputDeskripsi = trim($data['deskripsi'] ?? '');
-        if (! str_ends_with($inputDeskripsi, '.') && !empty($inputDeskripsi)) {
-            $inputDeskripsi .= '.';
-        }
-        $data['deskripsi'] = $inputDeskripsi;
+        $data['nama_mk'] = $this->normalizeNama($data['nama_mk'] ?? '');
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+        $data['bahan_kajian'] = $this->normalizeText($data['bahan_kajian'] ?? '');
 
-        $inputBahanKajian = trim($data['bahan_kajian'] ?? '');
-        if (! str_ends_with($inputBahanKajian, '.') && !empty($inputBahanKajian)) {
-            $inputBahanKajian .= '.';
-        }
-        $data['bahan_kajian'] = $inputBahanKajian;
-
-        // $tingkatanMap = [
-        //     'mk-prodi' => 1, 'mk-departemen' => 2, 'mk-fakultas' => 3, 'mk-universitas' => 4,
-        //     1 => 1, 2 => 2, 3 => 3, 4 => 4,
-        // ];
         $tingkatan = $this->mkType ?? 1;
         $targetProdiIds = ($tingkatan === 1) ? [$this->pr_id] : ($this->pr_id_array ?: []);
 
@@ -178,8 +180,50 @@ trait WithMKModal
         ];
 
         if ($tingkatan === 1) {
-            $rules['pr_id'] = 'required|exists:prodis,id';
+            $rules['pr_id'] = 'required|integer|exists:prodis,id';
         } else {
+            if ($tingkatan == 2) {
+                $dpId = $data['dp_id'] ?? null;
+                $rules['dp_id'] = [
+                    'required', 'integer',
+                    'exists:departemens,id',
+                    function ($attribute, $value, $fail) use ($data) {
+                        $validProdiIds = Prodi::where('dp_id', $value)->pluck('id')->toArray();
+                        $selectedProdiIds = $data['pr_id_array'] ?? [];
+
+                        $invalidSelected = array_diff($selectedProdiIds, $validProdiIds);
+
+                        if (! empty($invalidSelected)) {
+                            $fail('Beberapa Program Studi yang dipilih tidak terdaftar di Departemen ini!');
+                        }
+
+                        if (empty($validProdiIds)) {
+                            $fail('Departemen ini belum memiliki Program Studi!');
+                        }
+                    },
+                ];
+            } elseif ($tingkatan == 3) {
+                $fkId = $data['fk_id'] ?? null;
+                $rules['fk_id'] = [
+                    'required', 'integer',
+                    'exists:fakultas,id',
+                    function ($attribute, $value, $fail) use ($data) {
+                        $validProdiIds = Prodi::whereHas('dp_rel', fn ($q) => $q->where('fk_id', $value))
+                            ->pluck('id')->toArray();
+                        $selectedProdiIds = $data['pr_id_array'] ?? [];
+
+                        $invalidSelected = array_diff($selectedProdiIds, $validProdiIds);
+
+                        if (! empty($invalidSelected)) {
+                            $fail('Beberapa Program Studi yang dipilih tidak terdaftar di Fakultas ini!');
+                        }
+
+                        if (empty($validProdiIds)) {
+                            $fail('Fakultas ini belum memiliki Program Studi!');
+                        }
+                    },
+                ];
+            }
             $rules['pr_id_array'] = 'required|array|min:1';
         }
 
@@ -195,11 +239,6 @@ trait WithMKModal
         }
 
         return $validator->validated();
-    }
-
-    private function normalizeNama($value)
-    {
-        return ucwords(strtolower(trim($value)));
     }
 
     private function generateKodePrefix($data, $tingkatan)
@@ -220,26 +259,30 @@ trait WithMKModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
+
         $data['pr_id'] = $this->pr_id;
         $data['pr_id_array'] = $this->pr_id_array;
+
+        $data['dp_id'] = $this->dp_id;
+        $data['fk_id'] = $this->fk_id;
 
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
 
         try {
-            $validated = $this->inputModalMK(false, $data);
             $tingkatan = $this->mkType;
+            $validated = $this->inputModalMK(false, $data);
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
-            DB::transaction(function () use ($validated, $tingkatan, $data) {
+            DB::transaction(function () use ($validated, $tingkatan) {
 
                 $mk = MataKuliah::create([
                     'level_mk' => $tingkatan,
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
-                    'nama_mk' => $this->normalizeNama($validated['nama_mk']),
+                    'nama_mk' => $validated['nama_mk'],
                     'semester' => $validated['semester'],
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
@@ -259,7 +302,7 @@ trait WithMKModal
             $this->dispatch('refresh-data-mk');
 
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']));
+            $this->toast(message: "Mata Kuliah {$validated['nama_mk']}");
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -279,6 +322,9 @@ trait WithMKModal
         $data['pr_id'] = $this->pr_id;
         $data['pr_id_array'] = $this->pr_id_array;
 
+        $data['dp_id'] = $this->dp_id;
+        $data['fk_id'] = $this->fk_id;
+
         $data['is_wajib'] = ($data['is_wajib'] !== '') ? (int) $data['is_wajib'] : 1;
         $data['tipe_sks'] = ! empty($data['tipe_sks']) ? (int) $data['tipe_sks'] : 1;
         $data['sks_kuliah'] = ! empty($data['sks_kuliah']) ? (int) $data['sks_kuliah'] : 1;
@@ -288,7 +334,7 @@ trait WithMKModal
             $tingkatan = $this->mkType;
             $kodePrefix = $this->generateKodePrefix($data, $tingkatan);
 
-            DB::transaction(function () use ($validated, $tingkatan, $data) {
+            DB::transaction(function () use ($validated, $tingkatan) {
                 $mk = MataKuliah::findOrFail($this->selected_id_mk);
 
                 // 3. UPDATE DATA UTAMA
@@ -296,7 +342,7 @@ trait WithMKModal
                     // 'kode_mk' => $kodePrefix,
                     'digit_semester' => $validated['digit_semester'],
                     'digit_mk' => $validated['digit_mk'],
-                    'nama_mk' => $this->normalizeNama($validated['nama_mk']),
+                    'nama_mk' => $validated['nama_mk'],
                     'semester' => $validated['semester'],
                     'sks_kuliah' => $validated['sks_kuliah'],
                     'tipe_sks' => $validated['tipe_sks'],
@@ -321,9 +367,11 @@ trait WithMKModal
                 $mk->prodis()->sync($syncData);
             });
 
+            $this->toast(message: "Mata Kuliah {$validated['nama_mk']}", type: 'update');
+            $this->resetInputMK();
+
             $this->dispatch('refresh-data-mk');
             $this->showMKModal = false;
-            $this->toast(message: 'Mata Kuliah '.$this->normalizeNama($validated['nama_mk']), type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -338,7 +386,15 @@ trait WithMKModal
     private function validationMessagesMK()
     {
         return [
+            'fk_id.required' => 'Fakultas wajib diisi!',
+            'fk_id.integer' => 'ID Fakultas harus berupa angka!',
+            'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
+            'dp_id.required' => 'Departemen wajib diisi!',
+            'dp_id.integer' => 'ID Departemen harus berupa angka!',
+            'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
             'pr_id.required' => 'Program Studi wajib diisi!',
+            'pr_id.integer' => 'ID Program Studi harus berupa angka!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
 
             'pr_id_array.required' => 'Program Studi wajib diisi!',
             'pr_id_array.array' => 'Program Studi dalam bentuk Array!',
@@ -375,7 +431,7 @@ trait WithMKModal
 
             'deskripsi.required' => 'Deskripsi Mata Kuliah wajib diisi!',
             'deskripsi.max' => 'Deskripsi Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
-            'bahan_kajian.required' => 'Bahan KajianMata Kuliah wajib diisi!',
+            'bahan_kajian.required' => 'Bahan Kajian Mata Kuliah wajib diisi!',
             'bahan_kajian.max' => 'Bahan Kajian Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
         ];
     }
@@ -405,7 +461,7 @@ trait WithMKModal
             'pr_id', 'dp_id', 'fk_id',
             'pr_items', 'dp_items', 'fk_items',
             'pr_id_array', 'pr_items_array',
-            'prNameSearch', 'dpNameSearch', 'fkNameSearch'
+            'prNameSearch', 'dpNameSearch', 'fkNameSearch',
         ];
 
         $this->reset($fields);

@@ -190,11 +190,7 @@ trait WithFakultasSearchFilters
             $this->fk_items = $this->itemsFk($data);
         }
 
-        if (property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->mkType == 2 || $this->mkType == 3) {
-                $this->resetPrArray();
-            }
-        }
+        $this->haveFkChild();
 
         $this->resetErrorBag(['fk_id', 'fkNameSearch']);
     }
@@ -205,13 +201,18 @@ trait WithFakultasSearchFilters
         $this->fk_items = null;
         $this->fkNameSearch = '';
 
-        if (property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
-            if ($this->mkType == 2 || $this->mkType == 3) {
-                $this->resetPrArray();
-            }
-        }
+        $this->haveFkChild();
 
         $this->updatedFkNameSearch('');
         $this->resetErrorBag(['fk_id', 'fkNameSearch']);
+    }
+
+    public function haveFkChild()
+    {
+        if (property_exists($this, 'showMKModal') && property_exists($this, 'pr_id_array') && property_exists($this, 'mkType')) {
+            if ($this->showMKModal == true && $this->mkType == 3) {
+                $this->resetPrArray();
+            }
+        }
     }
 }

@@ -68,8 +68,8 @@ trait WithKelasFilters
         $this->sortFieldOrderKelas($queryKelas);
 
         return $queryKelas;
-
     }
+
 
     // public function buttonKelasFilter($queryKelas, $currentYear, $fiveYearsAgoYear)
     // {

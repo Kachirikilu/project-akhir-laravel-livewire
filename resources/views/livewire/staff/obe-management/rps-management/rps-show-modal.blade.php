@@ -9,42 +9,44 @@
 
         {{-- KIRI: Badge nama & status --}}
         <div class="flex items-center gap-2">
-            <flux:button @click="$wire.printPDF($store.rps?.id ?? null)"
+            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show'}} ?? null)"
                 class="cursor-pointer !text-rose-600 dark:!text-rose-400 hover:!bg-rose-100 dark:hover:!bg-rose-900/30 border border-rose-200 transition-colors">
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
-                <flux:icon wire:loading wire:target="printPDF" name="arrow-path"
+                <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"
                     class="animate-spin h-4 w-4 ml-3 dark:!text-rose-600" />
             </flux:button>
 
-            <flux:button
-                @click="
-                $store.rps?.setEdit(1);
-                $store.rps?.setFlyout(true);
-                $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
-                $store.rps?.setValueRPS(
-                    '{{ $r['kode_blok'] ?? null }}',
-                    '{{ $r['deskripsi'] ?? null }}',
-                    '{{ $r['mk_id'] ?? null }}',
-                    '{{ $r['kode_mk'] ?? null }}',
-                    '{{ $r['nama_mk'] ?? null }}',
-                    '{{ $r['akademik'] ?? null }}',
-                    '{{ $r['is_draf'] ?? null }}',
-                    '{{ $r['count_scpmk'] ?? null }}',
-                    '{{ $r['bobot_uts'] ?? null }}',
-                    '{{ $r['bobot_uas'] ?? null }}',
-                    '{{ $r['total_bobot'] ?? null }}'
-                );
-                $flux.modal('rps-modal').show();
-                $wire.editRPS($store.rps?.id ?? null)
-            "
-                wire:loading.attr="disabled" wire:target="showRPS, editRPS"
-                class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200 transition-colors">
-                <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-                <span>Edit RPS</span>
-                <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
-            </flux:button>
+            @if ($isEdit ?? true)
+                <flux:button
+                    @click="
+                    $store.rps?.setEdit(1);
+                    $store.rps?.setFlyout(true);
+                    $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
+                    $store.rps?.setValueRPS(
+                        '{{ $r['kode_blok'] ?? null }}',
+                        '{{ $r['deskripsi'] ?? null }}',
+                        '{{ $r['mk_id'] ?? null }}',
+                        '{{ $r['kode_mk'] ?? null }}',
+                        '{{ $r['nama_mk'] ?? null }}',
+                        '{{ $r['akademik'] ?? null }}',
+                        '{{ $r['is_draf'] ?? null }}',
+                        '{{ $r['count_scpmk'] ?? null }}',
+                        '{{ $r['bobot_uts'] ?? null }}',
+                        '{{ $r['bobot_uas'] ?? null }}',
+                        '{{ $r['total_bobot'] ?? null }}'
+                    );
+                    $flux.modal('rps-modal').show();
+                    $wire.editRPS($store.rps?.id ?? null)
+                "
+                    wire:loading.attr="disabled" wire:target="showRPS, editRPS"
+                    class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200 transition-colors">
+                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                    <span>Edit RPS</span>
+                    <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
+                        class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
+                </flux:button>
+            @endif
         </div>
 
         {{-- KANAN: Tombol --}}
@@ -62,7 +64,8 @@
                 @break
 
                 @case(3)
-                    <flux:badge icon="building-library" color="indigo" size="lg" class="px-4">{{ $r['kode_rps'] ?? '-' }}
+                    <flux:badge icon="building-library" color="indigo" size="lg" class="px-4">
+                        {{ $r['kode_rps'] ?? '-' }}
                     </flux:badge>
                 @break
 

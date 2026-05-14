@@ -11,6 +11,7 @@ use App\Livewire\Global\WithRPSSearchFilters;
 // use App\Livewire\Staff\KelasManagement\WithKelasDelete;
 use App\Livewire\Staff\KelasManagement\WithKelasFilters;
 use App\Livewire\Staff\KelasManagement\WithKelasModal;
+use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,7 @@ class KelasManagement extends Component
     use WithPagination;
     use WithProdiSearchFilters;
     use WithRPSSearchFilters;
+    use WithRPSShow;
 
     public $showModal = false;
 
@@ -56,6 +58,8 @@ class KelasManagement extends Component
         'sortField' => ['except' => 'kode'],
         'sortDirection' => ['except' => 'asc'],
     ];
+
+
 
     public function updatingSearch()
     {

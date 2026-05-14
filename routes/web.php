@@ -1,12 +1,9 @@
 <?php
 
+use App\Livewire\Staff\KelasDetailManagement;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
-use App\Http\Middleware\IsAdmin;
-use App\Http\Middleware\IsDosen;
-use App\Http\Middleware\IsStaff;
-use App\Http\Middleware\IsMahasiswa;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
         Route::view('mata-kuliah-management', 'mata-kuliah-management')->name('mata-kuliah-management');
         Route::view('rps-management', 'rps-management')->name('rps-management');
         Route::view('kelas-management', 'kelas-management')->name('kelas-management');
+        Route::view('kelas-management/jadwal/{kode}', 'kelas-management')->name('jadwal-management');
+
     });
 
     Route::redirect('settings', 'settings/profile');

@@ -170,8 +170,7 @@
 
                                                     $flux.modal('rps-detail-modal').show();
                                                 "
-                                                wire:click="showRPS({{ $r['id'] }})"
-                                            >
+                                                wire:click="showRPS({{ $r['id'] }})">
                                                 <div
                                                     class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30 transition-colors">
                                                     <flux:icon name="eye" variant="micro" class="w-3.5 h-3.5" />
@@ -183,14 +182,13 @@
 
                                             <button type="button"
                                                 class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors duration-200"
-                                                wire:click="printPDF({{ $r['id'] }})"
-                                            >
+                                                wire:click="printPDFRPS({{ $r['id'] }})">
                                                 <div
                                                     class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
                                                     <flux:icon name="printer" variant="micro" class="w-3.5 h-3.5" />
                                                 </div>
                                                 <span>Print PDF RPS</span>
-                                                <flux:icon wire:loading wire:target="printPDF({{ $r['id'] }})"
+                                                <flux:icon wire:loading wire:target="printPDFRPS({{ $r['id'] }})"
                                                     name="arrow-path" class="animate-spin h-4 w-4 ml-1" />
                                             </button>
 
@@ -218,8 +216,7 @@
                                                     );
                                                     $flux.modal('rps-modal').show();
                                                 "
-                                                wire:click="editRPS('{{ $r['id'] }}')"
-                                            >
+                                                wire:click="editRPS('{{ $r['id'] }}')">
                                                 <div
                                                     class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yelow-50 dark:group-hover:bg-yelow-900/30 transition-colors">
                                                     <flux:icon name="pencil-square" variant="micro"
@@ -242,9 +239,9 @@
                         <div class="py-4" id="pagination-links-container">
                             {{-- <div
                                 wire:target="gotoPage, previousPage, nextPage, {{ $rps_modal_paginator->getPageName() }}"> --}}
-                                {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
-                                    'typeXLoading' => 'loadingRPSList',
-                                ]) }}
+                            {{ $rps_modal_paginator->links('vendor.pagination.tailwind', [
+                                'typeXLoading' => 'loadingRPSList',
+                            ]) }}
                             {{-- </div> --}}
                         </div>
                     @endif

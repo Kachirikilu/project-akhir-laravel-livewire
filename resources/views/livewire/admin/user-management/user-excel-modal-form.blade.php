@@ -1,6 +1,6 @@
-<flux:modal name="user-excel-modal" wire:model="showUserExcelModal"
+<flux:modal name="user-excel-modal" wire:model="showUserExcelModal" flyout
     @refresh-data-user.window="if (!$wire.showUserExcelModal) $store.user.reset()"
-    class="sm:w-full md:w-5xl max-w-6xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+    class="md:w-[95vw] max-w-7xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}
     <div wire:loading wire:target="saveAllRows">

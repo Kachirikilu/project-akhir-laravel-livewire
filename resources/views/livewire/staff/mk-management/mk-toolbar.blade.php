@@ -2,13 +2,14 @@
     <h2 class="text-2xl mr-4 font-bold mb-4 text-[var(--contrast-second-text)]">Manajemen Mata Kuliah</h2>
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus" 
-                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)]"
+            <flux:button variant="primary" icon="plus"
+                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
                 wire:target="addMK">
                 Tambah Mata Kuliah
             </flux:button>
 
-            <flux:menu class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+            <flux:menu
+                class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
                 <flux:menu.heading>Pilih Tingkatan</flux:menu.heading>
                 <flux:menu.separator />
 

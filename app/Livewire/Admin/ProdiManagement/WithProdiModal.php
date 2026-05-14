@@ -165,7 +165,7 @@ trait WithProdiModal
                         }
                     },
                 ],
-                'dp_id' => ['required', 'exists:departemens,id'],
+                'dp_id' => ['required', 'integer', 'exists:departemens,id'],
                 'strata' => [
                     'required',
                     Rule::in(['Sarjana','Magister','Doktor']),
@@ -226,7 +226,7 @@ trait WithProdiModal
                         }
                     },
                 ],
-                'fk_id' => ['required', 'exists:fakultas,id'],
+                'fk_id' => ['required', 'integer', 'exists:fakultas,id'],
             ];
         }
 
@@ -269,14 +269,6 @@ trait WithProdiModal
     private function uniqueRule(string $table, string $column, $id = null)
     {
         return $id ? Rule::unique($table, $column)->ignore($id) : Rule::unique($table, $column);
-    }
-
-    private function normalizeNama($value)
-    {
-        $value = trim($value);
-        $value = strtolower($value);
-
-        return ucwords($value);
     }
 
     private function prepareData(array $validated)
@@ -353,10 +345,11 @@ trait WithProdiModal
                 }
             });
 
-            $this->resetInputProdi();            
+            $this->toast(message: $message);
+            $this->resetInputProdi();
+                 
             $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
-            $this->toast(message: $message);
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -417,10 +410,12 @@ trait WithProdiModal
                 }
             });
 
-            $this->resetInputProdi();            
+
+            $this->toast(message: $message, type: 'update');
+            $this->resetInputProdi();
+
             $this->dispatch('refresh-data-pr');
             $this->showProdiModal = false;
-            $this->toast(message: $message, type: 'update');
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -446,6 +441,7 @@ trait WithProdiModal
             'kode_pr.string' => 'Kode Program Studi harus berupa teks!',
             'kode_pr.unique' => 'Kode Program Studi ini sudah digunakan oleh Program Studi lain!',
             'dp_id.required' => 'Departemen wajib diisi!',
+            'dp_id.integer' => 'ID Departemen harus berupa angka!',
             'dp_id.exists' => 'Departemen yang dipilih tidak valid!',
 
             /* --- Departemen --- */
@@ -457,6 +453,7 @@ trait WithProdiModal
             'kode_dp.string' => 'Kode Departemen harus berupa teks!',
             'kode_dp.unique' => 'Kode Departemen ini sudah terdaftar di database!',
             'fk_id.required' => 'Fakultas wajib diisi!',
+            'fk_id.integer' => 'ID Fakultas harus berupa angka!',
             'fk_id.exists' => 'Fakultas yang dipilih tidak valid!',
 
             /* --- Fakultas --- */

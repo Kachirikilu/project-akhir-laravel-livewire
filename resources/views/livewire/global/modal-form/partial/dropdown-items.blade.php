@@ -4,6 +4,7 @@
     $itemKode = data_get($x, 'kode', '');
     $itemLabel2 = isset($typeX2String) ? data_get($x, $typeX2String, '') : null;
     $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
+    $itemLabel4 = isset($typeX4String) ? data_get($x, $typeX4String, '') : null;
 @endphp
 
 <div class="flex flex-col mr-4">
@@ -31,6 +32,12 @@
                 @else
                     {{ $itemLabel3 }}
                 @endif
+            </span>
+        @endif
+        @if ($typeX4String ?? null)
+            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+            <span>
+                {{ $itemLabel4 }}
             </span>
         @endif
     </div>

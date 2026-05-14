@@ -1,4 +1,4 @@
-<div x-data="{ activeFilter: @entangle('filterMK') }"
+<div x-data="{ activeFilter: @entangle('filterKelas') }"
     class="bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] mb-6 p-4 rounded-lg shadow-md border">
 
     {{-- BAGIAN FILTER ATAS --}}
@@ -181,7 +181,7 @@
                 'typeXString' => 'rps',
                 'typeX2String' => 'sks_full',
                 'typeX3String' => 'wajib_text',
-                'typeX4String' => 'draf_text',
+                'typeX4String' => 'draf_full',
                 'unfoundString' => 'Tidak ada RPS ditemukan!',
             ])
         </div>

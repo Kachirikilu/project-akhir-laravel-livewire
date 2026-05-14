@@ -3,13 +3,13 @@
 namespace App\Models\Kelas;
 
 use App\Models\Auth\Mahasiswa;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class KelasJadwal extends Model
 {
@@ -33,9 +33,16 @@ class KelasJadwal extends Model
             ->withTimestamps();
     }
 
+    protected function kode(): Attribute
+    {
+        return Attribute::get(function () {
+            return preg_replace('/([A-Za-z])([0-9])/', '$1-$2', $this->kode_jadwal);
+        });
+    }
+
     protected function labelFull(): Attribute
     {
-        return Attribute::get(fn () => $this->label_kelas . ' ' . $this->kode_wilayah);
+        return Attribute::get(fn () => $this->label_kelas.' '.$this->kode_wilayah);
     }
 
     protected function hari(): Attribute
@@ -46,7 +53,9 @@ class KelasJadwal extends Model
     protected function tanggalPelaksanaan(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->tanggal_mulai) return '-';
+            if (! $this->tanggal_mulai) {
+                return '-';
+            }
 
             $mulai = Carbon::parse($this->tanggal_mulai)->format('d/m/Y');
             $akhir = $this->tanggal_berakhir
@@ -60,7 +69,9 @@ class KelasJadwal extends Model
     protected function jamPelaksanaan(): Attribute
     {
         return Attribute::get(function () {
-            if (!$this->jam_mulai) return '-';
+            if (! $this->jam_mulai) {
+                return '-';
+            }
 
             $mulai = Carbon::parse($this->jam_mulai)->format('H:i');
             $akhir = $this->jam_berakhir
@@ -95,12 +106,15 @@ class KelasJadwal extends Model
 
     public function scopeSearchKelasJadwal($query, $search)
     {
-        $searchTerm = '%' . $search . '%';
+        $searchTerm = '%'.$search.'%';
         $searchLower = strtolower($search);
 
         return $query->where(function ($q) use ($searchLower, $search, $searchTerm) {
-            $q->where('kelas_jadwals.label_kelas', 'like', $searchTerm)
+            $q->where('kelas_jadwals.kode_jadwal', 'like', $searchTerm)
+                ->orWhere('kelas_jadwals.label_kelas', 'like', $searchTerm)
                 ->orWhere('kelas_jadwals.kode_wilayah', 'like', $searchTerm)
+                ->orWhereRaw("CONCAT(kelas_jadwals.label_kelas, ' ', kelas_jadwals.kode_wilayah) LIKE ?", [$searchTerm])
+
                 ->orWhere('kelas_jadwals.hari_pelaksanaan', 'like', $searchTerm)
                 ->orWhere('kelas_jadwals.jam_mulai', 'like', $searchTerm)
                 ->orWhere('kelas_jadwals.jam_berakhir', 'like', $searchTerm)
@@ -119,6 +133,10 @@ class KelasJadwal extends Model
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas_jadwals.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
                 });
+
+            if (is_numeric($search)) {
+                $q->orWhere('kelas_jadwals.id', 'like', $search);
+            }
         });
     }
 }

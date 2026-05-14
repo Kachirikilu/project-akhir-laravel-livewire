@@ -8,7 +8,7 @@ use Spatie\Browsershot\Browsershot;
 
 trait WithRPSShow
 {
-    public function printPDF($id)
+    public function printPDFRPS($id)
     {
         $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);

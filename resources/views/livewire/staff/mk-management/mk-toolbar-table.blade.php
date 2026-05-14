@@ -24,7 +24,6 @@
                 $store.mk?.reset();
 
                 const type = '{{ $typeXString }}';
-                console.log('Nilai type saat ini:', type);
 
                 $store.mk?.setType(type);
                 $store.mk?.setEdit(1);

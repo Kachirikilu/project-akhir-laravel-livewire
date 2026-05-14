@@ -53,7 +53,7 @@ trait WithUserModal
         'nidk' => 'nullable|string|max:20',
         'nim' => 'required|string|max:20',
         'angkatan' => 'required|integer',
-        'pr_id' => 'required|exists:prodis,id',
+        'pr_id' => 'required|integer|exists:prodis,id',
     ];
 
     public function addUser($role)
@@ -92,10 +92,8 @@ trait WithUserModal
             $this->selected_id_user = $user->id;
             $this->pr_id = $user->pr_id;
             $this->pr_id_2 = $user->pr_id;
+            $this->pr_items = $this->itemsPr($user->admin?->pr_rel ?? $user->dosen?->pr_rel ?? $user->mahasiswa?->pr_rel);
             $this->prNameSearch = $user->prodi;
-
-            $this->getPrbyUser();
-            $this->fetchPr($this->prNameSearch);
 
             if ($user->dosen && $withRPS) {
                 $this->dosen_rps_id = $user->dosen->id;
@@ -446,10 +444,11 @@ trait WithUserModal
 
             });
 
+            $this->toast(message: ucfirst($this->roleType), isAkun: true);
             $this->resetInputUser();
+            
             $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
-            $this->toast(message: ucfirst($this->roleType), isAkun: true);
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
@@ -536,10 +535,11 @@ trait WithUserModal
                 }
             });
 
-            $this->dispatch('refresh-data-user');
-            $this->showUserModal = false;
             $this->toast(message: ucfirst($this->roleType), type: 'update', isAkun: true);
+            $this->resetInputUser();
+            $this->dispatch('refresh-data-user');
 
+            $this->showUserModal = false;
             if (Auth::id() === $this->selected_id_user) {
                 $this->dispatch('profile-updated');
             }
@@ -584,8 +584,9 @@ trait WithUserModal
             'angkatan.integer' => 'Tahun angkatan harus berupa angka!',
             'angkatan.min' => 'Tahun angkatan tidak boleh kurang dari tahun 1960!',
             'angkatan.max' => 'Tahun angkatan tidak boleh melebihi tahun sekarang!',
-            'pr_id.required' => 'Program studi wajib dipilih!',
-            'pr_id.exists' => 'Program studi yang dipilih tidak valid!',
+            'pr_id.required' => 'Program Studi wajib dipilih!',
+            'pr_id.integer' => 'ID Program Studi harus berupa angka!',
+            'pr_id.exists' => 'Program Studi yang dipilih tidak valid!',
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
             'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',

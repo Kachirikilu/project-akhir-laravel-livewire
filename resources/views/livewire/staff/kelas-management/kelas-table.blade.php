@@ -60,12 +60,12 @@
             ])
 
             <th colspan="4" class="{{ $headSubKolom }}">
-                Informasi Kelas
+                Informasi Jadwal Kelas
             </th>
 
 
             <th colspan="6" class="{{ $headSubKolom }}">
-                Informasi Kelas
+                Informasi Mata Kuliah
             </th>
 
 
@@ -150,7 +150,7 @@
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $k->id }}</td>
-            <td class="{{ $mainKolom }}">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @switch($k->rps_rel?->mk_rel?->level_mk)
@@ -175,7 +175,6 @@
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
                         'x' => $k,
-                        'typeXString' => $k->level_kelas,
                         'editString' => 'editKelas',
                         'nameXString' => 'Kelas',
                         'confirmDeleteString' => 'deleteKelas',
@@ -227,7 +226,6 @@
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
                         'x' => $k,
-                        'typeXString' => $k->level_kelas,
                         'editString' => 'editKelas',
                         'nameXString' => 'Kelas',
                         'confirmDeleteString' => 'deleteKelas',
@@ -313,7 +311,6 @@
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
                         'x' => $k,
-                        'typeXString' => $k->level_kelas,
                         'editString' => 'editKelas',
                         'nameXString' => 'Kelas',
                         'confirmDeleteString' => 'deleteKelas',
@@ -344,7 +341,6 @@
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
                         'x' => $k,
-                        'typeXString' => $k->level_kelas,
                         'editString' => 'editKelas',
                         'nameXString' => 'Kelas',
                         'confirmDeleteString' => 'deleteKelas',
@@ -363,7 +359,6 @@
 
                     @include('livewire.staff.kelas-management.kelas-toolbar-table', [
                         'x' => $k,
-                        'typeXString' => $k->level_kelas,
                         'editString' => 'editKelas',
                         'nameXString' => 'Kelas',
                         'confirmDeleteString' => 'deleteKelas',

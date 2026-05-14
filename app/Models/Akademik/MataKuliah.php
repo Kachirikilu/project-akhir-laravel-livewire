@@ -69,7 +69,7 @@ class MataKuliah extends Model
                 $prefix = $prefixDefault ?? 'UNI';
             }
 
-            return $prefix.'-'.$this->digit_semester.$this->digit_mk;
+            return $prefix.$this->digit_semester.$this->digit_mk;
         });
     }
 

@@ -5,7 +5,6 @@ namespace App\Livewire\Staff\RPSManagement;
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPMK;
-use App\Models\Akademik\MataKuliah;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -25,10 +24,6 @@ trait WithRPSModal
     public $showEditRPS = false;
 
     public $showRPSModal = false;
-
-    public $detailRPSModal = false;
-
-    public $detailRPSData = [];
 
     public $mk_id_2;
 
@@ -157,38 +152,6 @@ trait WithRPSModal
         }
     }
 
-    public function showRPS($id)
-    {
-        if (! $this->AuthCheck('staff')) {
-            return;
-        }
-
-        $this->selected_id_rps = $id;
-
-        try {
-            // 1. Load data RPS dengan relasi yang sangat lengkap
-            $rps = RPS::with([
-                'mk_rel.prodis.dp_rel.fk_rel',
-                'dosens',
-                'cpmks.scpmks.dosens',
-                'cpmks.scpmks.refs',
-                'cpmks.refs',
-                'cpmks.cpls',
-                'cpls',
-                'refs',
-            ])->findOrFail($id);
-
-            $this->detailRPSData = $this->formatRPSDetailForShow($rps);
-            $this->detailRPSModal = true;
-
-            $this->dispatch('fill-modal-rps', rps: $rps);
-            $this->dispatch('refresh-component');
-
-        } catch (\Exception $e) {
-            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
-        }
-    }
-
     private function inputModalRPS($isEditingRPS, $data)
     {
         $this->resetErrorBag();
@@ -200,22 +163,18 @@ trait WithRPSModal
             'mk_id' => 'required|exists:mata_kuliahs,id',
         ], $this->validationMessagesRPS())->validate();
 
-        $mk = MataKuliah::find($mkId ?? null);
+        $mk = DB::table('mk')->where('id', $mkId ?? null)->first();
         $desMK = $mk?->deskripsi ?? '';
         if (! str_ends_with($desMK, '.') && ! empty($desMK)) {
             $desMK .= '.';
         }
 
-        if ($data['deskripsi'] == $mk->deskripsi || $data['deskripsi'] == $desMK) {
+        if ($data['deskripsi'] == $desMK) {
             $data['deskripsi'] = '';
         }
 
         // 1. Ambil data dari CPMK terpilih
-        $inputDeskripsi = trim($data['deskripsi'] ?? '');
-        if (! str_ends_with($inputDeskripsi, '.') && ! empty($inputDeskripsi)) {
-            $inputDeskripsi .= '.';
-        }
-        $data['deskripsi'] = $inputDeskripsi;
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         $cplFromCpmk = [];
         $refFromCpmkScpmk = [];
@@ -546,11 +505,13 @@ trait WithRPSModal
             $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
             $kodeRPS = $data['digit_akademik'] ?? ($data['akademik_1'] ?? '');
             $namaMK = data_get($this->mk_items, 'slot1', $this->mk_name);
+
             $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})");
-            $this->resetInputRPS();
             if (! empty($this->cpmk_rps_id)) {
                 $this->loadCPMKRPSPagination();
             }
+
+            $this->resetInputRPS();
             $this->dispatch('refresh-data-rps');
             $this->showRPSModal = false;
 
@@ -645,17 +606,20 @@ trait WithRPSModal
                 $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
 
-            $this->toast(message: 'RPS Berhasil diperbarui', type: 'update');
+            $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})", type: 'update');
             if (! empty($this->cpmk_rps_id)) {
                 $this->loadCPMKRPSPagination();
             }
             $this->showRPSModal = false;
-            $this->dispatch('refresh-data-rps');
 
             if ($this->detailRPSModal == true) {
                 $this->detailRPSModal = false;
                 $this->showRPS($this->selected_id_rps);
             }
+
+            $this->resetInputRPS();
+            $this->dispatch('refresh-data-rps');
+
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');

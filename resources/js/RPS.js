@@ -21,6 +21,8 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        rps_id_show: "",
+
         id: "",
         nama_rps: "",
 
@@ -148,38 +150,9 @@ document.addEventListener("alpine:init", () => {
             this.total_bobot = totalBobot;
         },
 
-        setShowRPS(
-            idRPS,
-            // namaRPS,
-            // kodeBlok,
-            // deskripsi,
-            // idMK,
-            // kodeMK,
-            // namaMK,
-            // tahunAkademik,
-            // isDraf,
-            // countScpmk,
-            // bobotUTS,
-            // bobotUAS,
-            // totalBobot,
-        ) {
-            this.reset();
-            this.id = idRPS;
-            // this.nama_rps = namaRPS;
-
-            // this.setValueRPS(
-            //     kodeBlok,
-            //     deskripsi,
-            //     idMK,
-            //     kodeMK,
-            //     namaMK,
-            //     tahunAkademik,
-            //     isDraf,
-            //     countScpmk,
-            //     bobotUTS,
-            //     bobotUAS,
-            //     totalBobot
-            // );
+        setShowRPS(idRPS) {
+            this.resetShow();
+            this.rps_id_show = idRPS;
         },
 
         setDeleteRPS(namaRPS, kodeCPLDelete, forceDelete) {
@@ -194,6 +167,10 @@ document.addEventListener("alpine:init", () => {
         //     this.tipe_sks = "";
         //     this.is_wajib = "";
         // },
+
+        resetShow() {
+            this.rps_id_show = "";
+        },
 
         reset() {
             this.typeModal_delete = "";

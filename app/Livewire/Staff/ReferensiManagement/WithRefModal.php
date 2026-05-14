@@ -142,6 +142,10 @@ trait WithRefModal
         $this->resetErrorBag();
         $this->resetValidation();
 
+        $data['judul'] = $this->normalizeNama($data['judul']);
+        $data['penulis'] = $this->normalizeNama($data['penulis']);
+        $data['penerbit'] = $this->normalizeNama($data['penerbit']);
+
         $rules = [
             'kode_ref_1' => 'required|alpha|max:10',
             'kode_ref_2' => 'required|numeric|min:1',
@@ -266,8 +270,9 @@ trait WithRefModal
                 }
             });
 
-            $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']} berhasil disimpan!");
+            $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']}");
             $this->resetInputRef();
+
             $this->dispatch('refresh-data-ref');
             $this->showRefModal = false;
 
@@ -324,7 +329,9 @@ trait WithRefModal
                 }
             });
 
-            $this->toast(message: 'Referensi Berhasil diperbarui', type: 'update');
+            $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']}", type: 'update');
+            $this->resetInputRef();
+            
             $this->showRefModal = false;
             $this->dispatch('refresh-data-ref');
 
@@ -351,11 +358,11 @@ trait WithRefModal
             'kode_ref_2.min' => 'Nomor kode minimal adalah 1!',
 
             // Pesan General untuk Hasil Gabungan
-            'kode_ref.required' => 'Kode Ref lengkap wajib terbentuk!',
+            'kode_ref.required' => 'Kode Referensi lengkap wajib terbentuk!',
             'kode_ref.alpha_num' => 'Gabungan kode harus alfanumerik!',
-            'kode_ref.required' => 'Kode Ref wajib diisi!',
-            'kode_ref.alpha_num' => 'Kode Ref hanya boleh berisi huruf dan angka!',
-            'kode_ref.max' => 'Kode Ref maksimal 20 karakter!',
+            'kode_ref.required' => 'Kode Referensi wajib diisi!',
+            'kode_ref.alpha_num' => 'Kode Referensi hanya boleh berisi huruf dan angka!',
+            'kode_ref.max' => 'Kode Referensi maksimal 20 karakter!',
 
             // Deskripsi & Status
             'judul.required' => 'Deskripsi Ref wajib diisi!',

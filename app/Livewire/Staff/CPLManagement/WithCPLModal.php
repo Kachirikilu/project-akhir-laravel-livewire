@@ -135,10 +135,7 @@ trait WithCPLModal
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $data['deskripsi'] = trim($data['deskripsi'] ?? '');
-        if ($data['deskripsi'] !== '' && ! str_ends_with($data['deskripsi'], '.')) {
-            $data['deskripsi'] .= '.';
-        }
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
 
         $rules = [
             'kode_cpl_1' => 'required|alpha|max:10',
@@ -250,8 +247,9 @@ trait WithCPLModal
                 }
             });
 
-            $this->toast(message: "CPL {$validated['kode_cpl_1']}-{$validated['kode_cpl_2']} berhasil disimpan!");
+            $this->toast(message: "CPL {$validated['kode_cpl_1']}-{$validated['kode_cpl_2']}");
             $this->resetInputCPL();
+            
             $this->dispatch('refresh-data-cpl');
             $this->showCPLModal = false;
 
@@ -302,7 +300,10 @@ trait WithCPLModal
 
             });
 
-            $this->toast(message: 'CPL Berhasil diperbarui', type: 'update');
+            $this->toast(message: "CPL {$validated['kode_cpl_1']}-{$validated['kode_cpl_2']}", type: 'update');
+            $this->resetInputCPL();
+
+            $this->dispatch('refresh-data-cpl');
             $this->showCPLModal = false;
             $this->dispatch('refresh-data-cpl');
 

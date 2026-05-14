@@ -8,7 +8,43 @@ use Spatie\Browsershot\Browsershot;
 
 trait WithRPSShow
 {
-    public function printPDF($id)
+    public $detailRPSModal = false;
+
+    public $detailRPSData = [];
+
+    public function showRPS($id)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        $this->selected_id_rps = $id;
+
+        try {
+            // 1. Load data RPS dengan relasi yang sangat lengkap
+            $rps = RPS::with([
+                'mk_rel.prodis.dp_rel.fk_rel',
+                'dosens',
+                'cpmks.scpmks.dosens',
+                'cpmks.scpmks.refs',
+                'cpmks.refs',
+                'cpmks.cpls',
+                'cpls',
+                'refs',
+            ])->findOrFail($id);
+
+            $this->detailRPSData = $this->formatRPSDetailForShow($rps);
+            $this->detailRPSModal = true;
+
+            $this->dispatch('fill-modal-rps', rps: $rps);
+            $this->dispatch('refresh-component');
+
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Mengambil Data: '.$e->getMessage(), variant: 'danger');
+        }
+    }
+
+    public function printPDFRPS($id)
     {
         $rps = RPS::with(['mk_rel', 'dosens', 'cpls', 'cpmks.scpmks', 'refs'])->findOrFail($id);
         $data = $this->formatRPSDetailForShow($rps);

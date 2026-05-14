@@ -146,4 +146,18 @@ trait HasToast
 
         return true;
     }
+
+    public function normalizeNama($value)
+    {
+        return ucwords(strtolower(trim($value)));
+    }
+
+    public function normalizeText($value) {
+        $input = trim($value ?? '');
+        if (! str_ends_with($input, '.') && ! empty($input)) {
+            $input .= '.';
+        }
+        return $input;
+    }
+
 }

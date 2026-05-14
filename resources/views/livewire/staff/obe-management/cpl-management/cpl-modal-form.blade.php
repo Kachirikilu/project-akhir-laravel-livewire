@@ -17,7 +17,7 @@
 
             <flux:badge icon="clipboard-document-list" color="red" size="lg">
                 <span
-                    x-text="$store.rps?.isEdit ? 'Edit OBE - Capaian Pembelajaran Lulusan' : 'Tambah OBE - Capaian Pembelajaran Lulusan'"></span>
+                    x-text="$store.cpl?.isEdit ? 'Edit OBE - Capaian Pembelajaran Lulusan' : 'Tambah OBE - Capaian Pembelajaran Lulusan'"></span>
             </flux:badge>
 
         </h3>
@@ -36,7 +36,7 @@
                     rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                 <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                    @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-message-form', ['show' => $showCPLModal])
+                    @include('livewire.staff.obe-management.cpl-management.cpl-modal-form.cpl-message-form', ['show' => $showCPLModal])
                     @include('livewire.global.modal-form.button-form', [
                         'targetX' => 'addCPL, saveCPL, editCPL, updateCPL',
                     ])

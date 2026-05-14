@@ -64,6 +64,7 @@
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
+            'isRequired' => 0,
         ])
     </template>
     <template x-if="$store.user?.typeModal == 'dosen'" x-cloak>
@@ -125,6 +126,7 @@
             'iconString' => 'tag',
             'placeholder' => 'Pilih Status...',
             'message' => $errors->first('status'),
+            'isRequired' => 0,
         ])
     </template>
 

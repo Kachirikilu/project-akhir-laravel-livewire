@@ -134,7 +134,7 @@
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
             <td class="{{ $secondKolom }} text-center">{{ $mk->id }}</td>
-            <td class="{{ $secondKolom }}">
+            <td class="{{ $secondKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @switch($mk->level_mk)
@@ -163,7 +163,7 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $mainKolom }}">
+            <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @switch($mk->semester)

@@ -38,7 +38,9 @@ class Kelas extends Model
 
     protected function kode(): Attribute
     {
-        return Attribute::get(fn () => $this->kode_kelas);
+        return Attribute::get(function () {
+            return preg_replace('/([A-Za-z])([0-9])/', '$1-$2', $this->kode_kelas);
+        });
     }
 
     protected function kodeRps(): Attribute
@@ -58,6 +60,17 @@ class Kelas extends Model
     protected function kelas(): Attribute
     {
         return Attribute::get(fn () => $this->nama_kelas);
+    }
+
+    protected function deskripsiKelas(): Attribute
+    {
+        return Attribute::get(function () {
+            if (empty($this->deskripsi) || ! $this->deskripsi) {
+                return $this->rps_rel?->deskripsi_rps;
+            }
+
+            return $this->deskripsi;
+        });
     }
     protected function prodi(): Attribute
     {
@@ -146,6 +159,9 @@ class Kelas extends Model
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
                         ->orWhereRaw("LOWER(DATE_FORMAT(kelas.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
                 });
+                if (is_numeric($search)) {
+                    $q->orWhere('kelas.id', 'like', $search);
+                }
         });
     }
 }

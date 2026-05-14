@@ -23,16 +23,16 @@
     {{-- 🔹 CONTENT --}}
     <div class="mt-4">
         <div x-show="step === 1">
-            @include('livewire.staff.obe-management.scpmk-management.modal-form.scpmk-partial.scpmk-main-input')
+            @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-partial.scpmk-main-input')
         </div>
         <div x-show="step === 2">
-            @include('livewire.staff.obe-management.scpmk-management.modal-form.scpmk-partial.scpmk-materi-input')
+            @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-partial.scpmk-materi-input')
         </div>
         <div x-show="step === 3">
-            @include('livewire.staff.obe-management.scpmk-management.modal-form.scpmk-partial.scpmk-metode-input')
+            @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-partial.scpmk-metode-input')
         </div>
         <div x-show="step === 4">
-            @include('livewire.staff.obe-management.scpmk-management.modal-form.scpmk-partial.scpmk-ref-input')
+            @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form.scpmk-partial.scpmk-ref-input')
         </div>
         <div x-show="step === 5">
             <template x-if="$store.scpmk.isEdit" x-cloak>

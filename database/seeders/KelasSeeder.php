@@ -45,7 +45,7 @@ class KelasSeeder extends Seeder
 
                             // 2. Buat Kelas sesuai Schema baru
                             $kelas = Kelas::create([
-                                'kode_kelas' => strtoupper(str()->random(3)) . '-' . rand(100, 999),
+                                'kode_kelas' => $this->generateUniqueKode(Kelas::class, 'kode_kelas'),
                                 'rps_id' => $rps->id,
                                 'pr_id' => $prodi->id,
                                 'nama_kelas' => 'Kelas ' . $rps->deskripsi . ' - ' . $prodi->nama_pr,
@@ -61,7 +61,9 @@ class KelasSeeder extends Seeder
                                 $tglMulai = now()->addDays(rand(1, 30));
 
                                 $jadwal = $kelas->jadwals()->create([
+                                    'kode_jadwal' => strtoupper(str()->random(5)). rand(100, 999),
                                     'kode_wilayah' => $wilayah,
+                                    'password' => strtoupper(str()->random(6)),
                                     'label_kelas' => $labels[$i],
                                     'tanggal_mulai' => $tglMulai,
                                     'tanggal_berakhir' => (clone $tglMulai)->addMonths(4),
@@ -83,7 +85,6 @@ class KelasSeeder extends Seeder
                                         'kj_id' => $jadwal->id,
                                         'pertemuan_ke' => $pertemuan,
                                         'tanggal' => (clone $tglMulai)->addWeeks($pertemuan - 1),
-                                        'password' => strtoupper(str()->random(6)),
                                         'catatan' => "Sesi rutin pertemuan ke-$pertemuan",
                                     ]);
 
@@ -118,5 +119,26 @@ class KelasSeeder extends Seeder
             });
         
         $this->command->info("KelasSeeder finished. Total RPS processed: $totalProcessed");
+    }
+
+    private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
+    {
+        $letters = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, rand($prefixMin, $prefixMax)));
+
+        $min = pow(10, $numMin - 1);
+        $max = pow(10, $numMax) - 1;
+
+        $numbers = rand($min, $max);
+
+        return $letters.$numbers;
+    }
+
+    private function generateUniqueKode($model, $column)
+    {
+        do {
+            $kode = $this->generateKode();
+        } while ($model::where($column, $kode)->exists());
+
+        return $kode;
     }
 }

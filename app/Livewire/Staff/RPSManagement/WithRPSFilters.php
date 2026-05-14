@@ -35,7 +35,8 @@ trait WithRPSFilters
     {
         $queryRPS = RPS::query()
             ->with([
-                'mk_rel.prodis', 'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel',
+                'mk_rel.prodis',
+                'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel',
                 'cpls', 'refs', 
                 'cpmks', 'cpmks.cpls', 'cpmks.refs',
                 'cpmks.scpmks', 'cpmks.scpmks.refs'

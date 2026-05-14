@@ -11,20 +11,26 @@ trait WithProdiSearchFilters
     use WithPagination;
 
     public $prSearchQuery = '';
+
     public $prSearchResults = [];
+
     public $modePr = '';
+
     public $pr_id;
+
     public $pr_name;
+
     public $pr_items;
+
     public $prNameSearch = '';
+
     public $prResults = [];
+
     public $selectedPrId = null;
-    public $mkType = '';
-    public $showMKModal = false;
 
     public $pr_id_array = [];
-    public $pr_items_array = [];
 
+    public $pr_items_array = [];
 
     private function mapPr($collection)
     {
@@ -110,14 +116,8 @@ trait WithProdiSearchFilters
 
         $query = $this->prQuery()->select('prodis.*');
 
-        // --- TAMBAHKAN LOGIKA FILTER DI SINI ---
-        if (($this->mkType == 2) && filled($this->dp_id) && $this->showMKModal) {
-            $query->where('dp_id', $this->dp_id);
-        } elseif (($this->mkType == 3) && filled($this->fk_id) && $this->showMKModal) {
-            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
-        }
+        $this->havePrParent($query);
 
-        // 1. Logika shortcut 'uni' untuk mkType 4
         if ($this->modePr !== 'single' && $input->toString() === 'uni' && $this->mkType == 4) {
             $allProdis = $query->get();
             foreach ($allProdis as $p) {
@@ -144,11 +144,13 @@ trait WithProdiSearchFilters
             $kodeDepartemen = $kodeProdi;
             $kodeFakultas = $kodeProdi;
 
-            if ($this->mkType >= 2) {
-                $kodeDepartemen = str($prodi->dp_rel?->kode ?? '')->lower()->trim();
-            }
-            if ($this->mkType >= 3) {
-                $kodeFakultas = str($prodi->dp_rel?->fk_rel?->kode ?? '')->lower()->trim();
+            if (property_exists($this, 'mkType')) {
+                if ($this->mkType >= 2) {
+                    $kodeDepartemen = str($prodi->dp_rel?->kode ?? '')->lower()->trim();
+                }
+                if ($this->mkType >= 3) {
+                    $kodeFakultas = str($prodi->dp_rel?->fk_rel?->kode ?? '')->lower()->trim();
+                }
             }
 
             $namaStrata = str($prodi->strata)->lower()->trim();
@@ -207,13 +209,7 @@ trait WithProdiSearchFilters
             return $this->mapPr($defaultProdis);
         }
 
-        if (($this->mkType == 2) && filled($this->dp_id) && $this->showMKModal) {
-            $query->where('dp_id', $this->dp_id);
-        } elseif (($this->mkType == 3) && filled($this->fk_id) && $this->showMKModal) {
-            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
-        } else {
-            $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $fakultasId));
-        }
+        $this->havePrParent($query);
 
         $mainResults = $query->get()->sortBy(function ($p) use ($prodiId, $departemenId, $fakultasId) {
             if ($p->id === $prodiId) {
@@ -269,6 +265,8 @@ trait WithProdiSearchFilters
             $this->pr_items = $this->itemsPr($data);
         }
 
+        $this->havePrChild();
+
         $this->prResults = $this->getPrbyUser();
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
     }
@@ -281,6 +279,8 @@ trait WithProdiSearchFilters
             $this->pr_id_array[] = $id;
             $this->pr_items_array[] = $this->itemsPr($data);
         }
+
+        $this->havePrChild();
     }
 
     public function resetPrInput()
@@ -288,6 +288,8 @@ trait WithProdiSearchFilters
         $this->pr_id = null;
         $this->pr_items = null;
         $this->prNameSearch = '';
+
+        $this->havePrChild();
 
         $this->updatedPrNameSearch('');
         $this->resetErrorBag(['pr_id', 'prNameSearch']);
@@ -298,5 +300,30 @@ trait WithProdiSearchFilters
         $this->pr_id_array = [];
         $this->pr_items_array = [];
         $this->prNameSearch = '';
+
+        $this->havePrChild();
+    }
+
+    public function havePrChild()
+    {
+        if (property_exists($this, 'showKelasModal') && property_exists($this, 'rps_id')) {
+            if ($this->showKelasModal == true) {
+                $this->resetRPSArray();
+            }
+        }
+    }
+    public function havePrParent($query)
+    {
+        if (property_exists($this, 'showMKModal') && property_exists($this, 'mkType')) {
+            if ($this->showMKModal == true && $this->mkType == 2 && filled($this->dp_id)) {
+                $query->where('dp_id', $this->dp_id);
+            } elseif ($this->showMKModal == true && $this->mkType == 3 && filled($this->fk_id)) {
+                $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $this->fk_id));
+            }
+            // else {
+            //     $query->whereHas('dp_rel', fn ($q) => $q->where('fk_id', $fakultasId));
+            // }
+        }
+        return $query;
     }
 }

@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Livewire\Staff\KelasManagement\JadwalManagement;
+
+use App\Livewire\Global\HasSortir;
+use App\Models\Kelas\KelasJadwal;
+use Livewire\WithPagination;
+
+trait WithJadwalFilters
+{
+    use HasSortir;
+    use WithPagination;
+
+    public $search = '';
+
+    public $filterJadwal = '';
+
+    public $searchBobotJadwal = '';
+
+    public function inputJadwalSearch($idKelas)
+    {
+        $queryJadwal = KelasJadwal::where('kelas_id', $idKelas);
+
+        if (! empty($this->search)) {
+            $queryJadwal->searchKelasJadwal($this->search);
+        }
+
+        $this->sortFieldOrderJadwal($queryJadwal);
+
+        return $queryJadwal;
+    }
+
+    public function filterByJadwal($kelas)
+    {
+        $this->filterJadwal = $kelas;
+        $this->resetPage();
+    }
+
+    public function resetInputFilter()
+    {
+        $this->reset(['search', 'filterJadwal']);
+        $this->resetPage();
+    }
+
+    public function sortFieldOrderJadwal($queryJadwal)
+    {
+        $queryJadwal->select('kelas_jadwals.*');
+
+        return match ($this->sortField) {
+            'kode' => $queryJadwal->orderBy('kelas_jadwals.kode_jadwal', $this->sortDirection),
+            'kelas' => $queryJadwal->orderBy('kelas_jadwals.nama_kelas', $this->sortDirection),
+            'label_kelas' => $queryJadwal->orderByRaw("CONCAT(kelas_jadwals.label_kelas, ' ', kelas_jadwals.kode_wilayah) ".$this->sortDirection),
+            'hari_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.hari_pelaksanaan', $this->sortDirection),
+            'jam_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.jam_mulai', $this->sortDirection),
+            'kapasitas' => $queryJadwal->orderBy('kelas_jadwals.kapasitas', $this->sortDirection),
+            'tanggal_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.tanggal_mulai', $this->sortDirection),
+            'created_at' => $queryJadwal->orderBy('kelas_jadwals.created_at', $this->sortDirection),
+            'updated_at' => $queryJadwal->orderBy('kelas_jadwals.updated_at', $this->sortDirection),
+            default => $queryJadwal->orderBy('kelas_jadwals.id', $this->sortDirection),
+        };
+    }
+}

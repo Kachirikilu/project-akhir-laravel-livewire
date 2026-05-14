@@ -205,6 +205,7 @@
                 'tab3String' => 'dosen-non-aktif',
                 'tabName' => Auth::user()->prodi,
                 'tab1Name' => 'Semua Status',
+                'tab2Name' => 'Aktif',
                 'tab3Name' => 'Tidak Aktif',
             ])
 
@@ -374,7 +375,7 @@
             'typeXString' => 'rps',
             'typeX2String' => 'sks_full',
             'typeX3String' => 'wajib_text',
-            'typeX4String' => 'draf_text',
+            'typeX4String' => 'draf_full',
             'unfoundString' => 'Tidak ada RPS ditemukan!',
         ])
     </div>

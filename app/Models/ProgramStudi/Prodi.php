@@ -2,6 +2,7 @@
 
 namespace App\Models\ProgramStudi;
 
+use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -110,6 +111,13 @@ class Prodi extends Model
             }
 
             return 'UNI';
+        });
+    }
+
+    protected function fkId(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->dp_rel?->fk_rel?->id;
         });
     }
 

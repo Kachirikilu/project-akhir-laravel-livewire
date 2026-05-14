@@ -6,14 +6,6 @@
 
         @include('livewire.global.table.export-excel', ['xString' => 'exportUserExcel'])
 
-        @include('livewire.global.search-and-filters.partial.tab-filter', [
-                'xString' => 'switchingTable',
-                'xFilter' => $switchTable,
-                'tabFilter' => $totalUsers,
-                'tabString' => '',
-                'tabNameString' => 'Semua Pengguna',
-            ])
-
         <div class="scrollbar-thin flex space-x-4 overflow-x-auto pb-1 w-full">
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',

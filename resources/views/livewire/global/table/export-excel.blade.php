@@ -18,7 +18,7 @@
     }
 }">
     <flux:button @click="handleClick" size="sm"
-        class="cursor-pointer h-8 !text-xs border border-emerald-200 transition-colors !text-emerald-600 dark:!text-emerald-400"
+        class="cursor-pointer h-8 !text-xs border border-emerald-200 transition-colors !text-emerald-600 dark:!text-emerald-400 transition-all duration-200 ease-in-out"
         x-bind:class="confirmExport
             ?
             '!bg-emerald-100 dark:!bg-emerald-900/30' :
