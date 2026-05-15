@@ -1,4 +1,4 @@
-<flux:modal name="kelas-modal" wire:model="showKelasModal" x-data  @refresh-data-kelas.window="$store.kelas.reset()" x-bind:flyout="$store.kelas.isEdit == 1"
+<flux:modal name="kelas-modal" wire:model="showKelasModal" x-data  @refresh-data-kelas.window="$store.kelas.reset()"
     class="sm:w-full md:w-4xl max-w-5xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 
     {{-- Loading Overlay --}}

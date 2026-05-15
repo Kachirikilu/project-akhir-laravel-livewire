@@ -62,6 +62,7 @@
                         '{{ $x->prodi ?? '' }}',
                         '{{ $detail->pr_rel?->departemen_dp ?? '' }}',
                         '{{ $detail->pr_rel?->fakultas_fk ?? '' }}',
+                        '{{ $detail->kode_wilayah ?? '' }}',
                     );
                     $flux.modal('user-modal').show();
             "

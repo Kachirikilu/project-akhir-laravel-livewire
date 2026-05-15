@@ -130,7 +130,17 @@
             const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
             swap(this.items, index, to);
             swap(this.itemsAll, index, to);
-        }
+        },
+    
+        resetItems() {
+            Flux.modal('reset-confirm-modal-{{ $idString }}').show();
+        },
+    
+        clearAllItems() {
+            this.items = [];
+            this.itemsAll = [];
+            this.subItems = [];
+        },
     }">
 
 
@@ -228,10 +238,12 @@
     @enderror
 
     {{-- 3. AREA OPSI TERPILIH (DI DALAM KOTAK) --}}
-    <div class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
+    <div
+        class="mt-4 p-4 border-2 border-dashed border-[var(--border-table-color)] rounded-xl bg-gray-50/30 dark:bg-neutral-800/30">
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
+                @include('livewire.global.modal-form.partial.reset-all-buttons')
                 <span x-show="items.length > 0"
                     class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
                     x-text="items.length + ' Terpilih'"></span>
@@ -248,7 +260,7 @@
                         <div class="flex items-start gap-3 flex-1">
                             <button type="button" @click="setKetuaById(id)"
                                 :class="itemsAll[index]?.is_ketua ? 'text-amber-500' : 'text-gray-300 hover:text-amber-400'"
-                                class="mt-1 transition-colors" title="Jadikan Ketua">
+                                class="cursor-pointer mt-1 transition-colors" title="Jadikan Ketua">
                                 <flux:icon icon="star" variant="solid" class="size-5" />
                             </button>
 
@@ -324,19 +336,19 @@
                             <div class="flex items-center gap-1 ml-2">
                                 <div class="flex flex-col gap-0.5">
                                     <button @click="move(index, -1)" type="button"
-                                        class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
                                         :disabled="(hasKetua ? index === 1 : index === 0) || index === 0">
                                         <flux:icon icon="chevron-up" variant="mini" class="size-4" />
                                     </button>
                                     <button @click="move(index, 1)" type="button"
-                                        class="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
+                                        class="cursor-pointer p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded disabled:opacity-10"
                                         :disabled="index === items.length - 1 || index == 0">
                                         <flux:icon icon="chevron-down" variant="mini" class="size-4" />
                                     </button>
                                 </div>
 
                                 <button @click="removeItem(index)" type="button"
-                                    class="p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
+                                    class="cursor-pointer p-1.5 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors ml-1">
                                     <flux:icon icon="trash" variant="mini" class="size-5" />
                                 </button>
                             </div>

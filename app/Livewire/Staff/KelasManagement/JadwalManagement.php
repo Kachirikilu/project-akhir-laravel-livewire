@@ -3,6 +3,9 @@
 namespace App\Livewire\Staff\KelasManagement;
 
 use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalFilters;
+use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalModal;
+use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Database\QueryException;
@@ -12,13 +15,17 @@ use Livewire\WithPagination;
 class JadwalManagement extends Component
 {
     use WithJadwalFilters;
+    use WithJadwalModal;
+    use WithRPSShow;
+    use WithMahasiswaSearchFilters;
+
     use WithPagination;
 
     public $kode;
 
     public Kelas $kelas;
 
-    public $perPage = 10;
+    public $perPage = 6;
 
     public $sortField = 'label_kelas';
 
@@ -32,7 +39,7 @@ class JadwalManagement extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'perPage' => ['except' => 8],
+        'perPage' => ['except' => 6],
         'sortField' => ['except' => 'label_kelas'],
         'sortDirection' => ['except' => 'asc'],
     ];

@@ -112,6 +112,7 @@
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIDK</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIM</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">NIK</th>
+                            <th class="px-3 py-2 border whitespace-nowrap text-center">Kode Wly</th>
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Thn Masuk</th>
                             {{-- <th class="px-3 py-2 border whitespace-nowrap text-center">Program Studi</th> --}}
                             <th class="px-3 py-2 border whitespace-nowrap text-center">Role</th>
@@ -219,6 +220,33 @@
                                     @if (isset($rowErrors[$i]['nik']))
                                         <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['nik'][0] }}</p>
                                     @endif
+                                </td>
+
+
+                                <td class="{{ $kolomExcel }}">
+                                    <div class="relative">
+                                        <select wire:model="parsedRows.{{ $i }}.kode_wilayah"
+                                            class="w-24 border rounded pl-2 pr-4 py-1 text-xs cursor-pointer appearance-none transition-colors
+                                            {{ isset($rowErrors[$i]['kode_wilayah']) ? 'border-red-500 bg-red-50' : 'bg-gray-50' }}
+                                                text-gray-800 border-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-500
+                                                dark:bg-neutral-700 dark:text-gray-200 dark:border-neutral-600 dark:focus:bg-gray-600 dark:focus:ring-blue-400">
+                                            <option value="IDL" class="dark:bg-neutral-800">IDL</option>
+                                            <option value="PLG" class="dark:bg-neutral-800">PLG</option>
+                                        </select>
+                                        @if (isset($rowErrors[$i]['kode_wilayah']))
+                                            <p class="text-red-500 text-[10px] mt-0.5">{{ $rowErrors[$i]['kode_wilayah'][0] }}
+                                            </p>
+                                        @endif
+
+                                        {{-- Ikon Panah Dropdown --}}
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1 text-gray-400 dark:text-gray-500">
+                                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </td>
 
                                 {{-- Tahun Masuk: Input dikecilkan --}}

@@ -133,18 +133,16 @@ class Kelas extends Model
     {
         $searchTerm = '%' . $search . '%';
         $searchLower = strtolower($search);
+        $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
 
-        return $query->where(function ($q) use ($searchLower, $search, $searchTerm) {
-            $q->where('kelas.kode_kelas', 'like', $searchTerm)
+        return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $searchClean) {
+            $q->where('kelas.kode_kelas', 'like', $searchClean)
                 ->orWhere('kelas.nama_kelas', 'like', $searchTerm)
                 ->orWhereHas('rps_rel', function ($rq) use ($search) {
                     $rq->searchRPS($search);
                 })
                 ->orWhereHas('rps_rel.mk_rel', function ($mq) use ($search) {
                     $mq->searchMK($search);
-                })
-                ->orWhereHas('jadwals', function ($jq) use ($search) {
-                    $jq->searchKelasJadwal($search);
                 })
                 ->orWhereHas('pr_rel', function ($pq) use ($search) {
                     $pq->searchProdi($search);

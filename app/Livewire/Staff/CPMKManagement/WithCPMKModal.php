@@ -34,19 +34,28 @@ trait WithCPMKModal
 
     protected $cpmk_rps_modal_paginator;
 
+    public $isFlyoutCPMK = false;
+
+    public function updatedShowCPMKModal($value)
+    {
+        if (! $value) {
+            $this->isFlyoutCPMK = false;
+            $this->isEditingCPMK = false;
+        } else {
+            $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
+        }
+    }
+
     public function addCPMK($key = 'cpmk')
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        if ($this->showEditCPMK == true) {
-            $this->resetInputCPMK();
-        }
-
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingCPMK = false;
+        $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
         $this->showCPMKModal = true;
         $this->showEditCPMK = false;
 
@@ -77,7 +86,8 @@ trait WithCPMKModal
         $this->selected_id_cpmk = $id;
         $this->isEditingCPMK = true;
         $this->showEditCPMK = true;
-
+        $this->isFlyoutCPMK = $this->showRPSModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
+        
         try {
             // 1. Load data CPMK dengan relasi yang sangat lengkap
             $cpmk = CPMK::with([

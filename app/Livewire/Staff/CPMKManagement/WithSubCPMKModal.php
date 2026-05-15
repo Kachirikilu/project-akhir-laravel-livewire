@@ -34,6 +34,19 @@ trait WithSubCPMKModal
 
     protected $scpmk_rps_modal_paginator;
 
+    public $isFlyoutSCPMK = false;
+
+    public function updatedShowSCPMKModal($value)
+    {
+        if (! $value) {
+            $this->isFlyoutSCPMK = false;
+            $this->isEditingSCPMK = false;
+        } else {
+            $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
+        }
+    }
+
+
     public function addSCPMK($key = 'scpmk')
     {
         if (! $this->AuthCheck('staff')) {
@@ -47,7 +60,10 @@ trait WithSubCPMKModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingSCPMK = false;
+        $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
+
         $this->showSCPMKModal = true;
+        
         $this->showEditSCPMK = false;
 
         $this->refNameSearch['scpmk'] = '';
@@ -71,6 +87,8 @@ trait WithSubCPMKModal
         $this->selected_id_scpmk = $id;
         $this->isEditingSCPMK = true;
         $this->showEditSCPMK = true;
+        $this->isFlyoutSCPMK = $this->showRPSModal || $this->showCPMKModal || $this->showCPLModal || $this->showRefModal;
+
 
         try {
             $scpmk = SubCPMK::with([

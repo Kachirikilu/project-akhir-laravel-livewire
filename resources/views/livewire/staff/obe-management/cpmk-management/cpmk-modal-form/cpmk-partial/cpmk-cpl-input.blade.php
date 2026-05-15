@@ -10,7 +10,7 @@
         </h4>
 
         @if (!$this->showCPLModal || $this->isEditingCPL == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => true])
+            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpl', 'isFlyout' => 1, 'isSmall' => 1])
         @endif
     </div>
 

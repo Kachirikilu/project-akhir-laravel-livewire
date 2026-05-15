@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Staff\ReferensiManagement;
 
-use App\Livewire\Global\HasToast;
 use App\Livewire\Global\HasErrorCount;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\Referensi;
 use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +13,8 @@ use Livewire\WithPagination;
 
 trait WithRefModal
 {
-    use HasToast;
     use HasErrorCount;
+    use HasToast;
     use WithPagination;
 
     public $selected_id_ref;
@@ -33,6 +33,18 @@ trait WithRefModal
 
     protected $ref_rps_modal_paginator;
 
+    public $isFlyoutRef = false;
+
+    public function updatedShowRefModal($value)
+    {
+        if (! $value) {
+            $this->isFlyoutRef = false;
+            $this->isEditingRef = false;
+        } else {
+            $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
+        }
+    }
+
     public function addRef()
     {
         if (! $this->AuthCheck('staff')) {
@@ -46,6 +58,8 @@ trait WithRefModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingRef = false;
+
+        $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
         $this->showRefModal = true;
         $this->showEditRef = false;
 
@@ -64,6 +78,8 @@ trait WithRefModal
         $this->selected_id_ref = $id;
         $this->isEditingRef = true;
         $this->showEditRef = true;
+
+        $this->isFlyoutRef = $this->showRPSModal || $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal;
 
         // $this->showRefModal = true;
         // $this->dispatch('refresh-component');
@@ -111,11 +127,11 @@ trait WithRefModal
                 $query->whereHas('refs', function ($inner) use ($ref) {
                     $inner->where('referensis.id', $ref->id);
                 })
-                ->orWhereHas('scpmks', function ($inner) use ($ref) {
-                    $inner->whereHas('refs', function ($deep) use ($ref) {
-                        $deep->where('referensis.id', $ref->id);
+                    ->orWhereHas('scpmks', function ($inner) use ($ref) {
+                        $inner->whereHas('refs', function ($deep) use ($ref) {
+                            $deep->where('referensis.id', $ref->id);
+                        });
                     });
-                });
             })
             ->orWhereHas('cpmks.scpmks.refs', function ($query) use ($ref) {
                 $query->where('referensis.id', $ref->id);
@@ -331,7 +347,7 @@ trait WithRefModal
 
             $this->toast(message: "Referensi {$validated['kode_ref_1']}-{$validated['kode_ref_2']}", type: 'update');
             $this->resetInputRef();
-            
+
             $this->showRefModal = false;
             $this->dispatch('refresh-data-ref');
 

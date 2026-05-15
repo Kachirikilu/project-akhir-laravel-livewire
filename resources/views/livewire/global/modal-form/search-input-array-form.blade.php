@@ -1,56 +1,69 @@
-<div class="relative" wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}-{{ $alpine }}" x-data="{
-    open: false,
-    search: @isset($nameSearchString) @entangle($nameSearchString).live @else null @endisset,
-    items: @isset($idString) @entangle($idString).live @else [] @endisset,
-    itemsAll: @isset($itemsAllString) @entangle($itemsAllString).live @else [] @endisset,
-    hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
-    parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
-
-    init() {
-        if (!Array.isArray(this.items)) this.items = [];
-        if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
-    },
-
-    get isParentReady() {
-        if (!this.hasParent) {
-            return true;
-        }
-
-        if (Array.isArray(this.parentSelectedId)) {
-            return this.parentSelectedId.length > 0;
-        }
-
-        return this.parentSelectedId != null && this.parentSelectedId !== '';
-    },
-
-    addItem(id, kode, slot1, slot2, slot3, link) {
-        let normalizedId = Number(id);
-        if (!this.items.map(i => Number(i)).includes(normalizedId)) {
-            this.items.push(normalizedId);
-
-            this.itemsAll.push({
-                kode: kode,
-                slot1: slot1,
-                slot2: slot2,
-                slot3: slot3,
-                link: link
-            });
-        }
-    },
-
-    removeItem(index) {
-        this.items.splice(index, 1);
-        this.itemsAll.splice(index, 1);
-    },
-
-    move(index, direction) {
-        let to = index + direction;
-        if (to < 0 || to >= this.items.length) return;
-        const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
-        swap(this.items, index, to);
-        swap(this.itemsAll, index, to);
-    }
-}">
+<div class="relative"
+    wire:key="search-array-{{ $typeXString }}-{{ $selectX }}-{{ $key ?? 'default' }}-{{ str_replace('.', '-', $idString) }}-{{ $alpine }}"
+    x-data="{
+        open: false,
+        search: @isset($nameSearchString) @entangle($nameSearchString).live @else null @endisset,
+        items: @isset($idString) @entangle($idString).live @else [] @endisset,
+        itemsAll: @isset($itemsAllString) @entangle($itemsAllString).live @else [] @endisset,
+        hasParent: {{ isset($parentIdString) ? 'true' : 'false' }},
+        parentSelectedId: @isset($parentIdString) @entangle($parentIdString).live @else null @endisset,
+    
+        init() {
+            if (!Array.isArray(this.items)) this.items = [];
+            if (!Array.isArray(this.itemsAll)) this.itemsAll = [];
+        },
+    
+        get isParentReady() {
+            if (!this.hasParent) {
+                return true;
+            }
+    
+            if (Array.isArray(this.parentSelectedId)) {
+                return this.parentSelectedId.length > 0;
+            }
+    
+            return this.parentSelectedId != null && this.parentSelectedId !== '';
+        },
+    
+        addItem(id, kode, slot1, slot2, slot3, slot4, slot5, link) {
+            let normalizedId = Number(id);
+            if (!this.items.map(i => Number(i)).includes(normalizedId)) {
+                this.items.push(normalizedId);
+    
+                this.itemsAll.push({
+                    kode: kode,
+                    slot1: slot1,
+                    slot2: slot2,
+                    slot3: slot3,
+                    slot4: slot4,
+                    slot5: slot5,
+                    link: link
+                });
+            }
+        },
+    
+        removeItem(index) {
+            this.items.splice(index, 1);
+            this.itemsAll.splice(index, 1);
+        },
+    
+        move(index, direction) {
+            let to = index + direction;
+            if (to < 0 || to >= this.items.length) return;
+            const swap = (arr, a, b) => [arr[a], arr[b]] = [arr[b], arr[a]];
+            swap(this.items, index, to);
+            swap(this.itemsAll, index, to);
+        },
+    
+        resetItems() {
+            Flux.modal('reset-confirm-modal-{{ $idString }}').show();
+        },
+    
+        clearAllItems() {
+            this.items = [];
+            this.itemsAll = [];
+        },
+    }">
 
     {{-- 1. INPUT SEARCH --}}
     @include('livewire.global.modal-form.partial.label')
@@ -75,13 +88,15 @@
                     $itemLabel = data_get($x, $typeXString, '');
                     $itemLabel2 = isset($typeX2String) ? data_get($x, $typeX2String, '') : null;
                     $itemLabel3 = isset($typeX3String) ? data_get($x, $typeX3String, '') : null;
+                    $itemLabel4 = isset($typeX4String) ? data_get($x, $typeX4String, '') : null;
+                    $itemLabel5 = isset($typeX5String) ? data_get($x, $typeX5String, '') : null;
                     $itemLink = isset($typeLinkString) ? data_get($x, $typeLinkString, '') : null;
                 @endphp
 
                 @if ($itemId !== null)
                     <div wire:key="res-{{ $typeXString }}-{{ $itemId }}"
                         class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-neutral-700 hover:bg-[var(--hover-pop-up-color)] transition-colors">
-                        
+
                         @include('livewire.global.modal-form.partial.dropdown-items')
 
                         <button type="button"
@@ -99,6 +114,8 @@
                                     '{{ $itemLabel }}', 
                                     @isset($typeX2String) '{{ $itemLabel2 }}' @else null @endisset, 
                                     @isset($typeX3String) '{{ $itemLabel3 }}' @else null @endisset,
+                                    @isset($typeX4String) '{{ $itemLabel4 }}' @else null @endisset,
+                                    @isset($typeX5String) '{{ $itemLabel5 }}' @else null @endisset,
                                     @isset($typeLinkString) '{{ $itemLink }}' @else null @endisset,
                                 );
                                 @isset($selectX)
@@ -110,7 +127,7 @@
                                 'bg-[var(--focus-color)] text-white'"
                             class="p-1.5 rounded-md transition-all group">
 
-                  
+
                             @include('livewire.global.modal-form.partial.dropdown-select')
 
                         </button>
@@ -146,6 +163,9 @@
         <div class="flex items-center justify-between mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-gray-400">Daftar Terpilih:</span>
             <div class="flex items-center gap-2">
+
+                @include('livewire.global.modal-form.partial.reset-all-buttons')
+
                 <span x-show="(items?.length || 0) > 0"
                     class="text-xs px-3 py-1 bg-[var(--focus-color)] text-white rounded-full"
                     x-text="(items?.length || 0) + ' Terpilih'"></span>
@@ -163,9 +183,15 @@
 
                         <div class="flex flex-col gap-1 flex-1">
                             <div class="flex items-center gap-2">
-                                <span
-                                    class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
-                                    x-text="itemsAll[index]?.kode"></span>
+                                @if ($idString == 'mahasiswa_id_array')
+                                    <span
+                                        class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
+                                        x-text="'NIM: ' + itemsAll[index]?.kode"></span>
+                                @else
+                                    <span
+                                        class="text-xs font-bold mb-1.5 px-1.5 py-0.5 rounded bg-[var(--focus-color)] text-white"
+                                        x-text="itemsAll[index]?.kode"></span>
+                                @endif
                                 <div class="h-px flex-1 mb-1.5 bg-gray-200 dark:bg-neutral-800 opacity-40"></div>
                             </div>
 
@@ -186,6 +212,16 @@
                                     <span x-text="itemsAll[index]?.slot3"></span>
                                 @endif
 
+                                @if ($typeX4String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.slot4"></span>
+                                @endif
+
+                                @if ($typeX4String ?? null)
+                                    <span class="mx-1.5 opacity-50">|</span>
+                                    <span x-text="itemsAll[index]?.slot5"></span>
+                                @endif
+
                                 @if ($typeLinkString ?? null)
                                     <span class="mx-1.5 opacity-50">|</span>
                                     <a :href="itemsAll[index]?.link" target="_blank"
@@ -204,7 +240,8 @@
             </template>
 
             {{-- Empty State --}}
-            <div x-show="(items?.length || 0) === 0" class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
+            <div x-show="(items?.length || 0) === 0"
+                class="pt-6 pb-12 flex flex-col items-center justify-center opacity-40">
                 <flux:icon icon="list-bullet" variant="outline" class="mb-1" />
                 <p class="text-xs italic">Belum ada {{ $nameXString }} yang dipilih!</p>
             </div>

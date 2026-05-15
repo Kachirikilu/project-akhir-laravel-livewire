@@ -44,6 +44,7 @@ class User extends Authenticatable
         'identity3',
         'nik',
         'status',
+        'status_full'
     ];
 
     protected $casts = [
@@ -307,6 +308,11 @@ class User extends Authenticatable
             'Tidak Ada'
         );
     }
+
+    protected function statusFull(): Attribute
+    {
+        return Attribute::get(fn () => 'Status: '. $this->status);
+    }
     // / Attribute Utama User /// Attribute Utama User /// Attribute Utama User
 
     // / ... /// ... /// ...
@@ -496,7 +502,7 @@ class User extends Authenticatable
                 }
 
             } else {
-                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', "%{$this->searchAngkatan}%")
+                $q->whereHas('mahasiswa', fn ($q) => $q->where('angkatan', 'like', [$searchTerm])
                 );
             }
         });

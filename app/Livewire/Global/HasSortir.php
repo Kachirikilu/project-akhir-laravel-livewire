@@ -74,6 +74,33 @@ trait HasSortir
         ) {$this->sortDirection}
     ");
     }
+
+    // public function applyJadwalKodeSort($queryJadwal, $sortir = 'kelas_jadwals')
+    // {
+    //     return $queryJadwal->orderByRaw(
+    //         "(
+    //             SELECT CONCAT_WS('-',
+    //                 k.kode_kelas,
+    //                 {$sortir}.label_kelas,
+    //                 {$sortir}.kode_wilayah,
+    //                 mk.kode_semester,
+    //                 (
+    //                     CASE
+    //                         WHEN CAST({$sortir}.tahun AS UNSIGNED) >= 3000 THEN CAST({$sortir}.tahun AS CHAR)
+    //                         WHEN CAST({$sortir}.tahun AS UNSIGNED) >= 2100 THEN RIGHT(CAST({$sortir}.tahun AS CHAR), 3)
+    //                         WHEN CAST({$sortir}.tahun AS UNSIGNED) >= 2000 THEN RIGHT(CAST({$sortir}.tahun AS CHAR), 2)
+    //                         ELSE CAST({$sortir}.tahun AS CHAR)
+    //                     END
+    //                 )
+    //             )
+    //             FROM kelas k
+    //             LEFT JOIN rps r ON k.rps_id = r.id
+    //             LEFT JOIN mata_kuliahs mk ON r.mk_id = mk.id
+    //             WHERE k.id = {$sortir}.kelas_id
+    //             LIMIT 1
+    //         ) {$this->sortDirection}
+    //     ");
+    // }
 }
 
     

@@ -38,6 +38,8 @@ document.addEventListener("alpine:init", () => {
         nama_pr_search: "",
         pr_items: "",
 
+        kode_wilayah: "",
+
         setValueUser(
             email,
             password,
@@ -54,7 +56,8 @@ document.addEventListener("alpine:init", () => {
             kodePr,
             prodi,
             departemen,
-            fakultas
+            fakultas,
+            wilayah,
         ) {
             this.email = email;
             this.password = password;
@@ -78,6 +81,7 @@ document.addEventListener("alpine:init", () => {
                 "slot2": departemen,
                 "slot3": fakultas
             };
+            this.kode_wilayah = wilayah;
         },
         setDeleteUser(email, forceDelete) {
             this.email_delete = email;
@@ -112,6 +116,8 @@ document.addEventListener("alpine:init", () => {
             this.pr_id = "";
             this.nama_pr_search = "";
             this.pr_items = "";
+
+            this.kode_wilayah = "";
 
             // Delete
             this.email_delete = "";

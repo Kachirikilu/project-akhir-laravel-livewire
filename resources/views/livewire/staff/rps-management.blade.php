@@ -1,5 +1,5 @@
 <div class="py-6 sm:px-6 sm:py-10 sm:bg-[var(--wadah-color)] sm:shadow-sm rounded-xl">
-    @include('livewire.staff.obe-management.obe-toolbar', ["typeXString" => 'all', 'isFlyout' => false])
+    @include('livewire.staff.obe-management.obe-toolbar', ["typeXString" => 'all'])
     @include('livewire.staff.obe-management.obe-switch-table')
     @include('livewire.staff.obe-management.obe-search-and-filters')
 
@@ -32,13 +32,13 @@
         @endif
     </div>
 
-    @include('livewire.staff.obe-management.rps-management.rps-flyout')
+    @include('livewire.staff.obe-management.rps-management.rps-modal-form')
     @include('livewire.staff.obe-management.rps-management.rps-show-modal')
     
-    @include('livewire.staff.obe-management.cpmk-management.cpmk-flyout')
-    @include('livewire.staff.obe-management.scpmk-management.scpmk-flyout')
-    @include('livewire.staff.obe-management.cpl-management.cpl-flyout')
-    @include('livewire.staff.obe-management.ref-management.ref-flyout')
+    @include('livewire.staff.obe-management.cpmk-management.cpmk-modal-form')
+    @include('livewire.staff.obe-management.scpmk-management.scpmk-modal-form')
+    @include('livewire.staff.obe-management.cpl-management.cpl-modal-form')
+    @include('livewire.staff.obe-management.ref-management.ref-modal-form')
 
     @include('livewire.admin.user-management.user-modal-form', ['withRPS' => true])
     

@@ -19,11 +19,17 @@ trait WithJadwalFilters
 
     public function inputJadwalSearch($idKelas)
     {
-        $queryJadwal = KelasJadwal::where('kelas_id', $idKelas);
+        $queryJadwal = KelasJadwal::where('kelas_id', $idKelas)
+            ->with(['kelas_rel', 'kelas_rel.rps_rel.mk_rel.prodis', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel', 'kelas_rel.rps_rel.mk_rel.prodis.dp_rel.fk_rel']);
+        $search = $this->search;
 
-        if (! empty($this->search)) {
-            $queryJadwal->searchKelasJadwal($this->search);
+        if (! empty($search)) {
+            $queryJadwal->searchKelasJadwal($search);
         }
+    //   dd(
+    //         $queryJadwal->searchKelasJadwal($search)->toSql(),
+    //         $queryJadwal->searchKelasJadwal($search)->getBindings()
+    //     );
 
         $this->sortFieldOrderJadwal($queryJadwal);
 
@@ -47,9 +53,10 @@ trait WithJadwalFilters
         $queryJadwal->select('kelas_jadwals.*');
 
         return match ($this->sortField) {
-            'kode' => $queryJadwal->orderBy('kelas_jadwals.kode_jadwal', $this->sortDirection),
+            // 'kode' => $this->applyJadwalKodeSort($queryJadwal),
+            'kode' => $queryJadwal->orderByRaw("CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah, kelas_jadwals.tanggal_mulai) ".$this->sortDirection),
             'kelas' => $queryJadwal->orderBy('kelas_jadwals.nama_kelas', $this->sortDirection),
-            'label_kelas' => $queryJadwal->orderByRaw("CONCAT(kelas_jadwals.label_kelas, ' ', kelas_jadwals.kode_wilayah) ".$this->sortDirection),
+            'label_kelas' => $queryJadwal->orderByRaw("CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah) ".$this->sortDirection),
             'hari_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.hari_pelaksanaan', $this->sortDirection),
             'jam_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.jam_mulai', $this->sortDirection),
             'kapasitas' => $queryJadwal->orderBy('kelas_jadwals.kapasitas', $this->sortDirection),

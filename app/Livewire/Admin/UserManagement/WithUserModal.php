@@ -43,6 +43,8 @@ trait WithUserModal
 
     protected $dosen_rps_modal_paginator;
 
+    public $isFlyoutUser = false;
+
     protected $rules = [
         'email' => 'required|email',
         'password' => 'nullable|min:8',
@@ -55,6 +57,14 @@ trait WithUserModal
         'angkatan' => 'required|integer',
         'pr_id' => 'required|integer|exists:prodis,id',
     ];
+
+    // public function updatedShowUserModal($value)
+    // {
+    //     if (! $value) {
+    //         $this->isEditingUser = false;
+    //     }
+    //     $this->syncFlyoutPreStates();
+    // }
 
     public function addUser($role)
     {
@@ -182,6 +192,11 @@ trait WithUserModal
                 Rule::unique('mahasiswas', 'nik'),
             ];
 
+            $rules['kode_wilayah'] = [
+                'required',
+                Rule::in(['IDL', 'PLG'])
+            ];
+
             $rules['status'] = [
                 'required',
                 Rule::in([
@@ -271,6 +286,11 @@ trait WithUserModal
                 Rule::unique('mahasiswas', 'nik'),
             ];
 
+            $rules['kode_wilayah'] = [
+                'required',
+                Rule::in(['IDL', 'PLG'])
+            ];
+
             $rules['angkatan'] =
                 'required|integer|min:1960|max:'.date('Y');
 
@@ -354,6 +374,7 @@ trait WithUserModal
         if (! $this->AuthCheck()) {
             return;
         }
+
         // if (empty($data['pr_id'])) {
         $data['pr_id'] = $this->pr_id;
         // }
@@ -382,8 +403,14 @@ trait WithUserModal
                 } else {
                     $identity1Input = $validated['nim'];
                 }
+
+   
                 $nikInput = $validated['nik'];
                 $prodiInput = $validated['pr_id'];
+
+                if ($this->roleType !== 'dosen') {
+                    $kodeWly = $validated['kode_wilayah'];
+                }
                 $statusInput = $validated['status'];
 
                 $dosen = null;
@@ -396,6 +423,7 @@ trait WithUserModal
                         'nitk' => $identity2Input,
                         'nik' => $nikInput,
                         'pr_id' => $prodiInput,
+                        'kode_wilayah' => $kodeWly,
                         'status' => $statusInput,
                     ]);
                 } elseif ($this->roleType === 'dosen') {
@@ -417,6 +445,7 @@ trait WithUserModal
                         'nik' => $nikInput,
                         'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
+                        'kode_wilayah' => $kodeWly,
                         'status' => $statusInput,
                     ]);
                 }
@@ -498,6 +527,10 @@ trait WithUserModal
                 }
                 $nikInput = $validated['nik'];
                 $prodiInput = $validated['pr_id'];
+
+                if ($this->roleType !== 'dosen') {
+                    $kodeWly = $validated['kode_wilayah'];
+                }
                 $statusInput = $validated['status'];
 
                 if ($this->roleType === 'admin') {
@@ -508,6 +541,7 @@ trait WithUserModal
                             'nitk' => $identity2Input,
                             'nik' => $nikInput,
                             'pr_id' => $prodiInput,
+                            'kode_wilayah' => $kodeWly,
                             'status' => $statusInput,
                         ]
                     );
@@ -530,6 +564,7 @@ trait WithUserModal
                         'nik' => $nikInput,
                         'angkatan' => $validated['angkatan'],
                         'pr_id' => $prodiInput,
+                        'kode_wilayah' => $kodeWly,
                         'status' => $statusInput,
                     ]);
                 }
@@ -590,6 +625,8 @@ trait WithUserModal
             'excel_file.required' => 'File Excel wajib diunggah!',
             'excel_file.file' => 'File Excel harus berupa file yang valid!',
             'excel_file.mimes' => 'File Excel harus berformat .xlsx, .xls, atau .csv!',
+            'kode_wilayah.required' => 'Kode Wilayah untuk Admin & Mahasiswa wajib dipilih!',
+            'kode_wilayah.in' => "Kode Wilayah hanya boleh 'IDL' & 'PLG'!",
             'status.required' => 'Status pengguna wajib dipilih!',
             'status.in' => 'Status yang dipilih tidak sesuai dengan kategori yang diizinkan!',
         ];

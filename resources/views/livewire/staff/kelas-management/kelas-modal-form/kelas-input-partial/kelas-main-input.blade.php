@@ -59,8 +59,8 @@
         'isRequired' => 0,
     ])
 
-    <div x-data x-init="$watch('$store.kelas.kode_kelas', value => console.log('kode_kelas: ', value))"></div>
+    {{-- <div x-data x-init="$watch('$store.kelas.kode_kelas', value => console.log('kode_kelas: ', value))"></div>
     <div x-data x-init="$watch('$store.kelas.nama_kelas', value => console.log('nama_kelas: ', value))"></div>
     <div x-data x-init="$watch('$store.kelas.pr_id', value => console.log('pr_id: ', value))"></div>
-    <div x-data x-init="$watch('$store.kelas.rps_id', value => console.log('rps_id: ', value))"></div>
+    <div x-data x-init="$watch('$store.kelas.rps_id', value => console.log('rps_id: ', value))"></div> --}}
 </div>

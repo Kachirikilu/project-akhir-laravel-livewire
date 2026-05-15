@@ -33,6 +33,18 @@ trait WithCPLModal
 
     protected $cpl_rps_modal_paginator;
 
+    public $isFlyoutCPL = false;
+
+    public function updatedShowCPLModal($value)
+    {
+        if (! $value) {
+            $this->isFlyoutCPL = false;
+            $this->isEditingCPL = false;
+        } else {
+            $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
+        }
+    }
+
     public function addCPL()
     {
         if (! $this->AuthCheck('staff')) {
@@ -46,7 +58,10 @@ trait WithCPLModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingCPL = false;
+        $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
+
         $this->showCPLModal = true;
+        
         $this->showEditCPL = false;
 
     }
@@ -64,6 +79,7 @@ trait WithCPLModal
         $this->selected_id_cpl = $id;
         $this->isEditingCPL = true;
         $this->showEditCPL = true;
+        $this->isFlyoutCPL = $this->showRPSModal || $this->showCPMKModal || $this->showRefModal;
 
         // $this->showCPLModal = true;
         // $this->dispatch('refresh-component');

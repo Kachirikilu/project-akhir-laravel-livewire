@@ -255,6 +255,7 @@ trait WithUserExcel
                 'nidk' => $data['nidk'] ?? '',
                 'nim' => $data['nim'] ?? '',
                 'nik' => $data['nik'] ?? '',
+                'kode_wilayah' => strtoupper(($data['kode wilayah'] ?: $data['kode kampus']) ?: 'IDL'),
                 'angkatan' => $data['tahun angkatan'] ?? $data['angkatan'] ?? '',
                 'role' => strtolower($data['role'] ?? ''),
             ];
@@ -404,6 +405,7 @@ trait WithUserExcel
                     'nitk' => $validated['nitk'] ?? null,
                     'nik' => $validated['nik'],
                     'pr_id' => $validated['pr_id'],
+                    'kode_wilayah' => $validated['kode_wilayah'],
                     'status' => $validated['status'],
                 ]);
             } elseif ($role === 'dosen') {
@@ -425,6 +427,7 @@ trait WithUserExcel
                     'nik' => $validated['nik'],
                     'angkatan' => $validated['angkatan'],
                     'pr_id' => $validated['pr_id'],
+                    'kode_wilayah' => $validated['kode_wilayah'],
                     'status' => $validated['status'],
                 ]);
             }

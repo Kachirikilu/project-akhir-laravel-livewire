@@ -16,7 +16,9 @@
                         <th class="pb-3 px-4 min-w-32">Deskripsi Tugas</th>
                         <th class="pb-3 px-4 text-center">Waktu Tugas</th>
                         <th class="pb-3 px-4 text-center">Waktu Mandiri</th>
-                        <th class="pb-3 px-4 text-center">Edit</th>
+                        @unless (($this->showSCPMKModal || $this->isEditingSCPMK) && ($this->isFlyoutRPS || $this->isFlyoutCPMK))
+                            <th class="pb-3 px-4 text-center">Edit</th>
+                        @endunless
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[var(--border-table-color)]">
@@ -69,17 +71,17 @@
                             <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]"
                                 x-text="sub.w_mandiri || '-'"></td>
 
+                            @unless (($this->showSCPMKModal || $this->isEditingSCPMK) && ($this->isFlyoutRPS || $this->isFlyoutCPMK))
+                                <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
 
-                            <td class="py-2.5 px-2 text-center leading-relaxed text-[var(--contrast-main-text)]">
+                                    {{-- 3. Tombol Aksi (Minimalist Style) --}}
+                                    <div
+                                        class="col-span-2 flex items-center justify-center border-zinc-200/50 dark:border-zinc-700/50">
 
-                                {{-- 3. Tombol Aksi (Minimalist Style) --}}
-                                <div
-                                    class="col-span-2 flex items-center justify-center border-zinc-200/50 dark:border-zinc-700/50">
-
-                                    {{-- Action Link: Edit --}}
-                                    <button type="button"
-                                        class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200"
-                                        @click="
+                                        {{-- Action Link: Edit --}}
+                                        <button type="button"
+                                            class="cursor-pointer group flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
+                                            @click="
                                                 $store.scpmk?.reset();
                                                 $store.scpmk?.setEdit(1);
                                                 $store.scpmk?.setFlyout(true);
@@ -98,19 +100,20 @@
                                                 );
                                                 $flux.modal('scpmk-modal').show();
                                             "
-                                        wire:click="editSCPMK(sub.id)">
+                                            wire:click="editSCPMK(sub.id)">
 
-                                        <div
-                                            class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30 transition-colors">
-                                            <flux:icon
-                                                wire:loading.class="opacity-50 pointer-events-none transition-opacity"
-                                                wire:target="editSCPMK()" name="pencil-square" variant="micro"
-                                                class="w-3.5 h-3.5" />
-                                        </div>
-                                    </button>
+                                            <div
+                                                class="p-1 rounded-md bg-zinc-100 dark:bg-zinc-800 group-hover:bg-yellow-50 dark:group-hover:bg-yellow-900/30 transition-colors">
+                                                <flux:icon
+                                                    wire:loading.class="opacity-50 pointer-events-none transition-opacity"
+                                                    wire:target="editSCPMK()" name="pencil-square" variant="micro"
+                                                    class="w-3.5 h-3.5" />
+                                            </div>
+                                        </button>
 
-                                </div>
-                            </td>
+                                    </div>
+                                </td>
+                            @endunless
                         </tr>
                     </template>
                 </tbody>

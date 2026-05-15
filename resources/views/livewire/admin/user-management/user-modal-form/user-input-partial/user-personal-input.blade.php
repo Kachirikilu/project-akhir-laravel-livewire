@@ -21,26 +21,18 @@
         'message' => $errors->first('name'),
     ])
 
-    @include('livewire.global.modal-form.search-input-form', [
-        'alpine' => 'user',
-        'xResults' => $prResults,
-        'selectX' => 'selectPr',
-        'modelString' => 'nama_pr_search',
-    
-        'idString' => 'pr_id',
-        'itemsAllString' => 'pr_items',
-    
-        'resetXInput' => 'resetPrInput()',
-        'typeXString' => 'prodi',
-        'typeX2String' => 'departemen',
-        'typeX3String' => 'fakultas',
-    
-        'nameXString' => 'Program Studi',
-        'nameSearchString' => 'prNameSearch',
-        'fetchString' => 'fetchPr',
-        'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr',
-    ])
+    <template x-if="$store.user?.typeModal !== 'dosen'" x-cloak>
+        @include('livewire.global.modal-form.select-form', [
+            'alpine' => 'user',
+            'nameXString' => 'Kode Wilayah',
+            'modelString' => 'kode_wilayah',
+            'xOptions' => ['IDL (Kampus Indralaya)', 'PLG (Kampus Bukit)'],
+            'xValues' => ['IDL', 'PLG'],  
+            'iconString' => 'map-pin',
+            'placeholder' => 'Pilih Kode Wilayah...',
+            'message' => $errors->first('kode_wilayah'),
+        ])
+    </template>
 
 
     <template x-if="$store.user?.typeModal == 'admin'" x-cloak>

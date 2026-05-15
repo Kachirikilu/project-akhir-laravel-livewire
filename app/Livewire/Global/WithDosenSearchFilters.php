@@ -131,15 +131,15 @@ trait WithDosenSearchFilters
 
             $normalizedValue = str_replace(['-', ' '], '', strtolower($value));
             $exactMatch = $results->first(function ($d) use ($value, $normalizedValue) {
-                $normalizedDosenNip = str_replace(['-', ' '], '', strtolower($d->nip));
-                $normalizedDosenNidn = str_replace(['-', ' '], '', strtolower($d->nidn));
-                $normalizedDosenNidk = str_replace(['-', ' '], '', strtolower($d->nidnk));
+                $normalizedDosenNIP = str_replace(['-', ' '], '', strtolower($d->nip));
+                $normalizedDosenNIDN = str_replace(['-', ' '], '', strtolower($d->nidn));
+                $normalizedDosenNIDK = str_replace(['-', ' '], '', strtolower($d->nidnk));
                 
                 return strtolower($d->name) === strtolower($value) 
                     || strtolower($d->user->email) === strtolower($value) 
-                    || $normalizedDosenNip === $normalizedValue
-                    || $normalizedDosenNidn === $normalizedValue
-                    || $normalizedDosenNidk === $normalizedValue;
+                    || $normalizedDosenNIP === $normalizedValue
+                    || $normalizedDosenNIDN === $normalizedValue
+                    || $normalizedDosenNIDK === $normalizedValue;
             });
 
             if ($exactMatch) {

@@ -4,8 +4,9 @@
 
         @php
             $isTrashed = $x->trashed();
+            $rpsId = $x->kelas_rel?->rps_id ?? 'null';
 
-            $showRPSCall = "showRPS($x->rps_id)";
+            $showRPSCall = "showRPS($rpsId)";
             $editCall = "editJadwal($x->id)";
             $deleteCall = "deleteJadwal($x->id, $isTrashed)";
             $restoreCall = "restoreJadwal($x->id)";
@@ -13,34 +14,18 @@
 
         @include('livewire.global.table.text-copy', [
             'xType' => $copyText ?? $x->kode,
-            'typeXString' => $copyName ?? 'Kode Kelas',
+            'typeXString' => $copyName ?? 'Kode Jadwal',
         ])
 
         <flux:menu.separator />
-        
-            <flux:menu.item
-                href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
-                class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
-                
-                <flux:icon name="eye" class="mr-2 h-4 w-4" />
-
-                <div class="flex justify-between items-center w-full">
-                    <span>Detail Kelas</span>
-                    <flux:icon wire:loading wire:target="showKelas" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-2" />
-                </div>
-            </flux:menu.item>
-
-        <flux:menu.separator />
-
 
         <flux:menu.item
             @click="
-                $store.kelas?.resetShow();
-                $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.jadwal?.resetShow();
+                $store.jadwal?.setColor('text-emerald-700 dark:text-emerald-400');
 
-                    $store.kelas?.setShowRPS(
-                        '{{ $x->rps_id ?? '' }}',
+                    $store.jadwal?.setShowRPS(
+                        '{{ $x->kelas_rel?->rps_id ?? '' }}',
                     );
 
                     $flux.modal('rps-detail-modal').show();
@@ -60,7 +45,7 @@
 
         <flux:menu.separator />
 
-        <div wire:click="printPDFRPS({{ $x->rps_id }})"
+        <div wire:click="printPDFRPS({{ $x->kelas_rel?->rps_id }})"
             class="px-3 py-2 flex items-center justify-between w-full cursor-pointer
                 !text-rose-600 dark:!text-rose-400
                 hover:!bg-rose-100 dark:hover:!bg-rose-900/30
@@ -69,7 +54,7 @@
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
             </div>
-            <flux:icon wire:loading wire:target="printPDFRPS({{ $x->rps_id }})" name="arrow-path"
+            <flux:icon wire:loading wire:target="printPDFRPS({{ $x->kelas_rel?->rps_id }})" name="arrow-path"
                 class="animate-spin h-4 w-4 ml-2" />
         </div>
 
@@ -79,32 +64,13 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                $store.kelas?.reset();
-                $store.kelas?.setEdit(1);
+                    $store.jadwal?.reset();
+                    $store.jadwal?.setEdit(1);
 
-                $store.kelas?.setColor('text-emerald-700 dark:text-emerald-400');
+                    $store.jadwal?.setColor('text-emerald-700 dark:text-emerald-400');
 
-                $store.kelas?.setValueKelas(
-                    '{{ $x->kode ?? '' }}',
-                    '{{ $x->kelas ?? '' }}',
-                    '{{ $x->deskripsi_kelas ?? '' }}',
-
-                    '{{ $x->pr_id ?? '' }}',
-                    '{{ $x->kode_pr ?? '' }}',
-                    '{{ $x->prodi ?? '' }}',
-                    '{{ $x->pr_rel?->departemen_dp ?? '' }}',
-                    '{{ $x->pr_rel?->fakultas_fk ?? '' }}',
-
-                    '{{ $x->rps_id ?? '' }}',
-                    '{{ $x->kode_rps ?? '' }}',
-                    '{{ $x->rps_rel?->rps ?? '' }}',
-                    '{{ $x->rps_rel?->sks_full ?? '' }}',
-                    '{{ $x->wajib_text ?? '' }}',
-                    '{{ $x->rps_rel?->draf_full ?? '' }}',
-                );
-
-                $flux.modal('kelas-modal').show();
-            "
+                    $flux.modal('jadwal-modal').show();
+                "
                 wire:click="{{ $editCall }}"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
                 <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
@@ -122,11 +88,10 @@
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.kelas?.setDeleteKelas(
-                            '{{ $x->kelas ?? '' }}',
+                        $store.jadwal?.setDeleteJadwal(
                             '{{ $x->kode ?? '' }}'
                         );
-                        $flux.modal('kelas-delete').show();
+                        $flux.modal('jadwal-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
@@ -156,12 +121,11 @@
             {{-- Tombol Delete Permanent --}}
             <flux:menu.item
                 @click="
-                            $store.kelas?.setDeleteKelas(
-                            '{{ $x->kelas ?? '' }}',
+                            $store.jadwal?.setDeleteJadwal(
                             '{{ $x->kode ?? '' }}',
                             '{{ $isTrashed }}'
                         );
-                        $flux.modal('kelas-delete').show();
+                        $flux.modal('jadwal-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">

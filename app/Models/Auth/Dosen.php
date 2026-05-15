@@ -108,7 +108,7 @@ class Dosen extends Model
 
         return $query->where(function ($q) use ($search, $searchTerm, $searchLower) {
             // 1. Pencarian Identitas Langsung di Tabel Dosens
-            $fields = ['name', 'nip', 'nidn', 'nidk', 'status'];
+            $fields = ['name', 'nip', 'nidn', 'nidk', 'nik', 'status'];
             foreach ($fields as $field) {
                 $q->orWhere("dosens.$field", 'like', $searchTerm);
             }

@@ -27,6 +27,18 @@ trait WithRPSModal
 
     public $mk_id_2;
 
+    public $isFlyoutRPS = false;
+
+    public function updatedShowRPSModal($value)
+    {
+        if (! $value) {
+            $this->isFlyoutRPS = false;
+            $this->isEditingRPS = false;
+        } else {
+            $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
+        }
+    }
+
     public function addRPS($key = 'rps')
     {
         if (! $this->AuthCheck('staff')) {
@@ -40,7 +52,9 @@ trait WithRPSModal
         $this->resetValidation();
         $this->resetErrorBag();
         $this->isEditingRPS = false;
+        $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
         $this->showRPSModal = true;
+
         $this->showEditRPS = false;
 
         $this->cplNameSearch['rps'] = '';
@@ -72,6 +86,7 @@ trait WithRPSModal
         $this->selected_id_rps = $id;
         $this->isEditingRPS = true;
         $this->showEditRPS = true;
+        $this->isFlyoutRPS = $this->showCPMKModal || $this->showSCPMKModal || $this->showCPLModal || $this->showRefModal;
 
         try {
             // 1. Load data RPS dengan relasi yang sangat lengkap
@@ -159,11 +174,11 @@ trait WithRPSModal
 
         $mkId = $data['mk_id'] ?? null;
 
-        Validator::make(['mk_id' => $mkId], [
-            'mk_id' => 'required|exists:mata_kuliahs,id',
-        ], $this->validationMessagesRPS())->validate();
+        // Validator::make(['mk_id' => $mkId], [
+        //     'mk_id' => 'required|exists:mata_kuliahs,id',
+        // ], $this->validationMessagesRPS())->validate();
 
-        $mk = DB::table('mk')->where('id', $mkId ?? null)->first();
+        $mk = DB::table('mata_kuliahs')->where('id', $mkId ?? null)->first();
         $desMK = $mk?->deskripsi ?? '';
         if (! str_ends_with($desMK, '.') && ! empty($desMK)) {
             $desMK .= '.';
@@ -619,7 +634,6 @@ trait WithRPSModal
 
             $this->resetInputRPS();
             $this->dispatch('refresh-data-rps');
-
 
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');

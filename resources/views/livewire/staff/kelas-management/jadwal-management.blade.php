@@ -4,8 +4,8 @@
 
     @include('livewire.staff.kelas-management.jadwal-management.jadwal-table')
 
-    {{-- RPS Modal if needed --}}
-    @include('livewire.staff.obe-management.rps-management.rps-show-modal', ['alpineKey' => 'kelas?.rps_id_show', 'isEdit' => 0])
+    @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form')
+    @include('livewire.staff.obe-management.rps-management.rps-show-modal', ['alpineKey' => 'jadwal?.rps_id_show', 'isEdit' => 0])
 
 </div>
 

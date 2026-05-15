@@ -119,6 +119,15 @@
             }, 0);
         },
     
+        resetItems() {
+            Flux.modal('reset-confirm-modal-{{ $idString }}').show();
+        },
+    
+        clearAllItems() {
+            this.items = [];
+            this.itemsAll = [];
+            this.subItems = [];
+        },
     }">
 
     {{-- 1. INPUT SEARCH --}}

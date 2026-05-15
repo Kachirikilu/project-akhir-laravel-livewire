@@ -11,7 +11,11 @@
         Pilih Capaian Pembelajaran Mata Kuliah</h4>
 
         @if (!$this->showCPMKModal || $this->isEditingCPMK == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk', 'isFlyout' => true])
+            @if (!$this->showSCPMKModal || $this->isEditingSCPMK == false)
+                @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk-scpmk', 'isFlyout' => 1, 'isSmall' => 1])
+            @else
+                @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'cpmk', 'isFlyout' => 1, 'isSmall' => 1])
+            @endif
         @endif
     </div>
 

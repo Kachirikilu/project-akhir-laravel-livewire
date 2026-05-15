@@ -6,7 +6,7 @@
     @endif
     <div class="ml-auto">
         <flux:dropdown>
-            <flux:button variant="primary" icon="plus"
+            <flux:button variant="primary" icon="plus" :size="($isSmall ?? false) ? 'sm' : null"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
                 wire:target="addRPS">
                 Tambah
@@ -19,7 +19,7 @@
                 @elseif ($typeXString == 'cpl')
                     CPL
                 @elseif ($typeXString == 'ref')
-                    Referens
+                    Referensi
                 @elseif ($typeXString == 'dosen')
                     Dosen
                 @else
@@ -40,7 +40,7 @@
                     <flux:menu.item
                         @click="
                             $store.rps?.setEdit(0);
-                            $store.rps?.setFlyout(false);
+                            $store.rps?.setFlyout({{ $isFlyout ?? false }});
                             $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
                             $flux.modal('rps-modal').show();
                             $wire.addRPS();
@@ -56,12 +56,12 @@
                     </flux:menu.item>
                 @endif
 
-                @if ($typeXString == 'cpmk' || $typeXString == 'all')
+                @if ($typeXString == 'cpmk-scpmk' || $typeXString == 'cpmk' || $typeXString == 'all')
                     {{-- CPMK --}}
                     <flux:menu.item
                         @click="
                             $store.cpmk?.setEdit(0);
-                            $store.cpmk?.setFlyout({{ $isFlyout }});
+                            $store.cpmk?.setFlyout({{ $isFlyout ?? false }});
                             $store.cpmk?.setColor('text-amber-700 dark:text-amber-400');
                             $flux.modal('cpmk-modal').show();
                             $wire.addCPMK();
@@ -76,12 +76,12 @@
                     </flux:menu.item>
                 @endif
 
-                @if ($typeXString == 'cpmk' || $typeXString == 'scpmk' || $typeXString == 'all')
+                @if ($typeXString == 'cpmk-scpmk' || $typeXString == 'scpmk' || $typeXString == 'all')
                     {{-- SCPMK --}}
                     <flux:menu.item
                         @click="
                             $store.scpmk?.setEdit(0);
-                            $store.scpmk?.setFlyout({{ $isFlyout }});
+                            $store.scpmk?.setFlyout({{ $isFlyout ?? false }});
                             $store.scpmk?.setColor('text-indigo-700 dark:text-indigo-400');
                             $flux.modal('scpmk-modal').show();
                             $wire.addSCPMK();
@@ -101,7 +101,7 @@
                     <flux:menu.item
                         @click="
                             $store.cpl?.setEdit(0);
-                            $store.cpl?.setFlyout({{ $isFlyout }});
+                            $store.cpl?.setFlyout({{ $isFlyout ?? false }});
                             $store.cpl?.setColor('text-red-700 dark:text-red-400');
                             $flux.modal('cpl-modal').show();
                             $wire.addCPL();
@@ -121,7 +121,7 @@
                     <flux:menu.item
                         @click="
                             $store.ref?.setEdit(0);
-                            $store.ref?.setFlyout({{ $isFlyout }});
+                            $store.ref?.setFlyout({{ $isFlyout ?? false }});
                             $store.ref?.setColor('text-fuchsia-700 dark:text-fuchsia-400');
                             $flux.modal('ref-modal').show();
                             $wire.addRef();

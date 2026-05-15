@@ -4,7 +4,7 @@
         <flux:dropdown>
             <flux:button variant="primary" icon="plus"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
-                wire:target="addMK">
+                wire:target="addKelas">
                 Tambah Kelas
             </flux:button>
 

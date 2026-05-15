@@ -28,7 +28,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             
-            $table->string('kode_jadwal');
             $table->string('password')->nullable();
 
             $table->enum('kode_wilayah', ['IDL', 'PLG']);

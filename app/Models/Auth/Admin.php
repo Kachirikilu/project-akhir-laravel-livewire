@@ -46,6 +46,19 @@ class Admin extends Model
         return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
     }
 
+    protected function wilayah(): Attribute
+    {
+        return Attribute::get(function () {
+
+            if ($this->kode_wilayah == 'IDL') {
+                return 'Kampus Indralaya';
+            } else {
+                return 'Kampus Bukit';
+            }
+
+        });
+    }
+
     protected static function booted()
     {
         static::saving(function ($admin) {

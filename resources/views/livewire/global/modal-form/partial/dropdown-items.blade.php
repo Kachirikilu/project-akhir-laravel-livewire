@@ -13,7 +13,11 @@
         <span>- <span class="text-[var(--hover-focus-color)] font-bold">ID:
                 {{ $itemId }}</span></span>
         <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
-        <span>{{ $itemKode }}</span>
+        @if ($idString == 'mahasiswa_id_array')
+            <span>NIM: {{ $itemKode }}</span>
+        @else
+            <span>{{ $itemKode }}</span>
+        @endif
         @if ($typeX2String ?? null)
             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
             <span>
@@ -38,6 +42,12 @@
             <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
             <span>
                 {{ $itemLabel4 }}
+            </span>
+        @endif
+        @if ($typeX5String ?? null)
+            <span class="mx-2 text-[var(--contrast-second-text)]">|</span>
+            <span>
+                {{ $itemLabel5 }}
             </span>
         @endif
     </div>

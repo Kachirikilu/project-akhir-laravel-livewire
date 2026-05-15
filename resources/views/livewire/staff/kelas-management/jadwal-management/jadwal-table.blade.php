@@ -1,4 +1,41 @@
 {{-- Jadwal Section --}}
+
+<div class="flex flex-wrap items-center gap-2 mb-4">
+    <div class="ml-auto">
+        <flux:dropdown>
+            <flux:button variant="primary" icon="plus" size="sm"
+                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
+                wire:target="addJadwal">
+                Tambah Jadwal
+            </flux:button>
+
+            <flux:menu
+                class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
+                <flux:menu.heading>Tambah Jadwal</flux:menu.heading>
+                <flux:menu.separator />
+
+                {{-- Program Studi --}}
+                <flux:menu.item
+                    @click="
+                        $store.jadwal?.setEdit(0);
+                        $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+                        $flux.modal('jadwal-modal').show();
+                        $wire.addJadwal();
+                    "
+                    class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
+                    <flux:icon name="calendar-days" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
+                    <div class="flex justify-between items-center w-full">
+                        <span>Jadwal Perkuliahan</span>
+                        <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+
+            </flux:menu>
+        </flux:dropdown>
+    </div>
+</div>
+
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 mb-5">
     <h3 class="text-xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
         <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />

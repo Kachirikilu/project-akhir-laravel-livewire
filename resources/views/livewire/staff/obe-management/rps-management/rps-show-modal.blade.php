@@ -9,7 +9,7 @@
 
         {{-- KIRI: Badge nama & status --}}
         <div class="flex items-center gap-2">
-            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show'}} ?? null)"
+            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)"
                 class="cursor-pointer !text-rose-600 dark:!text-rose-400 hover:!bg-rose-100 dark:hover:!bg-rose-900/30 border border-rose-200 transition-colors">
                 <flux:icon name="printer" class="mr-2 h-4 w-4" />
                 <span>Print PDF RPS</span>
@@ -18,8 +18,9 @@
             </flux:button>
 
             @if ($isEdit ?? true)
-                <flux:button
-                    @click="
+                @if (!$this->showRPSModal)
+                    <flux:button
+                        @click="
                     $store.rps?.setEdit(1);
                     $store.rps?.setFlyout(true);
                     $store.rps?.setColor('text-emerald-700 dark:text-emerald-400');
@@ -39,13 +40,14 @@
                     $flux.modal('rps-modal').show();
                     $wire.editRPS($store.rps?.id ?? null)
                 "
-                    wire:loading.attr="disabled" wire:target="showRPS, editRPS"
-                    class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200 transition-colors">
-                    <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
-                    <span>Edit RPS</span>
-                    <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
-                        class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
-                </flux:button>
+                        wire:loading.attr="disabled" wire:target="showRPS, editRPS"
+                        class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200 transition-colors">
+                        <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                        <span>Edit RPS</span>
+                        <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />
+                    </flux:button>
+                @endif
             @endif
         </div>
 

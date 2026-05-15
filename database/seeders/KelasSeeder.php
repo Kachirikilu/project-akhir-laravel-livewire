@@ -61,7 +61,6 @@ class KelasSeeder extends Seeder
                                 $tglMulai = now()->addDays(rand(1, 30));
 
                                 $jadwal = $kelas->jadwals()->create([
-                                    'kode_jadwal' => strtoupper(str()->random(5)). rand(100, 999),
                                     'kode_wilayah' => $wilayah,
                                     'password' => strtoupper(str()->random(6)),
                                     'label_kelas' => $labels[$i],
@@ -121,7 +120,7 @@ class KelasSeeder extends Seeder
         $this->command->info("KelasSeeder finished. Total RPS processed: $totalProcessed");
     }
 
-    private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 6)
+    private function generateKode($prefixMin = 3, $prefixMax = 4, $numMin = 2, $numMax = 3)
     {
         $letters = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, rand($prefixMin, $prefixMax)));
 

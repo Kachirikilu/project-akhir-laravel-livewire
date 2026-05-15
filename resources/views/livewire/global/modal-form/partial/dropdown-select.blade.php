@@ -1,5 +1,5 @@
 <template x-if="items.includes({{ $x['id'] }})">
-    <div class="relative flex items-center justify-center">
+    <div class="cursor-pointer relative flex items-center justify-center">
         <flux:icon icon="check" variant="mini" class="group-hover:hidden" />
         <flux:icon icon="trash" variant="mini" class="hidden group-hover:block" />
     </div>
@@ -7,7 +7,7 @@
 
 {{-- State: Belum Terpilih (Tampilkan Plus) --}}
 <template x-if="!items.includes({{ $x['id'] }})">
-    <div class="flex items-center justify-center">
+    <div class="cursor-pointer flex items-center justify-center">
         <flux:icon icon="plus" variant="mini" />
     </div>
 </template>

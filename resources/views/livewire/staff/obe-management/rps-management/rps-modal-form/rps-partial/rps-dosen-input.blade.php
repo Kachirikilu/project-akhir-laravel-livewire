@@ -12,7 +12,8 @@
         @if (Auth::user()->admin && (!$this->showUserModal || $this->isEditingUser == false))
             @include('livewire.staff.obe-management.obe-toolbar', [
                 'typeXString' => 'dosen',
-                'isFlyout' => true,
+                'isFlyout' => 1,
+                'isSmall' => 1
             ])
         @endif
     </div>

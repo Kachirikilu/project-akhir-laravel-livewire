@@ -1,4 +1,4 @@
-<flux:modal name="user-modal" wire:model="showUserModal"
+<flux:modal :flyout="$isFlyoutUser" name="user-modal" wire:model.live="showUserModal"
     @refresh-data-user.window="if (!$wire.showUserModal) $store.user.reset()"
     class="sm:w-full md:w-3xl max-w-4xl h-[98vh] !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
 

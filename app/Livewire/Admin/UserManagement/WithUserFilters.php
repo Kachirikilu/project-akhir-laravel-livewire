@@ -45,8 +45,8 @@ trait WithUserFilters
             $queryUser->searchUser($search);
         }
 
-        if (! empty($this->searchAngkatan) && $this->switchTable === 'mahasiswa') {
-            $queryUser->searchUser($search, true);
+        if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
+            $queryUser->searchUser($this->searchAngkatan, true);
         }
 
         if ($this->filterStatus !== '') {

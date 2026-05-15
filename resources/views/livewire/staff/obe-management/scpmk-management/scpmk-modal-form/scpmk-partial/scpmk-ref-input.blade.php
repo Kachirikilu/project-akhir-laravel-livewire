@@ -10,7 +10,7 @@
             Referensi Sub-CPMK</h4>
 
         @if (!$this->showRefModal || $this->isEditingRef == false)
-            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => true])
+            @include('livewire.staff.obe-management.obe-toolbar', ['typeXString' => 'ref', 'isFlyout' => 1, 'isSmall' => 1])
         @endif
     </div>
 
