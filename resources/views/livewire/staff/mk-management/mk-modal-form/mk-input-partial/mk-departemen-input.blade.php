@@ -6,9 +6,10 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'dp_items',
+                    'pathString' => 'dp_items',
+                    'modelString' => 'kode',
                     'placeholder' => '---',
-                    'iconString' => 'book-open'
+                    'iconString' => 'book-open',
                 ])
             </div>
 
@@ -39,19 +40,19 @@
         'xResults' => $dpResults,
         'selectX' => 'selectDp',
         'modelString' => 'nama_dp_search',
-
+    
         'idString' => 'dp_id',
         'itemsAllString' => 'dp_items',
-
+    
         'resetXInput' => 'resetDpInput()',
         'typeXString' => 'departemen',
         'typeX2String' => 'fakultas',
-        
+    
         'nameXString' => 'Departemen',
         'nameSearchString' => 'dpNameSearch',
         'fetchString' => 'fetchDp',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchDp'
+        'wireLoading' => 'fetchDp',
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -59,14 +60,14 @@
         'xResults' => $prResults,
         'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
-
+    
         'idString' => 'pr_id_array',
         'itemsAllString' => 'pr_items_array',
-
+    
         'typeXString' => 'prodi',
         'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
-
+    
         'nameXString' => 'Program Studi',
         'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchPr',

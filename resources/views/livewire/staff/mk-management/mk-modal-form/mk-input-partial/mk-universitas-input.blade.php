@@ -6,7 +6,8 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'secondValue' => 'UNI',
+                    'modelString' => 'kode',
+                    'valueString' => 'UNI',
                     'iconString' => 'globe-alt'
                 ])
             </div>

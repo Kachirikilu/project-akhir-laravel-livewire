@@ -59,7 +59,9 @@ trait WithJadwalFilters
             'label_kelas' => $queryJadwal->orderByRaw("CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah) ".$this->sortDirection),
             'hari_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.hari_pelaksanaan', $this->sortDirection),
             'jam_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.jam_mulai', $this->sortDirection),
-            'kapasitas' => $queryJadwal->orderBy('kelas_jadwals.kapasitas', $this->sortDirection),
+            'kapasitas' => $queryJadwal
+                ->withCount('mahasiswas')
+                ->orderBy('mahasiswas_count', $this->sortDirection),
             'tanggal_pelaksanaan' => $queryJadwal->orderBy('kelas_jadwals.tanggal_mulai', $this->sortDirection),
             'created_at' => $queryJadwal->orderBy('kelas_jadwals.created_at', $this->sortDirection),
             'updated_at' => $queryJadwal->orderBy('kelas_jadwals.updated_at', $this->sortDirection),

@@ -4,14 +4,11 @@ namespace App\Livewire\Staff\KelasManagement\JadwalManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
-use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
-use App\Models\Kelas\SesiKelas;
-use Illuminate\Validation\Rule;
+use App\Models\ProgramStudi\Prodi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Carbon\Carbon;
 
 trait WithJadwalModal
 {
@@ -87,102 +84,86 @@ trait WithJadwalModal
         }
     }
 
-    private function inputModalJadwal($isEditingJadwal, $data, $kelasId)
+    private function inputModalJadwal($isEditingJadwal, $data)
     {
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $kelas = Kelas::with('jadwals')->find($kelasId);
+        $data['nama_jadwal'] = $this->normalizeNama($data['nama_jadwal'] ?? '');
 
-        if (! $kelas) {
-            throw ValidationException::withMessages([
-                'kelas' => 'Kelas tidak ditemukan!',
-            ]);
+        $rps = DB::table('rps')->where('id', $this->rps_id ?? null)->first();
+        $desRPS = $rps?->deskripsi ?? '';
+        $desMK = $rps?->mk_rel?->deskripsi ?? '';
+        if (! str_ends_with($desRPS, '.') && ! empty($desRPS)) {
+            $desRPS .= '.';
+        }
+        if ($data['deskripsi'] == $desRPS || $data['deskripsi'] == $desMK) {
+            $data['deskripsi'] = '';
         }
 
-        $mahasiswaCount = count($data['mahasiswa_id_array'] ?? []);
+        $data['deskripsi'] = $this->normalizeText($data['deskripsi'] ?? '');
+
+        $prId = $data['pr_id'] ?? $this->pr_id ?? null;
 
         $rules = [
-            'kode_wilayah' => 'required|in:IDL,PLG',
-            'label_kelas' => 'required|string|max:5',
-
-            'password' => 'nullable|string|max:14',
-
-            'hari_pelaksanaan' => [
+            'kode_jadwal_1' => 'required|alpha|max:10',
+            'kode_jadwal_2' => 'required|numeric|min:1',
+            'kode_jadwal' => [
                 'required',
-                Rule::in([
-                    'Senin',
-                    'Selasa',
-                    'Rabu',
-                    'Kamis',
-                    'Jumat',
-                    'Sabtu',
-                    'Minggu',
-                ]),
-            ],
+                'alpha_num',
+                'max:20',
+                function ($attribute, $value, $fail) use ($isEditingJadwal) {
+                    $query = DB::table('jadwal')->where('kode_jadwal', $value);
 
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_berakhir' => 'required|date_format:H:i|after:jam_mulai',
+                    if ($isEditingJadwal) {
+                        $query->where('id', '!=', $this->selected_id_jadwal);
+                    }
 
-            'tanggal_mulai' => 'required|string',
-            'tanggal_berakhir' => 'required|string',
-
-            'base_sesi_1' => 'required|date',
-
-            'kapasitas' => [
-                'required',
-                'integer',
-                'min:1',
-
-                function ($attribute, $value, $fail) use ($mahasiswaCount) {
-                    if ($mahasiswaCount > (int) $value) {
-                        $fail('Jumlah mahasiswa melebihi kapasitas kelas!');
+                    if ($query->exists()) {
+                        $fail("Kode Jadwal '$value' sudah digunakan!");
                     }
                 },
             ],
+            'nama_jadwal' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string|max:1000',
+            'pr_id' => 'required|integer|exists:prodis,id',
+            'rps_id' => [
+                'required',
+                'integer',
+                'exists:rps,id',
+                function ($attribute, $value, $fail) use ($prId) {
+                    $isValid = Prodi::whereHas('mata_kuliahs.rps', fn ($q) => $q->where('id', $value))
+                        ->where('prodis.id', $prId)
+                        ->exists();
 
-            'mahasiswa_id_array' => 'nullable|array',
-            'mahasiswa_id_array.*' => 'exists:users,id',
+                    if (! $isValid) {
+                        $fail('RPS tidak terdaftar pada Program Studi yang dipilih!');
+                    }
+                },
+            ],
         ];
 
-        $validator = Validator::make(
-            $data,
-            $rules,
-            [
-                'kode_wilayah.required' => 'Wilayah wajib dipilih!',
-                'label_kelas.required' => 'Label kelas wajib diisi!',
-                'hari_pelaksanaan.required' => 'Hari pelaksanaan wajib dipilih!',
-                'jam_mulai.required' => 'Jam mulai wajib diisi!',
-                'jam_berakhir.required' => 'Jam berakhir wajib diisi!',
-                'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
-                'kapasitas.required' => 'Kapasitas wajib diisi!',
-                'kapasitas.integer' => 'Kapasitas harus berupa angka!',
-                'kapasitas.min' => 'Kapasitas minimal 1!',
-            ]
-        );
-
-        $validator->after(function ($validator) use ($kelas, $data, $isEditingJadwal) {
-
-            $query = $kelas->jadwals()
-                ->where('label_kelas', $data['label_kelas'])
-                ->where('kode_wilayah', $data['kode_wilayah']);
-
-            if ($isEditingJadwal) {
-                $query->where('id', '!=', $this->selected_id_jadwal);
-            }
-
-            if ($query->exists()) {
-                $validator->errors()->add(
-                    'label_kelas',
-                    'Kelas ini sudah ada!'
-                );
-            }
-        });
+        $validator = Validator::make($data, $rules, $this->validationMessagesJadwal());
 
         if ($validator->fails()) {
-            throw ValidationException::withMessages(
-                $validator->errors()->toArray()
-            );
+            $errors = $validator->errors();
+            if (empty($data['kode_jadwal_1']) && empty($data['kode_jadwal_2'])) {
+                $this->addError('kode_jadwal', 'Kode Jadwal wajib diisi!');
+            } elseif ($errors->has('kode_jadwal_1') || $errors->has('kode_jadwal_2')) {
+                $combinedMessage = $errors->first('kode_jadwal_1') ?: $errors->first('kode_jadwal_2');
+                $this->addError('kode_jadwal', $combinedMessage);
+            }
+            foreach ($errors->toArray() as $key => $messages) {
+                if (! in_array($key, ['kode_jadwal_1', 'kode_jadwal_2', 'kode_jadwal'])) {
+                    foreach ($messages as $message) {
+                        $this->addError($key, $message);
+                    }
+                }
+                if ($key === 'kode_jadwal' && ! $this->getErrorBag()->has('kode_jadwal')) {
+                    $this->addError('kode_jadwal', $messages[0]);
+                }
+            }
+            throw ValidationException::withMessages($this->getErrorBag()->messages());
         }
 
         return $validator->validated();
@@ -193,121 +174,42 @@ trait WithJadwalModal
         if (! $this->AuthCheck('staff')) {
             return;
         }
+        $data['mahasiswa_id_array'] = $this->mahasiswa_id_array;
 
-        $data['mahasiswa_id_array'] = $this->mahasiswa_id_array ?? [];
+        // $kelasId untuk mencari Kelas
+        dd($data);
 
         try {
+            $validated = $this->inputModalJadwal(false, $data);
 
-            $validated = $this->inputModalJadwal(
-                false,
-                $data,
-                $kelasId
-            );
-
-            DB::transaction(function () use ($validated, $kelasId, $data) {
-
-                // =========================================
-                // TANGGAL MULAI
-                // =========================================
-                $tanggalMulai = Carbon::parse(
-                    $validated['base_sesi_1']
-                )->format('Y-m-d');
-
-                // =========================================
-                // TANGGAL BERAKHIR
-                // FORMAT INPUT:
-                // 2026-W46
-                // =========================================
-                [$yearPart, $weekPart] = explode(
-                    '-W',
-                    $validated['tanggal_berakhir']
-                );
-
-                $year = (int) $yearPart;
-                $week = (int) $weekPart;
-
-                // AKHIR MINGGU ISO = MINGGU
-                $tanggalBerakhir = Carbon::now()
-                    ->setISODate($year, $week, 7)
-                    ->format('Y-m-d');
-
-                // =========================================
-                // CREATE JADWAL
-                // =========================================
-                $jadwal = KelasJadwal::create([
+            DB::transaction(function () use ($validated, $kelasId) {
+                KelasJadwal::create([
                     'kelas_id' => $kelasId,
-
-                    'password' => $validated['password'] ?? null,
-
+                    'password' => $validated['password'],
                     'kode_wilayah' => $validated['kode_wilayah'],
                     'label_kelas' => $validated['label_kelas'],
-
-                    'tanggal_mulai' => $tanggalMulai,
-                    'tanggal_berakhir' => $tanggalBerakhir,
-
-                    'hari_pelaksanaan' => $validated['hari_pelaksanaan'],
-
-                    'jam_mulai' => $validated['jam_mulai'],
-                    'jam_berakhir' => $validated['jam_berakhir'],
-
+                    'tanggal_mulai' => $validated['tanggal_mulai'],
+                    'tanggal_selesai' => $validated['tanggal_selesai'],
+                    'hari_pelasanaan' => $validated['hari_pelasanaan'],
+                    'jam_pelasanaan' => $validated['jam_pelasanaan'],
+                    'jam_selesai' => $validated['jam_selesai'],
                     'kapasitas' => $validated['kapasitas'],
                 ]);
-
-                // =========================================
-                // CREATE SESI 1 - 16
-                // =========================================
-                for ($i = 1; $i <= 16; $i++) {
-
-                    $tanggalSesi = $data["sesi_{$i}"] ?? null;
-
-                    if (! $tanggalSesi) {
-                        continue;
-                    }
-
-                    SesiKelas::create([
-                        'kj_id' => $jadwal->id,
-                        'pertemuan_ke' => $i,
-                        'tanggal' => $tanggalSesi,
-                    ]);
-                }
-
-                // =========================================
-                // ATTACH MAHASISWA
-                // =========================================
-                if (! empty($validated['mahasiswa_id_array'])) {
-
-                    $jadwal->mahasiswas()->sync(
-                        $validated['mahasiswa_id_array']
-                    );
-                }
             });
 
-            $this->toast(
-                message: "Jadwal {$validated['label_kelas']} {$validated['kode_wilayah']} berhasil ditambahkan"
-            );
-
+            $this->toast(message: "Jadwal {$validated['nama_jadwal']} ({$validated['kode_jadwal']})");
             $this->resetInputJadwal();
 
             $this->dispatch('refresh-data-jadwal');
-
             $this->showJadwalModal = false;
 
         } catch (ValidationException $e) {
-
-            $this->toast(
-                text: collect($e->errors())->flatten()->first(),
-                variant: 'danger'
-            );
-
+            $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
         } catch (\Exception $e) {
-
-            $this->toast(
-                text: 'Gagal Menambahkan: '.$e->getMessage(),
-                variant: 'danger'
-            );
-
-            report($e);
+            $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
+            $this->dispatch('refresh-data-jadwal');
+            $this->showJadwalModal = false;
         }
     }
 
@@ -408,17 +310,13 @@ trait WithJadwalModal
         ];
     }
 
-    private function resetInputJadwal()
+    private function resetInputKelas()
     {
         $fields = [
             'selected_id_jadwal',
+            'pr_id',
+            'rps_id',
         ];
-
-        $this->mahasiswaNameSearch = '';
-        $this->mahasiswa_id_array = [];
-        $this->mahasiswa_items_array = [];
-        $this->mahasiswa_sub_items_array = [];
-
 
         $this->reset($fields);
         $this->resetErrorBag();

@@ -6,9 +6,10 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'pr_items',
+                    'pathString' => 'pr_items',
+                    'modelString' => 'kode',
                     'placeholder' => '---',
-                    'iconString' => 'academic-cap'
+                    'iconString' => 'academic-cap',
                 ])
             </div>
 
@@ -25,7 +26,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1
+                    'isFocusSelect' => 1,
                 ])
             </div>
         </div>
@@ -39,20 +40,20 @@
         'xResults' => $prResults,
         'selectX' => 'selectPr',
         'modelString' => 'nama_pr_search',
-
+    
         'idString' => 'pr_id',
         'itemsAllString' => 'pr_items',
-
+    
         'resetXInput' => 'resetPrInput()',
         'typeXString' => 'prodi',
         'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
-
+    
         'nameXString' => 'Program Studi',
         'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchPr',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchPr'
+        'wireLoading' => 'fetchPr',
     ])
 
 

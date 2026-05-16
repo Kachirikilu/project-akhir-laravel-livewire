@@ -36,27 +36,29 @@
         'wireLoading' => 'fetchMK',
     ])
 
-    <div class="relative" x-data="{
+    {{-- <div class="relative" x-data="{
         mk_items_display: null
     }"
         x-effect="
                 const config = $store.rps;
+
                 if (config?.mk_items && Object.keys(config.mk_items).length > 0) {
                     mk_items_display = config.mk_items;
                 } else {
                     mk_items_display = null;
                 }
                 
-            ">
+            "> --}}
 
+    <div class="relative">
         <div class="space-y-4">
 
             <div class="grid sm:grid-cols-6 gap-1 sm:gap-3 items-end">
                 <div class="sm:col-span-2">
                     @include('livewire.staff.obe-management.rps-management.rps-modal-form.rps-partial.rps-digit-akademik')
                 </div>
-                <div class="sm:col-span-1">
-                    @include('livewire.global.modal-form.kode-input', [
+                {{-- <div class="sm:col-span-1">
+                    @include('livewire.global.modal-form.kode-input-old', [
                         'alpine' => 'rps',
                         'kode2String' => 'mk_items_display',
                         'itemString' => 'slot2',
@@ -65,11 +67,32 @@
                     ])
                 </div>
                 <div class="sm:col-span-3">
-                    @include('livewire.global.modal-form.kode-input', [
+                    @include('livewire.global.modal-form.kode-input-old', [
                         'alpine' => 'rps',
                         'kode2String' => 'mk_items_display',
                         'placeholder' => '--------',
                         'iconString' => 'clipboard-document-list',
+                    ])
+                </div> --}}
+                <div class="sm:col-span-1">
+                    @include('livewire.global.modal-form.kode-input', [
+                        'alpine' => 'rps',
+                        'pathString' => 'mk_items',
+                        'modelString' => 'slot2',
+                        'placeholder' => '--',
+                        'iconString' => 'variable',
+                        'noLabel' => 1,
+                    ])
+                </div>
+
+                <div class="sm:col-span-3">
+                    @include('livewire.global.modal-form.kode-input', [
+                        'alpine' => 'rps',
+                        'pathString' => 'mk_items',
+                        'modelString' => 'kode',
+                        'placeholder' => '--------',
+                        'iconString' => 'clipboard-document-list',
+                        'noLabel' => 1,
                     ])
                 </div>
             </div>

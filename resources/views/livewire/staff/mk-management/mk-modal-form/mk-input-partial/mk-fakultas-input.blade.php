@@ -6,9 +6,10 @@
                 @include('livewire.global.modal-form.kode-input', [
                     'alpine' => 'mk',
                     'nameXString' => 'Kode Mata Kuliah',
-                    'kodeString' => 'fk_items',
+                    'pathString' => 'fk_items',
+                    'modelString' => 'kode',
                     'placeholder' => '---',
-                    'iconString' => 'building-library'
+                    'iconString' => 'building-library',
                 ])
             </div>
 
@@ -25,7 +26,7 @@
                     'maxlength' => 2,
                     'iconString' => 'identification',
                     'placeholder' => 'Contoh: 07',
-                    'isFocusSelect' => 1
+                    'isFocusSelect' => 1,
                 ])
             </div>
         </div>
@@ -40,17 +41,17 @@
         'xResults' => $fkResults,
         'selectX' => 'selectFk',
         'modelString' => 'nama_fk_search',
-
+    
         'idString' => 'fk_id',
         'itemsAllString' => 'fk_items',
-
+    
         'resetXInput' => 'resetFkInput()',
         'typeXString' => 'fakultas',
         'nameXString' => 'Fakultas',
         'nameSearchString' => 'fkNameSearch',
         'fetchString' => 'fetchFk',
         'iconString' => 'academic-cap',
-        'wireLoading' => 'fetchFk'
+        'wireLoading' => 'fetchFk',
     ])
 
     @include('livewire.global.modal-form.search-input-array-form', [
@@ -58,14 +59,14 @@
         'xResults' => $prResults,
         'selectX' => 'selectPrArray',
         'modelString' => 'nama_pr_search',
-
+    
         'idString' => 'pr_id_array',
         'itemsAllString' => 'pr_items_array',
-
+    
         'typeXString' => 'prodi',
         'typeX2String' => 'departemen',
         'typeX3String' => 'fakultas',
-
+    
         'nameXString' => 'Program Studi',
         'nameSearchString' => 'prNameSearch',
         'fetchString' => 'fetchPr',

@@ -621,6 +621,10 @@ trait WithRPSModal
                 $this->syncDosenPertemuanToScpmk($rps, $validated['pertemuan_dosen'] ?? [], $validated['cpmk_sub_items_array'] ?? []);
             });
 
+            $kodeMK = data_get($this->mk_items, 'kode', $this->mk_name);
+            $kodeRPS = $data['digit_akademik'] ?? ($data['akademik_1'] ?? '');
+            $namaMK = data_get($this->mk_items, 'slot1', $this->mk_name);
+
             $this->toast(message: "RPS $kodeMK-$kodeRPS $namaMK ({$validated['akademik']})", type: 'update');
             if (! empty($this->cpmk_rps_id)) {
                 $this->loadCPMKRPSPagination();

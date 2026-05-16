@@ -1,14 +1,14 @@
 <div x-data="{
-        getSuffix(tahun) {
-            let ta = parseInt(tahun);
-            if (!ta) return '';
-            
-            if (ta >= 3000) return String(ta);
-            if (ta >= 2100) return String(ta).slice(-3);
-            if (ta >= 2000) return String(ta).slice(-2);
-            return String(ta);
-        }
-    }"
+    getSuffix(tahun) {
+        let ta = parseInt(tahun);
+        if (!ta) return '';
+
+        if (ta >= 3000) return String(ta);
+        if (ta >= 2100) return String(ta).slice(-3);
+        if (ta >= 2000) return String(ta).slice(-2);
+        return String(ta);
+    }
+}"
     x-effect="
         if ($store.rps) {
             let ta1 = $store.rps.akademik_1;
@@ -22,9 +22,12 @@
             }
         }
     ">
-    @include('livewire.global.modal-form.digit-input', [
+
+    @include('livewire.global.modal-form.kode-input', [
         'alpine' => 'rps',
-        'nameXString' => 'Kode RPS',
+        'nameX2String' => 'Kode RPS',
         'modelString' => 'digit_akademik',
+        'placeholder' => '--',
+        'iconString' => 'variable',
     ])
 </div>

@@ -33,6 +33,13 @@ class KelasJadwal extends Model
             ->withTimestamps();
     }
 
+    protected function countMahasiswa(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->mahasiswas()->count();
+        });
+    }
+
     protected function kodeKelas(): Attribute
     {
         return Attribute::get(function () {

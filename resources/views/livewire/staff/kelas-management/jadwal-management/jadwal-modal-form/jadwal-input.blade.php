@@ -19,6 +19,7 @@
             @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form.jadwal-input-partial.jadwal-main-input')
         </div>
         <div x-show="step === 2">
+            @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form.jadwal-input-partial.jadwal-hari-input')
             @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form.jadwal-input-partial.jadwal-sesi-input')
         </div>
         <div x-show="step === 3">

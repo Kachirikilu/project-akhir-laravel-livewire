@@ -79,7 +79,7 @@ trait WithMahasiswaSearchFilters
             'id' => $m->id,
             'kode' => $m->nim,
             'slot1' => $m->name,
-            'slot2' => $m->prodi,
+            'slot2' => $m->pr_rel?->prodi,
             'slot3' => $m->wilayah,
             'slot4' => $m->angkatan_full,
             'slot5' => $m->status_full,
