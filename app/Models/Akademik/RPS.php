@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class RPS extends Model
 {
@@ -193,12 +193,12 @@ class RPS extends Model
         });
     }
 
-    protected function countCpmk(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->cpmks->count();
-        });
-    }
+    // protected function countCpmk(): Attribute
+    // {
+    //     return Attribute::get(function () {
+    //         return $this->cpmks->count();
+    //     });
+    // }
 
     protected function countScpmk(): Attribute
     {
@@ -219,21 +219,19 @@ class RPS extends Model
             $allScpmk = $this->cpmks->flatMap->scpmks;
 
             $hasUTS = $allScpmk->contains(function ($scpmk) {
-                $method = strtoupper($scpmk->metode ?? '');
-                $text = strtoupper($scpmk->deskripsi ?? '');
+                $method = $scpmk->metode ?? '';
+                $text = $scpmk->deskripsi ?? '';
 
-                return $method === 'UTS' || str_contains($text, 'UTS');
+                return Str::contains($method, SubCPMK::UTS_FIELDS, ignoreCase: true) ||
+                       Str::contains($text, SubCPMK::UTS_FIELDS, ignoreCase: true);
             });
 
             $hasUAS = $allScpmk->contains(function ($scpmk) {
-                $method = strtoupper($scpmk->metode ?? '');
-                $text = strtoupper($scpmk->deskripsi ?? '');
+                $method = $scpmk->metode ?? '';
+                $text = $scpmk->deskripsi ?? '';
 
-                return in_array($method, ['UAS', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'], true)
-                    || str_contains($text, 'UAS')
-                    || str_contains($text, 'LAPORAN AKHIR')
-                    || str_contains($text, 'HASIL PROJEK')
-                    || str_contains($text, 'HASIL PROYEK');
+                return Str::contains($method, SubCPMK::UAS_FIELDS, ignoreCase: true) ||
+                       Str::contains($text, SubCPMK::UAS_FIELDS, ignoreCase: true);
             });
 
             $uts = $hasUTS ? 0 : (float) ($this->bobot_uts ?? 0);
@@ -279,7 +277,6 @@ class RPS extends Model
             return $this->updated_at->translatedFormat('D, d M Y');
         });
     }
-
 
     public function scopeSearchRPS($query, $search, $withBobot = false)
     {

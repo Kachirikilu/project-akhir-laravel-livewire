@@ -8,6 +8,7 @@ use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
+use App\Models\Kelas\KelasSesi;
 use Illuminate\Database\QueryException;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -33,7 +34,7 @@ class SesiManagement extends Component
 
     public $perPage = 16;
 
-    public $sortField = 'label_kelas';
+    public $sortField = 'pertemuan_ke';
 
     public $sortDirection = 'asc';
 
@@ -46,7 +47,7 @@ class SesiManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 16],
-        'sortField' => ['except' => 'label_kelas'],
+        'sortField' => ['except' => 'pertemuan_ke'],
         'sortDirection' => ['except' => 'asc'],
     ];
 

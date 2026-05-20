@@ -88,16 +88,17 @@
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
-            @include('livewire.global.table.head-table', [
+            {{-- @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'metode',
                 'isCenter' => 1,
                 'isMain' => 1,
                 'rowSpan' => 2,
-            ])
+            ]) --}}
+            <th rowspan="2" class="{{ $headKolom }} border-x">Metode</th>
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'label_kelas',
-                'headString' => 'Label',
+                'sortFieldString' => 'pertemuan_ke',
+                'headString' => 'Pertemuan',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
@@ -137,8 +138,8 @@
             ])
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'kapasitas',
-                'headString' => 'Kapasitas',
+                'sortFieldString' => 'jumlah_kehadiran',
+                'headString' => 'Kehadiran',
                 'isCenter' => 1,
             ])
 
@@ -162,21 +163,60 @@
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
-                    <button class="cursor-pointer">
-                        @switch($s->kode_wilayah)
-                            @case('IDL')
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $s->metode ?? '-' }}
-                                </flux:badge>
-                            @break
+                        <button class="cursor-pointer">
+                            @switch($s->metode)
+                                @case('Teori')
+                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
+                                    </flux:badge>
+                                @break
 
-                            @case('PLG')
-                                <flux:badge icon="academic-cap" color="amber" size="sm">{{ $s->metode ?? '-' }}</flux:badge>
-                            @break
+                                @case('Praktik')
+                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
+                                    </flux:badge>
+                                @break
 
-                            @default
-                                <flux:badge icon="academic-cap" color="red" size="sm">{{ $s->metode ?? '-' }}</flux:badge>
-                        @endswitch
-                    </button>
+                                @case('Tugas')
+                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
+                                    </flux:badge>
+                                @break
+
+                                @case('UTS')
+                                @case('UAS')
+                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm"
+                                        variant="pill">
+                                        {{ $s->metode }}</flux:badge>
+                                @break
+
+                                @case('Hasil Proyek')
+                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
+                                    </flux:badge>
+                                @break
+
+                                @case('Kerja Praktek')
+                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
+                                    </flux:badge>
+                                @break
+
+                                @case('Skripsi')
+                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
+                                    </flux:badge>
+                                @break
+
+                                @case('Aktivitas Partisipasif')
+                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
+                                    </flux:badge>
+                                @break
+
+                                @case('Mandiri')
+                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
+                                    </flux:badge>
+                                @break
+
+                                @default
+                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
+                                        {{ $s->metode ?? '-' }}</flux:badge>
+                            @endswitch
+                        </button>
 
                     @include(
                         'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
@@ -191,11 +231,11 @@
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $s->label_full }}</td>
+            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $s->pertemuan_ke }}</td>
 
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->count_mahasiswa . ' / ' . $s->kapasitas }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->kehadirans_count . ' / ' . $jadwal->kapasitas }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
 

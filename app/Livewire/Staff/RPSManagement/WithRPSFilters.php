@@ -126,7 +126,7 @@ trait WithRPSFilters
 
     public function sortFieldOrderRPS($queryRPS)
     {
-        $queryRPS->select('rps.*');
+        $queryRPS->select('rps.*')->withCount('cpmks');
 
         return match ($this->sortField) {
             'mk' => $queryRPS->join('mata_kuliahs', 'rps.mk_id', '=', 'mata_kuliahs.id')
@@ -167,12 +167,15 @@ trait WithRPSFilters
                 $this->sortDirection
             ),
 
-            'count_cpmk' => $queryRPS->orderBy(
-                DB::table('rps_pivot_cpmk')
-                    ->selectRaw('count(*)')
-                    ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
-                $this->sortDirection
-            ),
+            // 'count_cpmk' => $queryRPS->orderBy(
+            //     DB::table('rps_pivot_cpmk')
+            //         ->selectRaw('count(*)')
+            //         ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id'),
+            //     $this->sortDirection
+            // ),
+            'count_cpmk'    => $queryRPS
+                ->withCount('cpmks')
+                ->orderBy('cpmks_count', $this->sortDirection),
 
             'count_scpmk' => $queryRPS->orderBy(
                 DB::table('rps_pivot_cpmk')

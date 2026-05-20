@@ -24,7 +24,7 @@ trait WithSesiFilters
         $search = $this->search;
 
         if (! empty($search)) {
-            // $querySesi->searchJadwalSesi($search);
+            $querySesi->searchKelasSesi($search);
         }
 
         $this->sortFieldOrderSesi($querySesi);
@@ -40,28 +40,28 @@ trait WithSesiFilters
 
     public function resetInputFilter()
     {
-        $this->reset(['search', 'filterJadwal']);
+        $this->reset(['search', 'filterSesi']);
         $this->resetPage();
     }
 
     public function sortFieldOrderSesi($querySesi)
     {
-        $querySesi->select('kelas_sesi.*');
+        $querySesi->select('kelas_sesi.*')
+            ->withCount('kehadirans')
+            ->leftJoin('kelas_sesi_overrides', 'kelas_sesi.id', '=', 'kelas_sesi_overrides.sesi_id')
+            ->leftJoin('kelas_jadwals', 'kelas_sesi.kj_id', '=', 'kelas_jadwals.id');
 
         return match ($this->sortField) {
-            // 'kode' => $this->applyJadwalKodeSort($querySesi),
-            // 'kode' => $querySesi->orderByRaw("CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah, kelas_jadwals.tanggal_mulai) ".$this->sortDirection),
-            // 'kelas' => $querySesi->orderBy('kelas_jadwals.nama_kelas', $this->sortDirection),
-            // 'label_kelas' => $querySesi->orderByRaw("CONCAT(kelas_jadwals.label_kelas, kelas_jadwals.kode_wilayah) ".$this->sortDirection),
-            // 'hari_pelaksanaan' => $querySesi->orderBy('kelas_jadwals.hari_pelaksanaan', $this->sortDirection),
-            // 'jam_pelaksanaan' => $querySesi->orderBy('kelas_jadwals.jam_mulai', $this->sortDirection),
-            // 'kapasitas' => $querySesi
-            //     ->withCount('mahasiswas')
-            //     ->orderBy('mahasiswas_count', $this->sortDirection),
-            // 'tanggal_pelaksanaan' => $querySesi->orderBy('kelas_jadwals.tanggal_mulai', $this->sortDirection),
-            // 'created_at' => $querySesi->orderBy('kelas_jadwals.created_at', $this->sortDirection),
-            // 'updated_at' => $querySesi->orderBy('kelas_jadwals.updated_at', $this->sortDirection),
-            default => $querySesi->orderBy('kelas_sesi.id', $this->sortDirection),
+            'pertemuan_ke'        => $querySesi->orderBy('kelas_sesi.pertemuan_ke', $this->sortDirection),
+            'hari_pelaksanaan'    => $querySesi->orderByRaw("WEEKDAY(kelas_sesi.tanggal) " . $this->sortDirection),
+            'tanggal_pelaksanaan' => $querySesi->orderBy('kelas_sesi.tanggal', $this->sortDirection),
+            'jam_pelaksanaan'     => $querySesi->orderByRaw("COALESCE(kelas_sesi_overrides.jam_mulai, kelas_jadwals.jam_mulai) " . $this->sortDirection),
+            'jumlah_kehadiran'    => $querySesi
+                ->withCount('kehadirans')
+                ->orderBy('kehadirans_count', $this->sortDirection),
+            'created_at'          => $querySesi->orderBy('kelas_sesi.created_at', $this->sortDirection),
+            'updated_at'          => $querySesi->orderBy('kelas_sesi.updated_at', $this->sortDirection),
+            default               => $querySesi->orderBy('kelas_sesi.id', $this->sortDirection),
         };
     }
 }

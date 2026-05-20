@@ -202,7 +202,7 @@
 
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $j->hari }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->count_mahasiswa . ' / ' . $j->kapasitas }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->mahasiswas_count . ' / ' . $j->kapasitas }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
 
 

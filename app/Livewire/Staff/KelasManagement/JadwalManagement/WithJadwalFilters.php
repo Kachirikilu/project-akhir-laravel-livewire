@@ -46,7 +46,7 @@ trait WithJadwalFilters
 
     public function sortFieldOrderJadwal($queryJadwal)
     {
-        $queryJadwal->select('kelas_jadwals.*');
+        $queryJadwal->select('kelas_jadwals.*')->withCount('mahasiswas');
 
         return match ($this->sortField) {
             // 'kode' => $this->applyJadwalKodeSort($queryJadwal),

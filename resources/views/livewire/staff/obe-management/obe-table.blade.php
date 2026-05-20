@@ -400,7 +400,7 @@
                 </td>
 
                 <td class="{{ $secondKolom }} {{ $borderL }} whitespace-nowrap text-center">
-                    {{ $x->count_cpmk . ' CPMK' ?? '-' }}
+                    {{ $x->cpmks_count . ' CPMK' ?? '-' }}
                 </td>
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">
 
