@@ -1,11 +1,11 @@
 document.addEventListener("alpine:init", () => {
-    Alpine.store("jadwal", {
+    Alpine.store("sesi", {
         isEdit: 0,
         isForceDelete: 0,
         colorIcon: "",
 
-        nama_jadwal_delete: "",
-        kode_jadwal_delete: "",
+        nama_sesi_delete: "",
+        kode_sesi_delete: "",
 
         setEdit(val) {
             this.isEdit = val;
@@ -16,7 +16,7 @@ document.addEventListener("alpine:init", () => {
 
         kode_wilayah: "",
         label_kelas: "",
-        
+
         password: "",
 
         hari_pelaksanaan: "",
@@ -26,66 +26,39 @@ document.addEventListener("alpine:init", () => {
         tanggal_mulai: "",
         tanggal_berakhir: "",
 
-        kapasitas: "",
-
         jam_mulai: "",
         jam_berakhir: "",
 
         tanggal_mulai: "",
         tanggal_berakhir: "",
 
+        kapasitas: "",
+
         sks_menit: 0,
 
         setValueJadwal(
-            kode,
-            jadwal,
-            deskripsi,
-            idPr,
-            kodePr,
-            prodi,
-            departemen,
-            fakultas,
-            idRPS,
-            kodeRPS,
-            rps,
-            sksRPS,
-            wajibRPS,
-            drafRPS,
+            label,
+            wilayah,
+
+            hari,
+            jamMulai,
+            jamBerakhir,
+            tanggalMulai,
+            tanggalBerakhir,
+
+            kapasitas,
         ) {
-            this.kode_jadwal = kode;
-            this.nama_jadwal = jadwal;
-            this.deskripsi = deskripsi;
+            this.label_kelas = label;
+            this.kode_wilayah = wilayah;
 
-            if (kode) {
-                const huruf = kode.match(/[a-zA-Z]+/g);
-                this.kode_jadwal_1 = huruf ? huruf[0] : "";
-                const angka = kode.match(/\d+/g);
-                this.kode_jadwal_2 = angka ? angka[0] : "";
-            } else {
-                this.kode_jadwal_1 = "";
-                this.kode_jadwal_2 = "";
-            }
+            this.hari_pelaksanaan = hari;
+            this.jam_mulai = jamMulai?.slice(0, 5) || "";
+            this.jam_berakhir = jamBerakhir?.slice(0, 5) || "";
 
-            this.pr_id = idPr;
-            this.nama_pr_search = prodi;
-            this.pr_items = {
-                id: idPr,
-                kode: kodePr,
-                slot1: prodi,
-                slot2: departemen,
-                slot3: fakultas,
-            };
+            // this.tanggal_mulai = toWeekFormat(tanggalMulai);
+            // this.tanggal_berakhir = toWeekFormat(tanggalBerakhir);
 
-            this.rps_id = idRPS;
-            this.nama_rps_search = rps;
-            this.rps_items = {
-                id: idRPS,
-                kode: kodeRPS,
-                slot1: rps,
-                slot2: sksRPS,
-                slot3: wajibRPS,
-                slot4: drafRPS,
-            };
+            this.kapasitas = kapasitas;
         },
 
         setShowRPS(idRPS) {
@@ -94,8 +67,8 @@ document.addEventListener("alpine:init", () => {
         },
 
         setDeleteJadwal(namaJadwal, kodeJadwalDelete, forceDelete) {
-            this.nama_jadwal_delete = namaJadwal;
-            this.kode_jadwal_delete = kodeJadwalDelete;
+            this.nama_sesi_delete = namaJadwal;
+            this.kode_sesi_delete = kodeJadwalDelete;
             this.isForceDelete = forceDelete;
         },
 
@@ -350,11 +323,11 @@ document.addEventListener("alpine:init", () => {
         },
     });
 
-    window.addEventListener("fill-modal-jadwal", (event) => {
-        const j = event.detail.jadwal;
-        Alpine.store("jadwal").setValueJadwal(
-            j.kode_jadwal || j.kode_kelas,
-            j.nama_jadwal || j.nama_kelas,
+    window.addEventListener("fill-modal-sesi", (event) => {
+        const j = event.detail.sesi;
+        Alpine.store("sesi").setValueJadwal(
+            j.kode_sesi || j.kode_kelas,
+            j.nama_sesi || j.nama_kelas,
             j.deskripsi || j.deskripsi_kelas,
             j.pr_id,
             j.pr_rel?.kode_pr || j.kode_pr,
@@ -369,4 +342,28 @@ document.addEventListener("alpine:init", () => {
             j.rps_rel?.draf_full || j.draf_full,
         );
     });
+
+    function toWeekFormat(dateString) {
+        if (!dateString) return "";
+
+        const date = new Date(dateString);
+        const target = new Date(date.valueOf());
+        const dayNum = (date.getDay() + 6) % 7;
+
+        target.setDate(target.getDate() - dayNum + 3);
+        const firstThursday = new Date(target.getFullYear(), 0, 4);
+        const weekNumber =
+            1 +
+            Math.round(
+                ((target - firstThursday) / 86400000 -
+                    3 +
+                    ((firstThursday.getDay() + 6) % 7)) /
+                    7,
+            );
+
+        return `${target.getFullYear()}-W${String(weekNumber).padStart(
+            2,
+            "0",
+        )}`;
+    }
 });

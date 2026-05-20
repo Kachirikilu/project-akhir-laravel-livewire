@@ -26,10 +26,6 @@ trait WithJadwalFilters
         if (! empty($search)) {
             $queryJadwal->searchKelasJadwal($search);
         }
-    //   dd(
-    //         $queryJadwal->searchKelasJadwal($search)->toSql(),
-    //         $queryJadwal->searchKelasJadwal($search)->getBindings()
-    //     );
 
         $this->sortFieldOrderJadwal($queryJadwal);
 

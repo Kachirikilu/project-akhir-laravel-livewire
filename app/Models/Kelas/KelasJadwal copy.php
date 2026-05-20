@@ -24,7 +24,7 @@ class KelasJadwal extends Model
 
     public function sesis(): HasMany
     {
-        return $this->hasMany(SesiKelas::class, 'kj_id')->orderBy('pertemuan_ke');
+        return $this->hasMany(KelasSesi::class, 'kj_id')->orderBy('pertemuan_ke');
     }
 
     public function mahasiswas(): BelongsToMany

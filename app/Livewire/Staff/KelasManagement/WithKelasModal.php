@@ -64,8 +64,6 @@ trait WithKelasModal
         try {
             $kelas = Kelas::find($id);
 
-            $this->selected_id_kelas = $kelas->id;
-
             $this->pr_id = $kelas->pr_id;
             $this->pr_id_2 = $kelas->pr_id;
             $this->pr_items = $this->itemsPr($kelas->pr_rel);

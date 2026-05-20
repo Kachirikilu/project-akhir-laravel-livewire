@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Akademik\RPS;
-use App\Models\Kelas\Kelas;
-use App\Models\Kelas\SesiKelas;
 use App\Models\Auth\Mahasiswa;
+use App\Models\Kelas\Kelas;
+use App\Models\Kelas\KelasSesi;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +36,9 @@ class KelasSeeder extends Seeder
                     }
 
                     $prodis = $rps->mk_rel?->prodis;
-                    if (!$prodis) continue;
+                    if (! $prodis) {
+                        continue;
+                    }
 
                     foreach ($prodis as $prodi) {
                         DB::transaction(function () use ($rps, $scpmkList, $totalScpmk, $prodi) {
@@ -48,7 +50,7 @@ class KelasSeeder extends Seeder
                                 'kode_kelas' => $this->generateUniqueKode(Kelas::class, 'kode_kelas'),
                                 'rps_id' => $rps->id,
                                 'pr_id' => $prodi->id,
-                                'nama_kelas' => 'Kelas ' . $rps->deskripsi . ' - ' . $prodi->nama_pr,
+                                'nama_kelas' => 'Kelas '.$rps->deskripsi.' - '.$prodi->nama_pr,
                             ]);
 
                             // Tambahkan KelasJadwal (Min 2 jadwal)
@@ -80,7 +82,7 @@ class KelasSeeder extends Seeder
 
                                 // 4. Generate 16 Sesi
                                 for ($pertemuan = 1; $pertemuan <= 16; $pertemuan++) {
-                                    $sesi = SesiKelas::create([
+                                    $sesi = KelasSesi::create([
                                         'kj_id' => $jadwal->id,
                                         'pertemuan_ke' => $pertemuan,
                                         'tanggal' => (clone $tglMulai)->addWeeks($pertemuan - 1),
@@ -93,7 +95,8 @@ class KelasSeeder extends Seeder
                                             'metode' => 'UTS',
                                             'bobot' => $rps->bobot_uts,
                                         ]);
-                                        continue; 
+
+                                        continue;
                                     }
 
                                     if ($pertemuan == 16 && $totalScpmk < 16 && $rps->bobot_uas) {
@@ -102,6 +105,7 @@ class KelasSeeder extends Seeder
                                             'metode' => 'UAS',
                                             'bobot' => $rps->bobot_uas,
                                         ]);
+
                                         continue;
                                     }
 
@@ -116,7 +120,7 @@ class KelasSeeder extends Seeder
                 }
                 $this->command->info("Processed $totalProcessed RPS records...");
             });
-        
+
         $this->command->info("KelasSeeder finished. Total RPS processed: $totalProcessed");
     }
 

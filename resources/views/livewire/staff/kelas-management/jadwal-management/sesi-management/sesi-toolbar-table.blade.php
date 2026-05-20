@@ -7,37 +7,24 @@
             $rpsId = $x->kelas_rel?->rps_id ?? 'null';
 
             $showRPSCall = "showRPS($rpsId)";
-            $editCall = "editJadwal($x->id)";
-            $deleteCall = "deleteJadwal($x->id, $isTrashed)";
-            $restoreCall = "restoreJadwal($x->id)";
+            $editCall = "editSesi($x->id)";
+            $deleteCall = "deleteSesi($x->id, $isTrashed)";
+            $restoreCall = "restoreSesi($x->id)";
         @endphp
 
         @include('livewire.global.table.text-copy', [
             'xType' => $copyText ?? $x->kode,
-            'typeXString' => $copyName ?? 'Kode Jadwal',
+            'typeXString' => $copyName ?? 'Kode Sesi',
         ])
-
-        <flux:menu.separator />
-
-        <flux:menu.item href="{{ route('sesi-management', [$x->kode_kelas, $x->kode_jadwal, $x->id]) }}" wire:navigate
-            class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
-
-            <flux:icon name="calendar-days" class="mr-2 h-4 w-4" />
-
-            <div class="flex justify-between items-center w-full">
-                <span>Detail Jadwal</span>
-                <flux:icon wire:loading wire:target="showJadwal" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
 
         <flux:menu.separator />
 
         <flux:menu.item
             @click="
-                $store.jadwal?.resetShow();
-                $store.jadwal?.setColor('text-emerald-700 dark:text-emerald-400');
+                $store.sesi?.resetShow();
+                $store.sesi?.setColor('text-emerald-700 dark:text-emerald-400');
 
-                    $store.jadwal?.setShowRPS(
+                    $store.sesi?.setShowRPS(
                         '{{ $x->kelas_rel?->rps_id ?? '' }}',
                     );
 
@@ -77,12 +64,12 @@
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="
-                    $store.jadwal?.reset();
-                    $store.jadwal?.setEdit(1);
+                    $store.sesi?.reset();
+                    $store.sesi?.setEdit(1);
 
-                    $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
+                    $store.sesi?.setColor('text-amber-700 dark:text-amber-400');
 
-                    $store.jadwal?.setValueJadwal(
+                    $store.sesi?.setValueSesi(
                         '{{ $x->label_kelas ?? '' }}',
                         '{{ $x->kode_wilayah ?? '' }}',
 
@@ -95,7 +82,7 @@
                         '{{ $x->kapasitas ?? '' }}',
                     );
 
-                    $flux.modal('jadwal-modal').show();
+                    $flux.modal('sesi-modal').show();
                 "
                 wire:click="{{ $editCall }}"
                 class="!cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 transition-colors">
@@ -114,10 +101,10 @@
                 @click="
                     {{-- const type = '{{ $x->role ? strtolower($x->role) : $typeXString }}'; --}}
 
-                        $store.jadwal?.setDeleteJadwal(
+                        $store.sesi?.setDeleteSesi(
                             '{{ $x->kode ?? '' }}'
                         );
-                        $flux.modal('jadwal-delete').show();
+                        $flux.modal('sesi-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">
@@ -147,11 +134,11 @@
             {{-- Tombol Delete Permanent --}}
             <flux:menu.item
                 @click="
-                            $store.jadwal?.setDeleteJadwal(
+                            $store.sesi?.setDeleteSesi(
                             '{{ $x->kode ?? '' }}',
                             '{{ $isTrashed }}'
                         );
-                        $flux.modal('jadwal-delete').show();
+                        $flux.modal('sesi-delete').show();
                 "
                 wire:click="{{ $deleteCall }}"
                 class="!cursor-pointer !text-red-700 dark:!text-red-400 hover:!bg-red-100 dark:hover:!bg-red-900/30 transition-colors">

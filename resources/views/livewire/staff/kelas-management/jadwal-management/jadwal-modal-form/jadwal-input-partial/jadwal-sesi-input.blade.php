@@ -12,9 +12,10 @@
             <div class="relative">
                 @include('livewire.global.modal-form.input-form', [
                     'alpine' => 'jadwal',
+                    'isLivewire' => 1,
                     'nameXString' => 'Pertemuan ' . $i,
                     'modelString' => 'sesi_' . $i,
-                    'iconString' => 'calendar',
+                    'iconString' => 'calendar-days',
                     'isDate' => 1,
                     'message' => $errors->first('sesi_' . $i),
                 ])

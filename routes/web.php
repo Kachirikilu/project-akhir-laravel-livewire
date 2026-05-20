@@ -25,8 +25,8 @@ Route::middleware(['auth'])->group(function () {
         Route::view('mata-kuliah-management', 'mata-kuliah-management')->name('mata-kuliah-management');
         Route::view('rps-management', 'rps-management')->name('rps-management');
         Route::view('kelas-management', 'kelas-management')->name('kelas-management');
-        Route::view('kelas-management/jadwal/{kode}', 'kelas-management')->name('jadwal-management');
-
+        Route::view('kelas-management/kelas/{kode}', 'kelas-management')->name('jadwal-management');
+        Route::view('kelas-management/kelas/{kode}/jadwal/{kode_jadwal}/{id_jadwal}', 'kelas-management')->name('sesi-management');
     });
 
     Route::redirect('settings', 'settings/profile');

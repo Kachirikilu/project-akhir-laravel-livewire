@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
-use App\Models\Kelas\SesiKelas;
+use App\Models\Kelas\KelasSesi;
 
 class Dosen extends Model
 {
@@ -58,7 +58,7 @@ class Dosen extends Model
 
     public function sesiMengajars(): BelongsToMany
     {
-        return $this->belongsToMany(SesiKelas::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
+        return $this->belongsToMany(KelasSesi::class, 'sesi_pivot_dosen', 'dosen_id', 'sesi_id')
             ->withPivot(['peran', 'is_ketua', 'sort_order']);
     }
 

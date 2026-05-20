@@ -239,24 +239,30 @@
             <td class="{{ $secondKolom }} min-w-84">{{ $k->kelas ?? '-' }}</td>
             <td class="{{ $secondKolom }} min-w-24">{{ $k->prodi ?? '-' }} ({{ $k->kode_pr ?? '---' }})</td>
 
-            <td class="{{ $mainKolom }} text-center">
+            <td class="{{ $mainKolom }} text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
-                    <ul class="text-left text-sm whitespace-nowrap">
-                        @foreach ($k->jadwals as $jadwal)
-                            <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->hari ?? '-' }}</li>
-                        @endforeach
-                    </ul>
-                @endif
+                <ul class="text-left text-sm whitespace-nowrap">
+                    @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                        <li><strong class="mr-1">{{ $jadwal->label_full }}:</strong> {{ $jadwal->hari ?? '-' }}</li>
+                    @endforeach
+
+                    @if ($k->jadwals->count() > 4)
+                        <li class="text-xs text-gray-500 italic mt-1">
+                            dan {{ $k->jadwals->count() - 4 }} kelas lainnya...
+                        </li>
+                    @endif  
+                </ul>
+            @endif
             </td>
-            <td class="{{ $subKolom }} whitespace-nowrap text-center">
+            <td class="{{ $subKolom }} whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
                     <ul class="text-left text-sm whitespace-nowrap">
-                        @foreach ($k->jadwals as $jadwal)
-                            <li class="text-center">{{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
+                        @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
+                            <li class="text-left">{{ $jadwal->jam_pelaksanaan ?? '-' }}</li>
                         @endforeach
                     </ul>
                 @endif
@@ -265,19 +271,19 @@
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
-                    <ul class="text-left text-sm whitespace-nowrap">
-                        @foreach ($k->jadwals as $jadwal)
+                    <ul class="text-left text-sm whitespace-nowrap align-top">
+                        @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
                             <li class="text-center">{{ $jadwal->kapasitas ?? '-' }}</li>
                         @endforeach
                     </ul>
                 @endif
             </td>
-            <td class="{{ $subKolom }} {{ $borderR }} whitespace-nowrap text-center">
+            <td class="{{ $subKolom }} {{ $borderR }} whitespace-nowrap text-center align-top">
                 @if ($k->jadwals->isEmpty())
                     -
                 @else
                     <ul class="text-left text-sm whitespace-nowrap">
-                        @foreach ($k->jadwals as $jadwal)
+                        @foreach ($k->jadwals->sortBy(['label_kelas', 'kode_wilayah'])->take(4) as $jadwal)
                             <li>{{ $jadwal->tanggal_pelaksanaan ?? '-' }}</li>
                         @endforeach
                     </ul>

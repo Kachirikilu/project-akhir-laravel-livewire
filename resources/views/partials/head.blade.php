@@ -13,5 +13,5 @@
 @vite(['resources/css/color-template.css', 'resources/css/app.css', 'resources/js/app.js',
                 'resources/js/User.js', 'resources/js/ProgramStudi.js', 'resources/js/MataKuliah.js',
                 'resources/js/RPS.js', 'resources/js/CPMK.js', 'resources/js/SubCPMK.js', 'resources/js/CPL.js', 'resources/js/Referensi.js',
-                'resources/js/Kelas.js', 'resources/js/Jadwal.js'])
+                'resources/js/Kelas.js', 'resources/js/KelasJadwal.js', 'resources/js/KelasSesi.js'])
 @fluxAppearance

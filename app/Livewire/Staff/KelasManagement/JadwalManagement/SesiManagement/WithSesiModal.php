@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Staff\KelasManagement\JadwalManagement;
+namespace App\Livewire\Staff\KelasManagement\JadwalManagement\SesiManagement;
 
 use App\Livewire\Global\HasErrorCount;
 use App\Livewire\Global\HasToast;
@@ -13,18 +13,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-trait WithJadwalModal
+trait WithSesiModal
 {
     use HasErrorCount;
     use HasToast;
 
     public $selected_id_jadwal;
 
-    public $isEditingJadwal = false;
+    public $isEditingSesi = false;
 
-    public $showEditJadwal = false;
+    public $showEditSesi = false;
 
-    public $showJadwalModal = false;
+    public $showSesiModal = false;
 
     public $pr_id_2;
 
@@ -64,39 +64,39 @@ trait WithJadwalModal
 
     public $tanggal_berakhir;
 
-    public function addJadwal()
+    public function addSesi()
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        if ($this->showEditJadwal == true) {
-            $this->resetInputJadwal();
+        if ($this->showEditSesi == true) {
+            $this->resetInputSesi();
         }
 
         $this->resetValidation();
         $this->resetErrorBag();
-        $this->isEditingJadwal = false;
-        $this->showJadwalModal = true;
-        $this->showEditJadwal = false;
+        $this->isEditingSesi = false;
+        $this->showSesiModal = true;
+        $this->showEditSesi = false;
 
         $this->updatedMahasiswaNameSearch($this->mahasiswaNameSearch);
         // $this->updatedPrNameSearch($this->prNameSearch);
     }
 
-    public function editJadwal($id)
+    public function editSesi($id)
     {
         if (! $this->AuthCheck('staff')) {
             return;
         }
 
-        $this->resetInputJadwal();
+        $this->resetInputSesi();
         $this->resetValidation();
         $this->resetErrorBag();
 
         $this->selected_id_jadwal = $id;
-        $this->isEditingJadwal = true;
-        $this->showEditJadwal = true;
+        $this->isEditingSesi = true;
+        $this->showEditSesi = true;
 
         try {
 

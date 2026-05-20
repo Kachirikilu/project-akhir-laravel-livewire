@@ -1,27 +1,44 @@
-<div x-data="{
-    showPassword: false,
-
-    inputType:
-        @if (($isDate ?? false) === 1 || ($isDate ?? false) === true || ($isDate ?? false) === 'date')
-            'date'
-        @elseif (($isDate ?? false) === 'month')
-            'month'
-        @elseif (($isDate ?? false) === 'year')
-            'number'
-        @elseif ($isTime ?? false)
-            'time'
-        @elseif ($isWeek ?? false)
-            'week'
-        @else
-            '{{ $typeString ?? 'text' }}'
+<div
+    x-data="{
+        @if($isLivewire ?? false)
+            valueInput: @entangle($modelString).live,
         @endif
-}"
+
+        showPassword: false,
+
+        inputType:
+            @if (($isDate ?? false) === 1 || ($isDate ?? false) === true || ($isDate ?? false) === 'date')
+                'date'
+            @elseif (($isDate ?? false) === 'month')
+                'month'
+            @elseif (($isDate ?? false) === 'year')
+                'number'
+            @elseif ($isTime ?? false)
+                'time'
+            @elseif ($isWeek ?? false)
+                'week'
+            @else
+                '{{ $typeString ?? 'text' }}'
+            @endif
+    }"
+
     x-effect="
-        if($store.{{ $alpine ?? 'config' }}?.isEdit === 0){
-            $store.{{ $alpine ?? 'config' }}.{{ $modelString }} = '';
+        const store = $store.{{ $alpine ?? 'config' }};
+
+        if (!store) return;
+
+        if (store.isEdit === 0) {
+            store.{{ $modelString }} = '';
+            return;
         }
+
+        @if($isLivewire ?? false)
+            store.{{ $modelString }} = valueInput ?? '';
+        @endif
     "
-    wire:key="input-form-{{ $modelString }}-{{ $alpine }}">
+
+    wire:key="input-form-{{ $modelString }}-{{ $alpine }}"
+>
 
     @include('livewire.global.modal-form.partial.label')
 
@@ -34,6 +51,9 @@
         </div>
 
         <input
+            @if($isLivewire ?? false)
+                wire:model.live="{{ $modelString }}"
+            @endif
             x-model="$store.{{ $alpine ?? 'config' }}.{{ $modelString }}"
             name="{{ $modelString }}"
             x-bind:value="$store.{{ $alpine ?? 'config' }}?.isEdit ? $el.value : ''"

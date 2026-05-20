@@ -22,7 +22,7 @@
                 href="{{ route('jadwal-management', $x->kode) }}" wire:navigate
                 class="!cursor-pointer !text-green-600 dark:!text-green-400 hover:!bg-green-100 dark:hover:!bg-green-900/30 transition-colors">
                 
-                <flux:icon name="eye" class="mr-2 h-4 w-4" />
+                <flux:icon name="rectangle-group" class="mr-2 h-4 w-4" />
 
                 <div class="flex justify-between items-center w-full">
                     <span>Detail Kelas</span>

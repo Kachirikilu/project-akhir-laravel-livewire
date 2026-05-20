@@ -16,7 +16,7 @@
                     'modelString' => 'kode_kelas',
                     'valueString' => $kelas->kode ?? null,
                     'placeholder' => '---',
-                    'iconString' => 'identification',
+                    'iconString' => 'rectangle-group',
                 ])
             </div>
             <div class="sm:col-span-2" x-data="{}"
@@ -84,7 +84,7 @@
                 // 'noLabel' => 1,
                 'nameXString' => 'Label Kelas',
                 'modelString' => 'label_kelas',
-                'iconString' => 'variable',
+                'iconString' => 'presentation-chart-bar',
                 'placeholder' => 'Contoh: A, B, C',
                 'isKode' => 1,
                 'isFocusSelect' => 1,
@@ -108,7 +108,7 @@
     @include('livewire.global.modal-form.input-form', [
         'alpine' => 'jadwal',
         'modelString' => 'password',
-        'iconString' => 'variable',
+        'iconString' => 'lock-closed',
         'placeholder' => 'Contoh: AIDL22',
         'message' => $errors->first('password'),
     ])

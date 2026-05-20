@@ -24,7 +24,7 @@ class KelasJadwal extends Model
 
     public function sesis(): HasMany
     {
-        return $this->hasMany(SesiKelas::class, 'kj_id')->orderBy('pertemuan_ke');
+        return $this->hasMany(KelasSesi::class, 'kj_id')->orderBy('pertemuan_ke');
     }
 
     public function mahasiswas(): BelongsToMany
@@ -96,9 +96,33 @@ class KelasJadwal extends Model
         });
     }
 
+    protected function kodeJadwal(): Attribute
+    {
+        return Attribute::get(function () {
+            $lblKls = $this->label_kelas.'-'.$this->kode_wilayah;
+            $thn = $this->tahun_blok;
+
+            return "{$lblKls}-{$thn}";
+        });
+    }
+
     protected function labelFull(): Attribute
     {
         return Attribute::get(fn () => $this->label_kelas.' '.$this->kode_wilayah);
+    }
+
+    protected function labelExtra(): Attribute
+    {
+        return Attribute::get(function () {
+            $lbl = $this->label_kelas;
+            $wly = $this->kode_wilayah;
+            if ($wly == 'IDL') {
+                $wly = 'Indralaya';
+            } elseif ($wly == 'PLG') {
+                $wly = 'Palembang';
+            }
+            return "{$lbl} {$wly}";
+        });
     }
 
     protected function hari(): Attribute

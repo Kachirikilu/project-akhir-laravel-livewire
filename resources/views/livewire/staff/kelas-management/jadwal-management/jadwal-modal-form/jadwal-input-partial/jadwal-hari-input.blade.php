@@ -52,21 +52,34 @@
 
     <div class="grid sm:grid-cols-4 gap-1">
         <div class="sm:col-span-2">
-            @include('livewire.global.modal-form.input-form', [
-                'alpine' => 'jadwal',
-                'nameXString' => 'Tanggal Mulai',
-                'modelString' => 'tanggal_mulai',
-                'iconString' => 'calendar',
-                'isWeek' => 1,
-                'message' => $errors->first('tanggal_mulai'),
-            ])
+            <template x-if="$store.jadwal.isEdit == 0">
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'jadwal',
+                    'nameXString' => 'Tanggal Mulai',
+                    'modelString' => 'tanggal_mulai',
+                    'iconString' => 'calendar-days',
+                    'isWeek' => 1,
+                    'message' => $errors->first('tanggal_mulai'),
+                ])
+            </template>
+            <template x-if="$store.jadwal.isEdit == 1">
+                @include('livewire.global.modal-form.input-form', [
+                    'alpine' => 'jadwal',
+                    'nameXString' => 'Tanggal Mulai',
+                    'modelString' => 'tanggal_mulai',
+                    'iconString' => 'calendar-days',
+                    'isWeek' => 1,
+                    'message' => $errors->first('tanggal_mulai'),
+                    'isRequired' => 0,
+                ])
+            </template>
         </div>
         <div class="sm:col-span-2">
             @include('livewire.global.modal-form.input-form', [
                 'alpine' => 'jadwal',
                 'nameXString' => 'Tanggal Berakhir (Default: +6 Bulan)',
                 'modelString' => 'tanggal_berakhir',
-                'iconString' => 'calendar',
+                'iconString' => 'calendar-days',
                 'isWeek' => 1,
                 'isRequired' => 0,
                 'message' => $errors->first('tanggal_berakhir'),

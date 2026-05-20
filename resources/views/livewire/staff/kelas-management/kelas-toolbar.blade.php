@@ -22,7 +22,7 @@
                         $wire.addKelas();
                     "
                     class="cursor-pointer !text-emerald-600 dark:!text-emerald-400 hover:!bg-emerald-100 dark:hover:!bg-emerald-900/30">
-                    <flux:icon name="academic-cap" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
+                    <flux:icon name="rectangle-group" class="!text-emerald-600 dark:!text-emerald-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
                         <span>Kelas Perkuliahan</span>
                         <flux:icon wire:loading wire:target="addKelas()" name="arrow-path"

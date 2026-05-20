@@ -3,22 +3,22 @@
 namespace App\Models\Kelas;
 
 use App\Models\Auth\Dosen;
-use App\Models\Kelas\SesiKelas;
+use App\Models\Kelas\KelasSesi;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SesiKelasOverride extends Model
+class KelasSesiOverride extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'sesi_kelas_overrides';
+    protected $table = 'kelas_sesi_overrides';
     protected $guarded = ['id'];
 
     public function sesi(): BelongsTo
     {
-        return $this->belongsTo(SesiKelas::class, 'sesi_id');
+        return $this->belongsTo(KelasSesi::class, 'sesi_id');
     }
 
     public function dosen(): BelongsTo

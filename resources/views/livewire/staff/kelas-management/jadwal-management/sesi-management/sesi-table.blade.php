@@ -1,32 +1,32 @@
-{{-- Jadwal Section --}}
+{{-- Sesi Section --}}
 
 <div class="flex flex-wrap items-center gap-2 mb-4">
     <div class="ml-auto">
         <flux:dropdown>
             <flux:button variant="primary" icon="plus" size="sm"
                 class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
-                wire:target="addJadwal">
-                Tambah Jadwal
+                wire:target="addSesi">
+                Tambah Sesi
             </flux:button>
 
             <flux:menu
                 class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-                <flux:menu.heading>Tambah Jadwal</flux:menu.heading>
+                <flux:menu.heading>Tambah Sesi</flux:menu.heading>
                 <flux:menu.separator />
 
                 {{-- Program Studi --}}
                 <flux:menu.item
                     @click="
-                        $store.jadwal?.setEdit(0);
-                        $store.jadwal?.setColor('text-amber-700 dark:text-amber-400');
-                        $flux.modal('jadwal-modal').show();
-                        $wire.addJadwal();
+                        $store.sesi?.setEdit(0);
+                        $store.sesi?.setColor('text-amber-700 dark:text-amber-400');
+                        $flux.modal('sesi-modal').show();
+                        $wire.addSesi();
                     "
                     class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
                     <flux:icon name="calendar-days" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
                     <div class="flex justify-between items-center w-full">
-                        <span>Jadwal Perkuliahan</span>
-                        <flux:icon wire:loading wire:target="addJadwal()" name="arrow-path"
+                        <span>Sesi Perkuliahan</span>
+                        <flux:icon wire:loading wire:target="addSesi()" name="arrow-path"
                             class="animate-spin h-4 w-4 ml-2" />
                     </div>
                 </flux:menu.item>
@@ -39,12 +39,12 @@
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 mb-5">
     <h3 class="text-xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
         <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
-        Jadwal Kelas
+        Sesi Kelas
     </h3>
 
     <div class="w-full sm:w-auto sm:max-w-md">
         @include('livewire.global.search-and-filters.main-search', [
-            'placeholder' => 'Cari Jadwal Kelas...',
+            'placeholder' => 'Cari Sesi Kelas...',
             'isLive' => 1,
             'isBorder' => 2
         ])
@@ -89,7 +89,7 @@
                 'rowSpan' => 2,
             ])
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'kode',
+                'sortFieldString' => 'metode',
                 'isCenter' => 1,
                 'isMain' => 1,
                 'rowSpan' => 2,
@@ -102,14 +102,8 @@
                 'rowSpan' => 2,
             ])
 
-            @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'password',
-                'isCenter' => 1,
-                'rowSpan' => 2,
-            ])
-
             <th colspan="4" class="{{ $headSubKolom }}">
-                Informasi Jadwal Kelas
+                Informasi Sesi Kelas
             </th>
 
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
@@ -160,50 +154,49 @@
     </x-slot:header>
 
 
-    @forelse($jadwals as $j)
-        <tr wire:key="kelas-{{ $j->id }}" data-kelas-id="{{ $j->id }}"
+    @forelse($sesis as $s)
+        <tr wire:key="kelas-{{ $s->id }}" data-kelas-id="{{ $s->id }}"
             class="border-[var(--border-table-color)] hover:bg-[var(--hover-table-color)] transition-colors duration-200">
 
-            <td class="{{ $secondKolom }} text-center">{{ $j->id }}</td>
+            <td class="{{ $secondKolom }} text-center">{{ $s->id }}</td>
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
                     <button class="cursor-pointer">
-                        @switch($j->kode_wilayah)
+                        @switch($s->kode_wilayah)
                             @case('IDL')
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $j->kode ?? '-' }}
+                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $s->metode ?? '-' }}
                                 </flux:badge>
                             @break
 
                             @case('PLG')
-                                <flux:badge icon="academic-cap" color="amber" size="sm">{{ $j->kode ?? '-' }}</flux:badge>
+                                <flux:badge icon="academic-cap" color="amber" size="sm">{{ $s->metode ?? '-' }}</flux:badge>
                             @break
 
                             @default
-                                <flux:badge icon="academic-cap" color="red" size="sm">{{ $j->kode ?? '-' }}</flux:badge>
+                                <flux:badge icon="academic-cap" color="red" size="sm">{{ $s->metode ?? '-' }}</flux:badge>
                         @endswitch
                     </button>
 
                     @include(
-                        'livewire.staff.kelas-management.jadwal-management.jadwal-toolbar-table',
+                        'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
                         [
-                            'x' => $j,
-                            'editString' => 'editJadwal',
-                            'nameXString' => 'Jadwal',
-                            'confirmDeleteString' => 'deleteJadwal',
+                            'x' => $s,
+                            'editString' => 'editSesi',
+                            'nameXString' => 'Sesi',
+                            'confirmDeleteString' => 'deleteSesi',
                         ]
                     )
 
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $j->label_full }}</td>
-            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ !empty($j->password) ? $j->password : '-' }}</td>
+            <td class="{{ $secondKolom }} text-center whitespace-nowrap">{{ $s->label_full }}</td>
 
-            <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $j->hari }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->count_mahasiswa . ' / ' . $j->kapasitas }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $j->tanggal_pelaksanaan }}</td>
+            <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->count_mahasiswa . ' / ' . $s->kapasitas }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
 
 
             <td class="{{ $mainKolom }} text-center">
@@ -213,25 +206,25 @@
                     </flux:button>
 
                     @include(
-                        'livewire.staff.kelas-management.jadwal-management.jadwal-toolbar-table',
+                        'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
                         [
-                            'x' => $j,
-                            'editString' => 'editJadwal',
-                            'nameXString' => 'Jadwal',
-                            'confirmDeleteString' => 'deleteJadwal',
+                            'x' => $s,
+                            'editString' => 'editSesi',
+                            'nameXString' => 'Sesi',
+                            'confirmDeleteString' => 'deleteSesi',
                         ]
                     )
 
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $j->updated_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td>
         </tr>
         @empty
             <tr>
                 <td colspan="14" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada Jadwal Kelas ditemukan!
+                    Tidak ada Sesi Kelas ditemukan!
                 </td>
             </tr>
         @endforelse
@@ -239,7 +232,7 @@
 
         <x-slot:footer>
             @include('livewire.global.table.footer-table', [
-                'typeXString' => $jadwals,
+                'typeXString' => $sesis,
             ])
         </x-slot:footer>
 
