@@ -29,50 +29,131 @@ trait WithUserFilters
         $this->resetPage();
     }
 
-    public function inputUserSearch()
-    {
-        $queryUser = User::query()
-            ->with([
-                'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
-                'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
-                'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
-                'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
-            ]);
+    // public function inputUserSearch($role = null, $id_jadwal = null)
+    // {
+    //     if (!$role) {
+    //         $queryUser = User::query()
+    //         ->with([
+    //             'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
+    //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+    //             'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+    //             'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
+    //         ]);
+    //     } elseif ($role == 'admin') {
+    //         $queryUser = User::query()
+    //         ->with([
+    //             'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
+    //         ]);
+    //     } elseif ($role == 'dosen') {
+    //         $queryUser = User::query()
+    //         ->with([
+    //             'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+    //             'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+    //         ]);
+    //     } elseif ($role == 'mahasiswa') {
+    //         $queryUser = User::query()
+    //         ->with([
+    //             'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
+    //         ]);
+            
+    //         if ($id_jadwal) {
+    //             $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($id_jadwal) {
+    //                 $q->where('kj_id', $id_jadwal);
+    //             });
+    //         }
+    //     }
 
-        $search = $this->search;
+    //     $search = $this->search;
 
-        if (! empty($search)) {
-            $queryUser->searchUser($search);
-        }
+    //     if (! empty($search)) {
+    //         $queryUser->searchUser($search);
+    //     }
 
-        if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
-            $queryUser->searchUser($this->searchAngkatan, true);
-        }
+    //     if (! empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
+    //         $queryUser->searchUser($this->searchAngkatan, true);
+    //     }
 
-        if ($this->filterStatus !== '') {
-            if ($this->selectedPrId) {
-                $queryUser->inLocationUser('prodi', $this->selectedPrId);
-            }
+    //     if ($this->filterStatus !== '') {
+    //         if ($this->selectedPrId) {
+    //             $queryUser->inLocationUser('prodi', $this->selectedPrId);
+    //         }
 
-            if ($this->selectedDpId) {
-                $queryUser->inLocationUser('departemen', $this->selectedDpId);
-            }
+    //         if ($this->selectedDpId) {
+    //             $queryUser->inLocationUser('departemen', $this->selectedDpId);
+    //         }
 
-            if ($this->selectedFkId) {
-                $queryUser->inLocationUser('fakultas', $this->selectedFkId);
-            }
-        }
+    //         if ($this->selectedFkId) {
+    //             $queryUser->inLocationUser('fakultas', $this->selectedFkId);
+    //         }
+    //     }
 
-        if (! empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
-            $queryUser->whereHas('dosen.rps', function ($q) {
-                $q->where('rps.id', $this->selectedRPSId);
+    //     if (! empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
+    //         $queryUser->whereHas('dosen.rps', function ($q) {
+    //             $q->where('rps.id', $this->selectedRPSId);
+    //         });
+    //     }
+
+    //     $this->sortFieldOrderUser($queryUser);
+
+    //     return $queryUser;
+    // }
+
+public function inputUserSearch($role = null, $id_jadwal = null)
+{
+    if (!$role) {
+        $queryUser = User::query()->with([
+            'admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel',
+            'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+            'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+            'mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel',
+        ]);
+    } elseif ($role == 'admin') {
+        $queryUser = User::query()->with(['admin', 'admin.pr_rel', 'admin.pr_rel.dp_rel', 'admin.pr_rel.dp_rel.fk_rel']);
+    } elseif ($role == 'dosen') {
+        $queryUser = User::query()->with([
+            'dosen', 'dosen.pr_rel', 'dosen.pr_rel.dp_rel', 'dosen.pr_rel.dp_rel.fk_rel',
+            'dosen.rps', 'dosen.scpmks', 'dosen.sesiMengajars.jadwal.kelas_rel',
+        ]);
+    } elseif ($role == 'mahasiswa') {
+        $queryUser = User::query()->with(['mahasiswa', 'mahasiswa.pr_rel', 'mahasiswa.pr_rel.dp_rel', 'mahasiswa.pr_rel.dp_rel.fk_rel']);
+        
+        if ($id_jadwal) {
+            $queryUser = $queryUser->whereHas('mahasiswa.jadwals', function ($q) use ($id_jadwal) {
+                $q->where('kj_id', $id_jadwal);
             });
         }
-
-        $this->sortFieldOrderUser($queryUser);
-
-        return $queryUser;
     }
+
+    $search = trim($this->search);
+
+    if (!empty($search)) {
+        if (!str_contains($search, '%')) {
+            $queryUser->where(function($q) use ($search) {
+                $q->searchUser($search);
+            });
+        }
+    }
+
+    if (!empty($this->searchAngkatan) && $this->switchTable == 'mahasiswa') {
+        $queryUser->searchUser($this->searchAngkatan, true);
+    }
+
+    if ($this->filterStatus !== '') {
+        if ($this->selectedPrId) $queryUser->inLocationUser('prodi', $this->selectedPrId);
+        if ($this->selectedDpId) $queryUser->inLocationUser('departemen', $this->selectedDpId);
+        if ($this->selectedFkId) $queryUser->inLocationUser('fakultas', $this->selectedFkId);
+    }
+
+    if (!empty($this->selectedRPSId) && $this->switchTable === 'dosen') {
+        $queryUser->whereHas('dosen.rps', function ($q) {
+            $q->where('rps.id', $this->selectedRPSId);
+        });
+    }
+
+    $this->sortFieldOrderUser($queryUser);
+
+    return $queryUser;
+}
 
     public function buttonUserFilter($queryUser)
     {
@@ -142,6 +223,7 @@ trait WithUserFilters
             'role', 'admin_id', 'dosen_id', 'mahasiswa_id',
             'name', 'identity1', 'identity2', 'identity3', 'nik',
             'prodi', 'status', 'angkatan',
+            'nip', 'nitk', 'nidn', 'nidk', 'nim',
         ];
 
         if (in_array($this->sortField, $profileFields)) {
@@ -173,15 +255,20 @@ trait WithUserFilters
             'dosen_id' => 'dosens.id',
             'mahasiswa_id' => 'mahasiswas.id',
             'role' => 'CASE 
-                        WHEN admins.id IS NOT NULL THEN 1
-                        WHEN dosens.id IS NOT NULL THEN 2
-                        WHEN mahasiswas.id IS NOT NULL THEN 3
-                        ELSE 4
-                    END',
+                            WHEN admins.id IS NOT NULL THEN 1
+                            WHEN dosens.id IS NOT NULL THEN 2
+                            WHEN mahasiswas.id IS NOT NULL THEN 3
+                            ELSE 4
+                        END',
             'name' => 'COALESCE(admins.name, dosens.name, mahasiswas.name)',
             'identity1' => 'COALESCE(admins.nip, dosens.nip, mahasiswas.nim)',
             'identity2' => 'COALESCE(admins.nitk, dosens.nidn)',
             'identity3' => 'dosens.nidk',
+            'nip' => 'COALESCE(admins.nip, dosens.nip)',
+            'nitk' => 'admins.nitk',
+            'nidn' => 'dosens.nidn',
+            'nidk' => 'dosens.nidk',
+            'nim' => 'mahasiswas.nim',
             'nik' => 'COALESCE(admins.nik, dosens.nik, mahasiswas.nik)',
             'status' => 'COALESCE(admins.status, dosens.status, mahasiswas.status)',
             'angkatan' => 'mahasiswas.angkatan',

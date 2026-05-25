@@ -386,13 +386,13 @@ trait WithSubCPMKModal
                     
                     $hasUTSInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->whereIn('metode', SubCPMK::UTS_FIELDS);
+                            $query->whereIn('metode', SubCPMK::$UTS_FIELDS);
                         })
                         ->exists();
 
                     $hasUASInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->whereIn('metode', SubCPMK::UAS_FIELDS);
+                            $query->whereIn('metode', SubCPMK::$UAS_FIELDS);
                         })
                         ->exists();
 

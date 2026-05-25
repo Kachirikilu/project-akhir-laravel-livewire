@@ -21,7 +21,6 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalDepartemen,
                 'tabString' => 'departemen',
-                'tabNameString' => 'Departemen',
             ])
             {{-- Tab Fakultas --}}
             @include('livewire.global.search-and-filters.partial.tab-filter', [
@@ -29,7 +28,6 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalFakultas,
                 'tabString' => 'fakultas',
-                'tabNameString' => 'Fakultas',
             ])
         </div>
     </div>

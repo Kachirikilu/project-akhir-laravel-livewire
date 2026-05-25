@@ -47,6 +47,7 @@
                         'rps_items_list' => $dosen_rps_items_list,
                         'rps_modal_paginator' => $dosen_rps_modal_paginator,
                         'nameXString' => 'Dosen',
+                        'wireLoading' => 'editUser',
                     ])
                 </template>
             </div>

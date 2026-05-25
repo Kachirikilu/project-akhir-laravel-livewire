@@ -4,9 +4,7 @@
 
         @php
             $isTrashed = $x->trashed();
-            $rpsId = $x->kelas_rel?->rps_id ?? 'null';
 
-            $showRPSCall = "showRPS($rpsId)";
             $editCall = "editJadwal($x->id)";
             $deleteCall = "deleteJadwal($x->id, $isTrashed)";
             $restoreCall = "restoreJadwal($x->id)";
@@ -29,47 +27,6 @@
                 <flux:icon wire:loading wire:target="showJadwal" name="arrow-path" class="animate-spin h-4 w-4 ml-2" />
             </div>
         </flux:menu.item>
-
-        <flux:menu.separator />
-
-        <flux:menu.item
-            @click="
-                $store.jadwal?.resetShow();
-                $store.jadwal?.setColor('text-emerald-700 dark:text-emerald-400');
-
-                    $store.jadwal?.setShowRPS(
-                        '{{ $x->kelas_rel?->rps_id ?? '' }}',
-                    );
-
-                    $flux.modal('rps-detail-modal').show();
-            "
-            wire:click="{{ $showRPSCall }}"
-            class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-cyan-900/30 transition-colors">
-            <flux:icon name="eye" class="mr-2 h-4 w-4" />
-
-            <div class="flex justify-between items-center w-full">
-                <span>Show RPS</span>
-                <flux:icon wire:loading wire:target="{{ $showRPSCall }}" name="arrow-path"
-                    class="animate-spin h-4 w-4 ml-2" />
-            </div>
-        </flux:menu.item>
-
-
-
-        <flux:menu.separator />
-
-        <div wire:click="printPDFRPS({{ $x->kelas_rel?->rps_id }})"
-            class="px-3 py-2 flex items-center justify-between w-full cursor-pointer
-                !text-rose-600 dark:!text-rose-400
-                hover:!bg-rose-100 dark:hover:!bg-rose-900/30
-                transition-colors select-none rounded-md">
-            <div class="flex items-center">
-                <flux:icon name="printer" class="mr-2 h-4 w-4" />
-                <span>Print PDF RPS</span>
-            </div>
-            <flux:icon wire:loading wire:target="printPDFRPS({{ $x->kelas_rel?->rps_id }})" name="arrow-path"
-                class="animate-spin h-4 w-4 ml-2" />
-        </div>
 
         <flux:menu.separator />
 

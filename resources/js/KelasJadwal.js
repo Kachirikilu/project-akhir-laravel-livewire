@@ -14,18 +14,14 @@ document.addEventListener("alpine:init", () => {
             this.colorIcon = val;
         },
 
+        rps_id_show: "",
+
         kode_wilayah: "",
         label_kelas: "",
 
         password: "",
 
         hari_pelaksanaan: "",
-        jam_mulai: "",
-        jam_berakhir: "",
-
-        tanggal_mulai: "",
-        tanggal_berakhir: "",
-
         jam_mulai: "",
         jam_berakhir: "",
 

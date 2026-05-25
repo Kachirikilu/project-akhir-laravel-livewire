@@ -7,6 +7,7 @@ use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use App\Models\Kelas\KelasSesi;
+use App\Models\Kelas\KelasOverride;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -18,51 +19,13 @@ trait WithSesiModal
     use HasErrorCount;
     use HasToast;
 
-    public $selected_id_jadwal;
+    public $selected_id_sesi;
 
     public $isEditingSesi = false;
 
     public $showEditSesi = false;
 
     public $showSesiModal = false;
-
-    public $pr_id_2;
-
-    public $rps_id_2;
-
-    public $sesi_1;
-
-    public $sesi_2;
-
-    public $sesi_3;
-
-    public $sesi_4;
-
-    public $sesi_5;
-
-    public $sesi_6;
-
-    public $sesi_7;
-
-    public $sesi_8;
-
-    public $sesi_9;
-
-    public $sesi_10;
-
-    public $sesi_11;
-
-    public $sesi_12;
-
-    public $sesi_13;
-
-    public $sesi_14;
-
-    public $sesi_15;
-
-    public $sesi_16;
-
-    public $tanggal_berakhir;
 
     public function addSesi()
     {
@@ -79,9 +42,6 @@ trait WithSesiModal
         $this->isEditingSesi = false;
         $this->showSesiModal = true;
         $this->showEditSesi = false;
-
-        $this->updatedMahasiswaNameSearch($this->mahasiswaNameSearch);
-        // $this->updatedPrNameSearch($this->prNameSearch);
     }
 
     public function editSesi($id)
@@ -94,536 +54,308 @@ trait WithSesiModal
         $this->resetValidation();
         $this->resetErrorBag();
 
-        $this->selected_id_jadwal = $id;
+        $this->selected_id_sesi = $id;
         $this->isEditingSesi = true;
         $this->showEditSesi = true;
 
-        try {
-
-            $jadwal = KelasJadwal::with([
-                'sesis',
-                'mahasiswas',
-            ])->findOrFail($id);
-
-            $this->mahasiswa_id_array = $jadwal->mahasiswas->pluck('id')->toArray();
-            $this->mahasiswa_items_array = $jadwal->mahasiswas->map(function ($d) {
-                return $this->itemsMahasiswa($d);
-            })->toArray();
-
-            for ($i = 1; $i <= 16; $i++) {
-                $this->{'sesi_'.$i} = null;
-            }
-
-            $this->tanggal_berakhir = $jadwal->tanggal_berakhir ?? null;
-
-            // ======================================
-            // FILL SESI
-            // ======================================
-            foreach ($jadwal->sesis as $sesi) {
-
-                $index = $sesi->pertemuan_ke;
-
-                if ($index < 1 || $index > 16) {
-                    continue;
-                }
-
-                $this->{'sesi_'.$index} =
-                    Carbon::parse(
-                        $sesi->tanggal
-                    )->format('Y-m-d');
-            }
-
-            $this->dispatch(
-                'refresh-component'
-            );
-
-        } catch (\Exception $e) {
-
-            $this->toast(
-                text: 'Gagal Mengambil Data: '.
-                    $e->getMessage(),
-                variant: 'danger'
-            );
-        }
+        $this->dispatch('refresh-component');
     }
 
-    private function inputModalJadwal(
-        $isEditingJadwal,
-        $data,
-        $kelasId
-    ) {
+    private function inputModalSesi($isUpdate, $data, $kelasId = null)
+    {
         $this->resetErrorBag();
         $this->resetValidation();
 
-        $kelas = Kelas::with('jadwals')->find($kelasId);
+        $kelasId = $kelasId ?? $this->selected_kelas_id ?? null;
 
-        if (! $kelas) {
-            throw ValidationException::withMessages([
-                'kelas' => 'Kelas tidak ditemukan!',
-            ]);
-        }
-
-        $mahasiswaCount = count(
-            $data['mahasiswa_id_array'] ?? []
-        );
-
-        // ==========================================
-        // TRANSFORM DATA (AMAN)
-        // ==========================================
-
-        if (
-            ! empty($data['base_sesi_1']) &&
-            ! empty($data['hari_pelaksanaan'])
-        ) {
-
-            $data['tanggal_mulai'] = Carbon::parse(
-                $data['base_sesi_1']
-            )->format('Y-m-d');
-        }
-
-        if (! empty($data['tanggal_berakhir'])) {
-            [$yearPart, $weekPart] = explode(
-                '-W',
-                $data['tanggal_berakhir']
-            );
-            $year = (int) $yearPart;
-            $week = (int) $weekPart;
-            $data['tanggal_berakhir'] = Carbon::now()
-                ->setISODate($year, $week, 7)
-                ->format('Y-m-d');
-        } else {
-            if ($this->isEditingJadwal == true) {
-                $data['tanggal_berakhir'] = $this->tanggal_berakhir;
-            } else {
-                $data['tanggal_berakhir'] = Carbon::parse(
-                    $data['tanggal_mulai']
-                )->addMonths(6)->format('Y-m-d');
+        if ($isUpdate) {
+            $sesi = KelasSesi::with(['jadwal_rel.kelas_rel.rps_rel.cpmks.scpmks'])->find($this->selected_id_sesi);
+            if (! $sesi) {
+                throw ValidationException::withMessages([
+                    'sesi' => 'Data sesi pertemuan tidak ditemukan!',
+                ]);
             }
+            $scpmk = $sesi->scpmk_atr;
+            $jadwalInduk = $sesi->jadwal_rel;
+        } else {
+            $kelas = Kelas::with(['rps_rel.cpmks.scpmks'])->find($kelasId);
+            $scpmk = $kelas?->rps_rel?->cpmks?->flatMap->scpmks->firstWhere('pertemuan_ke', $data['pertemuan_ke'] ?? 1);
+            $jadwalInduk = null;
         }
 
         // ==========================================
-        // RULES
+        // RULES & CONDITIONAL UNIQUE CHECK
         // ==========================================
-
         $rules = [
-
-            'kode_wilayah' => 'required|in:IDL,PLG',
-
-            'label_kelas' => 'required|string|max:5',
-
-            'password' => 'nullable|string|max:14',
-
-            'hari_pelaksanaan' => [
-                'required',
-                Rule::in([
-                    'Senin',
-                    'Selasa',
-                    'Rabu',
-                    'Kamis',
-                    'Jumat',
-                    'Sabtu',
-                    'Minggu',
-                ]),
-            ],
-
-            // tanggal minggu input user
-            'tanggal_mulai' => [
-                // 'required',
-                function (
-                    $attribute,
-                    $value,
-                    $fail
-                ) use ($data) {
-
-                    if (
-                        empty($data['base_sesi_1']) && empty($data['tanggal_mulai']) && $this->isEditingJadwal == false
-                    ) {
-                        $fail(
-                            'Tanggal mulai wajib diisi!'
-                        );
-                    }
-                },
-            ],
-
-            // hasil transform
-            'tanggal_berakhir' => [
-                // 'required',
-                'date',
-                'after:tanggal_mulai',
-            ],
-
-            'jam_mulai' => 'required|date_format:H:i',
-
-            'jam_berakhir' => [
-                'required',
-                'date_format:H:i',
-                'after:jam_mulai',
-            ],
-
-            'kapasitas' => [
+            'pertemuan_ke'    => [
                 'required',
                 'integer',
                 'min:1',
+                'max:16',
+                function ($attribute, $value, $fail) use ($isUpdate, $jadwalInduk, $data) {
+                    $kjId = $jadwalInduk?->id ?? $data['kj_id'] ?? $this->selected_kj_id ?? null;
+                    
+                    if ($kjId) {
+                        $query = DB::table('kelas_sesi')
+                            ->where('kj_id', $kjId)
+                            ->where('pertemuan_ke', $value);
 
-                function (
-                    $attribute,
-                    $value,
-                    $fail
-                ) use ($mahasiswaCount) {
+                        if ($isUpdate) {
+                            $query->where('id', '!=', $this->selected_id_sesi);
+                        }
 
-                    if (
-                        $mahasiswaCount >
-                        (int) $value
-                    ) {
-                        $fail(
-                            'Jumlah mahasiswa melebihi kapasitas kelas!'
-                        );
+                        if ($query->exists()) {
+                            $fail("Pertemuan ke-{$value} sudah terdaftar pada jadwal kelas ini.");
+                        }
                     }
-                },
+                }
             ],
-
-            'mahasiswa_id_array' => 'nullable|array',
-
-            'mahasiswa_id_array.*' => 'exists:users,id',
+            'tanggal'         => 'required|date',
+            'jam_mulai'       => 'nullable|date_format:H:i',
+            'jam_berakhir'    => 'nullable|date_format:H:i|after:jam_mulai',
+            
+            'deskripsi'       => 'nullable|string|min:5|max:1000',
+            'materi'          => 'nullable|string|min:5|max:1000',
+            'metodologi'      => 'nullable|string|min:5|max:1000',
+            'indikator'       => 'nullable|string|min:5|max:1000',
+            
+            'metode'          => [
+                'nullable',
+                Rule::in([
+                    'Teori', 'Aktivitas Partisipasif', 'Tugas', 'Mandiri',
+                    'UTS', 'UAS', 'Evaluasi Awal', 'Evaluasi Akhir',
+                    'Laporan Akhir', 'Hasil Proyek', 'Kuis',
+                    'Skripsi', 'Kerja Praktek', 'Responsi', 'Logbook', 'Portofolio',
+                ]),
+            ],
+            
+            'deskripsi_tugas' => 'nullable|string|min:5|max:1000',
+            'waktu_tugas'     => 'nullable|integer|min:60',
+            'waktu_mandiri'   => 'nullable|integer|min:60',
+            'bobot'           => 'nullable|numeric|min:0.5|max:100',
         ];
-
-        // ==========================================
-        // SESI 1 - 16 WAJIB
-        // ==========================================
-
-        for ($i = 1; $i <= 16; $i++) {
-
-            $rules["sesi_{$i}"] = [
-                'required',
-                'date',
-            ];
-        }
 
         // ==========================================
         // VALIDATOR
         // ==========================================
-
-        $validator = Validator::make(
-            $data,
-            $rules,
-            $this->validationMessagesJadwal()
-        );
-
-        // ==========================================
-        // VALIDASI DUPLIKAT
-        // ==========================================
-
-        $validator->after(function (
-            $validator
-        ) use (
-            $kelas,
-            $data,
-            $isEditingJadwal
-        ) {
-
-            $query = $kelas->jadwals()
-                ->where(
-                    'label_kelas',
-                    $data['label_kelas']
-                )
-                ->where(
-                    'kode_wilayah',
-                    $data['kode_wilayah']
-                );
-
-            if ($isEditingJadwal) {
-                $query->where(
-                    'id',
-                    '!=',
-                    $this->selected_id_jadwal
-                );
-            }
-
-            if ($query->exists()) {
-                $validator->errors()->add(
-                    'label_kelas',
-                    'Kelas ini sudah ada!'
-                );
-            }
-        });
+        $validator = Validator::make($data, $rules, $this->validationMessagesSesi());
 
         if ($validator->fails()) {
-            throw ValidationException::withMessages(
-                $validator->errors()->toArray()
-            );
+            throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
-        return $validator->validated();
-    }
-
-    public function saveJadwal($data, $kelasId)
-    {
-        if (! $this->AuthCheck('staff')) {
-            return;
-        }
-
-        $data['mahasiswa_id_array'] = $this->mahasiswa_id_array ?? [];
-
-        try {
-
-            $validated = $this->inputModalJadwal(
-                false,
-                $data,
-                $kelasId
-            );
-
-            DB::transaction(function () use ($validated, $kelasId, $data) {
-
-                $jadwal = KelasJadwal::create([
-                    'kelas_id' => $kelasId,
-                    'password' => $validated['password'] ?? null,
-                    'kode_wilayah' => $validated['kode_wilayah'],
-                    'label_kelas' => $validated['label_kelas'],
-                    'tanggal_mulai' => $validated['tanggal_mulai'],
-                    'tanggal_berakhir' => $validated['tanggal_berakhir'],
-                    'hari_pelaksanaan' => $validated['hari_pelaksanaan'],
-                    'jam_mulai' => $validated['jam_mulai'],
-                    'jam_berakhir' => $validated['jam_berakhir'],
-                    'kapasitas' => $validated['kapasitas'],
-                ]);
-
-                // =========================================
-                // CREATE SESI 1 - 16
-                // =========================================
-                for ($i = 1; $i <= 16; $i++) {
-
-                    $tanggalSesi = $data["sesi_{$i}"] ?? null;
-
-                    if (! $tanggalSesi) {
-                        continue;
-                    }
-
-                    KelasSesi::create([
-                        'kj_id' => $jadwal->id,
-                        'pertemuan_ke' => $i,
-                        'tanggal' => $tanggalSesi,
-                    ]);
-                }
-
-                // =========================================
-                // ATTACH MAHASISWA
-                // =========================================
-                if (! empty($validated['mahasiswa_id_array'])) {
-
-                    $jadwal->mahasiswas()->sync(
-                        $validated['mahasiswa_id_array']
-                    );
-                }
-            });
-
-            $this->toast(
-                message: "Jadwal {$validated['label_kelas']} {$validated['kode_wilayah']}"
-            );
-
-            $this->resetInputJadwal();
-            $this->dispatch('refresh-data-jadwal');
-            $this->showJadwalModal = false;
-
-        } catch (ValidationException $e) {
-
-            $this->toast(
-                text: collect($e->errors())->flatten()->first(),
-                variant: 'danger'
-            );
-
-            throw $e;
-        } catch (\Exception $e) {
-
-            $this->toast(
-                text: 'Gagal Menambahkan: '.$e->getMessage(),
-                variant: 'danger'
-            );
-
-            report($e);
-        }
-    }
-
-    public function updateJadwal($data, $kelasId)
-    {
-        if (! $this->AuthCheck('staff')) {
-            return;
-        }
-
-        $data['mahasiswa_id_array'] =
-            $this->mahasiswa_id_array ?? [];
-
-        for ($i = 1; $i <= 16; $i++) {
-            if (empty($data['sesi_'.$i])) {
-                $data['sesi_'.$i] = $this->{'sesi_'.$i};
-            }
-        }
-
-        if (empty($data['base_sesi_1'])) {
-            $tanggalSesi1 = $data['sesi_1'] ?? null;
-            if (! empty($tanggalSesi1)) {
-                $data['base_sesi_1'] = Carbon::parse(
-                    $tanggalSesi1
-                )
-                    ->startOfWeek(Carbon::MONDAY)
-                    ->format('Y-m-d');
-            }
-        }
-
-        try {
-
-            $validated = $this->inputModalJadwal(true, $data, $kelasId
-            );
-
-            DB::transaction(function () use ($validated, $kelasId, $data
-            ) {
-
-                $jadwal = KelasJadwal::findOrFail(
-                    $this->selected_id_jadwal
-                );
-
-                // =========================================
-                // UPDATE JADWAL
-                // =========================================
-                $jadwal->update([
-                    'kelas_id' => $kelasId,
-                    'password' => $validated['password'] ?? null,
-
-                    'kode_wilayah' => $validated['kode_wilayah'],
-
-                    'label_kelas' => $validated['label_kelas'],
-
-                    'tanggal_mulai' => $validated['tanggal_mulai'],
-
-                    'tanggal_berakhir' => $validated['tanggal_berakhir'],
-
-                    'hari_pelaksanaan' => $validated['hari_pelaksanaan'],
-
-                    'jam_mulai' => $validated['jam_mulai'],
-
-                    'jam_berakhir' => $validated['jam_berakhir'],
-
-                    'kapasitas' => $validated['kapasitas'],
-                ]);
-
-                // =========================================
-                // UPDATE / CREATE SESI 1-16
-                // =========================================
-                for ($i = 1; $i <= 16; $i++) {
-                    $tanggalSesi = $data["sesi_{$i}"] ?? null;
-
-                    if (! $tanggalSesi) {
-                        continue;
-                    }
-
-                    KelasSesi::updateOrCreate(
-                        [
-                            'kj_id' => $jadwal->id,
-                            'pertemuan_ke' => $i,
-                        ],
-                        [
-                            'tanggal' => $tanggalSesi,
-                        ]
-                    );
-                }
-
-                // =========================================
-                // HAPUS SESI YANG TIDAK ADA
-                // =========================================
-                $jadwal->sesis()->whereNotIn('pertemuan_ke', range(1, 16))->delete();
-
-                // =========================================
-                // SYNC MAHASISWA
-                // =========================================
-                $jadwal->mahasiswas()->sync($validated['mahasiswa_id_array'] ?? []);
-            });
-
-            $this->resetInputJadwal();
-            $this->dispatch('refresh-data-jadwal');
-            $this->showJadwalModal = false;
-
-            $this->toast(message: "Jadwal {$validated['label_kelas']} {$validated['kode_wilayah']}", type: 'update');
-
-        } catch (ValidationException $e) {
-
-            $this->toast(
-                text: collect($e->errors())
-                    ->flatten()
-                    ->first(),
-                variant: 'danger'
-            );
-
-            throw $e;
-        } catch (\Exception $e) {
-
-            $this->toast(
-                text: 'Gagal Memperbarui: '
-                    .$e->getMessage(),
-                variant: 'danger'
-            );
-
-            report($e);
-        }
-    }
-
-    private function validationMessagesJadwal()
-    {
-        $messages = [
-
-            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi!',
-
-            'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi!',
-
-            'tanggal_berakhir.after' => 'Tanggal berakhir harus setelah tanggal mulai!',
-
-            'kode_wilayah.required' => 'Wilayah wajib dipilih!',
-
-            'label_kelas.required' => 'Label kelas wajib diisi!',
-
-            'hari_pelaksanaan.required' => 'Hari pelaksanaan wajib dipilih!',
-
-            'jam_mulai.required' => 'Jam mulai wajib diisi!',
-
-            'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
-
-            'jam_berakhir.required' => 'Jam berakhir wajib diisi!',
-
-            'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
-
-            'kapasitas.required' => 'Kapasitas wajib diisi!',
-
-            'kapasitas.integer' => 'Kapasitas harus berupa angka!',
-
-            'kapasitas.min' => 'Kapasitas minimal 1!',
-
-            'mahasiswa_id_array.required' => 'Mahasiswa wajib dipilih!',
-
-            'mahasiswa_id_array.min' => 'Minimal harus ada satu Mahasiswa!',
-
-            'mahasiswa_items_array.required' => 'Data detail Mahasiswa tidak boleh kosong!',
+        $validated = $validator->validated();
+
+        // ==========================================
+        // TRANSFORM DATA & LOGIKA FILTER OVERRIDE
+        // ==========================================
+        $sks = isset($data['sks']) ? (int) $data['sks'] : 2;
+        $defaultWaktuSks = 60 * $sks;
+
+        $fieldsToCompare = [
+            'jam_mulai'        => $validated['jam_mulai'] ?? null,
+            'jam_berakhir'     => $validated['jam_berakhir'] ?? null,
+            'deskripsi'        => $validated['deskripsi'] ?? null,
+            'materi'           => $validated['materi'] ?? null,
+            'metodologi'       => $validated['metodologi'] ?? null,
+            'indikator'        => $validated['indikator'] ?? null,
+            'metode'           => $validated['metode'] ?? null,
+            'deskripsi_tugas'  => $validated['deskripsi_tugas'] ?? null,
+            'waktu_tugas'      => isset($validated['waktu_tugas']) && $validated['waktu_tugas'] !== '' ? (int)$validated['waktu_tugas'] : null,
+            'waktu_mandiri'    => isset($validated['waktu_mandiri']) && $validated['waktu_mandiri'] !== '' ? (int)$validated['waktu_mandiri'] : null,
+            'bobot'            => isset($validated['bobot']) && $validated['bobot'] !== '' ? (float)$validated['bobot'] : null,
         ];
 
-        // ==========================================
-        // SESI 1 - 16
-        // ==========================================
+        $overridePayload = [];
+        $hasOverrideContent = false;
 
-        for ($i = 1; $i <= 16; $i++) {
+        foreach ($fieldsToCompare as $field => $inputValue) {
+            
+            if (in_array($field, ['jam_mulai', 'jam_berakhir'])) {
+                $defaultValue = $jadwalInduk ? ($jadwalInduk->{$field} ?? null) : ($data[$field] ?? null);
+                if ($defaultValue) {
+                    $defaultValue = date('H:i', strtotime($defaultValue));
+                }
+            } else {
+                $defaultValue = $scpmk ? ($scpmk->{$field} ?? null) : null;
+            }
 
-            $messages["sesi_{$i}.required"] =
-                "Pertemuan {$i} wajib diisi!";
+            if (in_array($field, ['deskripsi', 'materi', 'metodologi', 'indikator', 'deskripsi_tugas'])) {
+                $defaultValue = $this->normalizeText($defaultValue);
+                if ($scpmk && !empty($defaultValue)) {
+                    $scpmk->{$field} = $defaultValue;
+                }
+                $inputValue = $this->normalizeText($inputValue);
+            }
 
-            $messages["sesi_{$i}.date"] =
-                "Tanggal Pertemuan {$i} tidak valid!";
+            if (in_array($field, ['waktu_tugas', 'waktu_mandiri']) && !is_null($defaultValue)) {
+                $defaultValue = (int) $defaultValue;
+            }
+            if ($field === 'bobot' && !is_null($defaultValue)) {
+                $defaultValue = (float) $defaultValue;
+            }
+
+            if (in_array($field, ['waktu_tugas', 'waktu_mandiri'])) {
+                if ($inputValue === $defaultValue || $inputValue === $defaultWaktuSks) {
+                    $overridePayload[$field] = null;
+                } else {
+                    $overridePayload[$field] = $inputValue;
+                    if (!empty($inputValue)) $hasOverrideContent = true;
+                }
+                continue;
+            }
+
+            if (trim((string)$inputValue) === trim((string)$defaultValue) || trim((string)$inputValue) === '') {
+                $overridePayload[$field] = null;
+            } else {
+                $overridePayload[$field] = $inputValue;
+                $hasOverrideContent = true;
+            }
         }
+
+        return [
+            'main_data' => [
+                'pertemuan_ke' => $validated['pertemuan_ke'],
+                'tanggal'      => $validated['tanggal'] ?? null,
+            ],
+            'override_data' => $overridePayload,
+            'has_override'  => $hasOverrideContent,
+        ];
+    }
+
+    public function saveSesi($data)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        $data['kj_id'] = $data['kj_id'] ?? $this->selected_kj_id ?? null;
+        $kelasId = $this->selected_kelas_id ?? null;
+
+        try {
+            $validated = $this->inputModalSesi(false, $data, $kelasId);
+
+            DB::transaction(function () use ($validated, $data) {
+                $sesi = KelasSesi::create([
+                    'kj_id'        => $data['kj_id'],
+                    'pertemuan_ke' => $validated['main_data']['pertemuan_ke'],
+                    'tanggal'      => $validated['main_data']['tanggal'],
+                ]);
+
+                if ($validated['has_override']) {
+                    $sesi->override()->create($validated['override_data']);
+                }
+            });
+
+            $this->toast(message: "Sesi Pertemuan Ke-{$data['pertemuan_ke']} Berhasil Ditambahkan", type: 'create');
+
+            $this->resetInputSesi();
+            $this->dispatch('refresh-data-jadwal');
+            $this->showSesiModal = false;
+
+        } catch (ValidationException $e) {
+            $this->toast(text: collect($e->errors())->flatten()->first(), variant: 'danger');
+            throw $e;
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
+            report($e);
+        }
+    }
+
+
+    public function updateSesi($data)
+    {
+        if (! $this->AuthCheck('staff')) {
+            return;
+        }
+
+        try {
+            $validated = $this->inputModalSesi(true, $data);
+
+            DB::transaction(function () use ($validated) {
+                $sesi = KelasSesi::findOrFail($this->selected_id_sesi);
+                $sesi->update($validated['main_data']);
+
+                if ($validated['has_override']) {
+                    $sesi->override()->updateOrCreate(
+                        ['sesi_id' => $sesi->id],
+                        $validated['override_data']
+                    );
+                } else {
+                    $sesi->override()->delete();
+                }
+            });
+
+            $this->resetInputSesi();
+            $this->dispatch('refresh-data-sesi');
+            $this->showSesiModal = false;
+
+            $this->toast(message: "Sesi Pertemuan Ke-{$data['pertemuan_ke']}", type: 'update');
+
+        } catch (ValidationException $e) {
+            $this->toast(text: collect($e->errors())->flatten()->first(), variant: 'danger');
+            throw $e;
+        } catch (\Exception $e) {
+            $this->toast(text: 'Gagal Memperbarui: '.$e->getMessage(), variant: 'danger');
+            report($e);
+        }
+    }
+
+    private function validationMessagesSesi()
+    {
+        $messages = [
+            'tanggal.required'                    => 'Tanggal Sesi Kelas pertemuan wajib diisi!',
+            'tanggal.date'                        => 'Format tanggal Sesi Kelas tidak valid!',
+            
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
+            'jam_mulai.date_format'               => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
+            'jam_berakhir.date_format'            => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
+            'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
+
+
+            // Deskripsi & Status
+            'deskripsi.string' => 'Deskripsi Sub-CPMK harus berupa text!',
+            'deskripsi.min' => 'Deskripsi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
+            'deskripsi.max' => 'Deskripsi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+
+            'materi.string' => 'Materi Sub-CPMK harus berupa text!',
+            'materi.min' => 'Materi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
+            'materi.max' => 'Materi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+            
+            'metodologi.string' => 'Metodologi Sub-CPMK harus berupa text!',
+            'metodologi.min' => 'Metodologi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
+            'metodologi.max' => 'Metodologi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+            
+            'indikator.string' => 'Indikator Sub-CPMK harus berupa text!',
+            'indikator.min' => 'Indikator Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
+            'indikator.max' => 'Indikator Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+
+            'deskripsi_tugas.string' => 'Deskripsi Tugas harus berupa text!',
+            'deskripsi_tugas.min' => 'Deskripsi Tugas terlalu pendek (Minimal 5 karakter)!',
+            'deskripsi_tugas.max' => 'Deskripsi Tugas terlalu panjang (Maksimal 1000 karakter)!',
+            
+            'metode.in' => 'Pilih Metode yang telah tersedia!',
+
+            'waktu_tugas.integer' => 'Waktu tugas harus berupa angka!',
+            'waktu_tugas.min' => 'Waktu tugas minimal 60 menit!',
+
+            'waktu_mandiri.integer' => 'Waktu mandiri harus berupa angka!',
+            'waktu_mandiri.min' => 'Waktu mandiri minimal 60 menit!',
+
+            'bobot.numeric' => 'Bobot harus berupa angka desimal!',
+            'bobot.min' => 'Bobot minimal bernilai 0.5!',
+            'bobot.max' => 'Bobot minimal bernilai 100!',
+        ];
 
         return $messages;
     }
 
-    public function getJadwalErrorSections()
+    public function getSesiErrorSections()
     {
         return [
             1 => $this->getErrorCount([
-                'kode_jadwal',
-                'nama_jadwal',
+                'kode_sesi',
+                'nama_sesi',
                 'deskripsi',
             ]),
             2 => $this->getErrorCount([
@@ -633,16 +365,16 @@ trait WithSesiModal
         ];
     }
 
-    private function resetInputJadwal()
+    private function resetInputSesi()
     {
         $fields = [
-            'selected_id_jadwal',
+            'selected_id_sesi',
         ];
 
-        $this->mahasiswaNameSearch = '';
-        $this->mahasiswa_id_array = [];
-        $this->mahasiswa_items_array = [];
-        $this->mahasiswa_sub_items_array = [];
+        // $this->mahasiswaNameSearch = '';
+        // $this->mahasiswa_id_array = [];
+        // $this->mahasiswa_items_array = [];
+        // $this->mahasiswa_sub_items_array = [];
 
         $this->reset($fields);
         $this->resetErrorBag();

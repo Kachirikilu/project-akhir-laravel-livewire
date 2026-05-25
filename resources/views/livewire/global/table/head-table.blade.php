@@ -31,7 +31,7 @@
                         sortField === '{{ $sortFieldString }}' || clicked)
             }"
             class="{{ $isCenter ?? false ? 'ml-3' : '' }} transition-colors duration-200">
-            {{ $headString ?? $sortFieldString }}
+            {{ strtoupper($headString ?? str($sortFieldString)->replace(['-', '_'], ' ')) }}
         </span>
 
         <span

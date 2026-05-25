@@ -10,7 +10,7 @@
 
         @include('livewire.global.table.head-table', [
             'sortFieldString' => $sortFieldString,
-            'headString' => $headString,
+            'headString' => $headString ?? null,
             'withTh' => 0,
         ])
 

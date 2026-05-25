@@ -185,7 +185,6 @@ trait WithCPMKModal
             }
         }
 
-        // --- PROSES PEMBERSIHAN REFERENSI ---
         $cleanRef = [];
         if (isset($data['ref_id_array']) && is_array($data['ref_id_array'])) {
             $cleanRef = array_values(array_diff(array_unique($data['ref_id_array']), $refFromScpmk));
@@ -235,7 +234,7 @@ trait WithCPMKModal
                     }
                 },
             ],
-            'deskripsi' => 'nullable|max:1000',
+            'deskripsi' => 'nullable|string|min:1|max:1000',
             'scpmk_id_array' => 'required|array|min:1',
             'cpl_id_array' => 'required|array|min:1',
             'ref_id_array' => 'nullable|array',
@@ -512,6 +511,8 @@ trait WithCPMKModal
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi CPMK wajib diisi!',
+            'deskripsi.string' => 'Deskripsi CPMK harus berupa text!',
+            'deskripsi.min' => 'Deskripsi CPMK terlalu pendek (Minimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi CPMK terlalu panjang (Maksimal 1000 karakter)!',
 
             // CPMK & Relasi Data

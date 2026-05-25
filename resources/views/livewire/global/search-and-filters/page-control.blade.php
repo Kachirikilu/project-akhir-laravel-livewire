@@ -1,5 +1,5 @@
 <div wire:key="{{ $key ?? 'page-control-default' }}" 
-     class="flex items-center justify-end {{ $withFull ?? true ? 'pb-4 ml-4' : '' }}">
+     class="flex items-center justify-end {{ $withFull ?? true ? ($withPM ?? true ? 'pb-4 ml-4' : '') : '' }}">
 
     <div x-data="{ open: false, selected: @entangle('perPage').live }" class="relative w-15" @click.away="open = false">
         {{-- Tombol Utama --}}

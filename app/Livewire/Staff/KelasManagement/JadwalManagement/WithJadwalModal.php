@@ -26,10 +26,6 @@ trait WithJadwalModal
 
     public $showJadwalModal = false;
 
-    public $pr_id_2;
-
-    public $rps_id_2;
-
     public $sesi_1;
 
     public $sesi_2;
@@ -147,11 +143,8 @@ trait WithJadwalModal
         }
     }
 
-    private function inputModalJadwal(
-        $isEditingJadwal,
-        $data,
-        $kelasId
-    ) {
+    private function inputModalJadwal($isEditingJadwal, $data, $kelasId)
+    {
         $this->resetErrorBag();
         $this->resetValidation();
 
@@ -206,13 +199,9 @@ trait WithJadwalModal
         // ==========================================
 
         $rules = [
-
             'kode_wilayah' => 'required|in:IDL,PLG',
-
             'label_kelas' => 'required|string|max:5',
-
             'password' => 'nullable|string|max:14',
-
             'hari_pelaksanaan' => [
                 'required',
                 Rule::in([
@@ -226,7 +215,6 @@ trait WithJadwalModal
                 ]),
             ],
 
-            // tanggal minggu input user
             'tanggal_mulai' => [
                 // 'required',
                 function (
@@ -251,14 +239,10 @@ trait WithJadwalModal
                 'date',
                 'after:tanggal_mulai',
             ],
+            
 
             'jam_mulai' => 'required|date_format:H:i',
-
-            'jam_berakhir' => [
-                'required',
-                'date_format:H:i',
-                'after:jam_mulai',
-            ],
+            'jam_berakhir' => ['required', 'date_format:H:i', 'after:jam_mulai',],
 
             'kapasitas' => [
                 'required',
@@ -303,19 +287,14 @@ trait WithJadwalModal
         // VALIDATOR
         // ==========================================
 
-        $validator = Validator::make(
-            $data,
-            $rules,
-            $this->validationMessagesJadwal()
+        $validator = Validator::make($data, $rules, $this->validationMessagesJadwal()
         );
 
         // ==========================================
         // VALIDASI DUPLIKAT
         // ==========================================
 
-        $validator->after(function (
-            $validator
-        ) use (
+        $validator->after(function ($validator) use (
             $kelas,
             $data,
             $isEditingJadwal
@@ -372,10 +351,9 @@ trait WithJadwalModal
                 $kelasId
             );
 
-            DB::transaction(function () use ($validated, $kelasId, $data) {
+            DB::transaction(function () use ($validated, $data) {
 
                 $jadwal = KelasJadwal::create([
-                    'kelas_id' => $kelasId,
                     'password' => $validated['password'] ?? null,
                     'kode_wilayah' => $validated['kode_wilayah'],
                     'label_kelas' => $validated['label_kelas'],
@@ -474,7 +452,7 @@ trait WithJadwalModal
             $validated = $this->inputModalJadwal(true, $data, $kelasId
             );
 
-            DB::transaction(function () use ($validated, $kelasId, $data
+            DB::transaction(function () use ($validated, $data
             ) {
 
                 $jadwal = KelasJadwal::findOrFail(
@@ -485,23 +463,14 @@ trait WithJadwalModal
                 // UPDATE JADWAL
                 // =========================================
                 $jadwal->update([
-                    'kelas_id' => $kelasId,
                     'password' => $validated['password'] ?? null,
-
                     'kode_wilayah' => $validated['kode_wilayah'],
-
                     'label_kelas' => $validated['label_kelas'],
-
                     'tanggal_mulai' => $validated['tanggal_mulai'],
-
                     'tanggal_berakhir' => $validated['tanggal_berakhir'],
-
                     'hari_pelaksanaan' => $validated['hari_pelaksanaan'],
-
                     'jam_mulai' => $validated['jam_mulai'],
-
                     'jam_berakhir' => $validated['jam_berakhir'],
-
                     'kapasitas' => $validated['kapasitas'],
                 ]);
 
@@ -568,37 +537,27 @@ trait WithJadwalModal
     private function validationMessagesJadwal()
     {
         $messages = [
-
             'tanggal_mulai.required' => 'Tanggal mulai wajib diisi!',
-
             'tanggal_berakhir.required' => 'Tanggal berakhir wajib diisi!',
-
             'tanggal_berakhir.after' => 'Tanggal berakhir harus setelah tanggal mulai!',
 
             'kode_wilayah.required' => 'Wilayah wajib dipilih!',
-
             'label_kelas.required' => 'Label kelas wajib diisi!',
-
             'hari_pelaksanaan.required' => 'Hari pelaksanaan wajib dipilih!',
 
             'jam_mulai.required' => 'Jam mulai wajib diisi!',
-
             'jam_mulai.date_format' => 'Format jam mulai tidak valid!',
-
+            'jam_mulai.date_format'               => 'Format jam mulai harus berupa HH:MM (contoh: 08:00)!',
             'jam_berakhir.required' => 'Jam berakhir wajib diisi!',
-
+            'jam_berakhir.date_format'            => 'Format jam berakhir harus berupa HH:MM (contoh: 09:40)!',
             'jam_berakhir.after' => 'Jam berakhir harus setelah jam mulai!',
 
             'kapasitas.required' => 'Kapasitas wajib diisi!',
-
             'kapasitas.integer' => 'Kapasitas harus berupa angka!',
-
             'kapasitas.min' => 'Kapasitas minimal 1!',
 
             'mahasiswa_id_array.required' => 'Mahasiswa wajib dipilih!',
-
             'mahasiswa_id_array.min' => 'Minimal harus ada satu Mahasiswa!',
-
             'mahasiswa_items_array.required' => 'Data detail Mahasiswa tidak boleh kosong!',
         ];
 

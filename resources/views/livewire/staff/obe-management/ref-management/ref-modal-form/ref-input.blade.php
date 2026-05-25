@@ -118,6 +118,7 @@
                     'rps_items_list' => $ref_rps_items_list,
                     'rps_modal_paginator' => $ref_rps_modal_paginator,
                     'nameXString' => 'Referensi',
+                    'wireLoading' => 'editRef',
                 ])
             </template>
         </div>

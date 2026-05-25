@@ -1,62 +1,9 @@
-{{-- Sesi Section --}}
-
-<div class="flex flex-wrap items-center gap-2 mb-4">
-    <div class="ml-auto">
-        <flux:dropdown>
-            <flux:button variant="primary" icon="plus" size="sm"
-                class="cursor-pointer text-white bg-[var(--focus-color)] hover:bg-[var(--hover-focus-color)] transition-all duration-200 ease-in-out"
-                wire:target="addSesi">
-                Tambah Sesi
-            </flux:button>
-
-            <flux:menu
-                class="min-w-48 !bg-[var(--second-pop-up-color)] !border-[var(--border-table-color)] !text-[var(--contrast-main-text)]">
-                <flux:menu.heading>Tambah Sesi</flux:menu.heading>
-                <flux:menu.separator />
-
-                {{-- Program Studi --}}
-                <flux:menu.item
-                    @click="
-                        $store.sesi?.setEdit(0);
-                        $store.sesi?.setColor('text-amber-700 dark:text-amber-400');
-                        $flux.modal('sesi-modal').show();
-                        $wire.addSesi();
-                    "
-                    class="cursor-pointer !text-amber-600 dark:!text-amber-400 hover:!bg-amber-100 dark:hover:!bg-amber-900/30">
-                    <flux:icon name="calendar-days" class="!text-amber-600 dark:!text-amber-400 mr-2 h-4 w-4" />
-                    <div class="flex justify-between items-center w-full">
-                        <span>Sesi Perkuliahan</span>
-                        <flux:icon wire:loading wire:target="addSesi()" name="arrow-path"
-                            class="animate-spin h-4 w-4 ml-2" />
-                    </div>
-                </flux:menu.item>
-
-            </flux:menu>
-        </flux:dropdown>
-    </div>
-</div>
-
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2 mb-5">
-    <h3 class="text-xl font-bold text-[var(--contrast-second-text)] flex items-center gap-2">
-        <flux:icon name="calendar-days" class="h-6 w-6 text-[var(--focus-color)]" />
-        Sesi Kelas
-    </h3>
-
-    <div class="w-full sm:w-auto sm:max-w-md">
-        @include('livewire.global.search-and-filters.main-search', [
-            'placeholder' => 'Cari Sesi Kelas...',
-            'isLive' => 1,
-            'isBorder' => 2
-        ])
-    </div>
-</div>
-
 <x-global.main-layout-table>
 
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -75,7 +22,6 @@
 
     @php
         $borderR = 'border-[var(--border-table-color)] border-r';
-        $borderL = 'border-[var(--border-table-color)] border-l';
     @endphp
 
     <x-slot:header>
@@ -88,13 +34,13 @@
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
-            {{-- @include('livewire.global.table.head-table', [
+            @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'metode',
                 'isCenter' => 1,
                 'isMain' => 1,
                 'rowSpan' => 2,
-            ]) --}}
-            <th rowspan="2" class="{{ $headKolom }} border-x">Metode</th>
+            ])
+            {{-- <th rowspan="2" class="{{ $headKolom }} border-x">Metode</th> --}}
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'pertemuan_ke',
@@ -107,20 +53,22 @@
                 Informasi Sesi Kelas
             </th>
 
+            <th colspan="5" class="{{ $headSubKolom }}">
+                Informasi Sub-CPMK
+            </th>
+
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', [
+            {{-- @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
-                'headString' => 'Created At',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
-                'headString' => 'Updated At',
                 'isCenter' => 1,
                 'rowSpan' => 2,
-            ])
+            ]) --}}
         </tr>
 
         <tr>
@@ -138,8 +86,8 @@
             ])
 
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'jumlah_kehadiran',
-                'headString' => 'Kehadiran',
+                'sortFieldString' => 'jumlah_absensi',
+                'headString' => 'Absensi',
                 'isCenter' => 1,
             ])
 
@@ -150,6 +98,44 @@
                 'isCenter' => 1,
             ])
 
+            {{-- Sub-CPMK --}}
+
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'kode_scpmk',
+                'headString' => 'Sub-CPMK',
+                'isMain' => 1,
+                'isCenter' => 1,
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'bobot',
+            ])
+
+
+            {{-- @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'deskripsi',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'materi',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'metodologi',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'indikator',
+            ]) --}}
+
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'tugas',
+                'headString' => 'Deskripsi Tugas',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'w_tugas',
+                'headString' => 'Waktu Tugas',
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'w_mandiri',
+                'headString' => 'Waktu Mandiri',
+            ])
 
         </tr>
     </x-slot:header>
@@ -163,60 +149,59 @@
 
             <td class="{{ $mainKolom }} text-center">
                 <flux:dropdown>
-                        <button class="cursor-pointer">
-                            @switch($s->metode)
-                                @case('Teori')
-                                    <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
-                                    </flux:badge>
-                                @break
+                    <button class="cursor-pointer">
+                        @switch($s->metode)
+                            @case('Teori')
+                                <flux:badge icon="book-open" color="emerald" size="sm" variant="pill">Teori
+                                </flux:badge>
+                            @break
 
-                                @case('Praktik')
-                                    <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
-                                    </flux:badge>
-                                @break
+                            @case('Praktik')
+                                <flux:badge icon="beaker" color="cyan" size="sm" variant="pill">Praktik
+                                </flux:badge>
+                            @break
 
-                                @case('Tugas')
-                                    <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
-                                    </flux:badge>
-                                @break
+                            @case('Tugas')
+                                <flux:badge icon="pencil-square" color="blue" size="sm" variant="pill">Tugas
+                                </flux:badge>
+                            @break
 
-                                @case('UTS')
-                                @case('UAS')
-                                    <flux:badge icon="clipboard-document-check" color="amber" size="sm"
-                                        variant="pill">
-                                        {{ $s->metode }}</flux:badge>
-                                @break
+                            @case('UTS')
+                            @case('UAS')
+                                <flux:badge icon="clipboard-document-check" color="amber" size="sm" variant="pill">
+                                    {{ $s->metode }}</flux:badge>
+                            @break
 
-                                @case('Hasil Proyek')
-                                    <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
-                                    </flux:badge>
-                                @break
+                            @case('Hasil Proyek')
+                                <flux:badge icon="light-bulb" color="indigo" size="sm" variant="pill">Hasil Proyek
+                                </flux:badge>
+                            @break
 
-                                @case('Kerja Praktek')
-                                    <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
-                                    </flux:badge>
-                                @break
+                            @case('Kerja Praktek')
+                                <flux:badge icon="briefcase" color="violet" size="sm" variant="pill">Kerja Praktek
+                                </flux:badge>
+                            @break
 
-                                @case('Skripsi')
-                                    <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
-                                    </flux:badge>
-                                @break
+                            @case('Skripsi')
+                                <flux:badge icon="academic-cap" color="fuchsia" size="sm" variant="pill">Skripsi
+                                </flux:badge>
+                            @break
 
-                                @case('Aktivitas Partisipasif')
-                                    <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
-                                    </flux:badge>
-                                @break
+                            @case('Aktivitas Partisipasif')
+                                <flux:badge icon="user-group" color="rose" size="sm" variant="pill">Partisipasif
+                                </flux:badge>
+                            @break
 
-                                @case('Mandiri')
-                                    <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
-                                    </flux:badge>
-                                @break
+                            @case('Mandiri')
+                                <flux:badge icon="user" color="slate" size="sm" variant="pill">Mandiri
+                                </flux:badge>
+                            @break
 
-                                @default
-                                    <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
-                                        {{ $s->metode ?? '-' }}</flux:badge>
-                            @endswitch
-                        </button>
+                            @default
+                                <flux:badge icon="information-circle" color="zinc" size="sm" variant="pill">
+                                    {{ $s->metode ?? '-' }}</flux:badge>
+                        @endswitch
+                    </button>
 
                     @include(
                         'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
@@ -225,6 +210,8 @@
                             'editString' => 'editSesi',
                             'nameXString' => 'Sesi',
                             'confirmDeleteString' => 'deleteSesi',
+                            'copyName' => 'Kode Sub-CPMK',
+                            'copyText' => $s->kode_scpmk ?? '',
                         ]
                     )
 
@@ -235,8 +222,42 @@
 
             <td class="{{ $mainKolom }} text-center whitespace-nowrap">{{ $s->hari }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->jam_pelaksanaan }}</td>
-            <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->kehadirans_count . ' / ' . $jadwal->kapasitas }}</td>
+            <td class="{{ $subKolom }} text-center whitespace-nowrap">
+                {{ $s->mhs_absensi . ' / ' . $s->count_mahasiswa }}</td>
             <td class="{{ $subKolom }} text-center whitespace-nowrap">{{ $s->tanggal_pelaksanaan }}</td>
+
+            <td class="{{ $mainKolom }} text-center whitespace-nowrap">
+                <flux:dropdown>
+                    <button class="cursor-pointer">
+                        <flux:badge icon="academic-cap" color="fuchsia" size="sm">{{ $s->kode_scpmk ?? '---' }}
+                        </flux:badge>
+                    </button>
+
+                    @include(
+                        'livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-toolbar-table',
+                        [
+                            'x' => $s,
+                            'editString' => 'editSesi',
+                            'nameXString' => 'Sesi',
+                            'confirmDeleteString' => 'deleteSesi',
+                            'copyName' => 'Kode Sub-CPMK',
+                            'copyText' => $s->kode_scpmk ?? '',
+                        ]
+                    )
+                </flux:dropdown>
+            </td>
+            <td class="{{ $subKolom }} {{ $borderR }} text-center whitespace-nowrap">
+                {{ $s->bobot ? $s->bobot . '%' : '-' }}</td>
+            {{-- <td class="{{ $subKolom }} min-w-84">{{ $s->deskripsi ?? '-' }}</td>
+            <td class="{{ $subKolom }} min-w-48">{{ $s->materi ?? '-' }}</td>
+            <td class="{{ $subKolom }} min-w-48">{{ $s->metodologi ?? '-' }}</td>
+            <td class="{{ $subKolom }} min-w-48">{{ $s->indikator ?? '-' }}</td> --}}
+
+            <td class="{{ $subKolom }} min-w-48">{{ $s->tugas ?? '-' }}</td>
+            <td class="{{ $subKolom }} whitespace-nowrap text-center">
+                {{ $s->w_tugas ?? 0 }} menit</td>
+            <td class="{{ $subKolom }} whitespace-nowrap text-center">
+                {{ $s->w_mandiri ?? 0 }} menit</td>
 
 
             <td class="{{ $mainKolom }} text-center">
@@ -252,19 +273,21 @@
                             'editString' => 'editSesi',
                             'nameXString' => 'Sesi',
                             'confirmDeleteString' => 'deleteSesi',
+                            'copyName' => 'Kode Sub-CPMK',
+                            'copyText' => $s->kode_scpmk ?? '',
                         ]
                     )
 
                 </flux:dropdown>
             </td>
 
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
-            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td>
+            {{-- <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->created_day ?? '-' }}</td>
+            <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $s->updated_day ?? '-' }}</td> --}}
         </tr>
         @empty
             <tr>
-                <td colspan="14" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada Sesi Kelas ditemukan!
+                <td colspan="15" class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
+                    Tidak ada data Sesi Pertemuan Kelas ditemukan!
                 </td>
             </tr>
         @endforelse

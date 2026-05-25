@@ -25,10 +25,10 @@
 
         {{-- 2. Konten & Form --}}
         <div class="flex-1 overflow-y-auto p-6 scrollbar-large">
-            <form x-on:submit.prevent="$wire.{{ $isEditingSesi ? 'updateSesi' : 'saveSesi' }}($store.sesi, {{ $kelas->id }})"
+            <form x-on:submit.prevent="$wire.{{ $isEditingSesi ? 'updateSesi' : 'saveSesi' }}($store.sesi)"
                 enctype="multipart/form-data" id="sesiForm">
 
-                {{-- @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form.jadwal-input') --}}
+                @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-input')
 
                 {{-- 3. Footer / Button Action --}}
                 <div
@@ -36,7 +36,7 @@
                     p-4 mt-4 rounded-lg gap-4 shadow-sm border-t transition-colors duration-300">
 
                     <div class="flex-1 text-xs text-[var(--second-text)] space-y-3">
-                        {{-- @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form.jadwal-message-form') --}}
+                        @include('livewire.staff.kelas-management.jadwal-management.sesi-management.sesi-modal-form.sesi-message-form')
                         @include('livewire.global.modal-form.button-form', [
                             'targetX' => 'addSesi, saveSesi, editSesi, updateSesi',
                         ])

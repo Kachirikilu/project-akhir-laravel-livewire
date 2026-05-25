@@ -2,11 +2,14 @@
 
 namespace App\Models\Auth;
 
+use App\Models\Kelas\MahasiswaKehadiran;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+use App\Models\Kelas\KelasJadwal;
 use App\Models\ProgramStudi\Prodi;
 
 class Mahasiswa extends Model
@@ -51,6 +54,17 @@ class Mahasiswa extends Model
     public function pr_rel(): BelongsTo
     {
         return $this->belongsTo(Prodi::class, 'pr_id')->withTrashed();
+    }
+
+    public function jadwals(): BelongsToMany
+    {
+        return $this->belongsToMany(KelasJadwal::class, 'mahasiswa_kelas', 'mahasiswa_id', 'kj_id')
+            ->withTimestamps();
+    }
+
+    public function kehadirans(): HasMany
+    {
+        return $this->hasMany(MahasiswaKehadiran::class, 'mahasiswa_id');
     }
 
     protected function angkatanFull(): Attribute

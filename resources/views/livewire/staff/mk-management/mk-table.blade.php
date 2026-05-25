@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -76,8 +76,16 @@
 
             <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'rowSpan' => 2, 'isCenter' => 1])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'rowSpan' => 2, 'isCenter' => 1])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'created_at',
+                'rowSpan' => 2,
+                'isCenter' => 1,
+            ])
+            @include('livewire.global.table.head-table', [
+                'sortFieldString' => 'updated_at',
+                'rowSpan' => 2,
+                'isCenter' => 1,
+            ])
         </tr>
 
         {{-- BARIS KEDUA (Hanya untuk detail SKS) --}}
@@ -139,17 +147,24 @@
                     <button class="cursor-pointer">
                         @switch($mk->level_mk)
                             @case(1)
-                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="academic-cap" color="emerald" size="sm">{{ $mk->digit_mk ?? '-' }}
+                                </flux:badge>
                             @break
+
                             @case(2)
-                                <flux:badge icon="book-open" color="amber" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="book-open" color="amber" size="sm">{{ $mk->digit_mk ?? '-' }}
+                                </flux:badge>
                             @break
+
                             @case(3)
-                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
+                                <flux:badge icon="building-library" color="indigo" size="sm">{{ $mk->digit_mk ?? '-' }}
+                                </flux:badge>
                             @break
+
                             @default
-                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $mk->digit_mk ?? '-' }}</flux:badge>
-                        @endswitch 
+                                <flux:badge icon="globe-alt" color="red" size="sm">{{ $mk->digit_mk ?? '-' }}
+                                </flux:badge>
+                        @endswitch
                     </button>
 
                     @include('livewire.staff.mk-management.mk-toolbar-table', [
@@ -244,10 +259,12 @@
                 <flux:dropdown>
                     <button class="cursor-pointer">
                         @if ($mk->wajib)
-                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">{{ $mk->wajib_text }}
+                            <flux:badge icon="check" color="green" size="sm" inset="top bottom">
+                                {{ $mk->wajib_text }}
                             </flux:badge>
                         @else
-                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">{{ $mk->wajib_text }}
+                            <flux:badge icon="x-mark" color="zinc" size="sm" inset="top bottom">
+                                {{ $mk->wajib_text }}
                             </flux:badge>
                         @endif
                     </button>
@@ -287,7 +304,7 @@
             <tr>
                 <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada Mata Kuliah ditemukan!
+                    Tidak ada data Mata Kuliah ditemukan!
                 </td>
             </tr>
         @endforelse
@@ -299,4 +316,4 @@
             ])
         </x-slot:footer>
 
-    </x-admin.global.table.main-layout-table>
+        </x-admin.global.table.main-layout-table>

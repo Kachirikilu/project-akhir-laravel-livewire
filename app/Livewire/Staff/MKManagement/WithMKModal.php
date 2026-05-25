@@ -175,8 +175,8 @@ trait WithMKModal
             'sks_kuliah' => 'required|integer|min:1',
             'tipe_sks' => 'required|in:1,2,3,4',
             'is_wajib' => 'required|boolean',
-            'deskripsi' => 'required|string|max:1000',
-            'bahan_kajian' => 'required|string|max:1000',
+            'deskripsi' => 'required|string|min:5|max:1000',
+            'bahan_kajian' => 'required|string|min:5|max:1000',
         ];
 
         if ($tingkatan === 1) {
@@ -429,9 +429,14 @@ trait WithMKModal
             'is_wajib.required' => 'Status kewajiban Mata Kuliah wajib ditentukan!',
             'is_wajib.boolean' => 'Format status wajib tidak valid!',
 
+            'deskripsi.string' => 'Deskripsi Mata Kuliah harus berupa text!',
             'deskripsi.required' => 'Deskripsi Mata Kuliah wajib diisi!',
+            'deskripsi.min' => 'Deskripsi Mata Kuliah terlalu pendek (Minimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
+
             'bahan_kajian.required' => 'Bahan Kajian Mata Kuliah wajib diisi!',
+            'bahan_kajian.string' => 'Bahan Kajian harus berupa text!',
+            'bahan_kajian.min' => 'Bahan Kajian Mata Kuliah terlalu pendek (Minimal 5 karakter)!',
             'bahan_kajian.max' => 'Bahan Kajian Mata Kuliah terlalu panjang (Maksimal 1000 karakter)!',
         ];
     }

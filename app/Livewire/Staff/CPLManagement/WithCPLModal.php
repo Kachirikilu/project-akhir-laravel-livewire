@@ -175,6 +175,7 @@ trait WithCPLModal
             'deskripsi' => [
                 'required',
                 'string',
+                'min:5',
                 'max:1000',
                 function ($attribute, $value, $fail) use ($isEditingCPL) {
                     $query = DB::table('cpls')->where('deskripsi', $value);
@@ -354,6 +355,8 @@ trait WithCPLModal
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi CPL wajib diisi!',
+            'deskripsi.string' => 'Deskripsi CPL harus berupa text!',
+            'deskripsi.min' => 'Deskripsi CPL terlalu pendek (Maksimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi CPL terlalu panjang (Maksimal 1000 karakter)!',
             'deskripsi.unique' => 'Deskripsi CPL sudah tersedia!',
         ];

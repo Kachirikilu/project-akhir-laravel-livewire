@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -46,12 +46,10 @@
                 'rowSpan' => 2,
                 'isCenter' => 1,
                 'isBorderR' => 1,
-                'headString' => 'Kode RPS',
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kelas',
                 'rowSpan' => 2,
-                'headString' => 'Kelas',
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'prodi',
@@ -73,13 +71,11 @@
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
-                'headString' => 'Created At',
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
-                'headString' => 'Updated At',
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
@@ -114,7 +110,6 @@
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'kode_mk',
                 'isCenter' => 1,
-                'headString' => 'Kode MK',
                 'isMain' => 1,
             ])
             @include('livewire.global.table.head-table', [
@@ -378,9 +373,9 @@
         </tr>
         @empty
             <tr>
-                <td colspan="{{ $switchTable == '' ? 14 : 11 }}"
+                <td colspan="18"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada Kelas ditemukan!
+                    Tidak ada data Kelas ditemukan!
                 </td>
             </tr>
         @endforelse

@@ -124,7 +124,7 @@ trait WithKelasModal
                 },
             ],
             'nama_kelas' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string|max:1000',
+            'deskripsi' => 'nullable|string|min:5|max:1000',
             'pr_id' => 'required|integer|exists:prodis,id',
             'rps_id' => [
                 'required',
@@ -283,6 +283,7 @@ trait WithKelasModal
             'nama_kelas.max' => 'Nama Kelas tidak boleh lebih dari 255 karakter!',
 
             'deskripsi.required' => 'Deskripsi Kelas wajib diisi!',
+            'deskripsi.min' => 'Deskripsi Kelas terlalu pendek (Maksimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi Kelas terlalu panjang (Maksimal 1000 karakter)!',
         ];
     }

@@ -32,6 +32,7 @@ use App\Livewire\Staff\RPSManagement\WithOBEExcel;
 use App\Livewire\Staff\RPSManagement\WithRPSDelete;
 use App\Livewire\Staff\RPSManagement\WithRPSFilters;
 use App\Livewire\Staff\RPSManagement\WithRPSModal;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\CPL;
 use App\Models\Akademik\CPMK;
 use App\Models\Akademik\Referensi;
@@ -76,6 +77,7 @@ class RPSManagement extends Component
     use WithUserDelete;
     use WithUserFilters;
     use WithUserModal;
+    use HasToast;
 
     public $switchTable = 'rps';
 
@@ -179,62 +181,31 @@ class RPSManagement extends Component
         $columns = [
             'rps' => [1 => 'id', 2 => 'kode', 3 => 'akademik', 4 => 'kode_mk', 5 => 'mk', 6 => 'sks', 7 => 'sks_text', 8 => 'is_wajib', 9 => 'count-cpmk', 10 => 'count-scpmk', 11 => 'total_bobot', 12 => 'is_draf', 13 => 'revisi', 14 => 'created_at', 15 => 'updated_at'],
             'cpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'count-scpmk', 5 => 'total_bobot', 6 => 'created_at', 7 => 'updated_at'],
-            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'materi', 5 => 'metodologi', 6 => 'indikator', 7 => 'metode', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
+            'scpmk' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'metode', 5 => 'materi', 6 => 'metodologi', 7 => 'indikator', 8 => 'bobot', 9 => 'tugas', 10 => 'w_tugas', 11 => 'w_mandiri', 12 => 'created_at', 13 => 'updated_at'],
             'cpl' => [1 => 'id', 2 => 'kode', 3 => 'deskripsi', 4 => 'created_at', 5 => 'updated_at'],
             'ref' => [1 => 'id', 2 => 'kode', 3 => 'judul', 4 => 'penulis', 5 => 'penerbit', 6 => 'tahun', 7 => 'link', 8 => 'created_at', 9 => 'updated_at'],
             'dosen' => [1 => 'id', 2 => 'name', 3 => 'identity1', 4 => 'identity2', 5 => 'identity3', 6 => 'role', 7 => 'prodi', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
         ];
-
-        if (! isset($columns[$table])) {
-            return;
-        }
-
         $aliases = [
             'kode' => ['kode', 'name'],
-            'deskripsi' => ['mk', 'deskripsi', 'judul'],
+            'name' => ['name', 'kode'],
+            'deskripsi' => ['deskripsi', 'mk', 'judul'],
+            'mk' => ['mk', 'deskripsi', 'judul'],
+            'judul' => ['judul', 'deskripsi', 'mk'],
             'materi' => ['materi', 'penulis'],
+            'penulis' => ['penulis', 'materi'],
             'akademik' => ['akademik', 'bobot', 'total_bobot'],
+            'bobot' => ['bobot', 'akademik', 'total_bobot'],
+            'total_bobot' => ['total_bobot', 'akademik', 'bobot'],
             'is_draf' => ['is_draf', 'indikator'],
+            'indikator' => ['indikator', 'is_draf'],
             'created_at' => ['created_at'],
             'updated_at' => ['updated_at'],
         ];
 
-        $normalizedField = $sortField;
-        foreach ($aliases as $master => $related) {
-            if (in_array($sortField, $related)) {
-                $normalizedField = $master;
-                break;
-            }
-        }
-
-        $targetCols = $columns[$table];
-        $currentPos = 1;
-
-        foreach ($columns as $tableName => $cols) {
-            foreach ($cols as $pos => $colName) {
-                $isMatch = ($colName === $normalizedField);
-
-                if (! $isMatch) {
-                    foreach ($aliases as $master => $related) {
-                        if (in_array($colName, $related) && in_array($normalizedField, $related)) {
-                            $isMatch = true;
-                            break;
-                        }
-                    }
-                }
-
-                if ($isMatch) {
-                    $currentPos = $pos;
-                    break 2;
-                }
-            }
-        }
-
-        $maxPosInTarget = max(array_keys($targetCols));
-        $finalPos = min($currentPos, $maxPosInTarget);
-
-        $this->sortField = $targetCols[$finalPos];
+        $this->sortField($table, $sortField, $columns, $aliases);
     }
+
 
     public function switchingTable($table)
     {
@@ -293,7 +264,7 @@ class RPSManagement extends Component
             $querySCPMK = $this->inputSCPMKSearch();
             $queryCPL = $this->inputCPLSearch();
             $queryRef = $this->inputRefSearch();
-            $queryUser = $this->inputUserSearch();
+            $queryUser = $this->inputUserSearch('dosen');
 
             $countRPS = RPS::query();
             $countCPMK = CPMK::query();
@@ -344,6 +315,7 @@ class RPSManagement extends Component
             switch ($this->switchTable) {
                 case 'rps':
                     $this->buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgo->year);
+                    // $data['rps'] = $this->searchOutputRPS($queryRPS);
                     $data['rps'] = $queryRPS->paginate($this->perPage);
                     break;
                 case 'cpmk':
@@ -577,8 +549,9 @@ class RPSManagement extends Component
                 'stats' => $stats,
             ]));
         } catch (QueryException $e) {
-
-            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.staff.rps-management', [
                 'rps' => RPS::whereRaw('1=0')->paginate($this->perPage),

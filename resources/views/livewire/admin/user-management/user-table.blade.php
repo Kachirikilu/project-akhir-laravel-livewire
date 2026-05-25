@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -37,26 +37,26 @@
             @if ($switchTable == 'admin')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'admin_id',
+                    'headString' => 'ADM ID',
                     'rowSpan' => 2,
                     'isMain' => 1,
                     'isCenter' => 1,
-                    'headString' => 'Admin ID',
                 ])
             @elseif ($switchTable == 'dosen')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'dosen_id',
+                    'headString' => 'DSN ID',
                     'rowSpan' => 2,
                     'isMain' => 1,
                     'isCenter' => 1,
-                    'headString' => 'Dosen ID',
                 ])
             @elseif ($switchTable == 'mahasiswa')
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mahasiswa_id',
+                    'headString' => 'MHS ID',
                     'rowSpan' => 2,
                     'isMain' => 1,
                     'isCenter' => 1,
-                    'headString' => 'Mahasiswa ID',
                 ])
             @endif
 
@@ -67,7 +67,7 @@
                     'isCenter' => 1,
                 ])
             @else
-                <th rowspan="2" class="{{ $headKolom }} . ' uppercase'">Role</th>
+                <th rowspan="2" class="{{ $headKolom }}'">Role</th>
             @endif
 
             @include('livewire.global.table.head-table', [
@@ -93,10 +93,12 @@
                     'headString' => 'Angkatan',
                     'modelString' => 'searchAngkatan',
                     'resetXFilter' => 'resetInputAngkatan()',
+                    'wInput' => 15,
                     'numberOnly' => 1,
                     'maxlength' => 4,
                     'placeholder' => 'Tahun',
                     'rowSpan' => 2,
+                    'isBorderR' => 1,
                 ])
             @endif
 
@@ -110,17 +112,15 @@
                 'headString' => 'Program Studi',
                 'rowSpan' => 2,
             ])
-            <th rowspan="2" class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
-                'headString' => 'Created At',
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
-                'headString' => 'Updated At',
                 'rowSpan' => 2,
                 'isCenter' => 1,
             ])
@@ -129,26 +129,22 @@
 
         <tr>
             @include('livewire.global.table.head-table', [
-                'sortFieldString' => 'identity1',
+                'sortFieldString' => $switchTable == '' ? 'identity1' : ($switchTable == 'mahasiswa' ? 'nim' : 'nip'),
                 'headString' => $switchTable == '' ? 'NIP/NIM' : ($switchTable == 'mahasiswa' ? 'NIM' : 'NIP'),
-                // 'isSubHeader' => 1,
                 'isCenter' => 1,
                 'isMain' => 1,
             ])
             @if ($switchTable !== 'mahasiswa')
                 @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'identity2',
-                    'headString' =>
-                        $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
-                    // 'isSubHeader' => 1,
+                    'sortFieldString' => $switchTable == '' ? 'identity2' : ($switchTable == 'dosen' ? 'nidn' : 'nitk'),
+                    'headString' => $switchTable == '' ? 'NITK/NIDN' : ($switchTable == 'dosen' ? 'NIDN' : 'NITK'),
                     'isCenter' => 1,
                     'isBorderR' => $switchTable == 'admin' ? 1 : 0,
                 ])
                 @if ($switchTable !== 'admin')
                     @include('livewire.global.table.head-table', [
-                        'sortFieldString' => 'identity3',
+                        'sortFieldString' => 'nidk',
                         'headString' => 'NIDK',
-                        // 'isSubHeader' => 1,
                         'isCenter' => 1,
                     ])
                 @endif
@@ -180,6 +176,21 @@
                 <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->dosen->id }}</td>
             @elseif ($switchTable == 'mahasiswa')
                 <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->mahasiswa->id }}</td>
+                {{-- @php
+                    
+                    $jadwalId = 5;
+
+                    $users = User::with(['mahasiswa'])
+                        ->withCount(['kehadirans' => function ($query) use ($jadwalId) {
+                            $query->whereHas('sesi', function ($q) use ($jadwalId) {
+                                $q->where('jadwal_id', $jadwalId);
+                            });
+                        }])
+                        ->get();
+
+    
+                @endphp
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $user->kehadirans_count ?? 0 }} Sesi</td> --}}
             @endif
             {{-- Role --}}
             <td class="{{ $secondKolom }} text-center">
@@ -229,7 +240,7 @@
             <td class="{{ $subKolom }} {{ $borderR }} text-center">{{ $user->nik ?? '-' }}</td>
 
             @if ($switchTable == 'mahasiswa')
-                <td class="{{ $secondKolom }} text-center">{{ $detail->angkatan ?? '-' }}</td>
+                <td class="{{ $secondKolom }} {{ $borderR }} text-center">{{ $detail->angkatan ?? '-' }}</td>
             @endif
 
             <td class="{{ $secondKolom }} text-center">
@@ -324,7 +335,7 @@
                     default => 13,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada data Pengguna ditemukan!
+                    Tidak ada data {{ !empty($switchTable) ? ucfirst($switchTable) : 'Pengguna' }} ditemukan!
                 </td>
             </tr>
         @endforelse

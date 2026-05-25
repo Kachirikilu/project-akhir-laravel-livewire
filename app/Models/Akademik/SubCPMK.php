@@ -12,8 +12,14 @@ class SubCPMK extends Model
 {
     use SoftDeletes;
 
-    public const UTS_FIELDS = ['UTS', 'EVALUASI AWAL'];
-    public const UAS_FIELDS = ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK'];
+    public static array $UTS_FIELDS = [];
+    public static array $UAS_FIELDS = [];
+    
+    protected static function booted()
+    {
+        self::$UTS_FIELDS = config('app.uts_fields', ['UTS', 'EVALUASI AWAL']);
+        self::$UAS_FIELDS = config('app.uas_fields', ['UAS', 'EVALUASI AKHIR', 'LAPORAN AKHIR', 'HASIL PROYEK', 'HASIL PROJEK']);
+    }
 
     protected $table = 'sub_cpmks';
 
@@ -40,12 +46,12 @@ class SubCPMK extends Model
 
     protected function wTugas(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_tugas ?? 'Default SKS');
+        return Attribute::get(fn () => $this->waktu_tugas);
     }
 
     protected function wMandiri(): Attribute
     {
-        return Attribute::get(fn () => $this->waktu_mandiri ?? 'Default SKS');
+        return Attribute::get(fn () => $this->waktu_mandiri);
     }
 
     protected function createdDay(): Attribute
@@ -89,6 +95,20 @@ class SubCPMK extends Model
             ->withPivot(['rps_id', 'sort_order'])
             ->withTimestamps()
             ->orderBy('sort_order');
+    }
+
+    public function bobotFormat(): Attribute
+    {
+        return Attribute::get(function () {
+            $bobot = $this->bobot ?? null;
+            if ($bobot === null) {
+                return '-';
+            }
+            if ($bobot % 1 == 0) {
+                return (int) $bobot;
+            }
+            return number_format($bobot, 2);
+        });
     }
 
     public function scopeSearchSCPMK($query, $search, $withBobot = false)
@@ -164,7 +184,7 @@ class SubCPMK extends Model
         $method = strtoupper($method ?? '');
         $text = strtoupper($text);
 
-        return in_array($method, self::UTS_FIELDS, true)
+        return in_array($method, self::$UTS_FIELDS, true)
             || str_contains($text, 'UTS')
             || str_contains($text, 'EVALUASI AWAL');
     }
@@ -177,7 +197,7 @@ class SubCPMK extends Model
         $method = strtoupper($method ?? '');
         $text = strtoupper($text);
 
-        return in_array($method, self::UAS_FIELDS, true)
+        return in_array($method, self::$UAS_FIELDS, true)
             || str_contains($text, 'UAS')
             || str_contains($text, 'EVALUASI AKHIR')
             || str_contains($text, 'LAPORAN AKHIR')

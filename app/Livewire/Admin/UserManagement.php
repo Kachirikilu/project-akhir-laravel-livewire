@@ -11,6 +11,7 @@ use App\Livewire\Admin\UserManagement\WithUserModal;
 use App\Livewire\Global\WithDepartemenSearchFilters;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithProdiSearchFilters;
+use App\Livewire\Global\HasToast;
 use App\Models\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -28,6 +29,7 @@ class UserManagement extends Component
     use WithUserExcel;
     use WithUserFilters;
     use WithUserModal;
+    use HasToast;
 
     public $showModal = false;
 
@@ -103,7 +105,7 @@ class UserManagement extends Component
         $this->resetPage();
     }
 
-    private function syncSortField($filter, $sortField)
+    private function syncSortField2($filter, $sortField)
     {
         $this->sortField = match (true) {
             $filter != '' && $sortField == 'role' => 'name',
@@ -124,6 +126,38 @@ class UserManagement extends Component
                 default => 'id',
             };
         }
+    }
+
+    private function syncSortField($table, $sortField)
+    {
+        $columns = [
+            '' => [1 => 'id', 2 => 'role', 3 => 'name', 4 => 'email', 5 => 'identity1', 6 => 'identity2', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
+            'admin' => [1 => 'id', 2 => 'admin_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nitk', 7 => 'nik', 8 => 'status', 9 => 'created_at', 10 => 'updated_at'],
+            'dosen' => [1 => 'id', 2 => 'dosen_id', 3 => 'name', 4 => 'email', 5 => 'nip', 6 => 'nidn', 7 => 'nidk', 8 => 'nik', 9 => 'status', 10 => 'prodi', 11 => 'created_at', 12 => 'updated_at'],
+            'mahasiswa' => [1 => 'id', 2 => 'mahasiswa_id', 3 => 'name', 4 => 'email', 5 => 'nim', 6 => 'nik', 7 => 'angkatan', 8 => 'status', 9 => 'prodi', 10 => 'created_at', 11 => 'updated_at'],
+        ];
+        $aliases = [
+            'name' => ['name'],
+            'email' => ['email'],
+            'prodi' => ['prodi'],
+            'status' => ['status'],
+            'admin_id' => ['admin_id', 'dosen_id', 'mahasiswa_id'],
+            'dosen_id' => ['dosen_id', 'admin_id', 'mahasiswa_id'],
+            'mahasiswa_id' => ['mahasiswa_id', 'admin_id', 'dosen_id'],
+            'nik' => ['nik'],
+            'identity1' => ['identity1', 'nip', 'nim'],
+            'nip' => ['nip', 'nim', 'identity1'],
+            'nim' => ['nim', 'nip', 'identity1'],
+            'identity2' => ['identity2', 'nitk', 'nidn', 'nik'],
+            'nitk' => ['nitk', 'nidn', 'identity2', 'nik'],
+            'nidn' => ['nidn', 'nitk', 'identity2', 'nik'],
+            'identity3' => ['identity3', 'nidk', 'nik'],
+            'nidk' => ['nidk', 'identity3', 'nik'],
+            'created_at' => ['created_at'],
+            'updated_at' => ['updated_at'],
+        ];
+
+        $this->sortField($table, $sortField, $columns, $aliases);
     }
 
     public function switchingTable($table)
@@ -220,8 +254,9 @@ class UserManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-
-            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.admin.user-management', [
                 'users' => User::whereRaw('1=0')->paginate($this->perPage),

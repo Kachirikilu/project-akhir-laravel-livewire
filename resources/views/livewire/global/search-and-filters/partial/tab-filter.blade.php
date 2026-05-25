@@ -12,7 +12,7 @@
 
     <div class="flex items-center">
         <i class="fas fa-users mr-2"></i>
-        {{ $tabNameString }}
+        {{ $tabNameString ?? str($tabString)->replace(['-', '_'], ' ')->ucfirst() }}
         @if (!is_null($tabFilter))
             <span class="ml-1">({{ $tabFilter }})</span>
         @endif

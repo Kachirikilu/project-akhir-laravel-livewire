@@ -238,8 +238,8 @@ trait WithRPSShow
             }
         }
 
-        $utsFields = SubCPMK::UTS_FIELDS;
-        $uasFields = SubCPMK::UAS_FIELDS;
+        $utsFields = SubCPMK::$UTS_FIELDS;
+        $uasFields = SubCPMK::$UAS_FIELDS;
 
         $hasUTS = collect($rows)->contains(function ($row) {
             return SubCPMK::isUTS($row['metode'] ?? '', $row['sub_cpmk'] ?? '');

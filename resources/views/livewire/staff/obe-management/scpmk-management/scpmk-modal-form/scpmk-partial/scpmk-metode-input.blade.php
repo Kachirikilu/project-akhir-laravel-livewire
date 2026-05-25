@@ -76,7 +76,7 @@
                     'numberOnly' => 1,
                     'maxlength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default berdasarkan SKS (60 menit/SKS)...',
+                    'placeholder' => 'Default: 60 menit/SKS',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_tugas'),
                 ])
@@ -89,7 +89,7 @@
                     'numberOnly' => 1,
                     'maxlength' => 3,
                     'iconString' => 'clock',
-                    'placeholder' => 'Default berdasarkan SKS (60 menit/SKS)...',
+                    'placeholder' => 'Default: 60 menit/SKS',
                     'isRequired' => 0,
                     'message' => $errors->first('waktu_mandiri'),
                 ])

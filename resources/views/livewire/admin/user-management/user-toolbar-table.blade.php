@@ -8,11 +8,12 @@
             $rpsCall = $withRPS ?? false;
 
             $editCall = "editUser($x->id, $rpsCall)";
+            $editRPSCall = "editUser($x->id, $rpsCall, 1)";
             $deleteCall = "deleteUser($x->id, $isTrashed)";
             $restoreCall = "restoreUser($x->id)";
 
             $typeXString = '';
-            if ($user->role == 'mahasiswa') {
+            if ($user->role == 'Mahasiswa') {
                 $typeXString = 'NIM';
             } else {
                 $typeXString = 'NIP';
@@ -25,9 +26,36 @@
             'typeXString' => $typeXString . ' ' . $user->role,
         ])
 
-        <flux:menu.separator />
 
         @if (!$isTrashed)
+            {{-- Tombol RPS --}}
+                @if ($x->role == 'Dosen' && ($withRPS ?? false))
+                    <flux:menu.item
+                        @click="
+                    $store.user?.reset();
+
+                    const type = '{{ strtolower($x->role) }}';
+
+                    {{-- $store.user?.setType(type); --}}
+                    {{-- $store.user?.setEdit(1); --}}
+
+                    $store.user?.setColor('text-lime-700 dark:text-lime-400');
+                    $flux.modal('user-rps-modal').show();
+                    "
+                    wire:click="{{ $editRPSCall }}"
+                    class="!cursor-pointer !text-cyan-600 dark:!text-cyan-400 hover:!bg-cyan-100 dark:hover:!bg-yellow-900/30 transition-colors">
+                    <flux:icon name="eye" class="mr-2 h-4 w-4" />
+
+                    <div class="flex justify-between items-center w-full">
+                        <span>Show RPS</span>
+                        <flux:icon wire:loading wire:target="{{ $editRPSCall }}" name="arrow-path"
+                            class="animate-spin h-4 w-4 ml-2" />
+                    </div>
+                </flux:menu.item>
+
+                <flux:menu.separator />
+            @endif
+
             {{-- Tombol Edit --}}
             <flux:menu.item
                 @click="

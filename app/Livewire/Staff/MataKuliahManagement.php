@@ -9,6 +9,7 @@ use App\Livewire\Staff\MKManagement\WithMKDelete;
 use App\Livewire\Staff\MKManagement\WithMKFilters;
 use App\Livewire\Staff\MKManagement\WithMKModal;
 use App\Livewire\Staff\MKManagement\WithMKExcel;
+use App\Livewire\Global\HasToast;
 use App\Models\Akademik\MataKuliah;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,7 @@ class MataKuliahManagement extends Component
     use WithMKExcel;
     use WithPagination;
     use WithProdiSearchFilters;
+    use HasToast;
 
     public $showModal = false;
 
@@ -278,8 +280,9 @@ class MataKuliahManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-
-            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.staff.mk-management', [
                 'mks' => MataKuliah::whereRaw('1 = 0')->paginate($this->perPage),

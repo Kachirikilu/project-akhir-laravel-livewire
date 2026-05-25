@@ -6,11 +6,11 @@
         'subHead' => 'Jadwal Kelas'
     ])
 
+    @include('livewire.staff.obe-management.rps-management.rps-show-modal', ['alpineKey' => 'jadwal?.rps_id_show', 'isEdit' => 0])
 
+    @include('livewire.staff.kelas-management.jadwal-management.jadwal-toolbar')
     @include('livewire.staff.kelas-management.jadwal-management.jadwal-table')
 
     @include('livewire.staff.kelas-management.jadwal-management.jadwal-modal-form')
-    @include('livewire.staff.obe-management.rps-management.rps-show-modal', ['alpineKey' => 'jadwal?.rps_id_show', 'isEdit' => 0])
-
 </div>
 

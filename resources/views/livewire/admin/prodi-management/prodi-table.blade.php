@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -18,6 +18,10 @@
         $subKolom =
             'bg-[var(--sub-table-trans)] border-[var(--border-table-color)] text-[var(--contrast-second-text)] ' .
             $padingKolom;
+    @endphp
+
+    @php
+        $borderL = 'border-[var(--border-table-color)] border-l';
     @endphp
 
     <x-slot:header>
@@ -54,10 +58,10 @@
                     'isMain' => 1
                 ])
             @endif
-            <th class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+            <th class="{{ $headKolom }} border-x">Aksi</th>
 
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'headString' => 'Created At', 'isCenter' => 1])
-            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'headString' => 'Updated At', 'isCenter' => 1])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'created_at', 'isCenter' => 1])
+            @include('livewire.global.table.head-table', ['sortFieldString' => 'updated_at', 'isCenter' => 1])
 
         </tr>
     </x-slot:header>
@@ -120,7 +124,7 @@
 
 
             @if ($switchTable === 'prodi')
-                <td class="{{ $mainKolom }} text-center">
+                <td class="{{ $secondKolom }} {{ $borderL }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->strata)
@@ -178,7 +182,7 @@
                     default => 9,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada {{ $xNameString }} ditemukan!
+                    Tidak ada data {{ $xNameString }} ditemukan!
                 </td>
             </tr>
         @endforelse

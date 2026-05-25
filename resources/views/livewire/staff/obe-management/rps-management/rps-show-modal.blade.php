@@ -9,9 +9,8 @@
 
         {{-- KIRI: Badge nama & status --}}
         <div class="flex items-center gap-2">
-            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)"
-                class="cursor-pointer !text-rose-600 dark:!text-rose-400 hover:!bg-rose-100 dark:hover:!bg-rose-900/30 border border-rose-200 transition-colors">
-                <flux:icon name="printer" class="mr-2 h-4 w-4" />
+            <flux:button @click="$wire.printPDFRPS($store.{{ $alpineKey ?? 'rps?.rps_id_show' }} ?? null)" icon="printer" size="sm"
+                class="!cursor-pointer px-6 !text-rose-600 dark:!text-rose-400 !bg-rose-50 hover:!bg-rose-100 dark:!bg-rose-950/20 dark:hover:!bg-rose-900/30 !border-rose-200/60 dark:!border-rose-800/40 transition-all duration-200">
                 <span>Print PDF RPS</span>
                 <flux:icon wire:loading wire:target="printPDFRPS" name="arrow-path"
                     class="animate-spin h-4 w-4 ml-3 dark:!text-rose-600" />
@@ -40,9 +39,8 @@
                     $flux.modal('rps-modal').show();
                     $wire.editRPS($store.rps?.id ?? null)
                 "
-                        wire:loading.attr="disabled" wire:target="showRPS, editRPS"
-                        class="cursor-pointer !text-yellow-600 dark:!text-yellow-400 hover:!bg-yellow-100 dark:hover:!bg-yellow-900/30 border border-yellow-200 transition-colors">
-                        <flux:icon name="pencil-square" class="mr-2 h-4 w-4" />
+                        wire:loading.attr="disabled" wire:target="showRPS, editRPS" icon="pencil-square" size="sm"
+                       class="!cursor-pointer px-6 !text-yellow-600 dark:!text-yellow-400 !bg-yellow-50 hover:!bg-yellow-100 dark:!bg-yellow-950/20 dark:hover:!bg-yellow-900/30 !border-yellow-200/60 dark:!border-yellow-800/40 transition-all duration-200">
                         <span>Edit RPS</span>
                         <flux:icon wire:loading wire:target="showRPS, editRPS" name="arrow-path"
                             class="animate-spin h-4 w-4 ml-3 dark:!text-yellow-600" />

@@ -25,6 +25,8 @@ trait WithUserModal
 
     public $showUserModal = false;
 
+    public $showUserRPSModal = false;
+
     public $showUserExcelModal = false;
 
     public $isEditingUser = false;
@@ -78,13 +80,16 @@ trait WithUserModal
 
         if ($role == 'file') {
             $this->showUserExcelModal = true;
+            $this->showUserModal = false;
         } else {
             $this->showUserModal = true;
+            $this->showUserExcelModal = false;
         }
+        $this->showUserRPSModal = false;
         $this->updatedPrNameSearch($this->prNameSearch);
     }
 
-    public function editUser($id, $withRPS = false)
+    public function editUser($id, $withRPS = false, $isRPS = false)
     {
         if (! $this->AuthCheck()) {
             return;
@@ -94,7 +99,16 @@ trait WithUserModal
         $this->resetValidation();
 
         $this->resetErrorBag();
-        $this->showUserModal = true;
+
+        if ($isRPS) {
+            $this->showUserRPSModal = true;
+            $this->showUserModal = false;
+        } else {
+            $this->showUserModal = true;
+            $this->showUserRPSModal = false;
+        }
+        $this->showUserExcelModal = false;
+
         $this->isEditingUser = true;
 
         try {
@@ -478,7 +492,7 @@ trait WithUserModal
             
             $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
-
+            $this->showUserRPSModal = false;
         } catch (ValidationException $e) {
             $this->toast(text: 'Validasi Gagal: '.collect($e->errors())->first()[0], variant: 'danger');
             throw $e;
@@ -486,6 +500,7 @@ trait WithUserModal
             $this->toast(text: 'Gagal Menambahkan: '.$e->getMessage(), variant: 'danger');
             $this->dispatch('refresh-data-user');
             $this->showUserModal = false;
+            $this->showUserRPSModal = false;
         }
     }
 
@@ -575,6 +590,7 @@ trait WithUserModal
             $this->dispatch('refresh-data-user');
 
             $this->showUserModal = false;
+            $this->showUserRPSModal = false;
             if (Auth::id() === $this->selected_id_user) {
                 $this->dispatch('profile-updated');
             }

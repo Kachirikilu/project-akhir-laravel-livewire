@@ -8,6 +8,8 @@ use App\Models\Akademik\RPS;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait WithRPSFilters
 {
@@ -72,12 +74,118 @@ trait WithRPSFilters
                     $q->where('dosens.id', $this->selectedDosenId);
                 });
             }
-
         }
 
         return $queryRPS;
-
     }
+
+    // public function inputRPSSearch()
+    // {
+    //     $queryRPS = RPS::query()
+    //         ->with([
+    //             'mk_rel.prodis',
+    //             'mk_rel.prodis.dp_rel', 'mk_rel.prodis.dp_rel.fk_rel',
+    //             'cpls', 'refs', 
+    //             'cpmks', 'cpmks.cpls', 'cpmks.refs',
+    //             'cpmks.scpmks', 'cpmks.scpmks.refs'
+    //         ]);
+        
+    //     if ($this->switchTable === 'rps') {
+    //         $this->sortFieldOrderRPS($queryRPS);
+
+    //         if (!empty($this->selectedPrId)) {
+    //             $queryRPS->whereHas('mk_rel.prodis', fn ($q) => $q->where('prodis.id', $this->selectedPrId));
+    //         }
+    //         if (!empty($this->selectedMKId)) {
+    //             $queryRPS->where('rps.mk_id', $this->selectedMKId);
+    //         }
+    //         if (!empty($this->selectedDosenId)) {
+    //             $queryRPS->whereHas('dosens', function ($q) {
+    //                 $q->where('dosens.id', $this->selectedDosenId);
+    //             });
+    //         }
+    //     }
+
+    //     return $queryRPS;
+    // }
+
+    // public function searchOutputRPS($queryRPS)
+    // {
+    //     $accessorFields = ['kode', 'cpmks_count', 'count_scpmk', 'total_bobot'];
+    //     $search = trim($this->search);
+    //     $searchLower = '%' . strtolower($search) . '%';
+    //     $searchTerm = '%' . $search . '%';
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+    //     if (!empty($search) || in_array($this->sortField, $accessorFields)) {
+            
+    //         $dbMatchedIds = [];
+    //         if (!empty($search)) {
+    //             $dbMatchedIds = (clone $queryRPS)->searchRPS($search)
+    //                 ->pluck('rps.id')
+    //                 ->toArray();
+    //         }
+    //         $allRPS = $queryRPS->get();
+
+    //         if (!empty($search)) {
+    //             $pureSearchLower = strtolower($search);
+
+    //             $allRPS = $allRPS->filter(function ($rps) use ($pureSearchLower, $searchClean, $dbMatchedIds) {
+    //                 $matchRPSId = in_array($rps->id, $dbMatchedIds);
+
+    //                 // 1. Match Kode (Mengabaikan "-" dan karakter spesial lainnya)
+    //                 $matchKode = false;
+    //                 if (!empty($searchClean) && !is_null($rps->kode)) {
+    //                     $kodeClean = preg_replace('/[^A-Za-z0-9]/', '', $rps->kode);
+    //                     $matchKode = str_contains(strtolower($kodeClean), strtolower($searchClean));
+    //                 }
+
+    //                 // 2. Match Jumlah CPMK
+    //                 $matchCountCPMK = false;
+    //                 if (is_numeric($pureSearchLower)) {
+    //                     $matchCountCPMK = (int)$rps->cpmks_count === (int)$pureSearchLower;
+    //                 } elseif (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $pureSearchLower, $matches)) {
+    //                     $matchCountCPMK = (int)$rps->cpmks_count === (int)$matches[1];
+    //                 }
+
+    //                 // 3. Match Jumlah SCPMK
+    //                 $matchCountSCPMK = false;
+    //                 if (is_numeric($pureSearchLower)) {
+    //                     $matchCountSCPMK = (int)$rps->count_scpmk === (int)$pureSearchLower;
+    //                 } elseif (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $pureSearchLower, $matches)) {
+    //                     $matchCountSCPMK = (int)$rps->count_scpmk === (int)$matches[1];
+    //                 }
+
+    //                 // 4. Match Total Bobot
+    //                 $matchTotalBobot = false;
+    //                 $cleanSearchNumber = preg_replace('/[^0-9.]/', '', $pureSearchLower);
+    //                 if (is_numeric($cleanSearchNumber) && !empty($cleanSearchNumber)) {
+    //                     $matchTotalBobot = abs((float)$rps->total_bobot - (float)$cleanSearchNumber) < 0.01;
+    //                 }
+
+    //                 return $matchRPSId || $matchKode || $matchCountCPMK || $matchCountSCPMK || $matchTotalBobot;
+    //             });
+    //         }
+
+    //         // 5. Proses Sorting Data
+    //         $fieldToSort = in_array($this->sortField, $accessorFields) ? $this->sortField : 'id';
+            
+    //         $sortedRPS = $this->sortDirection === 'asc'
+    //             ? $allRPS->sortBy(fn ($rps) => $rps->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE)
+    //             : $allRPS->sortByDesc(fn ($rps) => $rps->{$fieldToSort}, SORT_NATURAL | SORT_FLAG_CASE);
+
+    //         $currentPage = Paginator::resolveCurrentPage() ?: 1;
+    //         return new LengthAwarePaginator(
+    //             $sortedRPS->forPage($currentPage, $this->perPage)->values(),
+    //             $sortedRPS->count(),
+    //             $this->perPage,
+    //             $currentPage,
+    //             ['path' => Paginator::resolveCurrentPath()]
+    //         );
+    //     } else {
+    //         return $queryRPS->paginate($this->perPage);
+    //     }
+    // }
 
     public function buttonRPSFilter($queryRPS, $currentYear, $fiveYearsAgoYear)
     {

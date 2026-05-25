@@ -44,7 +44,7 @@ class User extends Authenticatable
         'identity3',
         'nik',
         'status',
-        'status_full'
+        'status_full',
     ];
 
     protected $casts = [
@@ -133,6 +133,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pendidikan::class);
     }
+
     // / Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa /// Relasi User ke Admin/Dosen/Mahasiswa
 
     // / ... /// ... /// ...
@@ -190,7 +191,6 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
-
     protected function identity2(): Attribute
     {
         return Attribute::get(function () {
@@ -205,7 +205,6 @@ class User extends Authenticatable
             return empty($value) ? null : $value;
         });
     }
-
     protected function identity3(): Attribute
     {
         return Attribute::get(function () {
@@ -311,7 +310,7 @@ class User extends Authenticatable
 
     protected function statusFull(): Attribute
     {
-        return Attribute::get(fn () => 'Status: '. $this->status);
+        return Attribute::get(fn () => 'Status: '.$this->status);
     }
     // / Attribute Utama User /// Attribute Utama User /// Attribute Utama User
 
@@ -466,9 +465,9 @@ class User extends Authenticatable
 
                 // 2. Definisi Role dan Field Spesifiknya
                 $roleConfigs = [
-                    'admin' => ['name', 'nip', 'nitk', 'status'],
-                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status'],
-                    'mahasiswa' => ['name', 'nim', 'angkatan', 'status'],
+                    'admin' => ['name', 'nip', 'nitk', 'status', 'id'],
+                    'dosen' => ['name', 'nip', 'nidn', 'nidk', 'status', 'id'],
+                    'mahasiswa' => ['name', 'nim', 'angkatan', 'status', 'id'],
                 ];
 
                 foreach ($roleConfigs as $role => $fields) {

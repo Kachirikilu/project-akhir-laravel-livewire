@@ -32,7 +32,7 @@
             this.clickTimer = setTimeout(() => {
                 if (!this.isRealtime) {
                     $wire.$set('search', this.search);
-                    $wire.search();
+                    {{-- $wire.search(); --}}
                 }
                 this.clickTimer = null;
             }, 250);

@@ -82,7 +82,6 @@ return new class extends Migration
             $table->integer('waktu_mandiri')->nullable();
             $table->decimal('bobot', 5, 2)->nullable();
 
-            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -116,14 +115,13 @@ return new class extends Migration
             $table->foreignId('mahasiswa_id')->constrained('users')->onDelete('cascade');
 
             $table->enum('status', [
-                'hadir',
-                'terlambat',
-                'absen',
-                'sakit',
-                'izin',
-                'dispensasi',
-                'tugas_akhir',
-            ])->default('absen');
+                'Hadir',
+                'Terlambat',
+                'Absen',
+                'Sakit',
+                'Izin',
+                'Dispensasi',
+            ])->default('Absen');
 
             $table->dateTime('waktu_presensi')->nullable();
             $table->text('keterangan')->nullable();

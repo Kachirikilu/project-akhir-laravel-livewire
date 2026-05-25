@@ -19,21 +19,18 @@
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalAdmins,
                 'tabString' => 'admin',
-                'tabNameString' => 'Admin',
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalDosens,
                 'tabString' => 'dosen',
-                'tabNameString' => 'Dosen',
             ])
             @include('livewire.global.search-and-filters.partial.tab-filter', [
                 'xString' => 'switchingTable',
                 'xFilter' => $switchTable,
                 'tabFilter' => $totalMahasiswas,
                 'tabString' => 'mahasiswa',
-                'tabNameString' => 'Mahasiswa',
             ])
         </div>
     </div>

@@ -4,6 +4,51 @@ namespace App\Livewire\Global;
 
 trait HasSortir
 {
+    public function sortField($table, $sortField, $columns, $aliases)
+    {
+        if (! isset($columns[$table])) {
+            return;
+        }
+
+        $targetCols = $columns[$table];
+        $matchedField = null;
+
+        $activeGroup = [];
+        foreach ($aliases as $master => $related) {
+            if ($sortField === $master || in_array($sortField, $related)) {
+                $activeGroup = array_unique(array_merge([$master], $related));
+                break;
+            }
+        }
+        if (empty($activeGroup)) {
+            $activeGroup = [$sortField];
+        }
+
+        foreach ($activeGroup as $fieldInGroup) {
+            if (in_array($fieldInGroup, $targetCols)) {
+                $matchedField = $fieldInGroup;
+                break;
+            }
+        }
+
+        if (! $matchedField) {
+            $currentPos = 1;
+            foreach ($columns as $tableName => $cols) {
+                $pos = array_search($sortField, $cols);
+                if ($pos !== false) {
+                    $currentPos = $pos;
+                    break;
+                }
+            }
+
+            $maxPosInTarget = max(array_keys($targetCols));
+            $finalPos = min($currentPos, $maxPosInTarget);
+            $matchedField = $targetCols[$finalPos];
+        }
+
+        $this->sortField = $matchedField;
+    }
+
     public function applyProdiSort($query, $strata = 'strata', $nama = 'nama_pr')
     {
         return $query->orderByRaw("
@@ -42,6 +87,7 @@ trait HasSortir
             ) {$this->sortDirection}
         ");
     }
+
     public function applyRPSKodeSort($queryRPS, $sortir = 'rps')
     {
         return $queryRPS->orderByRaw("
@@ -102,5 +148,3 @@ trait HasSortir
     //     ");
     // }
 }
-
-    

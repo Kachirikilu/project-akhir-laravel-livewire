@@ -10,6 +10,7 @@ use App\Livewire\Admin\ProdiManagement\WithProdiModal;
 use App\Livewire\Admin\ProdiManagement\WithProdiExcel;
 use App\Livewire\Global\WithFakultasSearchFilters;
 use App\Livewire\Global\WithDepartemenSearchFilters;
+use App\Livewire\Global\HasToast;
 use App\Models\ProgramStudi\Fakultas;
 use App\Models\ProgramStudi\Departemen;
 use App\Models\ProgramStudi\Prodi;
@@ -27,6 +28,7 @@ class ProgramStudiManagement extends Component
     use WithProdiFilters;
     use WithProdiModal;
     use WithProdiExcel;
+    use HasToast;
 
     public $showModal = false;
 
@@ -194,8 +196,9 @@ class ProgramStudiManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-
-            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.admin.prodi-management', [
                 'prodis' => Prodi::whereRaw('1=0')->paginate($this->perPage),

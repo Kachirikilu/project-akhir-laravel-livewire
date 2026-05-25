@@ -3,7 +3,7 @@
     @php
         $padingKolom = 'px-6 py-4 text-sm';
         $headKolom =
-            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] ' .
+            'bg-[var(--main-table-color)] border-[var(--border-table-color)] text-[var(--contrast-main-text)] uppercase text-xs ' .
             $padingKolom;
 
         $mainKolom =
@@ -91,7 +91,6 @@
                 ])
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'total_bobot',
-                    'headString' => 'Total Bobot',
                     'modelString' => 'searchBobotCPMK',
                     'resetXFilter' => 'resetInputBobotCPMK()',
                     'maxlength' => 2,
@@ -135,17 +134,15 @@
                 ])
             @endif
 
-            <th rowspan="2" class="{{ $headKolom }} . ' border-x uppercase'">Aksi</th>
+            <th rowspan="2" class="{{ $headKolom }} border-x">Aksi</th>
 
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'created_at',
-                'headString' => 'Created At',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
             @include('livewire.global.table.head-table', [
                 'sortFieldString' => 'updated_at',
-                'headString' => 'Updated At',
                 'isCenter' => 1,
                 'rowSpan' => 2,
             ])
@@ -158,7 +155,6 @@
                     'sortFieldString' => 'kode_mk',
                     'isMain' => 1,
                     'isCenter' => 1,
-                    'headString' => 'Kode MK',
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'mk',
@@ -167,7 +163,6 @@
 
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'sks',
-                    'headString' => 'SKS',
                     'isCenter' => 1,
                 ])
 
@@ -199,7 +194,6 @@
                 ])
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'total_bobot',
-                    'headString' => 'Total Bobot',
                     'modelString' => 'searchBobotRPS',
                     'resetXFilter' => 'resetInputBobotRPS()',
                     'maxlength' => 3,
@@ -211,10 +205,16 @@
             @endif
 
             @if ($switchTable === 'scpmk')
+
+                @include('livewire.global.table.head-table', [
+                    'sortFieldString' => 'metode',
+                    'isCenter' => 1,
+                    'rowSpan' => 2,
+                    'isMain' => 1,
+                ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'materi',
                     'rowSpan' => 2,
-                    'isBorderL' => 1,
                 ])
                 @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'metodologi',
@@ -224,11 +224,7 @@
                     'sortFieldString' => 'indikator',
                     'rowSpan' => 2,
                 ])
-                @include('livewire.global.table.head-table', [
-                    'sortFieldString' => 'metode',
-                    'isCenter' => 1,
-                    'rowSpan' => 2,
-                ])
+
                 {{-- @include('livewire.global.table.head-table', [
                     'sortFieldString' => 'bobot',
                     'isMain' => 1,
@@ -237,7 +233,6 @@
                 ]) --}}
                 @include('livewire.global.search-and-filters.table-search', [
                     'sortFieldString' => 'bobot',
-                    'headString' => 'Bobot',
                     'modelString' => 'searchBobotSCPMK',
                     'resetXFilter' => 'resetInputBobotSCPMK()',
                     'maxlength' => 2,
@@ -501,15 +496,11 @@
             @if ($switchTable === 'cpmk')
                 <td class="{{ $secondKolom }} whitespace-nowrap text-center">
                     {{ $x->count_scpmk . ' Sub-CPMK' ?? '-' }}</td>
-                <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot . '%' ?? '-' }}</td>
+                <td class="{{ $secondKolom }} text-center">{{ $x->total_bobot ? $x->total_bobot . '%' : '-' }}</td>
             @endif
 
             @if ($switchTable === 'scpmk')
-                <td class="{{ $secondKolom }} {{ $borderL }} min-w-48">{{ $x->materi ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
-                <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
-
-                <td class="{{ $secondKolom }} text-center">
+                <td class="{{ $mainKolom }} text-center">
                     <flux:dropdown>
                         <button class="cursor-pointer">
                             @switch($x->metode)
@@ -572,12 +563,16 @@
                             'nameXString' => $xNameString,
                         ])
                     </flux:dropdown>
+
+                    <td class="{{ $secondKolom }} min-w-48">{{ $x->materi ?? '-' }}</td>
+                    <td class="{{ $secondKolom }} min-w-48">{{ $x->metodologi ?? '-' }}</td>
+                    <td class="{{ $secondKolom }} min-w-48">{{ $x->indikator ?? '-' }}</td>
                 </td>
 
-                <td class="{{ $mainKolom }} text-center">{{ $x->bobot ?? '-' }}</td>
+                <td class="{{ $mainKolom }} text-center">{{ $x->bobot_format ? $x->bobot_format . '%' : '-' }}</td>
                 <td class="{{ $secondKolom }} min-w-48">{{ $x->tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_tugas ?? '-' }}</td>
-                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_mandiri ?? '-' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_tugas ?? '60 m/SKS' }}</td>
+                <td class="{{ $secondKolom }} whitespace-nowrap text-center">{{ $x->w_mandiri ?? '60 m/SKS' }}</td>
             @endif
 
             @if ($switchTable === 'ref')
@@ -631,7 +626,7 @@
                     default => 9,
                 } }}"
                     class="text-[var(--contrast-second-text)] px-6 py-4 text-center">
-                    Tidak ada {{ $xNameString }} ditemukan!
+                    Tidak ada data {{ $xNameString }} ditemukan!
                 </td>
             </tr>
         @endforelse

@@ -12,6 +12,7 @@ use App\Livewire\Global\WithRPSSearchFilters;
 use App\Livewire\Staff\KelasManagement\WithKelasFilters;
 use App\Livewire\Staff\KelasManagement\WithKelasModal;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
+use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,7 @@ class KelasManagement extends Component
     use WithProdiSearchFilters;
     use WithRPSSearchFilters;
     use WithRPSShow;
+    use HasToast;
 
     public $showModal = false;
 
@@ -241,8 +243,9 @@ class KelasManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-
-            $this->toast(text: 'Terjadi kesalahan database: '.$e->getMessage(), variant: 'danger');
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.staff.kelas-management', [
                 'kelas' => Kelas::whereRaw('1 = 0')->paginate($this->perPage),

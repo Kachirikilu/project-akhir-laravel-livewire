@@ -21,9 +21,10 @@ trait WithDosenFilters
             $search = '%'.trim($this->search).'%';
 
             if (! empty($this->search)) {
-                $queryDosen->where('name', 'like', $search)
-                    ->orWhere('nip', 'like', $search)
+                $queryDosen->where('dosens.name', 'like', $search)
+                    ->orWhere('dosens.nip', 'like', $search)
                     ->orWhere('nidn', 'like', $search)
+                    ->orWhere('dosens.nik', 'like', $search)
                     ->orWhere('dosens.id', 'like', $search);
             }
 

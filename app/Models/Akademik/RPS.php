@@ -222,16 +222,16 @@ class RPS extends Model
                 $method = $scpmk->metode ?? '';
                 $text = $scpmk->deskripsi ?? '';
 
-                return Str::contains($method, SubCPMK::UTS_FIELDS, ignoreCase: true) ||
-                       Str::contains($text, SubCPMK::UTS_FIELDS, ignoreCase: true);
+                return Str::contains($method, SubCPMK::$UTS_FIELDS, ignoreCase: true) ||
+                       Str::contains($text, SubCPMK::$UTS_FIELDS, ignoreCase: true);
             });
 
             $hasUAS = $allScpmk->contains(function ($scpmk) {
                 $method = $scpmk->metode ?? '';
                 $text = $scpmk->deskripsi ?? '';
 
-                return Str::contains($method, SubCPMK::UAS_FIELDS, ignoreCase: true) ||
-                       Str::contains($text, SubCPMK::UAS_FIELDS, ignoreCase: true);
+                return Str::contains($method, SubCPMK::$UAS_FIELDS, ignoreCase: true) ||
+                       Str::contains($text, SubCPMK::$UAS_FIELDS, ignoreCase: true);
             });
 
             $uts = $hasUTS ? 0 : (float) ($this->bobot_uts ?? 0);
@@ -368,29 +368,17 @@ class RPS extends Model
                     $group->orWhere('akademik', 'like', $searchTerm);
                 });
 
-                // --- 1. PENCARIAN JUMLAH CPMK (Toleran Typo/Singkat) ---
+
                 if (preg_match('/(\d+)\s*(cpmk|cpm)$/i', $search, $matches)) {
-                    $number = $matches[1];
-                    $q->orWhereExists(function ($sq) use ($number) {
-                        $sq->select(DB::raw(1))
-                            ->from('rps_pivot_cpmk')
-                            ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id')
-                            ->groupBy('rps_pivot_cpmk.rps_id')
-                            ->havingRaw('COUNT(*) = ?', [$number]);
-                    });
+                    $number = (int) $matches[1];
+                    $q->orWhereHas('rps.cpmks', function ($sq) {
+                    }, '=', $number);
                 }
 
-                // --- 2. PENCARIAN JUMLAH SUB-CPMK (Toleran Typo/Singkat) ---
                 if (preg_match('/(\d+)\s*(pert|scpm|sub-?c)/i', $search, $matches)) {
-                    $number = $matches[1];
-                    $q->orWhereExists(function ($sq) use ($number) {
-                        $sq->select(DB::raw(1))
-                            ->from('rps_pivot_cpmk')
-                            ->join('cpmk_pivot_scpmk', 'rps_pivot_cpmk.cpmk_id', '=', 'cpmk_pivot_scpmk.cpmk_id')
-                            ->whereColumn('rps_pivot_cpmk.rps_id', 'rps.id')
-                            ->groupBy('rps_pivot_cpmk.rps_id')
-                            ->havingRaw('COUNT(cpmk_pivot_scpmk.scpmk_id) = ?', [$number]);
-                    });
+                    $number = (int) $matches[1];
+                    $q->orWhereHas('rps.scpmks', function ($sq) {
+                    }, '=', $number);
                 }
 
                 // 3. Logika Status
@@ -411,7 +399,6 @@ class RPS extends Model
                 }
 
             } else {
-
                 // --- 5. PENCARIAN TOTAL BOBOT (Toleran Typo/Singkat) ---
                 if (preg_match('/(\d+)\s*(|%|pers|bob|tot)/i', $search, $matches)) {
                     $weight = $matches[1];
@@ -449,4 +436,98 @@ class RPS extends Model
             }
         });
     }
+
+    // public function scopeSearchRPS($query, $search, $withBobot = false)
+    // {
+    //     if (empty(trim($search))) {
+    //         return $query;
+    //     }
+
+    //     $search = trim($search);
+    //     $searchLower = '%'.strtolower($search).'%';
+    //     $searchTerm = '%'.$search.'%';
+    //     $searchClean = preg_replace('/[^A-Za-z0-9]/', '', $search);
+
+
+    //     return $query->where(function ($q) use ($searchLower, $search, $searchTerm, $withBobot) {
+
+    //         if ($withBobot == false) {
+
+    //             $q->where(function ($group) use ($searchTerm, $searchLower) {
+
+    //                 // D. Filter Tanggal (Revisi, Created, Updated)
+    //                 $group->orWhere(function ($dq) use ($searchLower, $searchTerm) {
+    //                     $dq->whereRaw("DATE_FORMAT(rps.revisi, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("DATE_FORMAT(rps.revisi, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.revisi, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                         ->orWhereRaw("DATE_FORMAT(rps.created_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("DATE_FORMAT(rps.created_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.created_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.created_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                         ->orWhereRaw("DATE_FORMAT(rps.updated_at, '%d/%m/%Y') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("DATE_FORMAT(rps.updated_at, '%Y-%m-%d') LIKE ?", [$searchTerm])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.updated_at, '%a, %d %b %Y')) LIKE ?", ['%'.$searchLower.'%'])
+    //                         ->orWhereRaw("LOWER(DATE_FORMAT(rps.updated_at, '%W, %d %M %Y')) LIKE ?", ['%'.$searchLower.'%']);
+    //                 });
+
+    //                 // F. Fallback Umum
+    //                 $group->orWhere('akademik', 'like', $searchTerm);
+    //             });
+
+    //             // 3. Logika Status
+    //             $statusKeywords = [
+    //                 'draf' => ['draf', 'draft', 'konsep', 'aseli'],
+    //                 'aktif' => ['aktif', 'active', 'publish', 'siap'],
+    //             ];
+
+    //             if (in_array($searchLower, $statusKeywords['draf'])) {
+    //                 $q->orWhere('is_draf', true);
+    //             } elseif (in_array($searchLower, $statusKeywords['aktif'])) {
+    //                 $q->orWhere('is_draf', false);
+    //             }
+
+    //             // 4. ID RPS
+    //             if (is_numeric($search)) {
+    //                 $q->orWhere('rps.id', 'like', $search);
+    //             }
+
+    //         } else {
+    //             // --- 5. PENCARIAN TOTAL BOBOT (Toleran Typo/Singkat) ---
+    //             if (preg_match('/(\d+)\s*(|%|pers|bob|tot)/i', $search, $matches)) {
+    //                 $weight = $matches[1];
+    //                 $q->orWhereRaw('(
+    //                 COALESCE((
+    //                     SELECT SUM(sub_cpmks.bobot)
+    //                     FROM rps_pivot_cpmk
+    //                     JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+    //                     JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+    //                     WHERE rps_pivot_cpmk.rps_id = rps.id
+    //                 ), 0)
+    //                 + IF(
+    //                     EXISTS(
+    //                         SELECT 1
+    //                         FROM rps_pivot_cpmk
+    //                         JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+    //                         JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+    //                         WHERE rps_pivot_cpmk.rps_id = rps.id
+    //                         AND UPPER(sub_cpmks.metode) = \'UTS\'
+    //                     ), 0, COALESCE(rps.bobot_uts, 0)
+    //                 )
+    //                 + IF(
+    //                     EXISTS(
+    //                         SELECT 1
+    //                         FROM rps_pivot_cpmk
+    //                         JOIN cpmk_pivot_scpmk ON rps_pivot_cpmk.cpmk_id = cpmk_pivot_scpmk.cpmk_id
+    //                         JOIN sub_cpmks ON cpmk_pivot_scpmk.scpmk_id = sub_cpmks.id
+    //                         WHERE rps_pivot_cpmk.rps_id = rps.id
+    //                         AND UPPER(sub_cpmks.metode) IN (\'UAS\', \'LAPORAN AKHIR\', \'HASIL PROYEK\', \'HASIL PROJEK\')
+    //                     ), 0, COALESCE(rps.bobot_uas, 0)
+    //                 )
+    //             ) = ?', [$weight]);
+    //             }
+
+    //         }
+    //     });
+    // }
 }

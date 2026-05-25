@@ -6,6 +6,7 @@ use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalFilters;
 use App\Livewire\Staff\KelasManagement\JadwalManagement\WithJadwalModal;
 use App\Livewire\Staff\RPSManagement\WithRPSShow;
 use App\Livewire\Global\WithMahasiswaSearchFilters;
+use App\Livewire\Global\HasToast;
 use App\Models\Kelas\Kelas;
 use App\Models\Kelas\KelasJadwal;
 use Illuminate\Database\QueryException;
@@ -18,8 +19,11 @@ class JadwalManagement extends Component
     use WithJadwalModal;
     use WithRPSShow;
     use WithMahasiswaSearchFilters;
+    use HasToast;
 
     use WithPagination;
+
+    public $search = '';
 
     public $kode;
 
@@ -83,7 +87,9 @@ class JadwalManagement extends Component
             ]);
 
         } catch (QueryException $e) {
-            session()->flash('error', 'Terjadi kesalahan database: '.$e->getMessage());
+            $message = 'Terjadi kesalahan database: '.$e->getMessage();
+            session()->flash('error', $message);
+            $this->toast(text: $message, variant: 'danger');
 
             return view('livewire.staff.kelas-management.jadwal-management', [
                 'jadwals' => KelasJadwal::whereRaw('1 = 0')->paginate($this->perPage),

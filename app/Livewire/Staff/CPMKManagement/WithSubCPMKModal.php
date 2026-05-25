@@ -179,12 +179,13 @@ trait WithSubCPMKModal
                     }
                 },
             ],
-            'deskripsi' => 'required|max:1000',
-            'materi' => 'required|max:1000',
-            'metodologi' => 'required|max:1000',
-            'indikator' => 'required|max:1000',
+
+            'deskripsi' => 'required|min:5|max:1000',
+            'materi' => 'required|string|min:5|max:1000',
+            'metodologi' => 'required|string|min:5|max:1000',
+            'indikator' => 'required|string|min:5|max:1000',
             'metode' => 'required|in:Teori,Aktivitas Partisipasif,Tugas,Mandiri,UTS,UAS,Kuis,Laporan Akhir,Hasil Proyek,Skripsi,Kerja Praktek,Responsi,Logbook,Portofolio',
-            'deskripsi_tugas' => 'nullable|max:1000',
+            'deskripsi_tugas' => 'nullable|min:5|max:1000',
             'waktu_tugas' => 'nullable|integer|min:60',
             'waktu_mandiri' => 'nullable|integer|min:60',
             'bobot' => 'required|numeric|min:0.5|max:100',
@@ -376,13 +377,13 @@ trait WithSubCPMKModal
                     
                     $hasUTSInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->whereIn('metode', SubCPMK::UTS_FIELDS);
+                            $query->whereIn('metode', SubCPMK::$UTS_FIELDS);
                         })
                         ->exists();
 
                     $hasUASInRps = RPS::where('id', $rps->id)
                         ->whereHas('cpmks.scpmks', function ($query) {
-                            $query->whereIn('metode', SubCPMK::UAS_FIELDS);
+                            $query->whereIn('metode', SubCPMK::$UAS_FIELDS);
                         })
                         ->exists();
 
@@ -508,18 +509,32 @@ trait WithSubCPMKModal
 
             // Deskripsi & Status
             'deskripsi.required' => 'Deskripsi Sub-CPMK wajib diisi!',
+            'deskripsi.string' => 'Deskripsi Sub-CPMK harus berupa text!',
+            'deskripsi.min' => 'Deskripsi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'deskripsi.max' => 'Deskripsi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+
             'materi.required' => 'Materi Sub-CPMK wajib diisi!',
+            'materi.string' => 'Materi Sub-CPMK harus berupa text!',
+            'materi.min' => 'Materi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'materi.max' => 'Materi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+            
             'metodologi.required' => 'Metodologi Sub-CPMK wajib diisi!',
+            'metodologi.string' => 'Metodologi Sub-CPMK harus berupa text!',
+            'metodologi.min' => 'Metodologi Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'metodologi.max' => 'Metodologi Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
+            
             'indikator.required' => 'Indikator Sub-CPMK wajib diisi!',
+            'indikator.string' => 'Indikator Sub-CPMK harus berupa text!',
+            'indikator.min' => 'Indikator Sub-CPMK terlalu pendek (Minimal 5 karakter)!',
             'indikator.max' => 'Indikator Sub-CPMK terlalu panjang (Maksimal 1000 karakter)!',
 
             'metode.required' => 'Metode wajib dipilih!',
             'metode.in' => 'Pilih Metode yang telah tersedia!',
 
-            'deskripsi_tugas.max' => 'Deskripsi tugas terlalu panjang (Maksimal 1000 karakter)!',
+            'deskripsi_tugas.required' => 'Deskripsi Tugas wajib diisi!',
+            'deskripsi_tugas.string' => 'Deskripsi Tugas harus berupa text!',
+            'deskripsi_tugas.min' => 'Deskripsi Tugas terlalu pendek (Minimal 5 karakter)!',
+            'deskripsi_tugas.max' => 'Deskripsi Tugas terlalu panjang (Maksimal 1000 karakter)!',
 
             'waktu_tugas.integer' => 'Waktu tugas harus berupa angka!',
             'waktu_tugas.min' => 'Waktu tugas minimal 60 menit!',
@@ -529,8 +544,8 @@ trait WithSubCPMKModal
 
             'bobot.required' => 'Bobot penilaian wajib diisi!',
             'bobot.numeric' => 'Bobot harus berupa angka desimal!',
-            'bobot.min' => 'Bobot minimal bernilai 0.5!',
-            'bobot.max' => 'Bobot minimal bernilai 100!',
+            'bobot.min' => 'Bobot minimal bernilai 0.5%!',
+            'bobot.max' => 'Bobot minimal bernilai 100%!',
 
             'ref_id_array.required' => 'Minimal pilih satu Referensi untuk Sub-CPMK ini!',
             'ref_id_array.array' => 'Format data Referensi tidak valid!',
